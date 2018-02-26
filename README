@@ -1,0 +1,59 @@
+--- Install Tools -------------------------
+
+Make sure you got latest CMake installed on your system and your favorite IDE/compiler.
+
+--- Install dependencies ------------------
+
+Before compiling and linking one needs to install Boost, Glew, Glut, Atlas.
+
+Atlas is not a strong dependency and could be omitted. However, it is
+there then FOUNDATION/BIG will take advantage of it.
+
+--- Dependencies on Apple -----------------
+
+Glut and Atlas are already bundled with Mac, so no need to do anything for this.
+
+Other dependencies can be easy installed using macport (you need to install macport if you do not already have it)
+
+sudo port install boost@1.53.0_1+no_single+no_static+python27+universal
+sudo port install glew@1.9.0_0+universal
+sudo port install libdevil@1.7.8+universal
+
+--- Dependencies on Linux -----------------
+
+--- Ubuntu based versions -----------------
+
+Install dependencies:
+
+  $ sudo apt-get install build-essential cmake cmake-curses-gui freeglut3-dev libboost-all-dev libglew-dev libxi-dev libxmu-dev libdevil-dev --assume-yes
+  $ sudo apt-get install libatlas-dev libatlas3gf-base libatlas-base-dev --assume-yes
+
+This has been tested on a Precise64 Virtual Box and results in the following versions:
+- gcc (Ubuntu/Linaro 4.6.3-1ubuntu5)
+- cmake version 2.8.7
+- libglut.so.3.9.0, libGLU.so.1.3.08004, libGLEW.so.1.6.0, libGL.so.1.2
+- Boost 1.46.1
+- libXi.so.6.1.0, libXmu.so.6.2.0
+- libatlas.so.3gf.0 with libcblas.so.3gf.0 and liblapack_atlas.so.3gf.0
+
+--- Dependencies on Windows ----------------------
+
+????
+
+--- Howto compile and link  ------------------------
+
+CMake should be used for generating make/solution files.
+
+Open the cmake gui application
+
+Browse the source path to the top most folder containing a CMakeLists.txt file.
+
+For binary destination use the same folder location but add a
+subfolder to contain the binary tree. You can name it whatever you
+want. For instance "build". Press configure button, resolve any conflicts or issues.
+
+If you want to have unit-testing find the cmake variable ENABLE_UNIT_TESTS and set it to true (=1)
+
+Press configure button again until no red variables appear. Now press generate button.
+
+Goto the build folder and locate your solution/make files and use these to compile and link the sub project.

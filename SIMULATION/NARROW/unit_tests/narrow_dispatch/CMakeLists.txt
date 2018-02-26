@@ -1,0 +1,48 @@
+INCLUDE_DIRECTORIES( 
+  ${PROJECT_SOURCE_DIR}/FOUNDATION/UTIL/UTIL/include 
+  ${PROJECT_SOURCE_DIR}/FOUNDATION/TINY/TINY/include 
+  ${PROJECT_SOURCE_DIR}/FOUNDATION/GEOMETRY/GEOMETRY/include 
+  ${PROJECT_SOURCE_DIR}/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
+  ${PROJECT_SOURCE_DIR}/FOUNDATION/CONVEX/CONVEX/include 
+  ${PROJECT_SOURCE_DIR}/SIMULATION/NARROW/NARROW/include
+  ${PROJECT_SOURCE_DIR}/SIMULATION/KDOP/KDOP/include
+  ${Boost_INCLUDE_DIRS} 
+  )
+
+IF(HAS_DIKUCL)
+  INCLUDE_DIRECTORIES(
+      ${PROJECT_SOURCE_DIR}/FOUNDATION/DIKUCL/DIKUCL/include 
+    )
+ENDIF(HAS_DIKUCL)
+
+ADD_EXECUTABLE(
+  unit_narrow_dispatch
+  narrow_dispatch.cpp
+  )
+
+TARGET_LINK_LIBRARIES(
+  unit_narrow_dispatch
+  narrow
+  kdop
+  tiny
+  geometry
+  mesh_array
+  convex
+  ${Boost_SYSTEM_LIBRARY}
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  qhull
+  tetgen
+  util
+  )
+
+IF(HAS_DIKUCL)
+  TARGET_LINK_LIBRARIES(unit_narrow_dispatch dikucl)
+ENDIF(HAS_DIKUCL)
+
+
+ADD_TEST(
+  unit_narrow_dispatch
+  unit_narrow_dispatch
+  )
+

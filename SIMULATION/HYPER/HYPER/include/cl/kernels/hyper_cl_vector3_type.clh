@@ -1,0 +1,6 @@
+#ifndef HYPER_CL_VECTOR3_TYPE_CLH
+#define HYPER_CL_VECTOR3_TYPE_CLH
+
+typedef float3 vector3_type;
+
+#endif // HYPER_CL_VECTOR3_TYPE_CLH
