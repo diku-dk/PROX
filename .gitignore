@@ -31,5 +31,17 @@
 *.out
 *.app
 
-build
-build/
+bin/mesh_array_demo
+bin/rigid_body_cmd/rigid_body_cmdD
+bin/rigid_body_gui/rigid_body_guiD
+bin/rigid_body_gui_chalk/rigid_body_gui_chalkD
+bin/soft_body_cmd/soft_body_cmdD
+bin/soft_body_gui/soft_body_guiD
+build/*
+
+PROX/FOUNDATION/MESH_ARRAY/unit_tests/mesh_array_io/mesh_array_data_path.h
+PROX/FOUNDATION/MESH_ARRAY/unit_tests/mesh_array_tetgen/mesh_array_data_path.h
+PROX/SIMULATION/HYPER/HYPER/include/cl/hyper_cl_kernels_path.h
+PROX/SIMULATION/KDOP/KDOP/include/cl/kdop_cl_kernels_path.h
+PROX/SIMULATION/NARROW/NARROW/include/cl/narrow_cl_kernels_path.h
+
