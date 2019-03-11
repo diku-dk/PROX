@@ -45,3 +45,4 @@ PROX/FOUNDATION/MESH_ARRAY/unit_tests/mesh_array_tetgen/mesh_array_data_path.h
 PROX/SIMULATION/HYPER/HYPER/include/cl/hyper_cl_kernels_path.h
 PROX/SIMULATION/KDOP/KDOP/include/cl/kdop_cl_kernels_path.h
 PROX/SIMULATION/NARROW/NARROW/include/cl/narrow_cl_kernels_path.h
+.DS_Store
