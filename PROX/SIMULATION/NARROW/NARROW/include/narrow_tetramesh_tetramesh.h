@@ -54,9 +54,7 @@ namespace narrow
         kdop_test_pairs.push_back( test_pair );
       }
 
-      kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
-                                        , kdop::sequential()
-                                        );
+      kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs );
               
     }
 

@@ -9,10 +9,7 @@ namespace hyper
 {
 
   template<typename MT>
-  inline void update_kdop_bvh(
-                              Engine<MT> & engine
-                              , kdop::sequential const & tag
-                              )
+  inline void update_kdop_bvh( Engine<MT> & engine )
   {
     typedef typename MT::real_type    T;
     typedef typename MT::vector3_type V;
@@ -27,7 +24,7 @@ namespace hyper
       if(body.empty())
         continue;
 
-      kdop::refit_tree<V,8,T>(body.m_tree, body.m_mesh, body.m_X, body.m_Y, body.m_Z, tag );
+      kdop::refit_tree<V,8,T>(body.m_tree, body.m_mesh, body.m_X, body.m_Y, body.m_Z );
     }
     
   }

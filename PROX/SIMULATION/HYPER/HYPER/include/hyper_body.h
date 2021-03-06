@@ -244,7 +244,6 @@ namespace hyper
                                              , this->m_X0
                                              , this->m_Y0
                                              , this->m_Z0
-                                             , kdop::sequential()
                                              );
 
       this->m_X.bind(this->m_mesh);

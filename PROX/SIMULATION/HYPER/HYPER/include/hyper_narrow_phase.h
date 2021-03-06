@@ -16,10 +16,7 @@ namespace hyper
     typedef typename MT::real_type    T;
     typedef typename MT::vector3_type V;
 
-    kdop::tandem_traversal<V, 8, T>(
-                                    work_pool
-                                    , kdop::sequential()
-                                    );
+    kdop::tandem_traversal<V, 8, T>( work_pool );
 
   }
 

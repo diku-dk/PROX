@@ -1,7 +1,6 @@
 #ifndef KDOP_TANDEM_TRAVERSAL_H
 #define KDOP_TANDEM_TRAVERSAL_H
 
-#include <kdop_tags.h>
 #include <kdop_test_pair.h>
 #include <kdop_tree.h>
 #include <kdop_select_contact_point_algorithm.h>
@@ -196,10 +195,7 @@ namespace kdop
   }
 
   template< typename V, size_t K, typename T>
-  inline void tandem_traversal(
-                               std::vector< TestPair<V,K,T> > & work_pool
-                               , sequential const & /*tag*/
-                               )
+  inline void tandem_traversal( std::vector< TestPair<V,K,T> > & work_pool )
   {
     if( work_pool.empty() )
       return;

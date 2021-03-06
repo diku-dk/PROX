@@ -8,7 +8,6 @@
 #include <kdop_single_traversal.h>
 #include <kdop_tandem_traversal.h>
 #include <kdop_raycast.h>
-#include <kdop_tags.h>
 #include <kdop_test_pair.h>
 #include <kdop_tree.h>
 #include <kdop_select_contact_point_algorithm.h>

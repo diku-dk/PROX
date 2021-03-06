@@ -52,10 +52,7 @@ namespace hyper
     //--- First update collision detection data structures
     START_TIMER("collision_detection_updating_kdop");
 
-    update_kdop_bvh(
-                    engine
-                    , kdop::sequential()
-                    );
+    update_kdop_bvh( engine );
 
     STOP_TIMER("collision_detection_updating_kdop");
     START_TIMER("updating_bounding_sphere");

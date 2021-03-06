@@ -2,7 +2,6 @@
 #define KDOP_MAKE_TREE_H
 
 #include <kdop_refit_tree.h>
-#include <kdop_tags.h>
 #include <kdop_tree.h>
 
 #include <mesh_array_t4mesh.h>
@@ -193,7 +192,6 @@ namespace kdop
                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                             , sequential const & /* tag */
                              )
   {
     typedef typename V::value_traits VT;
@@ -282,7 +280,7 @@ namespace kdop
       }
     }
 
-    refit_tree<V,K,T>(tree, mesh, X, Y, Z, sequential());
+    refit_tree<V,K,T>(tree, mesh, X, Y, Z );
     
     return tree;
   }

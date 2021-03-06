@@ -167,7 +167,6 @@ namespace narrow
       kdop::refit_tree<V,8,T>(  object.m_tree
                               , geometry.m_tetramesh.m_mesh
                               , object.m_X, object.m_Y, object.m_Z
-                              , kdop::sequential()
                               );
     }
     

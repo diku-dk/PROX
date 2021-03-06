@@ -1,7 +1,6 @@
 #ifndef KDOP_REFIT_TREE_H
 #define KDOP_REFIT_TREE_H
 
-#include <kdop_tags.h>
 #include <kdop_tree.h>
 
 #include <types/geometry_direction_table.h>
@@ -26,7 +25,7 @@ namespace kdop
                               , mesh_array::T4Mesh const & mesh
                               , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
                               , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
-                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z                              
+                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
                               , geometry::DirectionTable<V,(K/2)> const & DT
                               )
     {     
@@ -123,7 +122,6 @@ namespace kdop
                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                             , sequential const & /* tag */
                              )
   {        
     geometry::DirectionTable<V,(K/2)> const DT = geometry::DirectionTableHelper<V,(K/2)>::make();

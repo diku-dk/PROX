@@ -5,7 +5,6 @@
 #include <narrow_params.h>
 
 #include <kdop_make_tree.h>
-#include <kdop_tags.h>
 #include <kdop_tree.h>
 
 #include <mesh_array.h>
@@ -109,7 +108,6 @@ namespace narrow
                                              , geometry.m_tetramesh.m_X0
                                              , geometry.m_tetramesh.m_Y0
                                              , geometry.m_tetramesh.m_Z0
-                                             , kdop::sequential()
                                              );
 
       object.m_X.bind(geometry.m_tetramesh.m_mesh);
