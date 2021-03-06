@@ -4,11 +4,6 @@
 #include <hyper_engine.h>
 #include <hyper_contact_callback.h>
 
-
-#ifdef HAS_DIKUCL
-#include <cl/hyper_cl_update_kdop_bvh.h>
-#endif // HAS_DIKUCL
-
 #include <hyper_update_kdop_bvh.h>
 #include <hyper_update_bounding_volumes.h>
 
@@ -56,27 +51,12 @@ namespace hyper
 
     //--- First update collision detection data structures
     START_TIMER("collision_detection_updating_kdop");
-#ifdef HAS_DIKUCL
-    if( engine.params().use_open_cl() )
-    {
-      update_kdop_bvh(
-                      engine
-                      , kdop::dikucl()
-                      , engine.params().open_cl_platform()
-                      , engine.params().open_cl_device()
-                      );
-    } else {
-#endif // HAS_DIKUCL
 
-      // use regular updating of KDOP BVHs if DIKUCL is not available or should not be used
-      update_kdop_bvh(
-                      engine
-                      , kdop::sequential()
-                      );
+    update_kdop_bvh(
+                    engine
+                    , kdop::sequential()
+                    );
 
-#ifdef HAS_DIKUCL
-    }
-#endif // HAS_DIKUCL
     STOP_TIMER("collision_detection_updating_kdop");
     START_TIMER("updating_bounding_sphere");
 

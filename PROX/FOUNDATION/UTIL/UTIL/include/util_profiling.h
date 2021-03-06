@@ -12,19 +12,16 @@
 
 #ifdef USE_PROFILING
 
-#define START_TIMER(NAME)         util::Profiling::get_timer_monitor(NAME)->start()
-#define PAUSE_TIMER(NAME)         util::Profiling::get_timer_monitor(NAME)->pause()
-#define RESUME_TIMER(NAME)        util::Profiling::get_timer_monitor(NAME)->resume()
-#define STOP_TIMER(NAME)          util::Profiling::get_timer_monitor(NAME)->stop()
-#define RECORD_TIME(NAME,VALUE)   util::Profiling::get_timer_monitor(NAME)->record(VALUE)
-#define RECORD(NAME,VALUE)        util::Profiling::get_monitor(NAME)->record(VALUE)
-#define NEW_UNIQUE_NAME(NAME)     util::Profiling::generate_unique_name(NAME)
-#define RECORD_VECTOR(NAME,VALUE) util::Profiling::get_vector_monitor(NAME)->record(VALUE)
-
-
-#define RECORD_VECTOR_NEW(NAME) util::Profiling::get_vector_monitor(NAME)->record_new()
+#define START_TIMER(NAME)              util::Profiling::get_timer_monitor(NAME)->start()
+#define PAUSE_TIMER(NAME)              util::Profiling::get_timer_monitor(NAME)->pause()
+#define RESUME_TIMER(NAME)             util::Profiling::get_timer_monitor(NAME)->resume()
+#define STOP_TIMER(NAME)               util::Profiling::get_timer_monitor(NAME)->stop()
+#define RECORD_TIME(NAME,VALUE)        util::Profiling::get_timer_monitor(NAME)->record(VALUE)
+#define RECORD(NAME,VALUE)             util::Profiling::get_monitor(NAME)->record(VALUE)
+#define NEW_UNIQUE_NAME(NAME)          util::Profiling::generate_unique_name(NAME)
+#define RECORD_VECTOR(NAME,VALUE)      util::Profiling::get_vector_monitor(NAME)->record(VALUE)
+#define RECORD_VECTOR_NEW(NAME)        util::Profiling::get_vector_monitor(NAME)->record_new()
 #define RECORD_VECTOR_PUSH(NAME,VALUE) util::Profiling::get_vector_monitor(NAME)->record_push(VALUE)
-
 
 #else
 
@@ -35,6 +32,9 @@
 #define RECORD_TIME(NAME,VALUE)
 #define RECORD(NAME,VALUE)
 #define NEW_UNIQUE_NAME(NAME)  ""
+#define RECORD_VECTOR(NAME,VALUE)
+#define RECORD_VECTOR_NEW(NAME)
+#define RECORD_VECTOR_PUSH(NAME,VALUE)
 
 #endif
 

@@ -101,23 +101,8 @@ namespace narrow
 
     if( geometry.m_tetramesh.has_data() )
     {
-      size_t mem_bytes;
+      size_t mem_bytes = params.get_chunk_bytes();
 
-#ifdef HAS_DIKUCL
-      if(params.use_open_cl() && params.use_gproximity() )
-      {
-        // make sure there is only ever one chunk per object
-        mem_bytes = std::numeric_limits<std::size_t>::max();
-      } else {
-#endif // HAS_DIKUCL
-        
-        // 8000 bytes if gProximity cannot/should not be used
-        mem_bytes = params.get_chunk_bytes();
-        
-#ifdef HAS_DIKUCL
-      }
-#endif // HAS_DIKUCL
-      
       object.m_tree = kdop::make_tree<V,8,T>(
                                              mem_bytes
                                              , geometry.m_tetramesh.m_mesh

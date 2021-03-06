@@ -1,18 +1,3 @@
-IF(HAS_DIKUCL)
-
-  
-  CONFIGURE_FILE(
-    "${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include/cl/narrow_cl_kernels_path.h.in"
-    "${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include/cl/narrow_cl_kernels_path.h"
-    @ONLY
-    )
-
-  INCLUDE_DIRECTORIES(
-      ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/DIKUCL/DIKUCL/include 
-    )
-  
-ENDIF(HAS_DIKUCL)
-
 INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
@@ -33,23 +18,10 @@ FILE(GLOB
   include/*.h
   )
 
-IF(HAS_DIKUCL)
-FILE(GLOB
-  NARROW_CL_HEADERS
-  include/cl/*.h
-  include/cl/kernels/*.h
-  include/cl/*.cl
-  include/cl/kernels/*.cl
-  include/cl/*.clh
-  include/cl/kernels/*.clh
-  )
-ENDIF(HAS_DIKUCL)
-
 ADD_LIBRARY( 
   narrow
   ${NARROW_SOURCES}  
   ${NARROW_HEADERS}
-  ${NARROW_CL_HEADERS}
   )
 
 TARGET_LINK_LIBRARIES(
@@ -60,10 +32,6 @@ TARGET_LINK_LIBRARIES(
   mesh_array
   convex
 )
-
-IF(HAS_DIKUCL)
-  TARGET_LINK_LIBRARIES(narrow dikucl)
-ENDIF(HAS_DIKUCL)
 
 SET_TARGET_PROPERTIES(narrow PROPERTIES DEBUG_POSTFIX "D" )
 SET_TARGET_PROPERTIES(narrow PROPERTIES ARCHIVE_OUTPUT_DIRECTORY                "${PROJECT_SOURCE_DIR}/lib/")

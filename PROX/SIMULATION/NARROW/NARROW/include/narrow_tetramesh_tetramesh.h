@@ -4,11 +4,6 @@
 #include "narrow_object.h"
 #include "narrow_geometry.h"
 
-#ifdef HAS_DIKUCL
-#include <cl/gproximity/kdop_cl_gproximity_tandem_traversal.h>
-#include <cl/kdop_cl_tandem_traversal.h>
-#endif // HAS_DIKUCL
-
 #include <kdop_tandem_traversal.h>
 
 namespace narrow
@@ -58,38 +53,11 @@ namespace narrow
 
         kdop_test_pairs.push_back( test_pair );
       }
-#ifdef HAS_DIKUCL
 
-      if(system.params().use_open_cl())
-      {
-        if(system.params().use_gproximity())
-        {
-
-          kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
-                                          , kdop::dikucl::gproximity()
-                                          , system.params().open_cl_platform()
-                                          , system.params().open_cl_device());
-          
-        } else {
-
-          kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
-                                          , kdop::dikucl()
-                                          , system.params().open_cl_platform()
-                                          , system.params().open_cl_device());
-
-        }
-      } else {
-#endif // HAS_DIKUCL
-          
-        // use regular tandem traversal if DIKUCL is not available or should not be used
-        kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
+      kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
                                         , kdop::sequential()
                                         );
-        
-#ifdef HAS_DIKUCL
-      }
-#endif // HAS_DIKUCL
-      
+              
     }
 
   } // namespace details

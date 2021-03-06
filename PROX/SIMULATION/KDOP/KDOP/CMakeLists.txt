@@ -1,11 +1,3 @@
-IF(HAS_DIKUCL)
-  CONFIGURE_FILE(
-    "${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include/cl/kdop_cl_kernels_path.h.in"
-    "${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include/cl/kdop_cl_kernels_path.h"
-    @ONLY
-  )
-ENDIF(HAS_DIKUCL)
-
 INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
@@ -14,12 +6,6 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
   ${Boost_INCLUDE_DIR}
 )
-
-IF(HAS_DIKUCL)
-  INCLUDE_DIRECTORIES(
-      ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/DIKUCL/DIKUCL/include 
-    )
-ENDIF(HAS_DIKUCL)
 
 FILE(GLOB 
   KDOP_SOURCES
@@ -31,29 +17,10 @@ FILE(GLOB
   include/*.h
   )
 
-IF(HAS_DIKUCL)
-FILE(GLOB
-  KDOP_CL_HEADERS
-  include/cl/*.h
-  include/cl/gproximity/*.h
-  include/cl/kernels/*.h
-  include/cl/kernels/gproximity/*.h
-  include/cl/*.cl
-  include/cl/gproximity/*.cl
-  include/cl/kernels/*.cl
-  include/cl/kernels/gproximity/*.cl
-  include/cl/*.clh
-  include/cl/gproximity/*.clh
-  include/cl/kernels/*.clh
-  include/cl/kernels/gproximity/*.clh
-  )
-ENDIF(HAS_DIKUCL)
-
 ADD_LIBRARY( 
   kdop
   ${KDOP_SOURCES}  
   ${KDOP_HEADERS}
-  ${KDOP_CL_HEADERS}
 )
 
 TARGET_LINK_LIBRARIES(
@@ -63,10 +30,6 @@ TARGET_LINK_LIBRARIES(
   mesh_array
   util
 )
-
-IF(HAS_DIKUCL)
-  TARGET_LINK_LIBRARIES(kdop dikucl)
-ENDIF(HAS_DIKUCL)
 
 SET_TARGET_PROPERTIES(kdop PROPERTIES DEBUG_POSTFIX "D" )
 SET_TARGET_PROPERTIES(kdop PROPERTIES ARCHIVE_OUTPUT_DIRECTORY                "${PROJECT_SOURCE_DIR}/lib/")

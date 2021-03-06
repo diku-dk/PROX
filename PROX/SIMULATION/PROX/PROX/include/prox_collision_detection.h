@@ -4,10 +4,6 @@
 #include <broad.h>
 #include <broad_statistics.h>
 
-#ifdef HAS_DIKUCL
-#include <cl/narrow_cl_update_kdop_bvh.h>
-#endif // HAS_DIKUCL
-
 #include <geometry.h>
 
 #include <narrow.h>
@@ -180,25 +176,11 @@ namespace prox
       START_TIMER("collision_detection_updating_kdop");
       if( ! kdop_bvh_update_work_pool.empty() )
       {
-#ifdef HAS_DIKUCL
-        if( narrow_system.params().use_open_cl() )
-        {
-          narrow::update_kdop_bvh(  kdop_bvh_update_work_pool
-                                  , narrow::dikucl()
-                                  , narrow_system.params().open_cl_platform()
-                                  , narrow_system.params().open_cl_device()
-                                  );
-        } else {
-#endif // HAS_DIKUCL
+
+      narrow::update_kdop_bvh( kdop_bvh_update_work_pool
+                               , narrow::sequential()
+                               );
           
-          // use regular updating of KDOP BVHs if DIKUCL is not available or should not be used
-          narrow::update_kdop_bvh(  kdop_bvh_update_work_pool
-                                  , narrow::sequential()
-                                  );
-          
-#ifdef HAS_DIKUCL
-        }
-#endif // HAS_DIKUCL
       }
       STOP_TIMER("collision_detection_updating_kdop");
 

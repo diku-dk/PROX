@@ -1,48 +1,13 @@
 #ifndef UTIL_TIMER_H
 #define UTIL_TIMER_H
 
-#if defined(HAS_CXX11) || defined(HAS_CXX0X)
-#define USE_CHRONO
-#endif
-
-#ifdef USE_CHRONO
-  #include <chrono>
-#endif
-
-#include <util_log.h>
+#include <chrono>
 
 #include <cassert>
-#include <sstream>   // needed for std::stringstream
+
 
 namespace util 
 {
-
-#ifdef USE_CHRONO
-
-  template <class Clock>
-  std::string display_clock_precision()
-  {
-    std::stringstream text;
-
-    typedef std::chrono::duration<double, std::nano> NS;
-
-    NS const ns = typename Clock::duration(1);
-    text << ns.count() << " ns";
-
-    return text.str();
-  }
-
-  inline void print_timers_info()
-  {
-    Log logging;
-
-    logging << "steady_clock precision          : " << display_clock_precision<std::chrono::steady_clock>()          << Log::newline();
-    logging << "steady_clock is steady          : " << std::chrono::steady_clock::is_steady                          << Log::newline();
-    logging << "system_clock precision          : " << display_clock_precision<std::chrono::system_clock>()          << Log::newline();
-    logging << "system_clock is steady          : " << std::chrono::system_clock::is_steady                          << Log::newline();
-    logging << "high_resolution_clock precision : " << display_clock_precision<std::chrono::high_resolution_clock>() << Log::newline();
-    logging << "high_resolution_clock is steady : " << std::chrono::high_resolution_clock::is_steady                 << Log::newline();
-  }
 
   class Timer
   {
@@ -101,8 +66,6 @@ namespace util
       return std::chrono::duration_cast<std::chrono::milliseconds>(m_end - m_start).count();
     }
   };
-
-#endif
 
 }  // end of namespace util
 

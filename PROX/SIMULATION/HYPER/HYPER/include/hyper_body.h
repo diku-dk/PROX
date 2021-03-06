@@ -238,14 +238,6 @@ namespace hyper
 
       size_t mem_bytes = 8000u;  // 8000 bytes is default chunk size
 
-#ifdef HAS_DIKUCL
-      if(params.use_open_cl() && params.use_gproximity() )
-      {
-        // make sure there is only ever one chunk per object
-        mem_bytes = std::numeric_limits<std::size_t>::max();
-      }
-#endif // HAS_DIKUCL
-
       this->m_tree = kdop::make_tree<V,8,T>(
                                              mem_bytes
                                              , this->m_mesh

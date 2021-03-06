@@ -1,8 +1,0 @@
-#ifndef KDOP_CL_TETRAHEDRON_SURFACE_INFO_CLH
-#define KDOP_CL_TETRAHEDRON_SURFACE_INFO_CLH
-
-typedef struct TetrahedronSurfaceInfo {
-    uchar vertex_on_surface[4];
-} TetrahedronSurfaceInfo;
-
-#endif // KDOP_CL_TETRAHEDRON_SURFACE_INFO_CLH

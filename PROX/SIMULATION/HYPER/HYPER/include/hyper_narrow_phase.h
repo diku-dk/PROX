@@ -2,12 +2,6 @@
 #define HYPER_NARROW_PHASE_H
 
 #include <hyper_engine.h>
-
-#ifdef HAS_DIKUCL
-#include <cl/gproximity/kdop_cl_gproximity_tandem_traversal.h>
-#include <cl/kdop_cl_tandem_traversal.h>
-#endif // HAS_DIKUCL
-
 #include <kdop_tandem_traversal.h>
 
 namespace hyper
@@ -22,40 +16,11 @@ namespace hyper
     typedef typename MT::real_type    T;
     typedef typename MT::vector3_type V;
 
-#ifdef HAS_DIKUCL
+    kdop::tandem_traversal<V, 8, T>(
+                                    work_pool
+                                    , kdop::sequential()
+                                    );
 
-    if(engine.params().use_open_cl())
-    {
-      if(engine.params().use_gproximity())
-      {
-
-        kdop::tandem_traversal<V, 8, T>(
-                                        work_pool
-                                        , kdop::dikucl::gproximity()
-                                        , engine.params().open_cl_platform()
-                                        , engine.params().open_cl_device());
-
-      } else {
-
-        kdop::tandem_traversal<V, 8, T>(
-                                        work_pool
-                                        , kdop::dikucl()
-                                        , engine.params().open_cl_platform()
-                                        , engine.params().open_cl_device());
-
-      }
-    } else {
-#endif // HAS_DIKUCL
-
-      kdop::tandem_traversal<V, 8, T>(
-                                      work_pool
-                                      , kdop::sequential()
-                                      );
-
-#ifdef HAS_DIKUCL
-    }
-#endif // HAS_DIKUCL
-    
   }
 
 } //namespace narrow
