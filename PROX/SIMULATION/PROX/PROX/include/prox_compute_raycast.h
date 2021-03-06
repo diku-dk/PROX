@@ -59,10 +59,7 @@ namespace prox
 
     if( ! kdop_bvh_update_work_pool.empty() )
     {
-      narrow::update_kdop_bvh(
-                              kdop_bvh_update_work_pool
-                              , narrow::sequential()
-                              );
+      narrow::update_kdop_bvh( kdop_bvh_update_work_pool );
     }
 
     for(geometry_iterator geometry = narrow_system.begin(); geometry != narrow_system.end(); ++geometry)

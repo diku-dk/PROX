@@ -7,7 +7,6 @@
 
 #include <narrow_geometry.h>
 #include <narrow_object.h>
-#include <narrow_tags.h>
 
 #include <tiny_quaternion_functions.h>
 
@@ -124,9 +123,7 @@ namespace narrow
   };
   
   template<typename M>
-  inline void update_kdop_bvh(  std::vector< KDopBvhUpdateWorkItem< M > > & work_pool
-                              , sequential const & /* tag */
-                              )
+  inline void update_kdop_bvh(  std::vector< KDopBvhUpdateWorkItem< M > > & work_pool )
   {
     assert( !work_pool.empty() || "update_kdop_bvh : update_kdop_bvh_objects are empty" );
     

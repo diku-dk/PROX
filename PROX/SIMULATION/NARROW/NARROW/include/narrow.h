@@ -5,7 +5,6 @@
 #include <narrow_geometry.h>
 #include <narrow_object.h>
 #include <narrow_system.h>
-#include <narrow_tags.h>
 #include <narrow_raycast.h>
 #include <narrow_update_kdop_bvh.h>
 

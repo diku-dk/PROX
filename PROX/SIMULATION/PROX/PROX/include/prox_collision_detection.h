@@ -7,7 +7,6 @@
 #include <geometry.h>
 
 #include <narrow.h>
-#include <narrow_tags.h>
 #include <narrow_update_kdop_bvh.h>
 
 #include <prox_contact_point.h>
@@ -176,11 +175,7 @@ namespace prox
       START_TIMER("collision_detection_updating_kdop");
       if( ! kdop_bvh_update_work_pool.empty() )
       {
-
-      narrow::update_kdop_bvh( kdop_bvh_update_work_pool
-                               , narrow::sequential()
-                               );
-          
+        narrow::update_kdop_bvh( kdop_bvh_update_work_pool );
       }
       STOP_TIMER("collision_detection_updating_kdop");
 
