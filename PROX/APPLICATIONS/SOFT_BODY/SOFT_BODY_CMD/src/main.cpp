@@ -129,30 +129,10 @@ namespace soft_body
         m_engine.params().set_tetgen_quiet_output(tetgen_quiet_output);
         m_engine.params().set_tetgen_suppress_splitting(tetgen_suppress_splitting);
 
-        bool const use_open_cl = util::to_value<bool>(
-                                                      m_config_file.get_value("use_open_cl", "false")
-                                                      );
-        size_t const open_cl_platform = util::to_value<size_t>(
-                                                               m_config_file.get_value("open_cl_platform", "0")
-                                                               );
-        size_t const open_cl_device = util::to_value<size_t>(
-                                                             m_config_file.get_value("open_cl_device", "0")
-                                                             );
-        bool const use_gproximity = util::to_value<bool>(
-                                                         m_config_file.get_value("use_gproximity", "false")
-                                                         );
-        bool const use_batching = util::to_value<bool>(
-                                                       m_config_file.get_value("use_batching", "true")
-                                                       );
         float const envelope = util::to_value<float>(
                                                      m_config_file.get_value("envelope", "0.01")
                                                      );
 
-        m_engine.params().set_use_open_cl(use_open_cl);
-        m_engine.params().set_open_cl_device(open_cl_platform);
-        m_engine.params().set_open_cl_device(open_cl_device);
-        m_engine.params().set_use_gproximity(use_gproximity);
-        m_engine.params().set_use_batching(use_batching);
         m_engine.params().set_envelope(envelope);
 
         std::string const scene_name =

@@ -122,28 +122,7 @@ namespace hyper
                                   );
     }
 
-    if( engine.params().use_batching() )
-    {
-      narrow_phase( engine, narrow_work_pool );
-    }
-    else
-    {
-      // 2015_03_12 Kenny: This non-batch mode seems completely stupid to
-      // have as a designated "dispatcher" logic... we have the "sequential" mode
-      // anyway that does this for non openCL version. So why do we have this at all?
-      
-      std::vector< kdop::TestPair<V, 8, T> > single_work;
-      single_work.resize(1);
-
-      typename std::vector< kdop::TestPair<V, 8, T>  >::iterator work_item = narrow_work_pool.begin();
-      typename std::vector< kdop::TestPair<V, 8, T>  >::iterator work_end  = narrow_work_pool.end();
-
-      for(;work_item!=work_end;++work_item)
-      {
-        single_work[0] = *work_item;
-        narrow_phase( engine, single_work );
-      }
-    }
+    narrow_phase( engine, narrow_work_pool );
 
     STOP_TIMER("narrow_phase");
 

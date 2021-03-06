@@ -54,13 +54,8 @@ namespace simulators
     static std::string const PARAM_BOUNCE_ON;
     static std::string const PARAM_TETGEN_QUIET;
     static std::string const PARAM_TETGEN_SUPPRESS_SPLITTING;
-    static std::string const PARAM_NARROW_USE_OPEN_CL;
-    static std::string const PARAM_NARROW_USE_GPROXIMITY;
-    static std::string const PARAM_NARROW_USE_BATCHING;
     static std::string const PARAM_USE_ONLY_TETRAMESHES;
     static std::string const PARAM_MAX_ITERATION;
-    static std::string const PARAM_NARROW_OPEN_CL_PLATFORM;
-    static std::string const PARAM_NARROW_OPEN_CL_DEVICE;
     static std::string const PARAM_NARROW_CHUNK_BYTES;
     static std::string const PARAM_ABSOLUTE_TOLERANCE;
     static std::string const PARAM_RELATIVE_TOLERANCE;

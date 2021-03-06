@@ -44,13 +44,8 @@ namespace simulators
   std::string const ProxEngine::PARAM_BOUNCE_ON                  = "bounce_on";
   std::string const ProxEngine::PARAM_TETGEN_QUIET               = "tetgen_quiet_output";
   std::string const ProxEngine::PARAM_TETGEN_SUPPRESS_SPLITTING  = "tetgen_suppress_splitting";
-  std::string const ProxEngine::PARAM_NARROW_USE_OPEN_CL         = "narrow_use_open_cl";
-  std::string const ProxEngine::PARAM_NARROW_USE_GPROXIMITY      = "narrow_use_gproximity";
-  std::string const ProxEngine::PARAM_NARROW_USE_BATCHING        = "narrow_use_batching";
   std::string const ProxEngine::PARAM_USE_ONLY_TETRAMESHES       = "use_only_tetrameshes";
   std::string const ProxEngine::PARAM_MAX_ITERATION              = "max_iteration";
-  std::string const ProxEngine::PARAM_NARROW_OPEN_CL_PLATFORM    = "narrow_open_cl_platform";
-  std::string const ProxEngine::PARAM_NARROW_OPEN_CL_DEVICE      = "narrow_open_cl_device";
   std::string const ProxEngine::PARAM_NARROW_CHUNK_BYTES         = "narrow_chunk_bytes";
   std::string const ProxEngine::PARAM_ABSOLUTE_TOLERANCE         = "absolute_tolerance";
   std::string const ProxEngine::PARAM_RELATIVE_TOLERANCE         = "relative_tolerance";
@@ -258,18 +253,6 @@ namespace simulators
     {
       m_data->m_tetgen_settings.m_suppress_splitting = value;
     }
-    else if (name == PARAM_NARROW_USE_OPEN_CL)
-    {
-      m_data->m_narrow.params().set_use_open_cl( value );
-    }
-    else if (name == PARAM_NARROW_USE_GPROXIMITY)
-    {
-      m_data->m_narrow.params().set_use_gproximity(  value );
-    }
-    else if (name == PARAM_NARROW_USE_BATCHING)
-    {
-      m_data->m_narrow.params().set_use_batching( value );
-    }
     else if (name == PARAM_USE_ONLY_TETRAMESHES)
     {
       m_data->m_use_only_tetrameshes = value;
@@ -289,14 +272,6 @@ namespace simulators
     if (name == PARAM_MAX_ITERATION)
     {
       m_data->m_params.solver_params().set_max_iterations(value);
-    }
-    else if (name == PARAM_NARROW_OPEN_CL_PLATFORM)
-    {
-      m_data->m_narrow.params().set_open_cl_platform(value);
-    }
-    else if (name == PARAM_NARROW_OPEN_CL_DEVICE)
-    {
-      m_data->m_narrow.params().set_open_cl_device(value);
     }
     else if (name == PARAM_NARROW_CHUNK_BYTES)
     {
@@ -371,9 +346,6 @@ namespace simulators
     bool         const contact_reduction_value     = util::to_value<bool>(         settings.get_value(PARAM_COTNACT_REDUCTION,         "true"   ) );
     bool         const tetgen_quiet_output         = util::to_value<bool>(         settings.get_value(PARAM_TETGEN_QUIET,              "true"   ) );
     bool         const tetgen_suppress_splitting   = util::to_value<bool>(         settings.get_value(PARAM_TETGEN_SUPPRESS_SPLITTING, "true"   ) );
-    bool         const narrow_use_open_cl          = util::to_value<bool>(         settings.get_value(PARAM_NARROW_USE_OPEN_CL,        "false"  ) );
-    bool         const narrow_use_gproximity       = util::to_value<bool>(         settings.get_value(PARAM_NARROW_USE_GPROXIMITY,     "false"  ) );
-    bool         const narrow_use_batching         = util::to_value<bool>(         settings.get_value(PARAM_NARROW_USE_BATCHING,       "true"   ) );
     bool         const use_only_tetrameshes        = util::to_value<bool>(         settings.get_value(PARAM_USE_ONLY_TETRAMESHES,      "false"  ) );
     bool         const bounce_on_value             = util::to_value<bool>(         settings.get_value(PARAM_BOUNCE_ON,                 "true"  ) );
 
@@ -382,20 +354,13 @@ namespace simulators
     set_parameter(PARAM_COTNACT_REDUCTION,           contact_reduction_value   );
     set_parameter(PARAM_TETGEN_QUIET,         tetgen_quiet_output       );
     set_parameter(PARAM_TETGEN_SUPPRESS_SPLITTING,   tetgen_suppress_splitting );
-    set_parameter(PARAM_NARROW_USE_OPEN_CL,          narrow_use_open_cl        );
-    set_parameter(PARAM_NARROW_USE_GPROXIMITY,       narrow_use_gproximity     );
-    set_parameter(PARAM_NARROW_USE_BATCHING,         narrow_use_batching       );
     set_parameter(PARAM_USE_ONLY_TETRAMESHES,        use_only_tetrameshes      );
     set_parameter(PARAM_BOUNCE_ON,                   bounce_on_value           );
 
     unsigned int const max_iteration_value         = util::to_value<unsigned int>( settings.get_value(PARAM_MAX_ITERATION,             "1000"   ) );
-    unsigned int const narrow_open_cl_platform     = util::to_value<unsigned int>( settings.get_value(PARAM_NARROW_OPEN_CL_PLATFORM,   "0"      ) );
-    unsigned int const narrow_open_cl_device       = util::to_value<unsigned int>( settings.get_value(PARAM_NARROW_OPEN_CL_DEVICE,     "0"      ) );
     unsigned int const narrow_chunk_bytes          = util::to_value<unsigned int>( settings.get_value(PARAM_NARROW_CHUNK_BYTES,        "8000"   ) );
 
     set_parameter(PARAM_MAX_ITERATION,               max_iteration_value       );
-    set_parameter(PARAM_NARROW_OPEN_CL_PLATFORM,     narrow_open_cl_platform   );
-    set_parameter(PARAM_NARROW_OPEN_CL_DEVICE,       narrow_open_cl_device     );
     set_parameter(PARAM_NARROW_CHUNK_BYTES,          narrow_chunk_bytes        );
 
     float        const absolute_tolerance_value    = util::to_value<float>(        settings.get_value(PARAM_ABSOLUTE_TOLERANCE,        "0.0"    ) );

@@ -35,46 +35,23 @@ namespace hyper
 
   protected:
 
-    T    m_time_step;          ///< The fixed time stepping to use when time-integrating the dynamics.
-    bool m_use_cfl_condition;  ///< Boolean flag for turning on/off CFL conditions
-
-
+    T       m_time_step;                   ///< The fixed time stepping to use when time-integrating the dynamics.
+    bool    m_use_cfl_condition;           ///< Boolean flag for turning on/off CFL conditions
     T       m_adaptive_min_dt;             ///< The minimum allowed time step size when using adaptive time-stepping.
     T       m_adaptive_max_dt;             ///< The maximum allowed time step size when using adaptive time-stepping.
     T       m_adaptive_halving_tolerance;  ///< The havling tolerance, the maximum allowed error (accuracy).
     size_t  m_adaptive_doubling_count;     ///< The number of consecutive time steps to take before trying ot increase time step-size.
+    T       m_envelope;                    ///< Procentage of scale of smallest object size to be used as collision envelope
 
-  protected:
-
-    bool   m_use_open_cl;
-    size_t m_open_cl_platform;
-    size_t m_open_cl_device;
-    bool   m_use_gproximity;
-    bool   m_use_batching;
-    T      m_envelope;              ///< Procentage of scale of smallest object size to be used as collision envelope
-
-    mesh_array::TetGenSettings m_tetgen_settings;    ///< Tetgen settings
-
-  protected:
-
-    time_step_method_type  m_time_step_method_type;
+    mesh_array::TetGenSettings m_tetgen_settings;              ///< Tetgen settings
+    time_step_method_type      m_time_step_method_type;
 
   public:
 
-    bool   const & use_open_cl()       const { return this->m_use_open_cl;        }
-    size_t const & open_cl_platform()  const { return this->m_open_cl_platform;   }
-    size_t const & open_cl_device()    const { return this->m_open_cl_device;     }
-    bool   const & use_gproximity()    const { return this->m_use_gproximity;     }
-    bool   const & use_batching()      const { return this->m_use_batching;       }
     T      const & get_envelope()      const { return this->m_envelope;           }
 
   public:
 
-    void set_use_open_cl(bool const & value)        { this->m_use_open_cl      = value; }
-    void set_open_cl_platform(size_t const & value) { this->m_open_cl_platform = value; }
-    void set_open_cl_device(size_t const & value)   { this->m_open_cl_device   = value; }
-    void set_use_gproximity(bool const & value)     { this->m_use_gproximity   = value; }
-    void set_use_batching(bool const & value)       { this->m_use_batching     = value; }
     void set_envelope(T const & value)              { this->m_envelope         = value; }
 
   public:
@@ -224,11 +201,6 @@ namespace hyper
     , m_adaptive_max_dt(VT::numeric_cast(0.01))
     , m_adaptive_halving_tolerance(VT::numeric_cast(0.000001))
     , m_adaptive_doubling_count(5u)
-    , m_use_open_cl( false )
-    , m_open_cl_platform( 0 )
-    , m_open_cl_device( 0 )
-    , m_use_gproximity( false )
-    , m_use_batching( true )
     , m_envelope(VT::numeric_cast(0.01))
     , m_tetgen_settings( mesh_array::tetgen_quality_settings() )
     , m_time_step_method_type(semi_implicit_type)
@@ -251,11 +223,6 @@ namespace hyper
       this->m_adaptive_halving_tolerance   = VT::numeric_cast(0.000001);
       this->m_adaptive_doubling_count      =  5u;
 
-      this->m_use_open_cl       = false;
-      this->m_open_cl_platform  = 0;
-      this->m_open_cl_device    = 0;
-      this->m_use_gproximity    = false;
-      this->m_use_batching      = true;
       this->m_envelope          = VT::numeric_cast(0.01);
       this->m_tetgen_settings   = mesh_array::tetgen_quality_settings();
 

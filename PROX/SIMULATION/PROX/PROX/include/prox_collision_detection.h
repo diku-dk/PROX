@@ -302,16 +302,6 @@ namespace prox
                                                                                 );
 
         narrow_test_pairs.push_back( narrow_pair );
-
-        // 2015-02-01 Kenny code review: Disptaching one-by-one is old-style
-        // fashion way of doing this. The batch dispatch is nicer as it allows
-        // narrow phase system to exploit parallism. The one-by-one behavior
-        // forces sequential behavior.
-        if( ! narrow_system.params().use_batching() )
-        {
-          narrow::dispatch_collision_handlers( narrow_system, narrow_test_pairs );
-          narrow_test_pairs.clear();
-        }
       }
 
       if ( ! narrow_test_pairs.empty() )
