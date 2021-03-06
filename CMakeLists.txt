@@ -4,8 +4,6 @@ project(PROX VERSION 0.1
                    DESCRIPTION "A header only c++ library for simulating contact between rigid or soft bodies"
                    HOMEPAGE_URL "https://github.com/diku-dk/PROX")
 
-list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
-
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 add_definitions(-D_USE_MATH_DEFINES)
@@ -41,7 +39,7 @@ endif()
 option(PROX_ENABLE_PROFILING "Build demos" OFF)
 option(PROX_ENABLE_UNIT_TESTS "Build unit test" OFF)
 
-if(PORX_ENABLE_PROFILING)
+if(PROX_ENABLE_PROFILING)
   message("Profiling is...........................ON")
   add_definitions(-DUSE_PROFILING)
 else()
