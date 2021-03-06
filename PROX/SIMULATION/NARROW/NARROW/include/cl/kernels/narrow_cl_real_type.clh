@@ -1,6 +1,0 @@
-#ifndef NARROW_CL_REAL_TYPE_CLH
-#define NARROW_CL_REAL_TYPE_CLH
-
-typedef float real_type;
-
-#endif // NARROW_CL_REAL_TYPE_CLH
