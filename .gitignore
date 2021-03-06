@@ -33,16 +33,36 @@
 *.app
 
 bin/mesh_array_demo
+
 bin/rigid_body_cmd/rigid_body_cmdD
+bin/rigid_body_cmd/*.ele
+bin/rigid_body_cmd/*.node
+bin/rigid_body_cmd/*.poly
 bin/rigid_body_gui/rigid_body_guiD
 bin/rigid_body_gui_chalk/rigid_body_gui_chalkD
+bin/rigid_body_gui/*.ele
+bin/rigid_body_gui/*.node
+bin/rigid_body_gui/*.poly
+
 bin/soft_body_cmd/soft_body_cmdD
+bin/soft_body_cmd/*.ele
+bin/soft_body_cmd/*.node
+bin/soft_body_cmd/*.poly
 bin/soft_body_gui/soft_body_guiD
+bin/soft_body_gui/*.ele
+bin/soft_body_gui/*.node
+bin/soft_body_gui/*.poly
+
 build/*
+
+bin/output/*.png
+bin/output/*.log
+bin/output/*.m
 
 PROX/FOUNDATION/MESH_ARRAY/unit_tests/mesh_array_io/mesh_array_data_path.h
 PROX/FOUNDATION/MESH_ARRAY/unit_tests/mesh_array_tetgen/mesh_array_data_path.h
 PROX/SIMULATION/HYPER/HYPER/include/cl/hyper_cl_kernels_path.h
 PROX/SIMULATION/KDOP/KDOP/include/cl/kdop_cl_kernels_path.h
 PROX/SIMULATION/NARROW/NARROW/include/cl/narrow_cl_kernels_path.h
+
 .DS_Store
