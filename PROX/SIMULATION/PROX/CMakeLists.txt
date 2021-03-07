@@ -1,4 +1,4 @@
-ADD_SUBDIRECTORY(PROX)
-IF(PROX_ENABLE_UNIT_TESTS)
-  ADD_SUBDIRECTORY(unit_tests)
-ENDIF()
+add_subdirectory(PROX)
+if(PROX_ENABLE_UNIT_TESTS)
+  add_subdiirectory(unit_tests)
+endif()
