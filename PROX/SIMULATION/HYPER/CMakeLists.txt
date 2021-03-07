@@ -1,4 +1,4 @@
-ADD_SUBDIRECTORY(HYPER)
-IF(PROX_ENABLE_UNIT_TESTS)
-  ADD_SUBDIRECTORY(unit_tests)
-ENDIF()
+add_subdirectory(HYPER)
+if(PROX_ENABLE_UNIT_TESTS)
+  add_subdirectory(unit_tests)
+endif()

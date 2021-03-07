@@ -1,4 +1,4 @@
-ADD_SUBDIRECTORY(SPARSE)
-IF(PROX_ENABLE_UNIT_TESTS)
-  ADD_SUBDIRECTORY(unit_tests)
-ENDIF()
+add_subdirectory(SPARSE)
+if(PROX_ENABLE_UNIT_TESTS)
+  add_subdirectorry(unit_tests)
+endif()

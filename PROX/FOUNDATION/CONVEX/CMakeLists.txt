@@ -1,4 +1,4 @@
-ADD_SUBDIRECTORY(CONVEX)
-IF(PROX_ENABLE_UNIT_TESTS)
-  ADD_SUBDIRECTORY(unit_tests)
-ENDIF()
+add_subdirectory(CONVEX)
+if(PROX_ENABLE_UNIT_TESTS)
+  subdirectory (unit_tests)
+endif()

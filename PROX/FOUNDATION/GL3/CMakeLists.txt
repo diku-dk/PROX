@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY( GL3  )
+add_subdirectory( GL3  )
