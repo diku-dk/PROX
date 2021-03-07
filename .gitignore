@@ -54,6 +54,7 @@ bin/soft_body_gui/*.node
 bin/soft_body_gui/*.poly
 
 build/*
+xbuild/*
 
 bin/output/*.png
 bin/output/*.log

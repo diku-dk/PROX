@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(kdop_make_tree)
   kdop::mesh_reorder( mesh_in, X_in, Y_in, Z_in, mesh_out, X_out, Y_out, Z_out );
   
   
-  kdop::Tree<T,8> tree = kdop::make_tree<V,8,T>( 8000, mesh_out, X_out, Y_out, Z_out, kdop::sequential() );
+  kdop::Tree<T,8> tree = kdop::make_tree<V,8,T>( 8000, mesh_out, X_out, Y_out, Z_out );
 }
 
 BOOST_AUTO_TEST_SUITE_END();

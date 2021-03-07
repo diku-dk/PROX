@@ -110,7 +110,7 @@ inline void do_test(
 
     if( work_pool.size() )
     {
-      narrow::update_kdop_bvh(work_pool, narrow::sequential() );
+      narrow::update_kdop_bvh(work_pool );
     }
   }
 

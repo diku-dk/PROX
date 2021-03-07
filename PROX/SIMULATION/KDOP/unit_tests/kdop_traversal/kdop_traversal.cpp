@@ -103,7 +103,7 @@ void make_geometry( GeometryInfo & info, V const & p )
 
   mesh_array::compute_surface_map( info.m_mesh, info.m_X, info.m_Y, info.m_Z, info.m_surface_map );
 
-  info.m_tree = kdop::make_tree<V,6,T>( 32000, info.m_mesh, info.m_X, info.m_Y, info.m_Z, kdop::sequential() );
+  info.m_tree = kdop::make_tree<V,6,T>( 32000, info.m_mesh, info.m_X, info.m_Y, info.m_Z );
 
   BOOST_CHECK( info.m_surface_map.size()>0u );
 
@@ -155,10 +155,7 @@ BOOST_AUTO_TEST_CASE(kdop_tandem_traversal)
 
   test_pairs.push_back(test);
 
-  kdop::tandem_traversal<V,6,T>(
-                                test_pairs
-                                , kdop::sequential()
-                                );
+  kdop::tandem_traversal<V,6,T>( test_pairs );
 }
 
 BOOST_AUTO_TEST_SUITE_END();
