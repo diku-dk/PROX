@@ -1,17 +1,14 @@
-INCLUDE_DIRECTORIES( 
-)
-
-FILE(GLOB 
+file(GLOB
   RIGID_BODY_CMD_SOURCES
   src/*.cpp 
   )
 
-FILE(GLOB
+file(GLOB
   RIGID_BODY_CMD_HEADERS
   include/*.h 
   )
 
-FILE(GLOB
+file(GLOB
   RIGID_BODY_CMD_CFGS
   ${PROJECT_SOURCE_DIR}/bin/rigid_body_cmd/*.cfg
   )
@@ -22,7 +19,7 @@ add_executable(rigid_body_cmd
   ${RIGID_BODY_CMD_CFGS}
   )
 
-source_group(Config    FILES ${RIGID_BODY_CMD_CFGS})
+source_group(Config FILES ${RIGID_BODY_CMD_CFGS})
 
 target_include_directories(rigid_body_cmd
   PRIVATE
