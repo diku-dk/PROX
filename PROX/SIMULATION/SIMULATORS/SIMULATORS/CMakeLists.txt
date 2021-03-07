@@ -17,7 +17,6 @@ add_library(simulators
 
 target_include_directories(simulators
   PUBLIC
-  ${Boost_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHull/QHull/include
@@ -54,6 +53,7 @@ target_link_libraries(simulators
   tetgen
   tinyxml
   qhull
+  Boost::filesystem
   )
 
 install(

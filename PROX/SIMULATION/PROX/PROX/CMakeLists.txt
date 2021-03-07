@@ -29,7 +29,6 @@ target_include_directories(kdop
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/BROAD/BROAD/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROX/PROX/include 
-  ${Boost_INCLUDE_DIRS}
   )
 
 target_link_libraries(prox

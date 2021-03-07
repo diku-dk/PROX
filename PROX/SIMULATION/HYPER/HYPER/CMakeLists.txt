@@ -18,7 +18,6 @@ target_include_directories(hyper
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include 
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include 
-  ${Boost_INCLUDE_DIRS}
   )
 
 target_link_libraries(hyper

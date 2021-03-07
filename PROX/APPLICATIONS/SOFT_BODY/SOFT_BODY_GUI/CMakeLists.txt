@@ -42,7 +42,6 @@ source_group(Config  FILES ${SOFT_BODY_GUI_CFGS}    )
 
 target_include_directories(${SOFT_BODY_GUI_NAME}
   PRIVATE
-  ${Boost_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHull/QHull/include
@@ -78,8 +77,8 @@ target_link_libraries(${SOFT_BODY_GUI_NAME}
   OpenGL::GL
   GLEW::glew
   glm::glm
-  ${Boost_SYSTEM_LIBRARIES} 
-  ${Boost_FILESYSTEM_LIBRARIES} 
+  Boost::system
+  Boost::filesystem
   )
 
 target_compile_definitions(${SOFT_BODY_GUI_NAME}

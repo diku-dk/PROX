@@ -52,8 +52,8 @@ target_link_libraries(rigid_body_gui
   OpenGL::GL
   GLEW::glew
   glm::glm
-  ${Boost_SYSTEM_LIBRARIES} 
-  ${Boost_FILESYSTEM_LIBRARIES}
+  Boost::system
+  Boost::filesystem
 )
 
 target_include_directories(rigid_body_gui

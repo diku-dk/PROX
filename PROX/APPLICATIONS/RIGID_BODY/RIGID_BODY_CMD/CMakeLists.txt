@@ -26,7 +26,6 @@ source_group(Config    FILES ${RIGID_BODY_CMD_CFGS})
 
 target_include_directories(rigid_body_cmd
   PRIVATE
-  ${Boost_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHull/QHull/include
@@ -79,8 +78,7 @@ target_link_libraries(rigid_body_cmd
   tetgen
   tinyxml
   qhull
-  ${Boost_SYSTEM_LIBRARIES} 
-  ${Boost_FILESYSTEM_LIBRARIES} 
+  Boost::boost
   )
 
 install(

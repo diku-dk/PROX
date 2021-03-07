@@ -21,7 +21,6 @@ target_include_directories(narrow
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/CONVEX/CONVEX/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-  ${Boost_INCLUDE_DIR}
   )
 
 target_link_libraries(narrow

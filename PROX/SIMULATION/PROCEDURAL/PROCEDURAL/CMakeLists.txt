@@ -22,7 +22,6 @@ target_include_directories(procedural
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/MASS/MASS/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include
-  ${Boost_INCLUDE_DIR}
   )
 
 target_link_libraries(procedural

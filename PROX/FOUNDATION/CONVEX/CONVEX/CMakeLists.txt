@@ -18,7 +18,6 @@ target_include_directories(convex
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/CONVEX/CONVEX/include    
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
-  ${Boost_INCLUDE_DIRS}
   )
 
 target_link_libraries( convex

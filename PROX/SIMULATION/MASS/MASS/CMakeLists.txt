@@ -17,7 +17,6 @@ target_include_directories(mass
   PUBLIC
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/MASS/MASS/include 
-  ${Boost_INCLUDE_DIRS} 
   )
 
 target_link_libraries(mass

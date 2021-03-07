@@ -6,8 +6,6 @@ project(PROX VERSION 0.1
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
-add_definitions(-D_USE_MATH_DEFINES)
-
 #-----------------------------------------------------------------------------
 #
 # Conan support for PROX
@@ -72,21 +70,5 @@ find_package (Qt5Core     REQUIRED)
 find_package (Qt5Gui      REQUIRED)
 find_package (Qt5OpenGL   REQUIRED)
 set( CMAKE_PREFIX_PATH ${TMP_CMAKE_PREFIX_PATH} )
-
-##########################################################
-##########################################################
-##########################################################
-#
-# Tell that TinyXML in 3RDPARTY should use
-# std::strings over char *
-#
-# TinyXML can work both with stl strings and char*. The
-# functionality is controlled by defining the pre-processor
-# directive TIXML_USE_STL or not.
-#
-# Note that every target that links against TinyXML
-# also need to have the TIXML_USE_STL flag defined!
-#
-ADD_DEFINITIONS(-DTIXML_USE_STL)
 
 add_subdirectory(PROX)

@@ -32,7 +32,6 @@ target_include_directories(soft_body_cmd
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include  
-  ${Boost_INCLUDE_DIRS}
   )
 
 target_link_libraries(soft_body_cmd
@@ -47,8 +46,6 @@ target_link_libraries(soft_body_cmd
   util
   tetgen
   qhull
-  ${Boost_SYSTEM_LIBRARIES}
-  ${Boost_FILESYSTEM_LIBRARIES}
   )
 
 target_compile_definitions(soft_body_cmd

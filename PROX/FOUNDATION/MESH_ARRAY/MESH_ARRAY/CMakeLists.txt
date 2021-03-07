@@ -24,18 +24,18 @@ target_include_directories(mesh_array
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include/factory
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
-  ${Boost_INCLUDE_DIRS}
   )
 
 target_link_libraries(mesh_array
   PUBLIC
-  ${Boost_SYSTEM_LIBRARY}
-  ${Boost_FILESYSTEM_LIBRARY}
   tiny
   util
   qhull
   tinyxml
   tetgen
+  Boost::boost
+  Boost::system
+  Boost::filesystem
 )
 
 install(

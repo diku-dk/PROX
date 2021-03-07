@@ -21,7 +21,6 @@ target_include_directories(kdop
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-  ${Boost_INCLUDE_DIR}
   )
 
 target_link_libraries(kdop

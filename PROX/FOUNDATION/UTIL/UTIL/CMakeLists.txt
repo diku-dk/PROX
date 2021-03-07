@@ -18,6 +18,11 @@ target_include_directories(util
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include 
   )
 
+target_link_libraries(util
+  PUBLIC
+  Boost::filesystem
+  )
+
 install(
   TARGETS util
   RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}

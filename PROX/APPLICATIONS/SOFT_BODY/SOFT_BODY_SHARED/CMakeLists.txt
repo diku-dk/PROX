@@ -24,7 +24,6 @@ target_include_directories(soft_body_shared
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
   ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_SHARED/include
-  ${Boost_INCLUDE_DIRS}
   )
 
 target_link_libraries(soft_body_shared
@@ -37,8 +36,6 @@ target_link_libraries(soft_body_shared
   util
   tetgen
   qhull
-  ${Boost_SYSTEM_LIBRARIES} 
-  ${Boost_FILESYSTEM_LIBRARIES} 
   )
 
 target_compile_definitions(soft_body_shared

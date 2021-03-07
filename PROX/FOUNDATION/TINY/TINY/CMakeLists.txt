@@ -18,6 +18,11 @@ target_include_directories(tiny
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
   )
 
+target_link_libraries(tiny
+  PUBLIC
+  Boost::boost
+  )
+
 install(
   TARGETS tiny
   RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
