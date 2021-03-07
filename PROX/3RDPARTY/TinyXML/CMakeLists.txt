@@ -6,6 +6,10 @@ add_library(tinyxml
 	    tinystr.h
       )
 
+target_include_directories(tinyxml
+  PUBLIC
+  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
+  )
 
 #-------------------------------------------------------
 #
@@ -28,6 +32,6 @@ target_compile_definitions(tinyxml
 install(
   TARGETS tinyxml
   RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  COMPONENT deps
  )
 

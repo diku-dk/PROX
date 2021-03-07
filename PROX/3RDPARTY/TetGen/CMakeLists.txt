@@ -5,6 +5,11 @@ add_library(tetgen
   tetgen.h
   )
 
+target_include_directories(tetgen
+  PUBLIC
+  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
+  )
+
 target_compile_definitions(tetgen
   PUBLIC
   TETLIBRARY
@@ -13,7 +18,7 @@ target_compile_definitions(tetgen
 install(
   TARGETS tetgen
   RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  COMPONENT deps
   )
 
 

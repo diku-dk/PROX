@@ -21,5 +21,5 @@ target_include_directories(qhull
 install(
   TARGETS qhull
   RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  COMPONENT deps
  )

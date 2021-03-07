@@ -15,8 +15,6 @@ add_library(soft_body_shared
 
 target_include_directories(soft_body_shared
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
-  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHull/QHull/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
