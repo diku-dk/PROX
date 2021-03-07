@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY(QHULL)
+add_subdirectory(QHULL)

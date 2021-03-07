@@ -1,17 +1,14 @@
-FILE(GLOB TINYXML_HEADERS *.h )
-
-ADD_LIBRARY(tinyxml
-            # tinystr.cpp   # Not used, since we want to use std::string version of TinyXML  
+add_library(tinyxml
             tinyxml.cpp  
             tinyxmlerror.cpp  
             tinyxmlparser.cpp
-	    ${TINYXML_HEADERS}
+	    tinyxml.h
+	    tinystr.h
             )
 
-SET_TARGET_PROPERTIES(tinyxml PROPERTIES DEBUG_POSTFIX "D" )
+install(
+  TARGETS tinyxml
+  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
+  COMPONENT library
+ )
 
-SET_TARGET_PROPERTIES(tinyxml PROPERTIES ARCHIVE_OUTPUT_DIRECTORY                "${PROJECT_SOURCE_DIR}/lib/")
-SET_TARGET_PROPERTIES(tinyxml PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG          "${PROJECT_SOURCE_DIR}/lib/")
-SET_TARGET_PROPERTIES(tinyxml PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE        "${PROJECT_SOURCE_DIR}/lib/")
-SET_TARGET_PROPERTIES(tinyxml PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL     "${PROJECT_SOURCE_DIR}/lib/")
-SET_TARGET_PROPERTIES(tinyxml PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${PROJECT_SOURCE_DIR}/lib/")
