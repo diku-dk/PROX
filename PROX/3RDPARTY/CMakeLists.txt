@@ -1,3 +1,3 @@
-ADD_SUBDIRECTORY(QHULL)
-ADD_SUBDIRECTORY(TinyXML)
-ADD_SUBDIRECTORY(TetGen)
+add_subdirectory(QHULL)
+add_subdirectory(TinyXML)
+add_subdirectory(TetGen)

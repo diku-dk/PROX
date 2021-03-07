@@ -1,70 +1,34 @@
-SET( CMAKE_INCLUDE_CURRENT_DIR ON                                     )
-SET( CMAKE_AUTOMOC ON                                                 )
+set( CMAKE_INCLUDE_CURRENT_DIR ON )
+set( CMAKE_AUTOMOC ON )
 
-SET( RIGID_BODY_GUI_CODE_PATH     "${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI"         )
-SET( RIGID_BODY_GUI_NAME          "rigid_body_gui"                                                       )
-SET( RIGID_BODY_GUI_RUN_PATH      "${PROJECT_SOURCE_DIR}/bin/rigid_body_gui"                             )
-SET( RIGID_BODY_GUI_TEXTURES_PATH "${PROJECT_SOURCE_DIR}/bin/resources/textures"                             )
-SET( RIGID_BODY_GUI_OBJS_PATH     "${PROJECT_SOURCE_DIR}/bin/resources/objs"                                 )
-SET( RIGID_BODY_GUI_CFGS_PATH     "${PROJECT_SOURCE_DIR}/bin/rigid_body_gui"                             )
-
-#INCLUDE_DIRECTORIES(
-#  ${GLM_INCLUDE_DIR}
-#  ${GLEW_INCLUDE_DIR}
-#  ${Boost_INCLUDE_DIRS}
-#  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
-#  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
-#  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHull/QHull/include
-#  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/GLM/glm_0_9_5_4/
-#  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GL3/GL3/include    
-#  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
-#  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-#  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include 
-#  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-#  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/MASS/MASS/include
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/BROAD/BROAD/include
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROX/PROX/include
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include 
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include 
-#  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/include
-#  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI_SHARED/include 
-#  ${RIGID_BODY_GUI_CODE_PATH}/include  
-#)
-
-FILE(GLOB 
+file(GLOB 
   RIGID_BODY_GUI_SOURCES
-  ${RIGID_BODY_GUI_CODE_PATH}/src/*.cpp 
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI/src/*.cpp 
   )
 
-FILE(GLOB
+file(GLOB
   RIGID_BODY_GUI_HEADERS
-  ${RIGID_BODY_GUI_CODE_PATH}/include/*.h 
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI/include/*.h 
   )
 
-FILE(GLOB
+file(GLOB
   RIGID_BODY_GUI_CFGS
-  ${RIGID_BODY_GUI_CFGS_PATH}/*.cfg
+  ${PROJECT_SOURCE_DIR}/bin/rigid_body_gui/*.cfg
   )
 
-#------------------------------------------------------------------------------
-
-add_executable(
-  ${RIGID_BODY_GUI_NAME} 
+add_executable(rigid_body_gui
   ${RIGID_BODY_GUI_SOURCES} 
   ${RIGID_BODY_GUI_HEADERS}
   ${RIGID_BODY_GUI_CFGS}
   )
 
-source_group(Config    FILES ${RIGID_BODY_GUI_CFGS})
+source_group(Config FILES ${RIGID_BODY_GUI_CFGS})
 
-target_link_libraries( ${RIGID_BODY_GUI_NAME}
-PRIVATE
-    gl3
-    content
-   simulators
+target_link_libraries(rigid_body_gui
+  PRIVATE
+  gl3
+  content
+  simulators
   procedural
   rigid_body_gui_shared
   mass
@@ -85,19 +49,18 @@ PRIVATE
   Qt5::Gui
   Qt5::Core
   Qt5::OpenGL
-    OpenGL::GL
-    GLEW::glew
-    glm::glm
+  OpenGL::GL
+  GLEW::glew
+  glm::glm
   ${Boost_SYSTEM_LIBRARIES} 
   ${Boost_FILESYSTEM_LIBRARIES}
 )
 
-target_include_directories(${RIGID_BODY_GUI_NAME}
-    PRIVATE
+target_include_directories(rigid_body_gui
+  PRIVATE
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TetGen
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHull/QHull/include
-#  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/GLM/glm_0_9_5_4/
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GL3/GL3/include    
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
@@ -112,11 +75,11 @@ target_include_directories(${RIGID_BODY_GUI_NAME}
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include 
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/include
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI_SHARED/include 
-  ${RIGID_BODY_GUI_CODE_PATH}/include  
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI_SHARED/include
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI/include  
 )
 
-target_compile_definitions(${RIGID_BODY_GUI_NAME}
+target_compile_definitions(rigid_body_gui
   PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:_SCL_SECURE_NO_WARNINGS>
     $<$<CXX_COMPILER_ID:MSVC>:_SCL_SECURE_NO_DEPRECATE>
@@ -129,9 +92,8 @@ target_compile_definitions(${RIGID_BODY_GUI_NAME}
     $<$<CXX_COMPILER_ID:AppleClang>:GL_SILENCE_DEPRECATION>
 )
 
-
 install(
-  TARGETS ${RIGID_BODY_GUI_NAME}
+  TARGETS rigid_body_gui
   RUNTIME DESTINATION  ${RIGID_BODY_GUI_RUN_PATH}
   COMPONENT binary
  )

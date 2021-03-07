@@ -1,3 +1,3 @@
-ADD_SUBDIRECTORY(RIGID_BODY_GUI_SHARED )
-ADD_SUBDIRECTORY(RIGID_BODY_GUI        )
-ADD_SUBDIRECTORY(RIGID_BODY_CMD        )
+add_subdirectory(RIGID_BODY_GUI_SHARED )
+add_subdirectory(RIGID_BODY_GUI        )
+add_subdirectory(RIGID_BODY_CMD        )
