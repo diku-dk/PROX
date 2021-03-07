@@ -57,29 +57,21 @@ endif()
 #
 # Find all libraries used by PROX
 #
-SET(Boost_USE_STATIC_LIBS ON)
 
-FIND_PACKAGE(
-  Boost
-  COMPONENTS
-  unit_test_framework
-  system
-  filesystem
-  REQUIRED
-  )
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost COMPONENTS unit_test_framework system filesystem REQUIRED )
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
 
-FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(GLEW REQUIRED)
-
-SET( TMP_CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH} )
-SET( CMAKE_PREFIX_PATH "/Users/kenny/Qt/5.3/clang_64/" ${TMP_CMAKE_PREFIX_PATH} )
-SET( CMAKE_PREFIX_PATH "/Users/kennyerleben/Qt/5.3/clang_64/" ${TMP_CMAKE_PREFIX_PATH} )
-FIND_PACKAGE(Qt5Widgets  REQUIRED)
-FIND_PACKAGE(Qt5Core     REQUIRED)
-FIND_PACKAGE(Qt5Gui      REQUIRED)
-FIND_PACKAGE(Qt5OpenGL   REQUIRED)
-SET( CMAKE_PREFIX_PATH ${TMP_CMAKE_PREFIX_PATH} )
-
+set( TMP_CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH} )
+set( CMAKE_PREFIX_PATH "/Users/kenny/Qt/5.3/clang_64/" ${TMP_CMAKE_PREFIX_PATH} )
+set( CMAKE_PREFIX_PATH "/Users/kennyerleben/Qt/5.3/clang_64/" ${TMP_CMAKE_PREFIX_PATH} )
+find_package(Qt5Widgets  REQUIRED)
+find_package (Qt5Core     REQUIRED)
+find_package (Qt5Gui      REQUIRED)
+find_package (Qt5OpenGL   REQUIRED)
+set( CMAKE_PREFIX_PATH ${TMP_CMAKE_PREFIX_PATH} )
 
 ##########################################################
 ##########################################################
@@ -97,7 +89,4 @@ SET( CMAKE_PREFIX_PATH ${TMP_CMAKE_PREFIX_PATH} )
 #
 ADD_DEFINITIONS(-DTIXML_USE_STL)
 
-
-
-
-ADD_SUBDIRECTORY(PROX)
+add_subdirectory(PROX)
