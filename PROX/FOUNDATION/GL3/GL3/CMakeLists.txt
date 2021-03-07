@@ -29,7 +29,8 @@ target_link_libraries(gl3
   mesh_array
   util
   OpenGL::GL
-  GLEW::glew  
+  GLEW::glew
+  glm::glm
   )
 
 install(

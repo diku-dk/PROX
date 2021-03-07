@@ -18,6 +18,22 @@ ADD_LIBRARY(
   ${PROX_HEADERS}
 )
 
+file(GLOB
+  PROX_SOLVERS
+  include/solvers/*.h
+  include/solvers/sub/*.h
+  include/solvers/strategies/*.h
+  )
+
+source_group(solvers   FILES ${PROX_SOLVERS})
+
+file(GLOB
+  PROX_STEPPERS
+  include/steppers/*.h
+  )
+
+source_group(steppers  FILES ${PROX_STEPPERS})
+
 target_include_directories(kdop
   PUBLIC
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
@@ -49,21 +65,3 @@ install(
   COMPONENT library
   )
 
-
-# Add folders to filters
-
-file(GLOB
-  PROX_SOLVERS
-  include/solvers/*.h
-  include/solvers/sub/*.h
-  include/solvers/strategies/*.h
-  )
-
-source_group(solvers   FILES ${PROX_SOLVERS})
-
-file(GLOB
-  PROX_STEPPERS
-  include/steppers/*.h
-  )
-
-source_group(steppers  FILES ${PROX_STEPPERS})
