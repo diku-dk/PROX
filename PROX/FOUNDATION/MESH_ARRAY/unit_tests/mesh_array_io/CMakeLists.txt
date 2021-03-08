@@ -10,20 +10,20 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_mesh_array_io 
   mesh_array_io.cpp
   mesh_array_data_path.h
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_mesh_array_io
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   mesh_array
   tiny
   )
 
-ADD_TEST( 
+add_test( 
   unit_mesh_array_io
   unit_mesh_array_io
   )

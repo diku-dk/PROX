@@ -15,12 +15,12 @@ IF(HAS_DIKUCL)
     )
 ENDIF(HAS_DIKUCL)
 
-ADD_EXECUTABLE(
+add_executable(
   unit_narrow_dispatch
   narrow_dispatch.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_narrow_dispatch
   narrow
   kdop
@@ -30,18 +30,18 @@ TARGET_LINK_LIBRARIES(
   convex
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   qhull
   tetgen
   util
   )
 
 IF(HAS_DIKUCL)
-  TARGET_LINK_LIBRARIES(unit_narrow_dispatch dikucl)
+  target_link_libraries(unit_narrow_dispatch dikucl)
 ENDIF(HAS_DIKUCL)
 
 
-ADD_TEST(
+add_test(
   unit_narrow_dispatch
   unit_narrow_dispatch
   )

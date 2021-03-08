@@ -3,17 +3,17 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
   )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_tiny_degrees_and_radians
   tiny_degrees_and_radians.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_tiny_degrees_and_radians
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST(
+add_test(
   unit_tiny_degrees_and_radians
   unit_tiny_degrees_and_radians
   )

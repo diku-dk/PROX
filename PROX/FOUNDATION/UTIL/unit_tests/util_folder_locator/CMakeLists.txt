@@ -3,20 +3,20 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_util_folder_locator
   util_folder_locator.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_util_folder_locator
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   util
 )
 
-ADD_TEST(
+add_test(
   unit_util_folder_locator
   unit_util_folder_locator
   )

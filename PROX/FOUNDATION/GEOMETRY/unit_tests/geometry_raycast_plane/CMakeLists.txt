@@ -1,23 +1,15 @@
-INCLUDE_DIRECTORIES( 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-  ${Boost_INCLUDE_DIRS}
-)
-
-ADD_EXECUTABLE(
+add_executable(
   unit_geometry_raycast_plane
   geometry_raycast_plane.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_geometry_raycast_plane
-  tiny
   geometry
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-)
+  Boost::unit_test_framework
+  )
 
-ADD_TEST(
+add_test(
   unit_geometry_raycast_plane
   unit_geometry_raycast_plane
   )
-

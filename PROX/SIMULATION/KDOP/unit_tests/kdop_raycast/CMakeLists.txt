@@ -7,12 +7,12 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
   )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_kdop_raycast
   kdop_raycast.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_kdop_raycast
   tiny
   geometry
@@ -21,10 +21,10 @@ TARGET_LINK_LIBRARIES(
   util
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST( 
+add_test( 
   unit_kdop_raycast
   unit_kdop_raycast
   )

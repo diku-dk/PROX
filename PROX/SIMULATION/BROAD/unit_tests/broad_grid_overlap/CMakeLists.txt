@@ -5,19 +5,19 @@ ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
   ${Boost_INCLUDE_DIRS}
   )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_broad_grid_overlap
   broad_grid_overlap.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_broad_grid_overlap
   tiny
   util
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST(
+add_test(
   unit_broad_grid_overlap
   unit_broad_grid_overlap
   )

@@ -4,18 +4,18 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_sparse_two_column_matrix
   sparse_two_column_matrix.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_sparse_two_column_matrix
   util
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST(
+add_test(
   unit_sparse_two_column_matrix
   unit_sparse_two_column_matrix
   )

@@ -3,17 +3,17 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
   )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_tiny_invert4x4
   tiny_invert4x4.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_tiny_invert4x4
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST(
+add_test(
   unit_tiny_invert4x4
   unit_tiny_invert4x4
   )

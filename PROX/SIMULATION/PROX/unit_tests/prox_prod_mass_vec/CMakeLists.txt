@@ -18,11 +18,11 @@ IF(HAS_DIKUCL)
     )
 ENDIF(HAS_DIKUCL)
 
-ADD_EXECUTABLE(
+add_executable(
   unit_prox_prod_mass_vec
   prox_prod_mass_vec.cpp)
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_prox_prod_mass_vec 
   util
   tiny
@@ -34,14 +34,14 @@ TARGET_LINK_LIBRARIES(
   narrow
   kdop
   prox
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
 )
 
 IF(HAS_DIKUCL)
-  TARGET_LINK_LIBRARIES(unit_prox_prod_mass_vec dikucl)
+  target_link_libraries(unit_prox_prod_mass_vec dikucl)
 ENDIF()
 
-ADD_TEST(
+add_test(
   unit_prox_prod_mass_vec
   unit_prox_prod_mass_vec
   )

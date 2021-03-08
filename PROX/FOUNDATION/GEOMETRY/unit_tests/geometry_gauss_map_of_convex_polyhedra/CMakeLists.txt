@@ -1,22 +1,15 @@
-INCLUDE_DIRECTORIES( 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-  ${Boost_INCLUDE_DIRS}
-  )
-
-ADD_EXECUTABLE(
+add_executable(
   unit_geometry_gauss_map_of_convex_polyhedra
   geometry_gauss_map_of_convex_polyhedra.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_geometry_gauss_map_of_convex_polyhedra
-  tiny
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  geometry
+  Boost::unit_test_framework
   )
 
-ADD_TEST( 
+add_test( 
   unit_geometry_gauss_map_of_convex_polyhedra
   unit_geometry_gauss_map_of_convex_polyhedra
   )
-

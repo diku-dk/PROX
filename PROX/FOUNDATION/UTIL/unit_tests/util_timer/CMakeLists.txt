@@ -3,18 +3,18 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_util_timer
   util_timer.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_util_timer
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   util
 )
 
-ADD_TEST(
+add_test(
   unit_util_timer
   unit_util_timer
   )

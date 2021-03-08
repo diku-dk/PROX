@@ -32,29 +32,9 @@ target_link_libraries(rigid_body_gui_shared
   PUBLIC
   gl3
   content
-  simulators
-  procedural
-  mass
-  broad
-  narrow
-  kdop
-  prox
   tiny
-  sparse
-  convex
-  geometry
-  mesh_array
   util
-  tinyxml
-  Qt5::Widgets
-  Qt5::Gui
-  Qt5::Core
-  Qt5::OpenGL
-  OpenGL::GL
-  GLEW::glew
-  glm::glm
-  Boost::system
-  Boost::filesystem
+  mesh_array
 )
 
 

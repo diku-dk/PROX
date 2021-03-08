@@ -3,18 +3,18 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_mass_sphere
   mass_sphere.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_mass_sphere 
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   mass
 )
 
-ADD_TEST(
+add_test(
   unit_mass_sphere
   unit_mass_sphere
   )

@@ -4,18 +4,18 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
   )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_sparse_fake_transpose
   sparse_fake_transpose.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_sparse_fake_transpose
   util
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST(
+add_test(
   unit_sparse_fake_transpose
   unit_sparse_fake_transpose
   )

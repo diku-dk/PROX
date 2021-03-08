@@ -4,19 +4,19 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_mesh_array_triangle 
   mesh_array_triangle.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_mesh_array_triangle
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   mesh_array
   tiny
   )
 
-ADD_TEST( 
+add_test( 
   unit_mesh_array_triangle
   unit_mesh_array_triangle
   )

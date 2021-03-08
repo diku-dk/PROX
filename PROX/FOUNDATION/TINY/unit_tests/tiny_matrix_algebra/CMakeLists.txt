@@ -3,17 +3,17 @@ INCLUDE_DIRECTORIES(
   ${Boost_INCLUDE_DIRS}
   )
 
-ADD_EXECUTABLE(
+add_executable(
   unit_tiny_matrix_algebra
   tiny_matrix_algebra.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_tiny_matrix_algebra
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
-ADD_TEST(
+add_test(
   unit_tiny_matrix_algebra
   unit_tiny_matrix_algebra
   )

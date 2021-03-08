@@ -14,12 +14,12 @@ IF(HAS_DIKUCL)
 )
 ENDIF(HAS_DIKUCL)
 
-ADD_EXECUTABLE(
+add_executable(
   unit_hyper_implicit_surface
   hyper_implicit_surface.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_hyper_implicit_surface
   util
   tiny
@@ -28,14 +28,14 @@ TARGET_LINK_LIBRARIES(
   mesh_array
   hyper
   kdop
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
   )
 
 IF(HAS_DIKUCL)
-  TARGET_LINK_LIBRARIES(unit_hyper_implicit_surface dikucl)
+  target_link_libraries(unit_hyper_implicit_surface dikucl)
 ENDIF()
 
-ADD_TEST(
+add_test(
   unit_hyper_implicit_surface
   unit_hyper_implicit_surface
   )

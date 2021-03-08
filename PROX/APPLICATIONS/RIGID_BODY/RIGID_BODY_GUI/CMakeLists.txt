@@ -26,52 +26,21 @@ source_group(Config FILES ${RIGID_BODY_GUI_CFGS})
 
 target_include_directories(rigid_body_gui
   PRIVATE
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GL3/GL3/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/MASS/MASS/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/BROAD/BROAD/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROX/PROX/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/include
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI_SHARED/include
   ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI/include
 )
 
 target_link_libraries(rigid_body_gui
   PRIVATE
+  rigid_body_gui_shared
   gl3
-  content
+  tiny
   simulators
   procedural
-  rigid_body_gui_shared
-  mass
-  broad
-  narrow
-  kdop
-  prox
-  tiny
-  sparse
-  convex
-  geometry
-  mesh_array
   util
-  tetgen
-  tinyxml
-  qhull
   Qt5::Widgets
   Qt5::Gui
   Qt5::Core
   Qt5::OpenGL
-  OpenGL::GL
-  GLEW::glew
-  glm::glm
   Boost::system
   Boost::filesystem
 )

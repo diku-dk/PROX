@@ -18,12 +18,12 @@ IF(HAS_DIKUCL)
     )
 ENDIF(HAS_DIKUCL)
 
-ADD_EXECUTABLE(
+add_executable(
   unit_prox_binders
   prox_binders.cpp
   )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
   unit_prox_binders
   util
   tiny
@@ -35,18 +35,18 @@ TARGET_LINK_LIBRARIES(
   narrow
   kdop
   prox
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  Boost::unit_test_framework
 )
 
 IF(HAS_DIKUCL)
-  TARGET_LINK_LIBRARIES(unit_prox_binders dikucl)
+  target_link_libraries(unit_prox_binders dikucl)
 ENDIF()
 
 #IF( OPENMP_FOUND )
 #  SET_TARGET_PROPERTIES(unit_prox_solver PROPERTIES XCODE_ATTRIBUTE_ENABLE_OPENMP_SUPPORT "YES")
 #ENDIF()
 
-ADD_TEST(
+add_test(
   unit_prox_binders
   unit_prox_binders
   )
