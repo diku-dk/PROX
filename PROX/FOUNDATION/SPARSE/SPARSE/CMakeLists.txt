@@ -9,7 +9,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include/io/*.h 
   )
 
-add_library( sparse
+add_library(sparse
   ${SPARSE_SOURCES}
   ${SPARSE_HEADERS}
   )
@@ -17,6 +17,11 @@ add_library( sparse
 target_include_directories(sparse
   PUBLIC
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include
+  )
+
+target_link_libraries(sparse
+  PUBLIC
+  util
   )
 
 install(
