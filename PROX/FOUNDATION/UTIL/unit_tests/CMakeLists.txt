@@ -1,3 +1,3 @@
-ADD_SUBDIRECTORY( util_timer          )
-ADD_SUBDIRECTORY( util_file_locator   )
-ADD_SUBDIRECTORY( util_folder_locator )
+add_subdirectory( util_timer          )
+add_subdirectory( util_file_locator   )
+add_subdirectory( util_folder_locator )

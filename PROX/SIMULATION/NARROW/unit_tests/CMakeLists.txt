@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY( narrow_dispatch   )
+add_subdirectory( narrow_dispatch   )

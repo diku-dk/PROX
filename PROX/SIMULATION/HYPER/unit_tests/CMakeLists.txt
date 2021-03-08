@@ -1,4 +1,4 @@
-ADD_SUBDIRECTORY( hyper_implicit_surface )
+add_subdirectory( hyper_implicit_surface )
 
 
 
