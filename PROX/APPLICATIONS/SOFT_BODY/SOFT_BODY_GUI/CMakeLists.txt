@@ -1,35 +1,27 @@
 set( CMAKE_INCLUDE_CURRENT_DIR ON                                     )
 set( CMAKE_AUTOMOC ON                                                 )
 
-set( SOFT_BODY_GUI_CODE_PATH     "${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_GUI"          )
-set( SOFT_BODY_GUI_NAME          "soft_body_gui"                                                       )
-set( SOFT_BODY_GUI_RUN_PATH      "${PROJECT_SOURCE_DIR}/bin/soft_body_gui"                             )
-set( SOFT_BODY_GUI_SHADERS_PATH  "${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_GUI/shaders"  )
-set( SOFT_BODY_GUI_TEXTURES_PATH "${PROJECT_SOURCE_DIR}/bin/resources/textures"                            )
-set( SOFT_BODY_GUI_OBJS_PATH     "${PROJECT_SOURCE_DIR}/bin/resources/objs"                                )
-set( SOFT_BODY_GUI_CFGS_PATH     "${PROJECT_SOURCE_DIR}/bin/soft_body_gui"                             )
-
 file(GLOB 
   SOFT_BODY_GUI_SOURCES
-  ${SOFT_BODY_GUI_CODE_PATH}/src/*.cpp 
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_GUI/src/*.cpp
   )
 
 file(GLOB
   SOFT_BODY_GUI_HEADERS
-  ${SOFT_BODY_GUI_CODE_PATH}/include/*.h 
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_GUI/include/*.h
   )
 
 file(GLOB
   SOFT_BODY_GUI_SHADERS
-  ${SOFT_BODY_GUI_SHADERS_PATH}/*.glsl
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_GUI/shaders/*.glsl
   )
 
 file(GLOB
   SOFT_BODY_GUI_CFGS
-  ${SOFT_BODY_GUI_CFGS_PATH}/*.cfg
+  ${PROJECT_SOURCE_DIR}/bin/soft_body_gui/*.cfg
   )
 
-add_executable(${SOFT_BODY_GUI_NAME} 
+add_executable(soft_body_gui
   ${SOFT_BODY_GUI_SOURCES} 
   ${SOFT_BODY_GUI_HEADERS}
   ${SOFT_BODY_GUI_SHADERS}
@@ -40,45 +32,29 @@ source_group(Shaders FILES ${SOFT_BODY_GUI_SHADERS} )
 
 source_group(Config  FILES ${SOFT_BODY_GUI_CFGS}    )
 
-target_include_directories(${SOFT_BODY_GUI_NAME}
+target_include_directories(soft_body_gui
   PRIVATE
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GL3/GL3/include    
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include    
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_SHARED/include 
-  ${SOFT_BODY_GUI_CODE_PATH}/include
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_GUI/include
   )
 
-target_link_libraries(${SOFT_BODY_GUI_NAME}
+target_link_libraries(soft_body_gui
   PRIVATE
   soft_body_shared
   gl3
-  kdop
-  hyper
   tiny
-  sparse
   geometry
   mesh_array
+  hyper
   util
-  tetgen
-  qhull
   Qt5::Widgets
   Qt5::Gui
   Qt5::Core
   Qt5::OpenGL
-  OpenGL::GL
-  GLEW::glew
-  glm::glm
   Boost::system
   Boost::filesystem
   )
 
-target_compile_definitions(${SOFT_BODY_GUI_NAME}
+target_compile_definitions(soft_body_gui
   PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:_SCL_SECURE_NO_WARNINGS>
     $<$<CXX_COMPILER_ID:MSVC>:_SCL_SECURE_NO_DEPRECATE>
@@ -92,7 +68,7 @@ target_compile_definitions(${SOFT_BODY_GUI_NAME}
 )
 
 install(
-  TARGETS ${SOFT_BODY_GUI_NAME}
+  TARGETS soft_body_gui
   RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin/}
   COMPONENT binary
   )

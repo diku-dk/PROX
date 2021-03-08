@@ -22,8 +22,6 @@ add_library(geometry
 target_include_directories(geometry
   PUBLIC
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/CONVEX/CONVEX/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
   )
 
 target_link_libraries(geometry

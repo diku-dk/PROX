@@ -8,8 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/BROAD/BROAD/include/*.h 
   )
 
-ADD_LIBRARY( 
-  broad 
+add_library(broad
   ${BROAD_SOURCES} 
   ${BROAD_HEADERS}
   )

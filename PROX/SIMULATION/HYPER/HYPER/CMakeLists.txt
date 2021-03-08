@@ -14,10 +14,7 @@ add_library(hyper
 
 target_include_directories(hyper
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include 
+  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include
   )
 
 target_link_libraries(hyper
@@ -25,6 +22,7 @@ target_link_libraries(hyper
   tiny
   sparse
   mesh_array
+  kdop
   )
 
 install(

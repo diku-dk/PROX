@@ -6,7 +6,6 @@
 #include <tiny_math_types.h>
 
 
-
 namespace mesh_array
 {
   

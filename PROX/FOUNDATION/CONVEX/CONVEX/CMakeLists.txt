@@ -16,8 +16,6 @@ add_library(convex
 target_include_directories(convex
   PUBLIC
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/CONVEX/CONVEX/include    
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
   )
 
 target_link_libraries( convex

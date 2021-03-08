@@ -23,29 +23,14 @@ source_group(Config    FILES ${SOFT_BODY_CMD_CFGS})
 
 target_include_directories(soft_body_cmd
   PRIVATE
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_SHARED/include 
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_CMD/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include  
+  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_CMD/include
   )
 
 target_link_libraries(soft_body_cmd
   PRIVATE
   soft_body_shared
-  kdop
   hyper
-  tiny
-  sparse
-  geometry
-  mesh_array
   util
-  tetgen
-  qhull
   )
 
 target_compile_definitions(soft_body_cmd

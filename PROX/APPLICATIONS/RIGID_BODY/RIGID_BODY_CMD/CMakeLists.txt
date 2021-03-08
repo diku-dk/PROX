@@ -23,42 +23,18 @@ source_group(Config FILES ${RIGID_BODY_CMD_CFGS})
 
 target_include_directories(rigid_body_cmd
   PRIVATE
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/CONVEX/CONVEX/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/MASS/MASS/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/BROAD/BROAD/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROX/PROX/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include 
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/include 
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include 
   ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_CMD/include 
   )
 
 target_link_libraries(rigid_body_cmd
   PRIVATE
-  simulators
-  procedural
-  content
   tiny
-  sparse
-  convex
+  mass
   geometry
   mesh_array
-  kdop
-  narrow
-  broad
-  prox
-  mass
+  simulators
+  procedural
   util
-  tetgen
-  tinyxml
-  qhull
   Boost::boost
   )
 

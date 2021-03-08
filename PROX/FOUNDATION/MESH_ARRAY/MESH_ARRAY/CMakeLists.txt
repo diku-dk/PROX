@@ -17,10 +17,9 @@ add_library(mesh_array
 
 target_include_directories(mesh_array
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
+  PRIVATE
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include/factory
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
   )
 
 target_link_libraries(mesh_array

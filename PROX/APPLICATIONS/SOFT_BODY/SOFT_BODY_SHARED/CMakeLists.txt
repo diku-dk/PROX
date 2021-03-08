@@ -15,25 +15,15 @@ add_library(soft_body_shared
 
 target_include_directories(soft_body_shared
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
   ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_SHARED/include
   )
 
 target_link_libraries(soft_body_shared
   PUBLIC
+  hyper
   tiny
-  sparse
-  geometry
-  mesh_array
-  kdop
   util
-  tetgen
-  qhull
+  mesh_array
   )
 
 target_compile_definitions(soft_body_shared

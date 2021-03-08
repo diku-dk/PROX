@@ -15,8 +15,6 @@ add_library(content
 
 target_include_directories(content
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include
   )
 
