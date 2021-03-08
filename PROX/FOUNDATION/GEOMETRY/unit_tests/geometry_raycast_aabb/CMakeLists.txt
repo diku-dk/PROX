@@ -4,6 +4,7 @@ add_executable(
   )
 
 target_link_libraries(
+  unit_geometry_raycast_aabb
   geometry
   Boost::unit_test_framework
   )

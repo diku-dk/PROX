@@ -1,8 +1,3 @@
-INCLUDE_DIRECTORIES( 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
-  ${Boost_INCLUDE_DIRS}
-  )
-
 add_executable(
   unit_tiny_power2
   tiny_power2.cpp
@@ -10,6 +5,7 @@ add_executable(
 
 target_link_libraries(
   unit_tiny_power2
+  tiny
   Boost::unit_test_framework
   )
 

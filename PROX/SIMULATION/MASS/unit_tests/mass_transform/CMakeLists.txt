@@ -5,13 +5,11 @@ add_executable(
 
 target_link_libraries(
   unit_mass_transform
-  Boost::unit_test_framework
-  tiny
   mass
+  Boost::unit_test_framework
 )
 
 add_test(
   unit_mass_transform
   unit_mass_transform
   )
-
