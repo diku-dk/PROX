@@ -69,6 +69,5 @@ target_compile_definitions(soft_body_gui
 
 install(
   TARGETS soft_body_gui
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin/}
-  COMPONENT binary
+  RUNTIME DESTINATION bin
   )

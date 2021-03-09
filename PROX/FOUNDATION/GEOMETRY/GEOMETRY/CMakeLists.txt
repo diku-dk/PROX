@@ -14,7 +14,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/closest_points/*.h
   )
 
-add_library(geometry
+add_library(geometry STATIC
   ${GEOMETRY_SOURCES}
   ${GEOMETRY_HEADERS}
   )
@@ -32,6 +32,5 @@ target_link_libraries(geometry
 
 install(
   TARGETS geometry
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )

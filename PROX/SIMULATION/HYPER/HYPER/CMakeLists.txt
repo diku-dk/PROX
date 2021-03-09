@@ -7,7 +7,7 @@ file(GLOB
   HYPER_HEADERS ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/HYPER/HYPER/include/*.h
   )
 
-add_library(hyper
+add_library(hyper STATIC
   ${HYPER_SOURCES}
   ${HYPER_HEADERS}
   )
@@ -27,6 +27,5 @@ target_link_libraries(hyper
 
 install(
   TARGETS hyper
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
- )
+   ARCHIVE DESTINATION lib
+)

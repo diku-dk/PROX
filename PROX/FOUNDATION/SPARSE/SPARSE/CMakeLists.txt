@@ -9,7 +9,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include/io/*.h 
   )
 
-add_library(sparse
+add_library(sparse STATIC
   ${SPARSE_SOURCES}
   ${SPARSE_HEADERS}
   )
@@ -26,6 +26,5 @@ target_link_libraries(sparse
 
 install(
   TARGETS sparse
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
  )

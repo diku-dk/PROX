@@ -53,6 +53,5 @@ target_compile_definitions(rigid_body_cmd
 
 install(
   TARGETS rigid_body_cmd
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin/}
-  COMPONENT binary
+  RUNTIME DESTINATION bin
   )

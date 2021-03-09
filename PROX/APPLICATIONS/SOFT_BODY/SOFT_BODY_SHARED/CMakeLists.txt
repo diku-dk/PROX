@@ -8,7 +8,7 @@ file(GLOB
   include/*.h 
   )
 
-add_library(soft_body_shared 
+add_library(soft_body_shared STATIC
   ${SOFT_BODY_SHARED_SOURCES} 
   ${SOFT_BODY_SHARED_HEADERS}
   )
@@ -41,6 +41,5 @@ target_compile_definitions(soft_body_shared
 
 install(
   TARGETS soft_body_shared
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin/}
-  COMPONENT binary
+  ARCHIVE DESTINATION lib
   )

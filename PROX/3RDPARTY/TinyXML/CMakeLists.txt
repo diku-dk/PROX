@@ -1,4 +1,4 @@
-add_library(tinyxml
+add_library(tinyxml STATIC
       tinyxml.cpp
       tinyxmlerror.cpp
       tinyxmlparser.cpp
@@ -31,7 +31,6 @@ target_compile_definitions(tinyxml
 
 install(
   TARGETS tinyxml
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT deps
+  ARCHIVE DESTINATION lib
  )
 

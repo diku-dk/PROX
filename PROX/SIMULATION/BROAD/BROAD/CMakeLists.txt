@@ -8,7 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/BROAD/BROAD/include/*.h 
   )
 
-add_library(broad
+add_library(broad STATIC
   ${BROAD_SOURCES} 
   ${BROAD_HEADERS}
   )
@@ -26,7 +26,6 @@ target_link_libraries(broad
 
 install(
   TARGETS broad
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
  )
 

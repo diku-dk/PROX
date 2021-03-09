@@ -15,7 +15,7 @@ file(GLOB
   shaders/show_texture/*.glsl
   )
 
-add_library(rigid_body_gui_shared 
+add_library(rigid_body_gui_shared STATIC
   ${RIGID_BODY_GUI_SHARED_SOURCES} 
   ${RIGID_BODY_GUI_SHARED_HEADERS}
   ${RIGID_BODY_GUI_SHARED_SHADERS}
@@ -37,7 +37,6 @@ target_link_libraries(rigid_body_gui_shared
   mesh_array
 )
 
-
 target_compile_definitions(rigid_body_gui_shared
   PUBLIC
     $<$<CXX_COMPILER_ID:MSVC>:_SCL_SECURE_NO_WARNINGS>
@@ -53,6 +52,5 @@ target_compile_definitions(rigid_body_gui_shared
 
 install(
   TARGETS rigid_body_gui_shared
-  RUNTIME DESTINATION  ${RIGID_BODY_GUI_RUN_PATH}
-  COMPONENT binary
+  RUNTIME DESTINATION bin
  )

@@ -9,7 +9,7 @@ file(GLOB
   private/*.h
   )
 
-add_library(simulators 
+add_library(simulators STATIC
   ${SIMULATORS_SOURCES}  
   ${SIMULATORS_HEADERS}
   )
@@ -44,6 +44,5 @@ target_link_libraries(simulators
 
 install(
   TARGETS simulators
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )

@@ -8,7 +8,7 @@ file(GLOB
   include/*.h
   )
 
-add_library(gl3
+add_library(gl3 STATIC
   ${GL3_SOURCES}
   ${GL3_HEADERS}
   )
@@ -31,6 +31,5 @@ target_link_libraries(gl3
 
 install(
   TARGETS gl3
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
-   )
+  ARCHIVE DESTINATION lib
+  )

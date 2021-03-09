@@ -8,7 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/MASS/MASS/include/*.h
   )
 
-add_library(mass
+add_library(mass STATIC
   ${MASS_SOURCES}
   ${MASS_HEADERS}
   )
@@ -25,6 +25,5 @@ target_link_libraries(mass
 
 install(
   TARGETS mass
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )

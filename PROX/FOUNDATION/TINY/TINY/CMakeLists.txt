@@ -8,7 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include/*.h
   )
 
-add_library(tiny
+add_library(tiny STATIC
   ${TINY_SOURCES}
   ${TINY_HEADERS}
   )
@@ -25,7 +25,6 @@ target_link_libraries(tiny
 
 install(
   TARGETS tiny
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
- )
+  ARCHIVE DESTINATION lib
+  )
  

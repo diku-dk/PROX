@@ -8,7 +8,7 @@ file(GLOB
   include/*.h
   )
 
-add_library(content
+add_library(content STATIC
   ${CONTENT_SOURCES}
   ${CONTENT_HEADERS}
   )
@@ -27,6 +27,5 @@ target_link_libraries(content
 
 install(
   TARGETS content
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
  )

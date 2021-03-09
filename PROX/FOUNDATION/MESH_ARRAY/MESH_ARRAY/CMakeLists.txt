@@ -10,7 +10,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include/factory/*.h
   )
 
-add_library(mesh_array
+add_library(mesh_array STATIC
   ${MESH_ARRAY_SOURCES}
   ${MESH_ARRAY_HEADERS}
   )
@@ -36,6 +36,5 @@ target_link_libraries(mesh_array
 
 install(
   TARGETS mesh_array
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
  )

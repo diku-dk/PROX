@@ -8,7 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include/*.h 
   )
 
-add_library(util 
+add_library(util STATIC
   ${UTIL_SOURCES} 
   ${UTIL_HEADERS} 
   )
@@ -25,6 +25,5 @@ target_link_libraries(util
 
 install(
   TARGETS util
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
- )
+  ARCHIVE DESTINATION lib
+  )

@@ -8,7 +8,7 @@ file(GLOB
   include/*.h
   )
 
-add_library(narrow
+add_library(narrow STATIC
   ${NARROW_SOURCES}  
   ${NARROW_HEADERS}
   )
@@ -29,6 +29,5 @@ target_link_libraries(narrow
 
 install(
   TARGETS narrow
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )

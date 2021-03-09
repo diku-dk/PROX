@@ -8,8 +8,7 @@ file(GLOB
   include/*.h
   )
 
-add_library( 
-  kdop
+add_library(kdop STATIC
   ${KDOP_SOURCES}  
   ${KDOP_HEADERS}
 )
@@ -29,6 +28,5 @@ target_link_libraries(kdop
 
 install(
   TARGETS kdop
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )

@@ -12,8 +12,7 @@ file(GLOB
   include/solvers/strategies/*.h
   )
 
-ADD_LIBRARY( 
-  prox 
+add_library(prox STATIC
   ${PROX_SOURCES}  
   ${PROX_HEADERS}
 )
@@ -53,7 +52,6 @@ target_link_libraries(prox
 
 install(
   TARGETS prox
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )
 

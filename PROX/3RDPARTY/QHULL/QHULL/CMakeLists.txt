@@ -8,7 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHULL/QHULL/include/*.h
   )
 
-add_library(qhull
+add_library(qhull STATIC
   ${QHULL_SOURCES}
   ${QHULL_HEADERS}
   )
@@ -20,6 +20,5 @@ target_include_directories(qhull
 
 install(
   TARGETS qhull
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT deps
- )
+  ARCHIVE DESTINATION lib
+  )

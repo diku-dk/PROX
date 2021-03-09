@@ -8,7 +8,7 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/CONVEX/CONVEX/include/*.h 
   )
 
-add_library(convex 
+add_library(convex STATIC
   ${CONVEX_SOURCES} 
   ${CONVEX_HEADERS} 
   )
@@ -26,6 +26,5 @@ target_link_libraries( convex
 
 install(
   TARGETS convex
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
- )
+  ARCHIVE DESTINATION lib
+  )

@@ -1,5 +1,5 @@
 
-add_library(tetgen
+add_library(tetgen STATIC
   predicates.cxx
   tetgen.cxx
   tetgen.h
@@ -17,8 +17,7 @@ target_compile_definitions(tetgen
 
 install(
   TARGETS tetgen
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT deps
+  ARCHIVE DESTINATION lib
   )
 
 

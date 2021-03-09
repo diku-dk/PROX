@@ -8,7 +8,7 @@ file(GLOB
   include/*.h
   )
 
-add_library(procedural 
+add_library(procedural STATIC
   ${PROCEDURAL_SOURCES}  
   ${PROCEDURAL_HEADERS}
 )
@@ -29,6 +29,5 @@ target_link_libraries(procedural
 
 install(
   TARGETS procedural
-  RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/lib/}
-  COMPONENT library
+  ARCHIVE DESTINATION lib
   )

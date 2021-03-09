@@ -60,6 +60,5 @@ target_compile_definitions(rigid_body_gui
 
 install(
   TARGETS rigid_body_gui
-  RUNTIME DESTINATION  ${RIGID_BODY_GUI_RUN_PATH}
-  COMPONENT binary
+  RUNTIME DESTINATION bin
  )
