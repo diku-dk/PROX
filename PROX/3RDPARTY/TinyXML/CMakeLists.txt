@@ -6,7 +6,7 @@ add_library(tinyxml
 	    tinystr.h
       )
 
-set_target_properties(tinyxml PROPERTIES PUBLIC_HEADER "tinyxml.h tinystr.h")
+set_target_properties(tinyxml PROPERTIES PUBLIC_HEADER "tinyxml.h;tinystr.h")
 
 target_include_directories(tinyxml
   PUBLIC
