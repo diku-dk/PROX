@@ -1,8 +1,8 @@
 #ifndef GEOMETRY_MAKE_INTERSECTION_H
 #define GEOMETRY_MAKE_INTERSECTION_H
 
-#include <types/geometry_line.h>
-#include <types/geometry_plane.h>
+#include <geometry_line.h>
+#include <geometry_plane.h>
 
 #include <tiny_is_finite.h>
 #include <tiny_is_number.h>

@@ -6,22 +6,19 @@ file(GLOB
 file(GLOB
   GEOMETRY_HEADERS
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/*.h
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/types/*.h
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/barycentric/*.h
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/raycast/*.h
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/contacts/*.h
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/overlap/*.h
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include/closest_points/*.h
   )
 
-add_library(geometry STATIC
+add_library(geometry
   ${GEOMETRY_SOURCES}
   ${GEOMETRY_HEADERS}
   )
 
+set_target_properties(geometry PROPERTIES PUBLIC_HEADER "${GEOMETRY_HEADERS}")
+
 target_include_directories(geometry
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(geometry
@@ -33,4 +30,5 @@ target_link_libraries(geometry
 install(
   TARGETS geometry
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

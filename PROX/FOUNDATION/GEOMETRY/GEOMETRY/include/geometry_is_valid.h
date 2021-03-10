@@ -1,17 +1,17 @@
 #ifndef GEOMETRY_IS_VALID_H
 #define GEOMETRY_IS_VALID_H
 
-#include <types/geometry_interval.h>
-#include <types/geometry_dop.h>
-#include <types/geometry_line.h>
-#include <types/geometry_plane.h>
-#include <types/geometry_obb.h>
-#include <types/geometry_ray.h>
-#include <types/geometry_sphere.h>
-#include <types/geometry_tetrahedron.h>
-#include <types/geometry_triangle.h>
-#include <types/geometry_cylinder.h>
-#include <types/geometry_aabb.h>
+#include <geometry_interval.h>
+#include <geometry_dop.h>
+#include <geometry_line.h>
+#include <geometry_plane.h>
+#include <geometry_obb.h>
+#include <geometry_ray.h>
+#include <geometry_sphere.h>
+#include <geometry_tetrahedron.h>
+#include <geometry_triangle.h>
+#include <geometry_cylinder.h>
+#include <geometry_aabb.h>
 
 #include <tiny_precision.h>   // needed for tiny::working_precision
 

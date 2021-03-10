@@ -15,17 +15,20 @@ file(GLOB
   shaders/show_texture/*.glsl
   )
 
-add_library(rigid_body_gui_shared STATIC
+add_library(rigid_body_gui_shared
   ${RIGID_BODY_GUI_SHARED_SOURCES} 
   ${RIGID_BODY_GUI_SHARED_HEADERS}
   ${RIGID_BODY_GUI_SHARED_SHADERS}
   )
 
+set_target_properties(rigid_body_gui_shared PROPERTIES PUBLIC_HEADER "${RIGID_BODY_GUI_SHARED_HEADERS}")
+
 source_group(Shaders FILES ${RIGID_BODY_GUI_SHARED_SHADERS} )
 
 target_include_directories(rigid_body_gui_shared
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI_SHARED/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/RIGID_BODY/RIGID_BODY_GUI_SHARED/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(rigid_body_gui_shared

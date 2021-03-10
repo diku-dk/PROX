@@ -8,14 +8,17 @@ file(GLOB
   include/*.h
   )
 
-add_library(narrow STATIC
+add_library(narrow
   ${NARROW_SOURCES}  
   ${NARROW_HEADERS}
   )
 
+set_target_properties(narrow PROPERTIES PUBLIC_HEADER "${NARROW_HEADERS}")
+
 target_include_directories(narrow
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/SIMULATION/NARROW/NARROW/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(narrow
@@ -30,4 +33,5 @@ target_link_libraries(narrow
 install(
   TARGETS narrow
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_MAKE_UNION_H
 #define GEOMETRY_MAKE_UNION_H
 
-#include <types/geometry_dop.h>
+#include <geometry_dop.h>
 
 namespace geometry
 {

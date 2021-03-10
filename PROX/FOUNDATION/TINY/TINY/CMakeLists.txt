@@ -8,14 +8,17 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include/*.h
   )
 
-add_library(tiny STATIC
+add_library(tiny
   ${TINY_SOURCES}
   ${TINY_HEADERS}
   )
 
+set_target_properties(tiny PROPERTIES PUBLIC_HEADER "${TINY_HEADERS}")
+
 target_include_directories(tiny
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(tiny
@@ -26,5 +29,6 @@ target_link_libraries(tiny
 install(
   TARGETS tiny
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )
  

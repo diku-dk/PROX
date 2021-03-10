@@ -8,14 +8,17 @@ file(GLOB
   include/*.h 
   )
 
-add_library(soft_body_shared STATIC
+add_library(soft_body_shared
   ${SOFT_BODY_SHARED_SOURCES} 
   ${SOFT_BODY_SHARED_HEADERS}
   )
 
+set_target_properties(soft_body_shared PROPERTIES PUBLIC_HEADER "${SOFT_BODY_SHARED_HEADERS}")
+
 target_include_directories(soft_body_shared
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_SHARED/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/APPLICATIONS/SOFT_BODY/SOFT_BODY_SHARED/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(soft_body_shared
@@ -42,4 +45,5 @@ target_compile_definitions(soft_body_shared
 install(
   TARGETS soft_body_shared
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

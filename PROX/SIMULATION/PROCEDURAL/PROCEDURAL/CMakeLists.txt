@@ -13,9 +13,13 @@ add_library(procedural STATIC
   ${PROCEDURAL_HEADERS}
 )
 
+set_target_properties(procedural PROPERTIES PUBLIC_HEADER "${PROCEDURAL_HEADERS}")
+
+
 target_include_directories(procedural
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROCEDURAL/PROCEDURAL/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(procedural
@@ -30,4 +34,5 @@ target_link_libraries(procedural
 install(
   TARGETS procedural
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

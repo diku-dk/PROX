@@ -8,17 +8,21 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHULL/QHULL/include/*.h
   )
 
-add_library(qhull STATIC
+add_library(qhull
   ${QHULL_SOURCES}
   ${QHULL_HEADERS}
   )
 
+set_target_properties(qhull PROPERTIES PUBLIC_HEADER "${QHULL_HEADERS}")
+
 target_include_directories(qhull
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHULL/QHULL/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/QHULL/QHULL/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 install(
   TARGETS qhull
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

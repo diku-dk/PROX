@@ -9,15 +9,17 @@ file(GLOB
   private/*.h
   )
 
-add_library(simulators STATIC
+add_library(simulators
   ${SIMULATORS_SOURCES}  
   ${SIMULATORS_HEADERS}
   )
 
+set_target_properties(simulators PROPERTIES PUBLIC_HEADER "${SIMULATORS_HEADERS}")
 
 target_include_directories(simulators
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/include>
+  $<INSTALL_INTERFACE:include>
   PRIVATE
   ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/SIMULATORS/SIMULATORS/private
   )
@@ -45,4 +47,5 @@ target_link_libraries(simulators
 install(
   TARGETS simulators
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

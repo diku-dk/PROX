@@ -1,8 +1,8 @@
 #ifndef GEOMETRY_TRANSFORM_H
 #define GEOMETRY_TRANSFORM_H
 
-#include <types/geometry_obb.h>
-#include <types/geometry_cylinder.h>
+#include <geometry_obb.h>
+#include <geometry_cylinder.h>
 
 #include <tiny.h>
 

@@ -1,7 +1,7 @@
 #ifndef KDOP_TREE_H
 #define KDOP_TREE_H
 
-#include <types/geometry_dop.h>
+#include <geometry_dop.h>
 
 #include <vector>
 #include <cassert>

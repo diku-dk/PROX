@@ -6,17 +6,19 @@ file(GLOB
 file(GLOB
   SPARSE_HEADERS
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include/*.h 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include/io/*.h 
   )
 
-add_library(sparse STATIC
+add_library(sparse
   ${SPARSE_SOURCES}
   ${SPARSE_HEADERS}
   )
 
+set_target_properties(sparse PROPERTIES PUBLIC_HEADER "${SPARSE_HEADERS}")
+
 target_include_directories(sparse
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/SPARSE/SPARSE/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(sparse
@@ -27,4 +29,5 @@ target_link_libraries(sparse
 install(
   TARGETS sparse
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
  )

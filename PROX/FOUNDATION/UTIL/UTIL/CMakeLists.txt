@@ -8,14 +8,17 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include/*.h 
   )
 
-add_library(util STATIC
+add_library(util
   ${UTIL_SOURCES} 
   ${UTIL_HEADERS} 
   )
 
+set_target_properties(util PROPERTIES PUBLIC_HEADER "${UTIL_HEADERS}")
+
 target_include_directories(util
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include 
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(util
@@ -26,4 +29,5 @@ target_link_libraries(util
 install(
   TARGETS util
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

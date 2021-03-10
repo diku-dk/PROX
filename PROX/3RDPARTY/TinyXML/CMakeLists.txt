@@ -1,4 +1,4 @@
-add_library(tinyxml STATIC
+add_library(tinyxml
       tinyxml.cpp
       tinyxmlerror.cpp
       tinyxmlparser.cpp
@@ -6,9 +6,12 @@ add_library(tinyxml STATIC
 	    tinystr.h
       )
 
+set_target_properties(tinyxml PROPERTIES PUBLIC_HEADER "tinyxml.h tinystr.h")
+
 target_include_directories(tinyxml
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/TinyXML>
+  $<INSTALL_INTERFACE:include>
   )
 
 #-------------------------------------------------------
@@ -32,5 +35,6 @@ target_compile_definitions(tinyxml
 install(
   TARGETS tinyxml
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
  )
 

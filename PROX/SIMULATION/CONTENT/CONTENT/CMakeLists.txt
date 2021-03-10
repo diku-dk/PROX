@@ -8,15 +8,18 @@ file(GLOB
   include/*.h
   )
 
-add_library(content STATIC
+add_library(content
   ${CONTENT_SOURCES}
   ${CONTENT_HEADERS}
   )
 
+set_target_properties(content PROPERTIES PUBLIC_HEADER "${CONTENT_HEADERS}")
+
 target_include_directories(content
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include
-  )
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/SIMULATION/CONTENT/CONTENT/include>
+  $<INSTALL_INTERFACE:include>
+ )
 
 target_link_libraries(content
   PUBLIC
@@ -28,4 +31,5 @@ target_link_libraries(content
 install(
   TARGETS content
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
  )

@@ -3,8 +3,8 @@
 
 #include <kdop_tree.h>
 
-#include <types/geometry_direction_table.h>
-#include <types/geometry_dop.h>
+#include <geometry_direction_table.h>
+#include <geometry_dop.h>
 #include <geometry_make_union.h>
 
 #include <mesh_array_t4mesh.h>

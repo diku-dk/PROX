@@ -36,25 +36,25 @@
 #include <mesh_array_tetgen.h>
 #include <mesh_array_is_positive_orientation.h>
 
-#include <factory/mesh_array_make_box.h>
-#include <factory/mesh_array_make_capsule.h>
-#include <factory/mesh_array_make_cone.h>
-#include <factory/mesh_array_make_conical.h>
-#include <factory/mesh_array_make_convex.h>
-#include <factory/mesh_array_make_cuboid.h>
-#include <factory/mesh_array_make_cylinder.h>
-#include <factory/mesh_array_make_ellipsoid.h>
-#include <factory/mesh_array_make_sphere.h>
-#include <factory/mesh_array_make_tetrahedron.h>
+#include <mesh_array_make_box.h>
+#include <mesh_array_make_capsule.h>
+#include <mesh_array_make_cone.h>
+#include <mesh_array_make_conical.h>
+#include <mesh_array_make_convex.h>
+#include <mesh_array_make_cuboid.h>
+#include <mesh_array_make_cylinder.h>
+#include <mesh_array_make_ellipsoid.h>
+#include <mesh_array_make_sphere.h>
+#include <mesh_array_make_tetrahedron.h>
 
-#include <factory/mesh_array_profile_sweep.h>
-#include <factory/mesh_array_compute_center.h>
-#include <factory/mesh_array_compute_extents.h>
-#include <factory/mesh_array_rotate.h>
-#include <factory/mesh_array_scale.h>
-#include <factory/mesh_array_shrink.h>
-#include <factory/mesh_array_transform.h>
-#include <factory/mesh_array_translate.h>
+#include <mesh_array_profile_sweep.h>
+#include <mesh_array_compute_center.h>
+#include <mesh_array_compute_extents.h>
+#include <mesh_array_rotate.h>
+#include <mesh_array_scale.h>
+#include <mesh_array_shrink.h>
+#include <mesh_array_transform.h>
+#include <mesh_array_translate.h>
 
 #include <mesh_array_concatenation.h>
 #include <mesh_array_convert.h>

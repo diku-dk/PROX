@@ -19,8 +19,8 @@
 #include <sparse_diag_of_prod.h>
 #include <sparse_swap.h>
 #include <sparse_inverse.h>
-#include <io/sparse_matlab_writers.h>
-#include <io/sparse_string_writers.h>
+#include <sparse_matlab_writers.h>
+#include <sparse_string_writers.h>
 #include <sparse_conjugate_gradient.h>
 
 // SPARSE_SPARSE_H

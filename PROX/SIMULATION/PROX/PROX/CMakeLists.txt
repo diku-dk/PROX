@@ -6,36 +6,19 @@ file(GLOB
 file(GLOB
   PROX_HEADERS
   include/*.h
-  include/steppers/*.h
-  include/solvers/*.h
-  include/solvers/sub/*.h
-  include/solvers/strategies/*.h
   )
 
-add_library(prox STATIC
+add_library(prox
   ${PROX_SOURCES}  
   ${PROX_HEADERS}
 )
 
-file(GLOB
-  PROX_SOLVERS
-  include/solvers/*.h
-  include/solvers/sub/*.h
-  include/solvers/strategies/*.h
-  )
-
-source_group(solvers   FILES ${PROX_SOLVERS})
-
-file(GLOB
-  PROX_STEPPERS
-  include/steppers/*.h
-  )
-
-source_group(steppers  FILES ${PROX_STEPPERS})
+set_target_properties(prox PROPERTIES PUBLIC_HEADER "${PROX_HEADERS}")
 
 target_include_directories(kdop
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROX/PROX/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/SIMULATION/PROX/PROX/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(prox
@@ -53,5 +36,5 @@ target_link_libraries(prox
 install(
   TARGETS prox
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include  
   )
-

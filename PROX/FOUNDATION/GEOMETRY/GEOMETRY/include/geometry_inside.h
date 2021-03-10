@@ -1,12 +1,12 @@
 #ifndef GEOMETRY_INSIDE_H
 #define GEOMETRY_INSIDE_H
 
-#include <types/geometry_aabb.h>
-#include <types/geometry_dop.h>
-#include <types/geometry_obb.h>
-#include <types/geometry_cylinder.h>
-#include <types/geometry_triangle.h>
-#include <types/geometry_plane.h>
+#include <geometry_aabb.h>
+#include <geometry_dop.h>
+#include <geometry_obb.h>
+#include <geometry_cylinder.h>
+#include <geometry_triangle.h>
+#include <geometry_plane.h>
 
 #include <geometry_transform.h>
 

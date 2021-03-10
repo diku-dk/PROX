@@ -8,14 +8,17 @@ file(GLOB
   include/*.h
   )
 
-add_library(kdop STATIC
+add_library(kdop
   ${KDOP_SOURCES}  
   ${KDOP_HEADERS}
 )
 
+set_target_properties(kdop PROPERTIES PUBLIC_HEADER "${KDOP_HEADERS}")
+
 target_include_directories(kdop
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/PROX/SIMULATION/KDOP/KDOP/include>
+  $<INSTALL_INTERFACE:include>
   )
 
 target_link_libraries(kdop
@@ -29,4 +32,5 @@ target_link_libraries(kdop
 install(
   TARGETS kdop
   ARCHIVE DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
   )

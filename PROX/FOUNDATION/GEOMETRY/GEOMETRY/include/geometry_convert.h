@@ -1,11 +1,11 @@
 #ifndef GEOMETRY_CONVERT_H
 #define GEOMETRY_CONVERT_H
 
-#include <types/geometry_dop.h>
-#include <types/geometry_sphere.h>
-#include <types/geometry_aabb.h>
-#include <types/geometry_cylinder.h>
-#include <types/geometry_capsule.h>
+#include <geometry_dop.h>
+#include <geometry_sphere.h>
+#include <geometry_aabb.h>
+#include <geometry_cylinder.h>
+#include <geometry_capsule.h>
 
 namespace geometry
 {

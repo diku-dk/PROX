@@ -1,7 +1,7 @@
 #ifndef CONVEX_SHAPES_H
 #define CONVEX_SHAPES_H
 
-#include <types/geometry_support_mapping.h>
+#include <geometry_support_mapping.h>
 
 #include <vector>
 

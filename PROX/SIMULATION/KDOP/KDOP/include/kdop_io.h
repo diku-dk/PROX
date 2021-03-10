@@ -2,7 +2,7 @@
 #define KDOP_IO_H
 
 #include <kdop_tree.h>
-#include <types/geometry_dop.h>
+#include <geometry_dop.h>
 
 #include <iosfwd>
 
