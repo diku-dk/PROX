@@ -3,8 +3,8 @@
 
 #include <hyper_engine.h>
 
-#include <types/geometry_dop.h>
-#include <overlap/geometry_overlap_dop_dop.h>
+#include <geometry_dop.h>
+#include <geometry_overlap_dop_dop.h>
 
 #include <cassert>    // needed for assert
 

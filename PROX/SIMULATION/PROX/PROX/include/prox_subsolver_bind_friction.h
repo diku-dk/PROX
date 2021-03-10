@@ -2,16 +2,15 @@
 #define PROX_SUBSOLVER_BIND_FRICTION_H
 
 #include <prox_enums.h>
-
-#include <solvers/sub/prox_friction_sub_solver.h>
-#include <solvers/sub/prox_nonnegative.h>
-#include <solvers/sub/prox_analytical_sphere.h>
-#include <solvers/sub/prox_analytical_ellipsoid.h>
-#include <solvers/sub/prox_numerical_ellipsoid.h>
-#include <solvers/sub/prox_gjk_ellipsoid.h>
-#include <solvers/sub/prox_box_model.h>
-#include <solvers/sub/prox_origin.h>
-#include <solvers/sub/prox_infinity.h>
+#include <prox_subsolver_friction.h>
+#include <prox_subsolver_nonnegative.h>
+#include <prox_subsolver_analytical_sphere.h>
+#include <prox_subsolver_analytical_ellipsoid.h>
+#include <prox_subsolver_numerical_ellipsoid.h>
+#include <prox_subsolver_gjk_ellipsoid.h>
+#include <prox_subsolver_box_model.h>
+#include <prox_subsolver_origin.h>
+#include <prox_subsolver_infinity.h>
 
 #include <util_log.h>
 

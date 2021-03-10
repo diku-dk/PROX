@@ -3,8 +3,8 @@
 
 #include <kdop_tree.h>
 
-#include <raycast/geometry_raycast_tetrahedron.h>
-#include <raycast/geometry_raycast_dop.h>
+#include <geometry_raycast_tetrahedron.h>
+#include <geometry_raycast_dop.h>
 
 #include <mesh_array.h>
 #include <mesh_array_t4mesh.h>

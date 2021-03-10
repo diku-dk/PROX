@@ -2,12 +2,10 @@
 #define PROX_SUBSOLVER_BIND_NORMAL_H
 
 #include <prox_enums.h>
-
-#include <solvers/sub/prox_normal_sub_solver.h>
-
-#include <solvers/sub/prox_nonnegative.h>
-#include <solvers/sub/prox_origin.h>
-#include <solvers/sub/prox_infinity.h>
+#include <prox_subsolver_normal.h>
+#include <prox_subsolver_nonnegative.h>
+#include <prox_subsolver_origin.h>
+#include <prox_subsolver_infinity.h>
 
 #include <util_log.h>
 

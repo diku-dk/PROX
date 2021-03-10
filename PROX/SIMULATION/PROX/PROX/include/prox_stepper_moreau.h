@@ -1,5 +1,5 @@
-#ifndef PROX_STEPPER_MOREAU_TIME_H
-#define PROX_STEPPER_MOREAU_TIME_H
+#ifndef PROX_STEPPER_MOREAU_H
+#define PROX_STEPPER_MOREAU_H
 
 #include <prox_rigid_body.h>
 #include <prox_contact_point.h>
@@ -26,10 +26,10 @@
 #include <prox_params.h>
 #include <prox_math_policy.h>
 
-#include <solvers/prox_bind_solver.h>
-#include <solvers/sub/prox_bind_normal_sub_solver.h>
-#include <solvers/sub/prox_bind_friction_sub_solver.h>
-#include <solvers/strategies/prox_bind_R_strategy.h>
+#include <prox_solver_bind.h>
+#include <prox_subsolver_bind_normal.h>
+#include <prox_subsolver_bind_friction.h>
+#include <prox_strategy_bind_R.h>
 
 #include <broad.h>
 #include <narrow.h>
@@ -279,5 +279,5 @@ namespace prox
   
 } //namespace prox
 
-// PROX_STEPPER_MOREAU_TIME_H
+// PROX_STEPPER_MOREAU_H
 #endif

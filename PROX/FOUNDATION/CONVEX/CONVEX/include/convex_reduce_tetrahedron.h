@@ -1,12 +1,11 @@
 #ifndef CONVEX_REDUCE_TETRAHEDRON_H
 #define CONVEX_REDUCE_TETRAHEDRON_H
 
-
 #include <convex_outside_vertex_edge_voronoi_plane.h>
 #include <convex_outside_edge_face_voronoi_plane.h>
 #include <convex_outside_triangle.h>
 
-#include <barycentric/geometry_barycentric.h>
+#include <geometry_barycentric.h>
 
 #include <tiny_vector_functions.h>
 

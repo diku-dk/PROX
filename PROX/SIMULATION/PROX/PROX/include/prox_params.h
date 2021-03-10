@@ -1,8 +1,8 @@
 #ifndef PROX_PARAMS_H
 #define PROX_PARAMS_H
 
-#include <solvers/prox_solver_params.h>    // Needed for SolverParams
-#include <steppers/prox_stepper_params.h>  // Needed for StepperParams
+#include <prox_solver_params.h>    // Needed for SolverParams
+#include <prox_stepper_params.h>  // Needed for StepperParams
 
 #include <tiny_is_number.h>
 #include <tiny_is_finite.h>

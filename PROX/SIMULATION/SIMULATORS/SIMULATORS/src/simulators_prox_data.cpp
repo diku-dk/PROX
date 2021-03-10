@@ -7,7 +7,7 @@
 #include <util_string_helper.h>
 #include <util_log.h>
 
-#include <steppers/prox_bind_stepper.h>
+#include <prox_stepper_bind.h>
 
 #include <cassert>
 

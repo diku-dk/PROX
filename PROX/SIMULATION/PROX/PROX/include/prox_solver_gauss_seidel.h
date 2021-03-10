@@ -1,11 +1,10 @@
 #ifndef PROX_SOLVER_GAUSS_SEIDEL_H
 #define PROX_SOLVER_GAUSS_SEIDEL_H
 
-#include <solvers/sub/prox_normal_sub_solver.h>
-#include <solvers/sub/prox_friction_sub_solver.h>
-#include <solvers/strategies/prox_R_strategy.h>
-
-#include <solvers/prox_solver_params.h>
+#include <prox_subsolver_normal.h>
+#include <prox_subsolver_friction.h>
+#include <prox_strategy_R.h>
+#include <prox_solver_params.h>
 
 #include <util_profiling.h>
 #include <util_log.h>

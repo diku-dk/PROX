@@ -2,11 +2,9 @@
 #define PROX_SOLVER_BIND_H
 
 #include <prox_enums.h>
-
-#include <solvers/prox_solver.h>
-
-#include <solvers/prox_jacobi_solver.h>
-#include <solvers/prox_gauss_seidel_solver.h>
+#include <prox_solver.h>
+#include <prox_solver_jacobi.h>
+#include <prox_solver_gauss_seidel.h>
 
 #include <util_log.h>
 

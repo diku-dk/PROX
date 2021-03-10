@@ -5,7 +5,7 @@
 #include <convex_constants.h>
 #include <convex_reduce_simplex.h>
 
-#include <types/geometry_support_mapping.h>
+#include <geometry_support_mapping.h>
 
 #include <tiny_quaternion_functions.h>
 #include <tiny_vector_functions.h>

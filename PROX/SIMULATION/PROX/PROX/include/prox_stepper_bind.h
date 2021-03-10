@@ -2,12 +2,10 @@
 #define PROX_STEPPER_BIND_H
 
 #include <prox_enums.h>
-
-#include <steppers/prox_stepper.h>
-
-#include <steppers/prox_moreau_time_stepper.h>
-#include <steppers/prox_semi_implicit_time_stepper.h>
-#include <steppers/prox_empty_stepper.h>
+#include <prox_stepper.h>
+#include <prox_stepper_moreau.h>
+#include <prox_stepper_semi_implicit.h>
+#include <prox_stepper_empty.h>
 
 #include <broad.h>
 #include <narrow.h>

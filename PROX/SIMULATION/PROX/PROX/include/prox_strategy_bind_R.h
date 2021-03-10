@@ -2,11 +2,10 @@
 #define PROX_STRATEGY_BIND_R_H
 
 #include <prox_enums.h>
-
-#include <solvers/strategies/prox_R_strategy.h>
-#include <solvers/strategies/prox_block_R_strategy.h>
-#include <solvers/strategies/prox_local_R_strategy.h>
-#include <solvers/strategies/prox_global_R_strategy.h>
+#include <prox_strategy_R.h>
+#include <prox_strategy_block_R.h>
+#include <prox_strategy_local_R.h>
+#include <prox_strategy_global_R.h>
 
 #include <util_log.h>
 

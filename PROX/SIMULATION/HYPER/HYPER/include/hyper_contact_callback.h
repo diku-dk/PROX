@@ -4,7 +4,7 @@
 #include <hyper_body.h>
 #include <hyper_contact_point.h>
 
-#include <contacts/geometry_contacts_callback.h>
+#include <geometry_contacts_callback.h>
 
 
 #include <cassert>

@@ -1,7 +1,7 @@
 #ifndef PROX_GET_POST_STABILIZATION_VECTOR_H
 #define PROX_GET_POST_STABILIZATION_VECTOR_H
 
-#include <steppers/prox_stepper_params.h>
+#include <prox_stepper_params.h>
 
 #include <tiny_is_number.h>
 

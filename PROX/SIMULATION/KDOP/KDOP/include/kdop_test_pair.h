@@ -3,7 +3,7 @@
 
 #include <kdop_tree.h>
 
-#include <contacts/geometry_contacts_callback.h>
+#include <geometry_contacts_callback.h>
 
 #include <mesh_array.h>
 #include <mesh_array_t4mesh.h>
