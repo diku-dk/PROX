@@ -62,3 +62,9 @@ install(
   TARGETS rigid_body_gui
   RUNTIME DESTINATION bin
  )
+
+set_target_properties(rigid_body_gui
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${PROJECT_SOURCE_DIR}/bin/rigid_body_gui/"
+  RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin/rigid_body_gui/"
+  )

@@ -51,3 +51,8 @@ install(
   RUNTIME DESTINATION bin
   )
 
+set_target_properties(soft_body_cmd
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${PROJECT_SOURCE_DIR}/bin/soft_body_cmd/"
+  RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin/soft_body_cmd/"
+  )

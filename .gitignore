@@ -67,3 +67,7 @@ PROX/SIMULATION/KDOP/KDOP/include/cl/kdop_cl_kernels_path.h
 PROX/SIMULATION/NARROW/NARROW/include/cl/narrow_cl_kernels_path.h
 
 .DS_Store
+bin/rigid_body_cmd/rigid_body_cmd
+bin/rigid_body_gui/rigid_body_gui
+bin/soft_body_cmd/soft_body_cmd
+bin/soft_body_gui/soft_body_gui

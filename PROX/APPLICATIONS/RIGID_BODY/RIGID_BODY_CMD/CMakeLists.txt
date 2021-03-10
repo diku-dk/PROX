@@ -55,3 +55,9 @@ install(
   TARGETS rigid_body_cmd
   RUNTIME DESTINATION bin
   )
+
+set_target_properties(rigid_body_cmd
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY_RELEASE  "${PROJECT_SOURCE_DIR}/bin/rigid_body_cmd/"
+  RUNTIME_OUTPUT_DIRECTORY_DEBUG    "${PROJECT_SOURCE_DIR}/bin/rigid_body_cmd/"
+  )

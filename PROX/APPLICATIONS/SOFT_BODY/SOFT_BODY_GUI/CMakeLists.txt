@@ -71,3 +71,9 @@ install(
   TARGETS soft_body_gui
   RUNTIME DESTINATION bin
   )
+
+set_target_properties(soft_body_gui
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/bin/soft_body_gui/"
+  RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin/soft_body_gui/"
+  )
