@@ -93,10 +93,10 @@ namespace util
         LogInfo::stream().close();
       }
     }
-    
+
     return log;
   }
-  
+
 } //namespace util
 
 // UTIL_LOG_H

@@ -179,7 +179,7 @@ namespace util
               log << "ConfigFile::load(): Current path is = " << pwd_path.string() << line << Log::newline();
 
               // If config file did not exist then try to locate it using the path of current config file
-              import_filename      = filename_path.parent_path().string() + tokens[2];
+              import_filename      = (filename_path.parent_path() / tokens[2]).string();
               import_filename_path = path( import_filename );
 
               // Test if the config file is located at this location

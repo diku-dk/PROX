@@ -3,7 +3,11 @@
 
 #include <util_profiling.h>
 #include <util_matlab_write_profiling.h>
+#include <util_python_write_matrix.h>
 #include <util_log.h>
+
+#include <prox_rigid_body.h>
+#include <tiny_matrix.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -14,6 +18,25 @@
 
 namespace simulators
 {
+
+    bool ProxEngine::write_profilingMatlab(std::string const& filename)
+    {
+        util::Log logging;
+
+        std::string const newline = util::Log::newline();
+
+        std::ofstream matlab;
+
+        matlab.open(filename.c_str(),std::ios::out);
+
+        if(! matlab.is_open())
+        {
+            logging << "ProxEngine::write_profiling(): error could not open file = " << filename.c_str() << util::Log::newline();
+
+            return false;
+        }
+
+    }
 
   bool ProxEngine::write_profiling(std::string const & filename)
   {
@@ -137,6 +160,153 @@ namespace simulators
 
     return true;
   }
+
+    bool ProxEngine::writeRigidBodiesData(std::string const & filename, unsigned int const & frameNumber)
+    {
+//        typedef typename ProxData::T  T;
+
+        util::Log        logging;
+
+        std::string const newline = util::Log::newline();
+
+        std::ofstream python;
+
+        // create directories if necessary
+        boost::filesystem::path contact_data_file(filename);
+
+        if ( contact_data_file.has_parent_path() &&
+            ! boost::filesystem::exists( contact_data_file.parent_path() ) &&
+            ! boost::filesystem::create_directories( contact_data_file.parent_path() ) )
+        {
+            util::Log logging;
+
+            logging << "ProxEngine::write_contacts(): Could not create directories for file '"
+                    << filename
+                    << "'"
+                    << util::Log::newline();
+        }
+
+        python.open(filename.c_str(),std::ios::out);
+
+        auto& bodies = m_data->m_bodies;
+
+        std::vector<std::string> objectNames;
+        std::vector<tiny::MathTypes<float>::matrix3x3_type> inertiabfs;
+        std::vector<tiny::MathTypes<float>::real_type> masses;
+        std::vector<tiny::MathTypes<float>::quaternion_type> orientations;
+        std::vector<tiny::MathTypes<float>::vector3_type> positions;
+        std::vector<tiny::MathTypes<float>::vector3_type> spin;
+        std::vector<tiny::MathTypes<float>::vector3_type> velocities;
+        for (uint32_t i = 0; i < bodies.size(); ++i)
+        {
+            auto& body = bodies[i];
+            inertiabfs.push_back(body.get_inertia_bf());
+            masses.push_back(body.get_mass());
+            objectNames.push_back("\"" + body.get_name() + "\"");
+            orientations.push_back(body.get_orientation());
+            positions.push_back(body.get_position());
+            spin.push_back(body.get_spin());
+            velocities.push_back(body.get_velocity());
+        }
+
+        auto val = inertiabfs[0];
+        std::cerr << val;
+
+        python << "rigidNames_" << frameNumber << " = " << util::python_write_vector(objectNames) << ";" << "\n";
+        python << "inertiabfs_" << frameNumber << " = " << util::python_write_matrix_vector<3>(inertiabfs) << ";" << "\n";
+        python << "masses_" << frameNumber << " = " << util::python_write_vector(masses) << ";" << "\n";
+        python << "orientations_" << frameNumber << " = " << util::python_write_quaternion(orientations) << ";" << "\n";
+        python << "positions_" << frameNumber << " = " << util::python_write_vector(positions) << ";" << "\n";
+        python << "spin_" << frameNumber << " = " << util::python_write_vector(spin) << ";" << "\n";
+        python << "velocities_" << frameNumber << " = " << util::python_write_vector(velocities) << ";" << "\n";
+
+
+
+
+        //Same as below, however write to our .py file
+        typedef typename ProxData::T  T;
+
+        std::vector<T> CX;
+        std::vector<T> CY;
+        std::vector<T> CZ;
+        std::vector<T> NX;
+        std::vector<T> NY;
+        std::vector<T> NZ;
+        std::vector<T> D;
+        std::vector<T> AX;
+        std::vector<T> AY;
+        std::vector<T> AZ;
+        std::vector<T> BX;
+        std::vector<T> BY;
+        std::vector<T> BZ;
+        std::vector<unsigned int> A;
+        std::vector<unsigned int> B;
+
+        for(unsigned int i=0u; i < m_data->m_contacts.size(); ++i)
+        {
+            T const cx = m_data->m_contacts[i].get_position()(0);
+            T const cy = m_data->m_contacts[i].get_position()(1);
+            T const cz = m_data->m_contacts[i].get_position()(2);
+            T const nx = m_data->m_contacts[i].get_normal()(0);
+            T const ny = m_data->m_contacts[i].get_normal()(1);
+            T const nz = m_data->m_contacts[i].get_normal()(2);
+            T const d = m_data->m_contacts[i].get_depth();
+            T const ax = m_data->m_contacts[i].get_body_i()->get_position()(0);
+            T const ay = m_data->m_contacts[i].get_body_i()->get_position()(1);
+            T const az = m_data->m_contacts[i].get_body_i()->get_position()(2);
+            T const bx = m_data->m_contacts[i].get_body_j()->get_position()(0);
+            T const by = m_data->m_contacts[i].get_body_j()->get_position()(1);
+            T const bz = m_data->m_contacts[i].get_body_j()->get_position()(2);
+
+            unsigned int const idxA = m_data->m_contacts[i].get_body_i()->get_idx();
+            unsigned int const idxB = m_data->m_contacts[i].get_body_j()->get_idx();
+
+            CX.push_back(cx);
+            CY.push_back(cy);
+            CZ.push_back(cz);
+            NX.push_back(nx);
+            NY.push_back(ny);
+            NZ.push_back(nz);
+            D.push_back(d);
+            AX.push_back(ax);
+            AY.push_back(ay);
+            AZ.push_back(az);
+            BX.push_back(bx);
+            BY.push_back(by);
+            BZ.push_back(bz);
+            A.push_back(idxA);
+            B.push_back(idxB);
+        }
+
+        python << "CX_" << frameNumber << " = " << util::python_write_vector(CX) << ";" << std::endl;
+        python << "CY_" << frameNumber << " = " << util::python_write_vector(CY) << ";" << std::endl;
+        python << "CZ_" << frameNumber << " = " << util::python_write_vector(CZ) << ";" << std::endl;
+        python << "NX_" << frameNumber << " = " << util::python_write_vector(NX) << ";" << std::endl;
+        python << "NY_" << frameNumber << " = " << util::python_write_vector(NY) << ";" << std::endl;
+        python << "NZ_" << frameNumber << " = " << util::python_write_vector(NZ) << ";" << std::endl;
+        python << "D_" << frameNumber << " = " << util::python_write_vector(D) << ";" << std::endl;
+        python << "AX_" << frameNumber << " = " << util::python_write_vector(AX) << ";" << std::endl;
+        python << "AY_" << frameNumber << " = " << util::python_write_vector(AY) << ";" << std::endl;
+        python << "AZ_" << frameNumber << " = " << util::python_write_vector(AZ) << ";" << std::endl;
+        python << "BX_" << frameNumber << " = " << util::python_write_vector(BX) << ";" << std::endl;
+        python << "BY_" << frameNumber << " = " << util::python_write_vector(BY) << ";" << std::endl;
+        python << "BZ_" << frameNumber << " = " << util::python_write_vector(BZ) << ";" << std::endl;
+        python << "A_" << frameNumber << " = " << util::python_write_vector(A) << ";" << std::endl;
+        python << "B_" << frameNumber << " = " << util::python_write_vector(B) << ";" << std::endl;
+
+
+
+
+        python.flush();
+        python.close();
+
+
+
+        logging << "ProxEngine::write_contacts(): Done writing rigidbody data..." << newline;
+
+        return true;
+
+    }
 
   bool ProxEngine::write_contact_data(std::string const & filename, unsigned int const & frame_number)
   {

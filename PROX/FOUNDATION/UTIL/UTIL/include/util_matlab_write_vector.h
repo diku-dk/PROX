@@ -8,6 +8,7 @@
 namespace util
 {
 
+
   /**
    * This version fo the write_vector is usefull for writing indices into
    * matlab scripts. Problem is that in C++ one often use zero-based indexing
@@ -63,12 +64,12 @@ namespace util
       output << values[i] << " ";
     }
     output << "];";
-    
+
     output.flush();
-    
+
     return output.str();
   }
-  
+
 }// namespace util
 
 // UTIL_MATLAB_WRITE_VECTOR_H

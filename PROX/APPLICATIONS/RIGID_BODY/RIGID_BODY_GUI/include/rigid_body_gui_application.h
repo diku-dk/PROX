@@ -98,6 +98,7 @@ namespace rigid_body
       bool                                  m_xml_record;
       bool                                  m_xml_auto_save;
       bool                                  m_did_auto_save;
+      bool                                  m_capture_first_frame;
 
       std::string                           m_framegrab_file;
       std::string                           m_matlab_file;
@@ -174,9 +175,10 @@ namespace rigid_body
         m_shader_path              = "";
         m_working_directory                 = "";
         m_output_path              = "";
-        
+
         m_time                     = VT::zero();
         m_time_step                = VT::numeric_cast(0.01f);
+        m_capture_first_frame      = false;
         m_draw_debug               = false;
         m_draw_contacts            = false;
         m_draw_wireframe           = false;
@@ -440,6 +442,7 @@ namespace rigid_body
         size_t total_tetrahedrons = 0u;
         size_t total_bodies       = 0u;
 
+
         for(; total_bodies < m_engine.get_number_of_rigid_bodies(); ++total_bodies)
         {
           size_t const geom_id = m_engine.get_rigid_body_collision_geometry(total_bodies);
@@ -560,6 +563,23 @@ namespace rigid_body
       {
       }
 
+        void saveRigidBodyData()
+        {
+            std::stringstream filename;
+
+            // compute output width for filename
+            static int width = std::ceil( std::log10( std::ceil( m_total_time / m_time_step ) ) ) + 1;
+
+            filename << m_output_path << "sceneCollection/"
+                     << m_framegrab_file
+                     << "rigidBodiesData_"
+                     << std::setw(width)
+                     << std::setfill('0')
+                     << frame_counter()
+                     << ".py";
+            m_engine.writeRigidBodiesData(filename.str(), frame_counter());
+        }
+
       void save_contact_data()
       {
         std::stringstream filename;
@@ -576,6 +596,26 @@ namespace rigid_body
         << ".m";
 
         m_engine.write_contact_data(filename.str(), frame_counter());
+        //Update frame counter.
+        ++frame_counter();
+      }
+
+      void save_contact_data_fixed(uint32_t frameCounter)
+      {
+          std::stringstream filename;
+
+          // compute output width for filename
+          static int width = std::ceil( std::log10( std::ceil( m_total_time / m_time_step ) ) ) + 1;
+
+          filename << m_output_path
+                   << m_framegrab_file
+                   << "contact_data_"
+                   << std::setw(width)
+                   << std::setfill('0')
+                   << frameCounter
+                   << ".m";
+
+          m_engine.write_contact_data(filename.str(), frameCounter);
       }
 
     public:
@@ -765,7 +805,11 @@ namespace rigid_body
           case 'L': load_xml_file(); break;
           case 'S': save_xml_file(); break;
           case 'V': save_contact_data(); break;
-
+          case 'G':
+              m_capture_first_frame = true;
+              //Save xml file...
+              save_xml_file();
+              break;
           case '+': run(); break;
 
           case 'O':
@@ -798,6 +842,7 @@ namespace rigid_body
        */
       bool run()
       {
+          std::cerr << "ITERATION!!!\n";
         if (m_time >= m_total_time)
         {
           if(! m_did_auto_save)
@@ -837,9 +882,16 @@ namespace rigid_body
           framegrab();
         }
 
-        if (m_save_contact_data)
+        if (m_save_contact_data || true)
         {
-          save_contact_data();
+
+            save_contact_data();
+//            std::cerr << m_engine.get_geometry_name(0   );
+        }
+
+        if (m_capture_first_frame)
+        {
+            saveRigidBodyData();
         }
 
         if(m_xml_play)
@@ -868,16 +920,16 @@ namespace rigid_body
               }
             }
             ++m_key_idx;
-            
+
             m_time = m_time + m_time_step;
           }
         }
         else
         {
           m_engine.simulate(m_time_step);
-          
+
           m_time = m_time + m_time_step;
-          
+
           if (m_xml_record)
           {
             // record xml motion channel data
@@ -893,7 +945,7 @@ namespace rigid_body
                 m_engine.get_rigid_body_position( body_idx, x, y, z);
                 m_channel_storage.set_key_position( channel_idx, key_idx, x, y, z);
               }
-              
+
               {
                 float qs = 0.0f;
                 float qx = 0.0f;
@@ -903,44 +955,44 @@ namespace rigid_body
                 m_channel_storage.set_key_orientation( channel_idx, key_idx, qs, qx, qy, qz);
               }
             }
-            
-            
+
+
           }
-          
+
         }
-        
+
         update_scene(m_scene_manager, &m_engine);
         return true;
       }
-      
+
       void mouse_down(double cur_x,double cur_y,bool shift,bool ctrl,bool alt,bool left,bool middle,bool right)
       {
         if (middle || (alt && left))  // 2008-08-13 micky: not all mice have a "normal" middle button!
           m_dolly_mode = true;
-        
+
         if ( shift && left )
           m_pan_mode = true;
-        
+
         if(!middle && !right && !ctrl && !alt && !shift && left)// only left button allowed
         {
           m_camera.mouse_down( cur_x, cur_y );
           m_trackball_mode = true;
         }
-        
+
         m_begin_x = cur_x;
         m_begin_y = cur_y;
-        
+
         if(ctrl)
         {
           V p;
           V r;
           get_ray(cur_x, cur_y,p,r);
-          
+
           m_select_tool.select( p, r, &m_engine );
           m_selection_mode = true;
         }
       }
-      
+
       void mouse_up(double cur_x,double cur_y,bool shift,bool ctrl,bool alt,bool left,bool middle,bool right)
       {
         if (m_dolly_mode )
@@ -961,17 +1013,17 @@ namespace rigid_body
           m_camera.mouse_up( cur_x, cur_y );
           m_trackball_mode = false;
         }
-        
+
         if(ctrl)
         {
           m_select_tool.deselect();
           m_selection_mode = false;
         }
-        
+
         m_begin_x = cur_x;
         m_begin_y = cur_y;
       }
-      
+
       void mouse_move(double cur_x,double cur_y)
       {
         if (m_dolly_mode )
@@ -989,41 +1041,41 @@ namespace rigid_body
         {
           m_camera.mouse_move( cur_x, cur_y);
         }
-        
+
         m_begin_x = cur_x;
         m_begin_y = cur_y;
-        
+
         if(m_selection_mode)
         {
           V p;
           V r;
           get_ray(cur_x, cur_y, p,r);
-          
+
           V const dof = V::make( m_camera.dof().x, m_camera.dof().y, m_camera.dof().z );
-          
+
           m_select_tool.move_selection(p, r, dof, &m_engine);
-          
+
           // 2014-10-7 Kenny code review: This is expensive to update all objects
           // when only one object has been manipulated
           update_scene(m_scene_manager, &m_engine);
         }
       }
-      
+
     };
-    
+
     class Instance
     {
     public:
-      
+
       static Application & app()
       {
         static Application my_instance;
-        
+
         return my_instance;
       }
-      
+
     };
-    
+
   }// namespace gui
 }// namespace rigid_body
 
