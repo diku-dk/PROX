@@ -97,6 +97,7 @@ namespace rigid_body
       bool                                  m_framegrab;
       bool                                  m_save_contact_data;
       bool                                  m_profiling;
+      bool                                  m_profilingPy;
       bool                                  m_xml_load;
       bool                                  m_xml_play;
       bool                                  m_xml_record;
@@ -194,6 +195,7 @@ namespace rigid_body
         m_xml_record               = false;
         m_did_auto_save            = false;
         m_profiling                = false;
+        m_profilingPy              = false;
         m_framegrab_file           = "screen_";
         m_matlab_file              = "profiling.m";
         m_xml_load_channel_file    = "in_channels.xml";
@@ -426,6 +428,7 @@ namespace rigid_body
         m_total_time             = util::to_value<float>( m_config_file.get_value("total_time",        "3.0"     ));
         m_time_step              = util::to_value<float>( m_config_file.get_value("time_step",         "0.01"    ));
         m_profiling              = util::to_value<bool>(  m_config_file.get_value("profiling",         "false"   ));
+        m_profilingPy            = false;
 
         m_engine.set_parameters_from_config_file( cfg_file );
 
@@ -979,6 +982,9 @@ namespace rigid_body
               //save_xml_file();
               prepareRigidBodyScripts();
               break;
+          case 'H':
+                m_profiling = true;
+                logging << "Profiling ON.";
           case '+': run(); break;
 
           case 'O':
@@ -1022,7 +1028,8 @@ namespace rigid_body
             }
             if(m_profiling)
             {
-              m_engine.write_profiling( m_output_path + m_matlab_file );
+                m_engine.write_profiling( m_output_path + m_matlab_file );
+                m_engine.write_profiling_python(m_output_path + m_framegrab_file + "profiling.py");
             }
 
             m_did_auto_save = true;
@@ -1051,7 +1058,7 @@ namespace rigid_body
           framegrab();
         }
 
-        if (m_save_contact_data || true)
+        if (m_save_contact_data)
         {
 
             save_contact_data();

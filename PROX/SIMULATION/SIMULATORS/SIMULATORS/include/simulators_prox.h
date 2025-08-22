@@ -767,6 +767,7 @@ namespace simulators
   public:
 
     bool write_profiling(std::string const & filename);
+    bool write_profiling_python(std::string const & filename);
     bool write_profilingMatlab(std::string const & filename);
     bool write_contact_data(std::string const & filename, unsigned int const & frame_number);
     bool writeRigidBodiesData(std::string const & filename, unsigned int const & frameNumber);

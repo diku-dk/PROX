@@ -3,6 +3,7 @@
 
 #include <util_profiling.h>
 #include <util_matlab_write_profiling.h>
+#include <util_python_write_profiling.h>
 #include <util_python_write_matrix.h>
 #include <util_log.h>
 
@@ -163,6 +164,224 @@ namespace simulators
     logging << "ProxEngine::write_profiling(): Done writing profile data..." << newline;
 
     return true;
+  }
+
+  bool ProxEngine::write_profiling_python(std::string const & filename)
+  {
+      util::Log        logging;
+
+      std::string const newline = util::Log::newline();
+
+      std::ofstream python;
+
+      python.open(filename.c_str(),std::ios::out);
+
+      if(! python.is_open())
+      {
+          logging << "ProxEngine::write_profiling(): error could not open file = " << filename.c_str() << util::Log::newline();
+
+          return false;
+      }
+
+      python << std::endl;
+      python << std::endl;
+      python << util::python_write_profiling()  << std::endl;
+      python << std::endl;
+      python << std::endl;
+
+      python << "import numpy as np" << "\n";
+      python << "import matplotlib.pyplot as plt" << "\n";
+      python << "import matplotlib as mpl" << "\n";
+      python << "mpl.rcParams['lines.linewidth'] = 0.75" << "\n";
+      python << "mpl.rcParams['lines.markersize'] = 6" << "\n";
+      python << "\n";
+      python << "f_type = 'Times';" << "\n";
+      python << "f_size = 20;" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "import numpy as np" << "\n";
+      python << "import matplotlib.pyplot as plt" << "\n";
+      python << "import warnings" << "\n";
+      python << "\n";
+      python << "def toNp(x):" << "\n";
+      python << "    return np.asarray(x, dtype=float)" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "Ekin = toNp(Ekin)" << "\n";
+      python << "Epot = toNp(Epot)" << "\n";
+      python << "Emech = Epot + Ekin" << "\n";
+      python << "frames = np.arange(1, Ekin.size + 1)" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(100)" << "\n";
+      python << "e1, = plt.plot(frames, Ekin, 'r-', label='Kinetic')" << "\n";
+      python << "e2, = plt.plot(frames, Epot, 'g-', label='Potential')" << "\n";
+      python << "e3, = plt.plot(frames, Emech, 'b-', label='Mechanical')" << "\n";
+      python << "plt.title('Kinetic and potential energy of total system', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.legend(handles=[e1, e2, e3], fontsize=f_size)" << "\n";
+      python << "plt.ylabel('Energy (Joules)', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Frame', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, linestyle=':', linewidth=0.5)" << "\n";
+      python << "plt.tight_layout()" << "\n";
+      python << "plt.savefig('energy_py.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('energy_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(200)" << "\n";
+      python << "avg_pen = toNp(average_penetration)" << "\n";
+      python << "plt.plot(np.abs(avg_pen) * 100)" << "\n";
+      python << "plt.title('Penetrations', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Frame', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.ylabel('Penetration depth (cm)', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, linestyle=':', linewidth=0.5)" << "\n";
+      python << "plt.tight_layout()" << "\n";
+      python << "plt.savefig('penetration_py.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('penetration_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(300)" << "\n";
+      python << "plt.plot(toNp(contacts))" << "\n";
+      python << "plt.title('Contacts', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Frame', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.ylabel('Number of contacts', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, linestyle=':', linewidth=0.5)" << "\n";
+      python << "\n";
+      python << "plt.tight_layout()" << "\n";
+      python << "plt.savefig('contacts_py.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('contacts_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(400)" << "\n";
+      python << "contactsNp = toNp(contacts)" << "\n";
+      python << "solverNp = toNp(solver)" << "\n";
+      python << "\n";
+      python << "mask = contactsNp > 0" << "\n";
+      python << "xVals = contactsNp[mask]" << "\n";
+      python << "\n";
+      python << "if solverNp.size == xVals.size:" << "\n";
+      python << "    yVals = solverNp" << "\n";
+      python << "elif solverNp.size == contactsNp.size:" << "\n";
+      python << "    yVals = solverNp[mask]" << "\n";
+      python << "else:" << "\n";
+      python << "    minLen = min(solverNp.size, xVals.size)" << "\n";
+      python << "    xVals = xVals[:minLen]" << "\n";
+      python << "    yVals = solverNp[:minLen]" << "\n";
+      python << "\n";
+      python << "plt.plot(xVals, yVals, '.', markersize=6)" << "\n";
+      python << "plt.title('Time used by solver vs number of contacts', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Number of contacts', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.ylabel('Solver (ms)', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, linestyle=':', linewidth=0.5)" << "\n";
+      python << "plt.tight_layout()" << "\n";
+      python << "\n";
+      python << "plt.savefig('solver_time_vs_contacts_py.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('solver_time_vs_contacts_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(500)" << "\n";
+      python << "if solverNp.size == frames.size:" << "\n";
+      python << "    xVal = frames[mask]" << "\n";
+      python << "    yVal = solverNp[mask]" << "\n";
+      python << "elif solverNp.size == mask.sum():" << "\n";
+      python << "    xVal = frames[mask]" << "\n";
+      python << "    yVal = solverNp" << "\n";
+      python << "else:" << "\n";
+      python << "    minLen = min(frames[mask].size, solverNp.size)" << "\n";
+      python << "    print(f'warning: solver length ({solverNp.size}) not matching frames(mask) length ({frames[mask].size}). Truncating to {minLen}.')" << "\n";
+      python << "    xVal = frames[mask][:minLen]" << "\n";
+      python << "    yVal = solverNp[:minLen]" << "\n";
+      python << "\n";
+      python << "plt.plot(xVal, yVal)" << "\n";
+      python << "plt.title('Time used by solver per frame', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Frame', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.ylabel('Solver (ms)', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, linestyle=':', linewidth=0.5)" << "\n";
+      python << "plt.tight_layout()" << "\n";
+      python << "plt.savefig('solver_time_per_frame_py.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('solver_time_per_frame_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(600)" << "\n";
+      python << "for i, ylist in enumerate(convergence, start=1):" << "\n";
+      python << "    y = np.asarray(ylist, dtype=float)" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "    bad = ~np.isfinite(y) | (y <= 0)" << "\n";
+      python << "    if np.any(bad):" << "\n";
+      python << "        yClean = y.copy()" << "\n";
+      python << "        yClean[bad] = np.nan" << "\n";
+      python << "    else:" << "\n";
+      python << "        yClean = y" << "\n";
+      python << "\n";
+      python << "    if yClean.size == 0:" << "\n";
+      python << "        continue" << "\n";
+      python << "\n";
+      python << "    x = np.arange(0, yClean.size + 0)" << "\n";
+      python << "    plt.semilogy(x, yClean, alpha=0.8)" << "\n";
+      python << "\n";
+      python << "plt.title('Convergence', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Solver iteration', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.ylabel('Natural merit function', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, which='both', linestyle=':', linewidth=0.5)" << "\n";
+      python << "\n";
+      python << "plt.savefig('convergence_py.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('convergence_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "\n";
+      python << "plt.show()" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "plt.figure(700)" << "\n";
+      python << "for i, arr in enumerate(rfactor, start=1):" << "\n";
+      python << "    y = toNp(arr)" << "\n";
+      python << "    if y.size == 0:" << "\n";
+      python << "        continue" << "\n";
+      python << "    x = np.arange(0, y.size)" << "\n";
+      python << "    plt.plot(x, y, alpha=0.8)" << "\n";
+      python << "\n";
+      python << "plt.title('R-factor development', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Solver iteration', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, linestyle=':', linewidth=0.5)" << "\n";
+      python << "plt.tight_layout()" << "\n";
+      python << "plt.savefig('rfactors_py.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "plt.show()" << "\n";
+      python << "\n";
+      python << "maxLen = max((len(c) for c in convergence), default=0)" << "\n";
+      python << "if maxLen == 0:" << "\n";
+      python << "    raise ValueError('all convergence entries are empty')" << "\n";
+      python << "\n";
+      python << "data = np.full((len(convergence), maxLen), np.nan, dtype=float)" << "\n";
+      python << "for i, ylist in enumerate(convergence):" << "\n";
+      python << "    y = np.asarray(ylist, dtype=float)" << "\n";
+      python << "    if y.size == 0:" << "\n";
+      python << "        continue" << "\n";
+      python << "    data[i, :y.size] = y" << "\n";
+      python << "    bad = ~np.isfinite(data[i, :y.size]) | (data[i, :y.size] <= 0)" << "\n";
+      python << "    if np.any(bad):" << "\n";
+      python << "        data[i, :y.size][bad] = np.nan" << "\n";
+      python << "\n";
+      python << "\n";
+      python << "avgCurve = np.nanmean(data, axis=0)" << "\n";
+      python << "\n";
+      python << "x = np.arange(0, avgCurve.size)" << "\n";
+      python << "plt.figure(800)" << "\n";
+      python << "plt.semilogy(x, avgCurve, linewidth=0.75)" << "\n";
+      python << "plt.title('Average Convergence', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.xlabel('Solver iteration', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.ylabel('Natural merit function', fontsize=f_size, fontname=f_type)" << "\n";
+      python << "plt.grid(True, which='both', linestyle=':', linewidth=0.5)" << "\n";
+      python << "\n";
+      python << "plt.savefig('convergence_avg.eps', format='eps', bbox_inches='tight')" << "\n";
+      python << "plt.savefig('convergence_avg.png', dpi=300, bbox_inches='tight')" << "\n";
+      python << "plt.show()" << "\n";
+      python.flush();
+      python.close();
+
+      logging << "ProxEngine::write_profiling_python(): Done writing profile data..." << newline;
+
+      return true;
   }
 
 
