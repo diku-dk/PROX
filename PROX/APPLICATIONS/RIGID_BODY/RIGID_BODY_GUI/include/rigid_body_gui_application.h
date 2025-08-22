@@ -23,6 +23,9 @@
 #include <rigid_body_gui_draw_shadowmaps.h>
 #include <rigid_body_gui_draw_ssao.h>
 
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+
 #include <tiny.h>
 #include <simulators.h>
 #include <procedural.h>
@@ -33,6 +36,7 @@
 #include <util_log.h>
 #include <util_timestamp.h>
 
+#include <cstdlib>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
@@ -559,18 +563,176 @@ namespace rigid_body
         init_ssao_buffer( m_ssao_buffer );
       }
 
+
       void resize(int const & width, int const & height)
       {
       }
 
+      void copyFile(std::string copyFromString, std::string copyToString)
+      {
+          std::ifstream in(copyFromString, std::ios::binary);
+          std::ofstream out(copyToString, std::ios::binary);
+
+          out << in.rdbuf();
+      }
+
+    std::vector<std::string> getFilesInDirectory(const std::string& folderPath)
+    {
+        std::vector<std::string> file_list;
+        boost::filesystem::path dirPath(folderPath);
+
+        //Check if the directory exists and is a directory
+        if (boost::filesystem::exists(dirPath) && boost::filesystem::is_directory(dirPath))
+        {
+            //Iterate over all entries in the directory
+            for (const boost::filesystem::directory_entry& entry : boost::filesystem::directory_iterator(dirPath))
+            {
+                if (boost::filesystem::is_regular_file(entry.status()))
+                {
+                    file_list.push_back(entry.path().filename().string());
+                }
+            }
+        }
+        else
+        {
+            std::cerr << "The provided path is not a valid directory or does not exist." << std::endl;
+        }
+
+        return file_list;
+    }
+
+    void prepareRigidBodyScripts()
+    {
+        util::Log logging;
+
+
+
+        //CREATE ALL RELEVANT FOLDERS
+        std::stringstream filename;
+        filename << m_output_path << m_framegrab_file << "scene/";
+        boost::filesystem::path rigiddumper(filename.str());
+        if(!boost::filesystem::create_directories(rigiddumper))
+        {
+            logging << "ProxEngine::prepareRigidBodyScripts(): Could not create directories for file '"
+                    << filename.str()
+                    << "'"
+                    << util::Log::newline();
+        }
+
+
+        boost::filesystem::path rigiddumperasset(filename.str() + "assets/");
+        if(!boost::filesystem::create_directories(rigiddumperasset))
+        {
+            logging << "ProxEngine::prepareRigidBodyScripts(): Could not create directories for file '"
+                    << filename.str()
+                    << "'"
+                    << util::Log::newline();
+        }
+
+        boost::filesystem::path rigiddumpertextures(filename.str() + "textures/");
+        if(!boost::filesystem::create_directories(rigiddumpertextures))
+        {
+            logging << "ProxEngine::prepareRigidBodyScripts(): Could not create directories for file '"
+                    << filename.str()
+                    << "'"
+                    << util::Log::newline();
+        }
+
+
+        boost::filesystem::path workingDir(m_output_path);
+
+        std::string rootDir = workingDir.parent_path().parent_path().parent_path().c_str();
+        //COPY OUR RELEVANT FILES
+        std::stringstream copyFrom;
+        //Very ugly TODO CHANGE
+        copyFrom << (rootDir + "/TOOLS/PROX2BLENDER/");
+        std::string copyFromString = copyFrom.str();
+        std::stringstream copyTo;
+        copyTo << m_output_path << m_framegrab_file << "scene/";
+        std::string copyToString = copyTo.str();
+        copyFile(copyFromString + "build_usd_animation.py", copyToString + "build_usd_animation.py");
+        copyFile(copyFromString + "convertOBJSToUSD.py", copyToString + "convertOBJSToUSD.py");
+        copyFile(copyFromString + "convertXMLToMeshes.py", copyToString + "convertXMLToMeshes.py");
+
+
+        logging << "Copied build_usd_animation.py to"
+                << (copyToString)
+                << " from " << copyFromString
+                << util::Log::newline();
+        logging << "Copied convertOBJSToUSD.py to"
+                << (copyToString)
+                << " from " << copyFromString
+                << util::Log::newline();
+        logging << "Copied convertXMLToMeshes.py to"
+                << (copyToString)
+                << " from " << copyFromString
+                << util::Log::newline();
+
+        std::string assetCopyFrom = copyFromString + "assets/";
+        std::string texturesCopyFrom = copyFromString + "textures/";
+        //Copy all assets over
+        std::vector<std::string> allFilesAssets = getFilesInDirectory(assetCopyFrom);
+        std::vector<std::string> allFilesTextures = getFilesInDirectory(texturesCopyFrom);
+        for (uint32_t i = 0; i < allFilesAssets.size(); ++i)
+        {
+            copyFile(assetCopyFrom + allFilesAssets[i], (rigiddumperasset.string() + allFilesAssets[i]));
+        }
+        for (uint32_t i = 0; i < allFilesTextures.size(); ++i)
+        {
+            copyFile(texturesCopyFrom + allFilesTextures[i], (rigiddumpertextures.string() + allFilesTextures[i]));
+        }
+
+
+        //COPY XMLOUTPUT
+        std::stringstream xmloutputpath;
+        xmloutputpath << m_output_path << m_framegrab_file << "scene/";
+        std::string xmloutputpathStr = xmloutputpath.str();
+        content::xml_write(xmloutputpathStr + m_xml_save_scene_file, &m_engine);
+        content::xml_write(xmloutputpathStr  + m_xml_save_channel_file, m_channel_storage);
+
+        logging << "Saved XML data to "
+                << (xmloutputpathStr  + m_xml_save_scene_file)
+                << " and " << (xmloutputpathStr  + m_xml_save_channel_file)
+                << util::Log::newline();
+
+        std::ofstream python;
+
+        //Very hardcoded, but for me only
+        python.open(filename.str() + "buildUSDScene.sh",std::ios::out);
+        python << "/home/rasmus/PYTHONENV/myenv/bin/python3 convertXMLToMeshes.py " << m_xml_save_scene_file << " out && \\";
+        python << "../../../../../rasmus/Downloads/blender-4.5.2-linux-x64/blender --background --python convertOBJSToUSD.py && \\";
+        python << "/home/rasmus/PYTHONENV/myenv/bin/python3 build_usd_animation.py " << m_framegrab_file << "\"rigidBodiesData_*.py\"";
+
+        python.flush();
+        python.close();
+
+
+        std::string command = "chmod +x " + filename.str() + "buildUSDScene.sh";
+        int result = system(command.c_str());  // Executes chmod
+
+        if (result == 0)
+        {
+            std::cout << "Script is now executable." << std::endl;
+        }
+        else
+        {
+            std::cerr << "Failed to make the script executable." << std::endl;
+        }
+
+
+      }
+
         void saveRigidBodyData()
         {
+
+
+
             std::stringstream filename;
 
             // compute output width for filename
             static int width = std::ceil( std::log10( std::ceil( m_total_time / m_time_step ) ) ) + 1;
 
-            filename << m_output_path << "sceneCollection/"
+            filename << m_output_path << m_framegrab_file << "scene/"
                      << m_framegrab_file
                      << "rigidBodiesData_"
                      << std::setw(width)
@@ -578,6 +740,12 @@ namespace rigid_body
                      << frame_counter()
                      << ".py";
             m_engine.writeRigidBodiesData(filename.str(), frame_counter());
+
+
+
+
+
+            std::cerr << "BREAKPOINT";
         }
 
       void save_contact_data()
@@ -808,7 +976,8 @@ namespace rigid_body
           case 'G':
               m_capture_first_frame = true;
               //Save xml file...
-              save_xml_file();
+              //save_xml_file();
+              prepareRigidBodyScripts();
               break;
           case '+': run(); break;
 
