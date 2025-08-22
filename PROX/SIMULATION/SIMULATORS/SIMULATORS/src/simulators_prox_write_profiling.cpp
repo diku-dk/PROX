@@ -12,6 +12,10 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
+#include <filesystem>
+#include <fstream>
+
+
 #include <string>
 #include <vector>
 #include <fstream>   // needed for std::ofstream
@@ -161,15 +165,19 @@ namespace simulators
     return true;
   }
 
-    bool ProxEngine::writeRigidBodiesData(std::string const & filename, unsigned int const & frameNumber)
+
+    bool ProxEngine::writeRigidBodiesData(std::string const& filename, unsigned int const & frameNumber)
     {
 //        typedef typename ProxData::T  T;
+
+
 
         util::Log        logging;
 
         std::string const newline = util::Log::newline();
 
         std::ofstream python;
+
 
         // create directories if necessary
         boost::filesystem::path contact_data_file(filename);
@@ -197,6 +205,7 @@ namespace simulators
         std::vector<tiny::MathTypes<float>::vector3_type> positions;
         std::vector<tiny::MathTypes<float>::vector3_type> spin;
         std::vector<tiny::MathTypes<float>::vector3_type> velocities;
+        std::vector<std::string> materialNames;
         for (uint32_t i = 0; i < bodies.size(); ++i)
         {
             auto& body = bodies[i];
@@ -207,10 +216,8 @@ namespace simulators
             positions.push_back(body.get_position());
             spin.push_back(body.get_spin());
             velocities.push_back(body.get_velocity());
+            materialNames.push_back("\"" + get_material_name(bodies[i].get_material_idx()) + "\"");
         }
-
-        auto val = inertiabfs[0];
-        std::cerr << val;
 
         python << "rigidNames_" << frameNumber << " = " << util::python_write_vector(objectNames) << ";" << "\n";
         python << "inertiabfs_" << frameNumber << " = " << util::python_write_matrix_vector<3>(inertiabfs) << ";" << "\n";
@@ -219,6 +226,7 @@ namespace simulators
         python << "positions_" << frameNumber << " = " << util::python_write_vector(positions) << ";" << "\n";
         python << "spin_" << frameNumber << " = " << util::python_write_vector(spin) << ";" << "\n";
         python << "velocities_" << frameNumber << " = " << util::python_write_vector(velocities) << ";" << "\n";
+        python << "materials_" << frameNumber << " = " << util::python_write_vector(materialNames) << ";" << "\n";
 
 
 
