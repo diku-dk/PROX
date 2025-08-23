@@ -18,15 +18,14 @@ namespace geometry
   inline V make_intersection(Line<V> const & L, Plane<V> const & P)
   {
     using std::fabs;
-    
+
     typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
-    
+
     V const & o       = L.point();
     V const & d       = L.direction();
     V const & n       = P.normal();
     T const & w       = P.offset();
-    
+
     //
     // A line is given as all points
     //
@@ -45,12 +44,12 @@ namespace geometry
     //     t =  ( w - n*o ) / n*d
     //
     //
-    
+
     T const   n_dot_d = inner_prod( n, d );
 
     assert( is_number(n_dot_d)         || !"make_intersection(): NaN encountered");
     assert( is_finite(n_dot_d)         || !"make_intersection(): Inf encountered");
-    assert(fabs( n_dot_d) > VT::zero() || !"make_intersection(): line was parallel withe plane");
+    assert(fabs( n_dot_d) > V::value_traits::zero() || !"make_intersection(): line was parallel withe plane");
 
 
     T const   n_dot_o = inner_prod( n, o );
@@ -63,7 +62,7 @@ namespace geometry
     assert( is_number(t)               || !"make_intersection(): NaN encountered");
     assert( is_finite(t)               || !"make_intersection(): Inf encountered");
     V const   p       = o + t*d;
-    
+
     assert( is_number(p(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(p(0))               || !"make_intersection(): Inf encountered");
     assert( is_number(p(1))               || !"make_intersection(): NaN encountered");
@@ -73,15 +72,13 @@ namespace geometry
 
     return p;
   }
-  
+
   template<typename V>
   inline Line<V> make_intersection( Plane<V> const & A,  Plane<V> const & B)
   {
-    typedef typename V::value_traits   VT;
-
     V const D = cross( A.normal(), B.normal() );
 
-    assert( inner_prod(D,D) > VT::zero() || !"make_intersection(): error planes are coplanar");
+    assert( inner_prod(D,D) > V::value_traits::zero() || !"make_intersection(): error planes are coplanar");
     assert( is_number(D(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(D(0))               || !"make_intersection(): Inf encountered");
     assert( is_number(D(1))               || !"make_intersection(): NaN encountered");
@@ -123,7 +120,7 @@ namespace geometry
     // Since line (pA, r) is on plane A then the intersection point with B will be a point both on plane A and B.
     //
     Line<V> const L(pA, r);
-    
+
     V const o = make_intersection(L, B);
 
     assert( is_number(o(0))               || !"make_intersection(): NaN encountered");
@@ -142,7 +139,7 @@ namespace geometry
     Line<V> const L = make_intersection(A,B);
     return make_intersection(L,C);
   }
-  
+
 }// namespace geometry
 
 // GEOMETRY_MAKE_INTERSECTION_H

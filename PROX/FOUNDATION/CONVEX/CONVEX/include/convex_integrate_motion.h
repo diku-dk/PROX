@@ -6,7 +6,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Integrate Motion.
    *
@@ -29,27 +29,26 @@ namespace convex
     typedef typename M::real_type        T;
     typedef typename M::vector3_type     V;
     typedef typename M::quaternion_type  Q;
-    typedef typename M::value_traits     VT;
-    
-    assert( tau >= VT::zero() || !"integrate_motion(): Tau must be non-negative");
-    
+
+    assert( tau >= M::value_traits::zero() || !"integrate_motion(): Tau must be non-negative");
+
     T const radian           = tau * tiny::norm( omega );
     V const axis             = tiny::unit( omega );
-    
+
     assert( is_number( radian )  || !"integrate_motion(): NaN encountered");
     assert( is_number( axis(0) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( axis(1) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( axis(2) ) || !"integrate_motion(): NaN encountered");
-    
+
     Q dq;
     V dv;
     dq = Q::Ru( radian, axis);
     dv = v*tau;
-    
+
     assert( is_number( dv(0) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( dv(1) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( dv(2) ) || !"integrate_motion(): NaN encountered");
-    
+
     return C( dv + X.T(), tiny::prod(dq, X.Q()) );
   }
 

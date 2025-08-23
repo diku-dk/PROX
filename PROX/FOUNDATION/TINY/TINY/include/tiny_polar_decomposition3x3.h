@@ -7,7 +7,7 @@
 #include <cmath>
 
 namespace tiny
-{  
+{
       /**
       * Polar Decomposition of matrix A (as described by Etzmuss et. al in ``A Fast Finite Solution for Cloth Modelling'')
       *
@@ -16,12 +16,12 @@ namespace tiny
       * Where R is a special orthogonal matrix (R*R^T = I and det(R)=1)
       *
       *   S^2 = A^T A
-      * 
+      *
       * let d be vector of eigenvalues and let v_0,v_1, and v_2 be corresponding eigenvectors of (A^T A), then
       *
       *   S = sqrt(d_0) v_0 * v_0^T + ... + sqrt(d_2) v_2 * v_2^T
       *
-      * Now compute 
+      * Now compute
       *
       *  R = A * S^-1
       *
@@ -92,11 +92,10 @@ namespace tiny
       template<typename matrix3x3_type>
       inline bool polar_decomposition_newton(matrix3x3_type const & A, matrix3x3_type & R,unsigned int max_iterations, typename matrix3x3_type::real_type const & threshold)
       {
-        typedef typename matrix3x3_type::value_traits  value_traits;
         typedef typename matrix3x3_type::real_type     real_type;
 
         assert(max_iterations>0 || !"polar_decompostion_newton() max_iterations must be positive");
-        assert(threshold>value_traits::zero() || !"polar_decomposition_newton(): theshold must be positive");
+        assert(threshold>(matrix3x3_type::value_traits::zero()) || !"polar_decomposition_newton(): theshold must be positive");
 
         matrix3x3_type Q[2];
         int cur = 0, next = 1;
@@ -106,7 +105,7 @@ namespace tiny
 
         for(unsigned int iteration=0;iteration< max_iterations;++iteration)
         {
-          Q[next] = (   Q[cur] + trans(inverse(Q[cur])) )*.5;       
+          Q[next] = (   Q[cur] + trans(inverse(Q[cur])) )*.5;
           real_type test = max_value ( Q[next] - Q[cur] );
           if( test < threshold )
           {

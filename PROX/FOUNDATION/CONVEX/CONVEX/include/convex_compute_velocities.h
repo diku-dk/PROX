@@ -6,7 +6,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Compute Velocities.
    * This function tries to convert two poses from the motion of an object into equivalent velocities.
@@ -31,16 +31,15 @@ namespace convex
                           )
   {
     using std::atan2;
-    
+
     typedef typename M::real_type         T;
     typedef typename M::vector3_type      V;
-    typedef typename M::value_traits      VT;
-    
-    assert(  delta_tau > VT::zero() || !"compute_velocities(): time step must be positive");
-    
+
+    assert(  delta_tau > M::value_traits::zero() || !"compute_velocities(): time step must be positive");
+
     // Translation is straightforward
     v = (T_to.T() - T_from.T()) / delta_tau;
-    
+
     T theta;
     V n;
     tiny::get_axis_angle(

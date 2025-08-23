@@ -27,15 +27,15 @@ namespace geometry
   class Plane
   {
   protected:
-    
+
     typedef typename V::real_type    T;
     typedef typename V::value_traits VT;
 
     V  m_normal;
     T  m_offset;
-    
+
   public:
-    
+
     void set_normal(V const & normal)
     {
       this->m_normal = unit(normal);
@@ -55,26 +55,26 @@ namespace geometry
     T const & w() const { return this->m_offset; }
 
   public:
-    
+
     Plane()
     : m_normal( V::k() )
     , m_offset( VT::zero() )
     {}
-    
+
     ~Plane(){}
-    
+
     Plane(V const & normal, T const & offset)
     : m_normal( unit(normal) )
     , m_offset(offset)
     {
       assert(fabs(VT::one() - norm(normal)) < tiny::working_precision<T>() || !"Plane(): Must be unit normal");
     }
-    
+
     Plane(Plane const & plane)
     {
       *this = plane;
     }
-    
+
     Plane& operator=(Plane const & plane)
     {
       if( this != &plane)
@@ -85,9 +85,9 @@ namespace geometry
       return *this;
     }
 
-    
+
   };
-  
+
   template<typename V>
   inline Plane<V> make_plane(V const & normal, typename V::real_type const & offset)
   {
@@ -148,7 +148,7 @@ namespace geometry
 
       return Plane<V>(normal,offset);
     }
-    
+
     return Plane<V>();
   }
 
@@ -173,17 +173,17 @@ namespace geometry
   {
     return inner_prod(P.n(),p) - P.w();
   }
-  
+
   template<typename V>
   inline typename V::real_type get_distance(V const & p, Plane<V>  const & P)
   {
     using std::fabs;
-    
+
     return fabs( get_signed_distance(p,P));
   }
 
 
-  
+
 }// namespace geometry
 
 // GEOMETRY_PLANE_H

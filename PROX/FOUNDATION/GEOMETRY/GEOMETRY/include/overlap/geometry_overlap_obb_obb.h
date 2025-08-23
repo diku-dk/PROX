@@ -29,7 +29,6 @@ namespace geometry
       typedef typename MT::vector3_type    V;
       typedef typename MT::matrix3x3_type  M;
       typedef typename MT::real_type       T;
-      typedef typename MT::value_traits    VT;
 
       M const R_a = tiny::make(A.orientation());
       M const R_b = tiny::make(B.orientation());
@@ -45,9 +44,9 @@ namespace geometry
       V const A1  = R_a.get_column_copy(1);
       V const A2  = R_a.get_column_copy(2);
 
-      assert( fabs( VT::one() - inner_prod(A0,A0) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
-      assert( fabs( VT::one() - inner_prod(A1,A1) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
-      assert( fabs( VT::one() - inner_prod(A2,A2) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(A0,A0) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(A1,A1) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(A2,A2) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( inner_prod(A0,A1) ) < tiny::working_precision<T>()             || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( inner_prod(A0,A2) ) < tiny::working_precision<T>()             || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( inner_prod(A1,A2) ) < tiny::working_precision<T>()             || !"compute_obb_obb_sat_axes(): logic error");
@@ -56,9 +55,9 @@ namespace geometry
       V const B1  = R_b.get_column_copy(1);
       V const B2  = R_b.get_column_copy(2);
 
-      assert( fabs( VT::one() - inner_prod(B0,B0) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
-      assert( fabs( VT::one() - inner_prod(B1,B1) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
-      assert( fabs( VT::one() - inner_prod(B2,B2) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(B0,B0) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(B1,B1) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(B2,B2) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( inner_prod(B0,B1) ) < tiny::working_precision<T>()             || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( inner_prod(B0,B2) ) < tiny::working_precision<T>()             || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( inner_prod(B1,B2) ) < tiny::working_precision<T>()             || !"compute_obb_obb_sat_axes(): logic error");
@@ -114,7 +113,7 @@ namespace geometry
       assert( is_finite( axes[0](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[0](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[0](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[0],axes[0]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[0],axes[0]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[1](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[1](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -122,7 +121,7 @@ namespace geometry
       assert( is_finite( axes[1](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[1](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[1](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[1],axes[1]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[1],axes[1]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[2](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[2](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -130,7 +129,7 @@ namespace geometry
       assert( is_finite( axes[2](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[2](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[2](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[2],axes[2]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[2],axes[2]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[3](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[3](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -138,7 +137,7 @@ namespace geometry
       assert( is_finite( axes[3](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[3](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[3](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[3],axes[3]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[3],axes[3]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[4](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[4](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -146,7 +145,7 @@ namespace geometry
       assert( is_finite( axes[4](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[4](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[4](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[4],axes[4]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[4],axes[4]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[5](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[5](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -154,7 +153,7 @@ namespace geometry
       assert( is_finite( axes[5](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[5](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[5](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[5],axes[5]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[5],axes[5]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[6](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[6](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -162,7 +161,7 @@ namespace geometry
       assert( is_finite( axes[6](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[6](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[6](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[6],axes[6]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[6],axes[6]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[7](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[7](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -170,7 +169,7 @@ namespace geometry
       assert( is_finite( axes[7](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[7](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[7](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[7],axes[7]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[7],axes[7]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[8](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[8](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -178,7 +177,7 @@ namespace geometry
       assert( is_finite( axes[8](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[8](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[8](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[8],axes[8]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[8],axes[8]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[9](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[9](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -186,7 +185,7 @@ namespace geometry
       assert( is_finite( axes[9](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[9](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[9](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[9],axes[9]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[9],axes[9]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[10](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[10](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -194,7 +193,7 @@ namespace geometry
       assert( is_finite( axes[10](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[10](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[10](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[10],axes[10]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[10],axes[10]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[11](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[11](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -202,7 +201,7 @@ namespace geometry
       assert( is_finite( axes[11](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[11](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[11](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[11],axes[11]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[11],axes[11]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[12](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[12](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -210,7 +209,7 @@ namespace geometry
       assert( is_finite( axes[12](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[12](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[12](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[12],axes[12]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[12],axes[12]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[13](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[13](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -218,7 +217,7 @@ namespace geometry
       assert( is_finite( axes[13](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[13](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[13](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[13],axes[13]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[13],axes[13]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
 
       assert( is_number( axes[14](0) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[14](0) ) || !"compute_obb_obb_sat_axes(): inf");
@@ -226,7 +225,7 @@ namespace geometry
       assert( is_finite( axes[14](1) ) || !"compute_obb_obb_sat_axes(): inf");
       assert( is_number( axes[14](2) ) || !"compute_obb_obb_sat_axes(): nan");
       assert( is_finite( axes[14](2) ) || !"compute_obb_obb_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[14],axes[14]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[14],axes[14]) ) < tiny::working_precision<T>() || !"compute_obb_obb_sat_axes(): logic error");
     }
 
   }// end namespace detail
@@ -328,7 +327,7 @@ namespace geometry
       assert( is_number( min_overlap ) || !"overlap_obb_obb(); nan");
       assert( is_finite( min_overlap ) || !"overlap_obb_obb(): inf");
     }
-    
+
     return (min_overlap <= VT::zero());
   }
 
@@ -405,7 +404,7 @@ namespace geometry
       if(b_max < a_min)
         return false;
     }
-    
+
     return true;
   }
 

@@ -1,7 +1,7 @@
 #ifndef UTIL_TIMER_H
 #define UTIL_TIMER_H
 
-#if defined(HAS_CXX11) || defined(HAS_CXX0X)
+#if defined(HAS_CXX17) || defined(HAS_CXX0X)
 #define USE_CHRONO
 #endif
 
@@ -14,7 +14,7 @@
 #include <cassert>
 #include <sstream>   // needed for std::stringstream
 
-namespace util 
+namespace util
 {
 
 #ifdef USE_CHRONO
@@ -107,4 +107,4 @@ namespace util
 }  // end of namespace util
 
 // UTIL_TIMER_H
-#endif 
+#endif

@@ -10,7 +10,7 @@ BOOST_AUTO_TEST_SUITE(util);
 
 BOOST_AUTO_TEST_CASE(timer_test)
 {
-  
+
   util::Timer timer;
   timer.start();
 
@@ -21,10 +21,10 @@ BOOST_AUTO_TEST_CASE(timer_test)
     for(size_t i=0u;i< 1000000u;++i)
       fake *= 2.0f;
   }
-  
+
   timer.stop();
 
-  BOOST_CHECK( timer() > 0.0f );  
+  BOOST_CHECK( timer() > 0.0f );
 }
 
 BOOST_AUTO_TEST_SUITE_END();

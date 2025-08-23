@@ -32,7 +32,6 @@ namespace geometry
       typedef typename MT::vector3_type    V;
       typedef typename MT::matrix3x3_type  M;
       typedef typename MT::real_type       T;
-      typedef typename MT::value_traits    VT;
 
       M const R = tiny::make(obb.orientation());
 
@@ -41,9 +40,9 @@ namespace geometry
       V const A2  = R.get_column_copy(2);
       V const B   = capsule.point1()- capsule.point0();
 
-      assert( fabs( VT::one() - inner_prod(A0,A0) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( VT::one() - inner_prod(A1,A1) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( VT::one() - inner_prod(A2,A2) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(A0,A0) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(A1,A1) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(A2,A2) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
       assert( fabs( inner_prod(A0,A1) ) < tiny::working_precision<T>()             || !"compute_obb_capsule_sat_axes(): logic error");
       assert( fabs( inner_prod(A0,A2) ) < tiny::working_precision<T>()             || !"compute_obb_capsule_sat_axes(): logic error");
       assert( fabs( inner_prod(A1,A2) ) < tiny::working_precision<T>()             || !"compute_obb_capsule_sat_axes(): logic error");
@@ -74,7 +73,7 @@ namespace geometry
       assert( is_finite( axes[0](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[0](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[0](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[0],axes[0]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[0],axes[0]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[1](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[1](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -82,7 +81,7 @@ namespace geometry
       assert( is_finite( axes[1](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[1](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[1](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[1],axes[1]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[1],axes[1]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[2](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[2](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -90,7 +89,7 @@ namespace geometry
       assert( is_finite( axes[2](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[2](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[2](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[2],axes[2]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[2],axes[2]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[3](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[3](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -98,7 +97,7 @@ namespace geometry
       assert( is_finite( axes[3](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[3](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[3](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[3],axes[3]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[3],axes[3]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[4](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[4](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -106,7 +105,7 @@ namespace geometry
       assert( is_finite( axes[4](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[4](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[4](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[4],axes[4]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[4],axes[4]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[5](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[5](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -114,7 +113,7 @@ namespace geometry
       assert( is_finite( axes[5](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[5](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[5](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[5],axes[5]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[5],axes[5]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[6](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[6](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -122,9 +121,9 @@ namespace geometry
       assert( is_finite( axes[6](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[6](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[6](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( VT::one() - inner_prod(axes[6],axes[6]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( MT::value_traits::one() - inner_prod(axes[6],axes[6]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
     }
-    
+
   }// end namespace detail
 
   /**
@@ -223,7 +222,7 @@ namespace geometry
       assert( is_number( min_overlap ) || !"overlap_obb_capsule(); nan");
       assert( is_finite( min_overlap ) || !"overlap_obb_capsule(): inf");
     }
-    
+
     return (min_overlap <= VT::zero());
   }
 

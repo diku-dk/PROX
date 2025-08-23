@@ -213,15 +213,15 @@ namespace geometry
 
           if(distance <= VT::zero() )
             continue;
-          
-            V const n = tiny::unit(n_a);  // (p_b - p_a) / distance;
+
+          V const n = tiny::unit(n_a);  // (p_b - p_a) / distance;
           V const p = (p_a + p_b)*VT::half();
           T const depth = too_far_away - distance;
-          
+
           callback( p, n, depth);
-          
+
           ++count;
-          
+
           vertex_B_is_used[i] = true;
         }
       }
@@ -299,10 +299,10 @@ namespace geometry
           continue;
 
         V  ndir = tiny::unit( tiny::cross( aj-ai, bj-ai ) );
-        
+
         if( tiny::inner_prod(p_a, ndir) > tiny::inner_prod(p_b, ndir) )
           ndir = -ndir;
-        
+
         V const n = ndir; // (p_b - p_a) / distance;
         V const p = (p_a + p_b)*VT::half();
         T const depth = too_far_away - distance;

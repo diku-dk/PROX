@@ -18,9 +18,8 @@ namespace geometry
   template<typename T, size_t K,typename V>
   inline bool outside_dop( V const & p, DOP<T,K> const & dop, T const & threshold )
   {
-    typedef tiny::ValueTraits<T> VT;
 
-    assert(threshold >= VT::zero()  || !"outside_dop(): threshold must be non-negative");
+    assert(threshold >= tiny::ValueTraits<T>::zero()  || !"outside_dop(): threshold must be non-negative");
 
     size_t              const N = K/2;
     DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();

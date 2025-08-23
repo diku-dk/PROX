@@ -26,19 +26,18 @@ namespace convex
                                                                      , V const & B
                                                                      )
   {
-    typedef typename V::value_traits   VT;
     typedef typename V::real_type      T;
-    
+
     V const m = (A-B);
-    
-    assert( tiny::inner_prod( m, m ) > VT::zero() || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
-    
+
+    assert( tiny::inner_prod( m, m ) > V::value_traits::zero() || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
+
     V const n = tiny::unit( m );
-    
+
     T sign_p = tiny::inner_prod( n, (p-A) );
-    
+
     assert( is_number( sign_p ) || !"signed_distance_to_vertex_edge_voronoi_plane(): Not a Number encountered");
-    
+
     return sign_p;
   }
 

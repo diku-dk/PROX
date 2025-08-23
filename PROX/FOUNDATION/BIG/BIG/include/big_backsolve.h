@@ -29,14 +29,14 @@ namespace big
                          )
   {
     using std::fabs;
-    
+
     typedef typename vector_type::value_type value_type;
-    
+
     assert(m>0            || !"backsolve: m too small");
     assert(b.size() >= m  || !"backsolve: b too small");
     assert(A.size1() >= m || !"backsolve: A too small");
     assert(A.size2() >= m || !"backsolve: A too small");
-    
+
     // Try to solve
     //
     //  |x_1|       | A_11      ...    A_1m | | b_1 |
@@ -63,9 +63,9 @@ namespace big
     //
     x.resize(b.size(), false);
     x = b;
-    
+
     int k = ::boost::numeric_cast<int>(m);
-    
+
     for ( int i = k - 1; i >= 0; --i)
     {
       assert( fabs(A( i, i ))> big::working_precision<value_type>()  || !"backsolve(): A is near singular");
@@ -75,7 +75,7 @@ namespace big
         x [ j ] -= A ( j, i ) * x [ i ];
     }
   }
-  
+
 } // end of namespace big
 
 // BIG_BACKSOLVE_H

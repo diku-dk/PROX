@@ -8,10 +8,10 @@
 
 namespace tiny
 {
-  
+
   namespace detail
   {
-    
+
     /**
      * Modular Exponentiation.
      * Computes a raised to the power of b modular n
@@ -28,7 +28,7 @@ namespace tiny
       }
       return d;
     }
-        
+
     /**
      * Used exclusively by the Miller-Rabin algorithm. It
      * is essential the same as modular exponentiation a
@@ -44,7 +44,9 @@ namespace tiny
       {
         int c=0;
         while((k&0x80000000)==0)
+        {
           k<<=1;c++;
+        }
         while(c<32)
         {
           int x =d;
@@ -52,7 +54,9 @@ namespace tiny
           if((d==1)&&(x!=1)&&(x!=ndec))
             return true;//--- Notrival square root of 1 was discovered.
           if((k&0x80000000)!=0)
+          {
             d=(d*a)%n;
+          }
           k<<=1;c++;
         }
       }
@@ -60,10 +64,10 @@ namespace tiny
         return true;
       return false;
     }
-    
+
   }//namespace detail
-  
-  
+
+
   /**
    * Prime Test.
    * This method tests if the specified integer is a prime.
@@ -82,7 +86,7 @@ namespace tiny
   {
     using std::sqrt;
     using std::floor;
-    
+
     double sqrN = sqrt(static_cast<double>(n));
     int j = static_cast<int>( floor(sqrN) );
     for(int i=2;i<=j;++i)
@@ -92,7 +96,7 @@ namespace tiny
     }
     return true;
   }
-    
+
   /**
    * Prime Test.
    * This method tests if the specified integer is a prime.
@@ -116,8 +120,8 @@ namespace tiny
       return false;//--- definitely not a prime, i.e. composite
     return true;//--- possible prime or a base-2 pseudoprime
   }
-  
-  
+
+
   /**
    * Prime Test.
    * This method tests if the specified integer is a prime.
@@ -134,9 +138,9 @@ namespace tiny
   inline bool miller_rabin(int n,int s)
   {
     using std::floor;
-    
+
     static Random<double> random;
-    
+
     int ndec = n-2;
     for(int j=s;j>0;--j)
     {
@@ -146,7 +150,7 @@ namespace tiny
     }
     return true;//--- n is almost surely prime.
   }
-  
+
   /**
    * Closest Prime Search.
    * This method tries to find the closest
@@ -187,7 +191,7 @@ namespace tiny
       return l;
     return o;
   }
-  
+
   /**
    * Greatest Common Divisor.
    * Computes greatest common divisor with euclids algorithm.
@@ -203,7 +207,7 @@ namespace tiny
     else
       return gcd_euclid_algorithm(b,a%b);
   }
-  
+
   /**
    * Tests if two numbers are relative prime.
    *
@@ -217,7 +221,7 @@ namespace tiny
       return true;
     return false;
   }
-  
+
 } // namespace tiny
 
 //TINY_PRIME_NUMBERS_H

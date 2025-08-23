@@ -10,11 +10,14 @@
 #include <cstring> // Needed for memcpy
 #include <cassert>
 
+#include <iostream>
+#include <type_traits>
+
 namespace tiny
 {
   namespace detail
   {
-    
+
     /**
      * Math Base Class.
      *
@@ -29,70 +32,79 @@ namespace tiny
      *  @tparam J_    The number of columns. Must be a positive number.
      */
     template<size_t I_, size_t J_, typename T>
-    class Container 
+    class Container
       {
       public:
-        
+
         enum { I    = I_    };
         enum { J    = J_    };
         enum { N    = I_*J_ };
-        
+
       private:
-                
+
         typedef Container< I , J, T>   self_type;
-        
+
         friend class detail::Accessor< self_type >;
-        
+
       public:
-        
+
         typedef          detail::Accessor< self_type >    accessor;
         typedef          T                                type_traits;
         typedef typename T::real_type                     real_type;
         typedef typename T::op_type                       op_type;
+
         typedef          ValueTraits<real_type>           value_traits;
-        
+
         typedef IndexIterator< false, self_type >   iterator;
         typedef IndexIterator<  true, self_type >   const_iterator;
-        
+
         static size_t size()  { return I*J; }
         static size_t size1() { return I;   }
         static size_t size2() { return J;   }
-        
+
       protected:
-        
+
         enum { stride    = T::stride    };
         enum { padding   = (stride - (J % stride)) % stride };
         enum { J_padded  = J + padding };
         enum { allocsize = I * J_padded }; ///< Total number of elements including padding.
-        
+
       private:
-        
-        typedef union 
+
+        typedef union
           {
             real_type real[stride];
             op_type op;
           } Converter;
-        
-        op_type get_op_type ( size_t const & i , size_t const & j ) const 
-        {
-          return reinterpret_cast<Converter const *>( m_data + i*J_padded + j )->op;
-        }
-        
-        op_type & get_op_type ( size_t const & i , size_t const & j ) 
+
+/*      op_type get_op_type ( size_t const & i , size_t const & j ) const
+      {
+          op_type tmp;
+          const void * src = static_cast<const void*>( m_data + i*J_padded + j );
+          std::memcpy(&tmp, src, sizeof(op_type));
+          return tmp;
+      }*/
+          op_type get_op_type ( size_t const & i , size_t const & j ) const
+          {
+              return reinterpret_cast<Converter const *>( m_data + i*J_padded + j )->op;
+          }
+
+
+        op_type & get_op_type ( size_t const & i , size_t const & j )
         {
           return reinterpret_cast<Converter*>( m_data + i*J_padded + j )->op;
         }
-        
+
       public:
-        
+
 
         // 2009-07-14 Kenny: warning C4820: '4' bytes padding added after data member 'm_data'?
-        ALIGNED_16 real_type m_data[ allocsize ]; 
-        
+        ALIGNED_16 real_type m_data[ allocsize ];
+
       public:
-        
+
         Container()
-        {        
+        {
           for (size_t i = 0; i<I; ++i)
           {
             size_t const offset = i*J_padded;
@@ -100,23 +112,23 @@ namespace tiny
               this->m_data[offset + j] = value_traits::zero();
           }
         }
-        
+
         explicit Container( real_type const & value )
         {
           for (size_t i = 0; i<I ; ++i)
           {
             size_t const offset = i * J_padded;
-            
+
             for (size_t j = 0; j<J ; ++j)
               this->m_data[offset + j] = value;
-            
+
             for (size_t j = J; j<J_padded ; ++j)
               this->m_data[offset + j] = value_traits::zero();
           }
         }
-        
+
         Container( Container const & cpy )
-        {        
+        {
           for (size_t i = 0; i<I ; ++i)
           {
             const size_t offset = i*J_padded;
@@ -126,21 +138,21 @@ namespace tiny
               this->m_data[offset + j] = value_traits::zero();
           }
         }
-        
+
         ~Container () {}
-        
+
         Container &  operator= (Container const & rhs)
         {
           if (this == &rhs)
             return *this;
-          
+
           for (size_t i = 0; i<I ; ++i)
             for (size_t j = 0 ; j<J ; ++j)
               (*this)(i,j) = rhs(i,j);
           //memcpy((void*)(this),(void*)(&rhs),I*J_padded*sizeof(real_type));
           return *this;
         }
-        
+
         void clear()
         {
           for (size_t i = 0; i< allocsize;++i)
@@ -148,21 +160,21 @@ namespace tiny
             this->m_data[i] = value_traits::zero();
           }
         }
-        
+
         real_type const & operator()(size_t const & i, size_t const & j) const
         {
           size_t const offset = i*J_padded;
           return this->m_data[offset+j];
         }
-        
+
         real_type & operator()(size_t const & i, size_t const & j)
         {
           size_t const offset = i*J_padded;
           return this->m_data[offset+j];
         }
-        
+
       public:
-        
+
         /**
          * Component index operator
          * Indexes Container as a container and return elements as an op_type.
@@ -176,27 +188,27 @@ namespace tiny
          */
         real_type & operator() ( size_t const & i )
         {
-          assert( (i>=0 && i<J) || !"i was out of range");        
+          assert( (i>=0 && i<J) || !"i was out of range");
           return this->m_data[i];
         }
-        
+
         real_type const & operator() ( size_t const & i ) const
         {
           assert((i>=0 && i<J) || !"i was out of range");
           return this->m_data[i];
         }
-        
+
         real_type       & operator[] ( size_t const & i )        { return this->operator()(i); }
         real_type const & operator[] ( size_t const & i ) const  { return this->operator()(i); }
-        
+
         iterator       begin()       { return iterator(  0, 0, this);       }
         iterator       end()         { return iterator(I-1, J, this);       }
         const_iterator begin() const { return const_iterator(  0, 0, this); }
         const_iterator end()   const { return const_iterator(I-1, J, this); }
-      }; 
-    
+      };
+
   } // namespace detail
 } // namespace tiny
 
 // TINY_CONTAINER_H
-#endif 
+#endif
