@@ -120,22 +120,22 @@ qh_CENTER;
 
   qh_PRINT
     output formats for printing (qh.PRINTout).
-    'Fa' 'FV' 'Fc' 'FC' 
-       
+    'Fa' 'FV' 'Fc' 'FC'
+
 
    notes:
    some of these names are similar to qh names.  The similar names are only
    used in switch statements in qh_printbegin() etc.
 */
-typedef enum {qh_PRINTnone= 0, 
+typedef enum {qh_PRINTnone= 0,
   qh_PRINTarea, qh_PRINTaverage,           /* 'Fa' 'FV' 'Fc' 'FC' */
-  qh_PRINTcoplanars, qh_PRINTcentrums, 
+  qh_PRINTcoplanars, qh_PRINTcentrums,
   qh_PRINTfacets, qh_PRINTfacets_xridge,   /* 'f' 'FF' 'G' 'FI' 'Fi' 'Fn' */
-  qh_PRINTgeom, qh_PRINTids, qh_PRINTinner, qh_PRINTneighbors, 
+  qh_PRINTgeom, qh_PRINTids, qh_PRINTinner, qh_PRINTneighbors,
   qh_PRINTnormals, qh_PRINTouter, qh_PRINTmaple, /* 'n' 'Fo' 'i' 'm' 'Fm' 'FM', 'o' */
-  qh_PRINTincidences, qh_PRINTmathematica, qh_PRINTmerges, qh_PRINToff, 
+  qh_PRINTincidences, qh_PRINTmathematica, qh_PRINTmerges, qh_PRINToff,
   qh_PRINToptions, qh_PRINTpointintersect, /* 'FO' 'Fp' 'FP' 'p' 'FQ' 'FS' */
-  qh_PRINTpointnearest, qh_PRINTpoints, qh_PRINTqhull, qh_PRINTsize, 
+  qh_PRINTpointnearest, qh_PRINTpoints, qh_PRINTqhull, qh_PRINTsize,
   qh_PRINTsummary, qh_PRINTtriangles,      /* 'Fs' 'Ft' 'Fv' 'FN' 'Fx' */
   qh_PRINTvertices, qh_PRINTvneighbors, qh_PRINTextremes,
   qh_PRINTEND} qh_PRINT;
@@ -222,58 +222,58 @@ struct facetT {
 #endif
 #if qh_MAXoutside
   coordT   maxoutside;  /* max computed distance of point to facet
-  			Before QHULLfinished this is an approximation
-  			since maxdist not always set for mergefacet
-			Actual outer plane is +DISTround and
-			computed outer plane is +2*DISTround */
+            Before QHULLfinished this is an approximation
+            since maxdist not always set for mergefacet
+            Actual outer plane is +DISTround and
+            computed outer plane is +2*DISTround */
 #endif
   coordT   offset;      /* exact offset of hyperplane from origin */
   coordT  *normal;      /* normal of hyperplane, hull_dim coefficients */
-			/*   if tricoplanar, shared with a neighbor */
+            /*   if tricoplanar, shared with a neighbor */
   union {               /* in order of testing */
    realT   area;        /* area of facet, only in io.c if  ->isarea */
    facetT *replace;	/*  replacement facet if ->visible and NEWfacets
-  			     is NULL only if qh_mergedegen_redundant or interior */
+                 is NULL only if qh_mergedegen_redundant or interior */
    facetT *samecycle;   /*  cycle of facets from the same visible/horizon intersection,
-   			     if ->newfacet */
-   facetT *newcycle;    /*  in horizon facet, current samecycle of new facets */ 
+                 if ->newfacet */
+   facetT *newcycle;    /*  in horizon facet, current samecycle of new facets */
    facetT *trivisible;  /* visible facet for ->tricoplanar facets during qh_triangulate() */
    facetT *triowner;    /* owner facet for ->tricoplanar, !isarea facets w/ ->keepcentrum */
   }f;
   coordT  *center;      /*  centrum for convexity, qh CENTERtype == qh_AScentrum */
-      			/*  Voronoi center, qh CENTERtype == qh_ASvoronoi */
-			/*   if tricoplanar, shared with a neighbor */
+                /*  Voronoi center, qh CENTERtype == qh_ASvoronoi */
+            /*   if tricoplanar, shared with a neighbor */
   facetT  *previous;    /* previous facet in the facet_list */
   facetT  *next;        /* next facet in the facet_list */
-  setT    *vertices;    /* vertices for this facet, inverse sorted by ID 
+  setT    *vertices;    /* vertices for this facet, inverse sorted by ID
                            if simplicial, 1st vertex was apex/furthest */
   setT    *ridges;      /* explicit ridges for nonsimplicial facets.
-  			   for simplicial facets, neighbors defines ridge */
+               for simplicial facets, neighbors defines ridge */
   setT    *neighbors;   /* neighbors of the facet.  If simplicial, the kth
-			   neighbor is opposite the kth vertex, and the first
-			   neighbor is the horizon facet for the first vertex*/
+               neighbor is opposite the kth vertex, and the first
+               neighbor is the horizon facet for the first vertex*/
   setT    *outsideset;  /* set of points outside this facet
-		           if non-empty, last point is furthest
-			   if NARROWhull, includes coplanars for partitioning*/
+                   if non-empty, last point is furthest
+               if NARROWhull, includes coplanars for partitioning*/
   setT    *coplanarset; /* set of points coplanar with this facet
-  			   > qh.min_vertex and <= facet->max_outside
+               > qh.min_vertex and <= facet->max_outside
                            a point is assigned to the furthest facet
-		           if non-empty, last point is furthest away */
+                   if non-empty, last point is furthest away */
   unsigned visitid;     /* visit_id, for visiting all neighbors,
-			   all uses are independent */
+               all uses are independent */
   unsigned id;	        /* unique identifier from qh facet_id */
   unsigned nummerge:9;  /* number of merges */
 #define qh_MAXnummerge 511 /*     2^9-1, 32 flags total, see "flags:" in io.c */
   flagT    tricoplanar:1; /* True if TRIangulate and simplicial and coplanar with a neighbor */
-			  /*   all tricoplanars share the same ->center, ->normal, ->offset, ->maxoutside */
-			  /*   all tricoplanars share the same apex */
+              /*   all tricoplanars share the same ->center, ->normal, ->offset, ->maxoutside */
+              /*   all tricoplanars share the same apex */
                           /*   if ->degenerate, does not span facet (one logical ridge) */
                           /*   one tricoplanar has ->keepcentrum and ->coplanarset */
                           /*   during qh_triangulate, f.trivisible points to original facet */
   flagT	   newfacet:1;  /* True if facet on qh newfacet_list (new or merged) */
   flagT	   visible:1;   /* True if visible facet (will be deleted) */
   flagT    toporient:1; /* True if created with top orientation
-			   after merging, use ridge orientation */
+               after merging, use ridge orientation */
   flagT    simplicial:1;/* True if simplicial facet, ->ridges may be implicit */
   flagT    seen:1;      /* used to perform operations only once, like visitid */
   flagT    seen2:1;     /* used to perform operations only once, like visitid */
@@ -322,7 +322,7 @@ struct facetT {
     nonconvex           True if ridge is non-convex
 */
 struct ridgeT {
-  setT    *vertices;    /* vertices belonging to this ridge, inverse sorted by ID 
+  setT    *vertices;    /* vertices belonging to this ridge, inverse sorted by ID
                            NULL if a degen ridge (matchsame) */
   facetT  *top;         /* top facet this ridge is part of */
   facetT  *bottom;      /* bottom facet this ridge is part of */
@@ -330,7 +330,7 @@ struct ridgeT {
   flagT    seen:1;      /* used to perform operations only once */
   flagT    tested:1;    /* True when ridge is tested for convexity */
   flagT    nonconvex:1; /* True if getmergeset detected a non-convex neighbor
-			   only one ridge between neighbors may have nonconvex */
+               only one ridge between neighbors may have nonconvex */
 };
 
 /*-<a                             href="qh-poly.htm#TOC"
@@ -351,7 +351,7 @@ struct vertexT {
   vertexT *previous;    /* previous vertex in vertex_list */
   pointT  *point;       /* hull_dim coordinates (coordT) */
   setT    *neighbors;   /* neighboring facets of vertex, qh_vertexneighbors()
-			   inits in io.c or after first merge */
+               inits in io.c or after first merge */
   unsigned visitid; /* for use with qh vertex_visit */
   unsigned id:24;   /* unique identifier, =>room for 8 flags */
   flagT    seen:1;      /* used to perform operations only once */
@@ -414,7 +414,7 @@ struct qhT {
   int   GOODpoint;        /* 1+n for 'QGn', good facet if visible/not(-) from point n*/
   pointT *GOODpointp;     /*   the actual point */
   boolT GOODthreshold;    /* true if qh lower_threshold/upper_threshold defined
-  			     false if qh SPLITthreshold */
+                 false if qh SPLITthreshold */
   int   GOODvertex;       /* 1+n, good facet if vertex for point n */
   pointT *GOODvertexp;     /*   the actual point */
   boolT HALFspace;        /* true 'Hn,n,n' if halfspace intersection */
@@ -422,7 +422,7 @@ struct qhT {
   int   KEEParea;         /* 'PAn' number of largest facets to keep */
   boolT KEEPcoplanar;     /* true 'Qc' if keeping nearest facet for coplanar points */
   boolT KEEPinside;       /* true 'Qi' if keeping nearest facet for inside points
-			      set automatically if 'd Qc' */
+                  set automatically if 'd Qc' */
   int   KEEPmerge;        /* 'PMn' number of facets to keep with most merges */
   realT KEEPminArea;      /* 'PFn' minimum facet area to keep */
   realT MAXcoplanar;      /* 'Un' max distance below a facet to be coplanar*/
@@ -441,7 +441,7 @@ struct qhT {
   boolT PICKfurthest;     /* true 'Q9' if process furthest of furthest points*/
   boolT POSTmerge;        /* true if merging after buildhull (Cn or An) */
   boolT PREmerge;         /* true if merging during buildhull (C-n or A-n) */
-  			/* NOTE: some of these names are similar to qh_PRINT names */
+            /* NOTE: some of these names are similar to qh_PRINT names */
   boolT PRINTcentrums;	  /* true 'Gc' if printing centrums */
   boolT PRINTcoplanar;    /* true 'Gp' if printing coplanar points */
   int	PRINTdim;      	  /* print dimension for Geomview output */
@@ -460,7 +460,7 @@ struct qhT {
   boolT PRINTsummary;     /* true 's' if printing summary to stderr */
   boolT PRINTtransparent; /* true 'Gt' if print transparent outer ridges */
   boolT PROJECTdelaunay;  /* true if DELAUNAY, no readpoints() and
-			     need projectinput() for Delaunay in qh_init_B */
+                 need projectinput() for Delaunay in qh_init_B */
   int   PROJECTinput;     /* number of projected dimensions 'bn:0Bn:0' */
   boolT QUICKhelp;	  /* true if quick help message for degen input */
   boolT RANDOMdist;       /* true if randomly change distplane and setfacetplane */
@@ -480,9 +480,9 @@ struct qhT {
   boolT SPLITthresholds;  /* true if upper_/lower_threshold defines a region
                                used only for printing (not for qh ONLYgood) */
   int	STOPcone;         /* 'TCn' 1+n for stopping after cone for point n*/
-			  /*       also used by qh_build_withresart for err exit*/
+              /*       also used by qh_build_withresart for err exit*/
   int	STOPpoint;        /* 'TVn' 'TV-n' 1+n for stopping after/before(-)
-			                adding point n */
+                            adding point n */
   int	TESTpoints;	  /* 'QTn' num of test points after qh.num_points.  Test points always coplanar. */
   boolT TESTvneighbors;   /*  true 'Qv' if test vertex neighbors at end */
   int   TRACElevel;       /* 'Tn' conditional IStracing level */
@@ -520,11 +520,11 @@ struct qhT {
   boolT ZEROcentrum;      /* true if 'C-0' or 'C-0 Qx'.  sets ZEROall_ok */
   realT *upper_threshold; /* don't print if facet->normal[k]>=upper_threshold[k]
                              must set either GOODthreshold or SPLITthreshold
-  			     if Delaunay, default is 0.0 for upper envelope */
+                 if Delaunay, default is 0.0 for upper envelope */
   realT *lower_threshold; /* don't print if facet->normal[k] <=lower_threshold[k] */
   realT *upper_bound;     /* scale point[k] to new upper bound */
   realT *lower_bound;     /* scale point[k] to new lower bound
-  			     project if both upper_ and lower_bound == 0 */
+                 project if both upper_ and lower_bound == 0 */
 
 /*-<a                             href="qh-globa.htm#TOC"
   >--------------------------------</a><a name="qh-prec">-</a>
@@ -557,8 +557,8 @@ struct qhT {
   realT outside_err;      /* application's epsilon for coplanar points
                              qh_check_bestdist() qh_check_points() reports error if point outside */
   realT WIDEfacet;        /* size of wide facet for skipping ridge in
-			     area computation and locking centrum */
-  
+                 area computation and locking centrum */
+
 /*-<a                             href="qh-globa.htm#TOC"
   >--------------------------------</a><a name="qh-intern">-</a>
 
@@ -591,7 +591,7 @@ struct qhT {
   facetT *facet_list;     /* first facet */
   facetT  *facet_tail;     /* end of facet_list (dummy facet) */
   facetT *facet_next;     /* next facet for buildhull()
-    			     previous facets do not have outside sets
+                     previous facets do not have outside sets
                              NARROWhull: previous facets may have coplanar outside sets for qh_outcoplanar */
   facetT *newfacet_list;  /* list of new facets to end of facet_list */
   facetT *visible_list;   /* list of visible facets preceeding newfacet_list,
@@ -606,7 +606,7 @@ struct qhT {
   vertexT *newvertex_list; /* list of vertices in newfacet_list, to vertex_tail
                              all vertices have 'newlist' set */
   int 	num_facets;	  /* number of facets in facet_list
-			     includes visble faces (num_visible) */
+                 includes visble faces (num_visible) */
   int 	num_vertices;     /* number of vertices in facet_list */
   int   num_outside;      /* number of points in outsidesets (for tracing and RANDOMoutside)
                                includes coplanar outsideset points for NARROWhull/qh_outcoplanar() */
@@ -633,17 +633,17 @@ struct qhT {
   realT JOGGLEmax;        /* set 'QJn' if randomly joggle input */
   boolT maxoutdone;       /* set qh_check_maxout(), cleared by qh_addpoint() */
   realT max_outside;      /* maximum distance from a point to a facet,
-			       before roundoff, not simplicial vertices
-			       actual outer plane is +DISTround and
-			       computed outer plane is +2*DISTround */
+                   before roundoff, not simplicial vertices
+                   actual outer plane is +DISTround and
+                   computed outer plane is +2*DISTround */
   realT max_vertex;       /* maximum distance (>0) from vertex to a facet,
-			       before roundoff, due to a merge */
+                   before roundoff, due to a merge */
   realT min_vertex;       /* minimum distance (<0) from vertex to a facet,
-			       before roundoff, due to a merge
-			       if qh.JOGGLEmax, qh_makenewplanes sets it
-  			       recomputed if qh.DOcheckmax, default -qh.DISTround */
+                   before roundoff, due to a merge
+                   if qh.JOGGLEmax, qh_makenewplanes sets it
+                   recomputed if qh.DOcheckmax, default -qh.DISTround */
   boolT NEWfacets;        /* true while visible facets invalid due to new or merge
-			      from makecone/attachnewfacets to deletevisible */
+                  from makecone/attachnewfacets to deletevisible */
   boolT findbestnew;	  /* true if partitioning calls qh_findbestnew */
   boolT findbest_notsharp; /* true if new facets are at least 90 degrees */
   boolT NOerrexit;        /* true if qh.errexit is not available */
@@ -659,7 +659,7 @@ struct qhT {
   unsigned int vertex_visit; /* unique ID for searching vertices */
   boolT ZEROall_ok;       /* True if qh_checkzero always succeeds */
   boolT WAScoplanar;      /* True if qh_partitioncoplanar (qh_check_maxout) */
-  
+
 /*-<a                             href="qh-globa.htm#TOC"
   >--------------------------------</a><a name="qh-set">-</a>
 
@@ -687,7 +687,7 @@ struct qhT {
   int maxline;
   coordT *half_space;     /* malloc'd input array for halfspace (qh normal_size+coordT) */
   coordT *temp_malloc;    /* malloc'd input array for points */
-  
+
 /*-<a                             href="qh-globa.htm#TOC"
   >--------------------------------</a><a name="qh-static">-</a>
 
@@ -732,7 +732,7 @@ struct qhT {
     return ID for facet, ridge, or vertex
     return MAXINT if NULL (-1 causes type conversion error )
 */
-#define getid_(p)       ((p) ? (p)->id : -1)
+#define getid_(p) ((p) ? (p)->id : (unsigned int)-1)
 
 /*============== FORALL macros ===================*/
 
@@ -950,15 +950,15 @@ void	qh_printsummary(FILE *fp);
 void 	qh_errexit(int exitcode, facetT *facet, ridgeT *ridge);
 void 	qh_errprint(char* string, facetT *atfacet, facetT *otherfacet, ridgeT *atridge, vertexT *atvertex);
 int     qh_new_qhull (int dim, int numpoints, coordT *points, boolT ismalloc,
-		char *qhull_cmd, FILE *outfile, FILE *errfile);
+        char *qhull_cmd, FILE *outfile, FILE *errfile);
 void    qh_printfacetlist(facetT *facetlist, setT *facets, boolT printall);
 void 	qh_user_memsizes (void);
 
 /***** -geom.c/geom2.c prototypes (duplicated from geom.h) ****************/
 
 facetT *qh_findbest (pointT *point, facetT *startfacet,
-		     boolT bestoutside, boolT newfacets, boolT noupper,
-		     realT *dist, boolT *isoutside, int *numpart);
+             boolT bestoutside, boolT newfacets, boolT noupper,
+             realT *dist, boolT *isoutside, int *numpart);
 facetT *qh_findbestnew (pointT *point, facetT *startfacet,
                      realT *dist, boolT bestoutside, boolT *isoutside, int *numpart);
 boolT   qh_gram_schmidt(int dim, realT **rows);
