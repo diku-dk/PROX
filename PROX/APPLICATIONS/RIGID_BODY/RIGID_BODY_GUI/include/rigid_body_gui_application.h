@@ -104,6 +104,7 @@ namespace rigid_body
       bool                                  m_xml_auto_save;
       bool                                  m_did_auto_save;
       bool                                  m_capture_first_frame;
+      uint32_t                              m_currentFrame;
 
       std::string                           m_framegrab_file;
       std::string                           m_matlab_file;
@@ -653,9 +654,10 @@ namespace rigid_body
         std::stringstream copyTo;
         copyTo << m_output_path << m_framegrab_file << "scene/";
         std::string copyToString = copyTo.str();
-        copyFile(copyFromString + "build_usd_animation.py", copyToString + "build_usd_animation.py");
+        copyFile(copyFromString + "buildUSDAnimation.py", copyToString + "buildUSDAnimation.py");
         copyFile(copyFromString + "convertOBJSToUSD.py", copyToString + "convertOBJSToUSD.py");
         copyFile(copyFromString + "convertXMLToMeshes.py", copyToString + "convertXMLToMeshes.py");
+        copyFile(copyFromString + "automaterender.py", copyToString + "automaterender.py");
 
 
         logging << "Copied build_usd_animation.py to"
@@ -667,6 +669,10 @@ namespace rigid_body
                 << " from " << copyFromString
                 << util::Log::newline();
         logging << "Copied convertXMLToMeshes.py to"
+                << (copyToString)
+                << " from " << copyFromString
+                << util::Log::newline();
+        logging << "Copied automaterender.py to"
                 << (copyToString)
                 << " from " << copyFromString
                 << util::Log::newline();
@@ -704,7 +710,7 @@ namespace rigid_body
         python.open(filename.str() + "buildUSDScene.sh",std::ios::out);
         python << "/home/rasmus/PYTHONENV/myenv/bin/python3 convertXMLToMeshes.py " << m_xml_save_scene_file << " out && \\";
         python << "../../../../../rasmus/Downloads/blender-4.5.2-linux-x64/blender --background --python convertOBJSToUSD.py && \\";
-        python << "/home/rasmus/PYTHONENV/myenv/bin/python3 build_usd_animation.py " << m_framegrab_file << "\"rigidBodiesData_*.py\"";
+        python << "/home/rasmus/PYTHONENV/myenv/bin/python3 buildUSDAnimation.py " << m_framegrab_file << "\"rigidBodiesData_*.py\"";
 
         python.flush();
         python.close();
@@ -725,7 +731,7 @@ namespace rigid_body
 
       }
 
-        void saveRigidBodyData()
+        void saveRigidBodyData(uint32_t currentFrame)
         {
 
 
@@ -740,15 +746,14 @@ namespace rigid_body
                      << "rigidBodiesData_"
                      << std::setw(width)
                      << std::setfill('0')
-                     << frame_counter()
+                     << currentFrame
                      << ".py";
-            m_engine.writeRigidBodiesData(filename.str(), frame_counter());
+            m_engine.writeRigidBodiesData(filename.str(), currentFrame);
 
 
 
 
 
-            std::cerr << "BREAKPOINT";
         }
 
       void save_contact_data()
@@ -978,6 +983,7 @@ namespace rigid_body
           case 'V': save_contact_data(); break;
           case 'G':
               m_capture_first_frame = true;
+              m_currentFrame = 0;
               //Save xml file...
               //save_xml_file();
               prepareRigidBodyScripts();
@@ -1067,7 +1073,8 @@ namespace rigid_body
 
         if (m_capture_first_frame)
         {
-            saveRigidBodyData();
+            saveRigidBodyData(m_currentFrame);
+            m_currentFrame += 1;
         }
 
         if(m_xml_play)
