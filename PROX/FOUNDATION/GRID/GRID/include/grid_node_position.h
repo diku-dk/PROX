@@ -6,22 +6,17 @@
 namespace grid
 {
 
-  template<typename D, typename T>
-  inline
-  void node_position(
+    template<typename D, typename T>
+    inline void node_position(
                      Grid<D,T> const & grid
-                     , size_t const & i
-                     , size_t const & j
-                     , size_t const & k
-                     , T & x
-                     , T & y
-                     , T & z
+                     , const Eigen::Matrix<size_t, 3, 1>& nodes
+                     , Eigen::Matrix<T, 3, 1>& pos
                      )
-  {
-    x = i * grid.dx() + grid.min_x();
-    y = j * grid.dy() + grid.min_y();
-    z = k * grid.dz() + grid.min_z();
-  }
+    {
+        pos.x() = nodes.x() * grid.dir().z() + grid.min().x();
+        pos.y() = nodes.y() * grid.dir().y() + grid.min().y();
+        pos.z() = nodes.z() * grid.dir().z() + grid.min().z();
+    }
 
 } // namespace grid
 

@@ -10,9 +10,10 @@
 #include <OpenTissue/configuration.h>
 
 #include <iterator>
+#include <eigen3/Eigen/Dense>
 
-namespace OpenTissue 
-{ 
+namespace OpenTissue
+{
   namespace grid
   {
     namespace detail
@@ -27,14 +28,14 @@ namespace OpenTissue
 
         typedef grid_type_                                            grid_type;
         typedef typename grid_type::math_types                        math_types;
-      
+
       private:
 
         typedef OpenTissue::grid::detail::Iterator<grid_type, reference_type, pointer_type>     self_type;
 
       protected:
 
-        typedef typename grid_type::index_vector index_vector;
+        //typedef typename grid_type::index_vector index_vector;
         grid_type *   m_grid;
         pointer_type m_pos;
 
@@ -49,12 +50,12 @@ namespace OpenTissue
 
       public:
 
-        Iterator() 
+        Iterator()
           : m_grid( 0 )
           , m_pos( 0 )
         {}
 
-        Iterator( grid_type * grid, pointer_type pos ) 
+        Iterator( grid_type * grid, pointer_type pos )
           : m_grid( grid )
           , m_pos( pos )
         {}
@@ -117,25 +118,25 @@ namespace OpenTissue
         bool operator>=( self_type const & other ) const  {  return m_pos >= other.m_pos; }
 
         // TODO: henrikd 2005-06-27 - confirm these!
-        index_vector compute_index() const
+        Eigen::Matrix<size_t, 3, 1> compute_index() const
         {
           int offset = m_pos - m_grid->data();
-          index_vector res;
-          res(2) = offset / ( m_grid->J() * m_grid->I() );
-          offset = offset % ( m_grid->J() * m_grid->I() );
-          res(1) = offset / m_grid->I();
-          res(0) = offset % m_grid->I();
+          Eigen::Matrix<size_t, 3, 1> res;
+          res.z() = offset / ( m_grid->m_nodes.y() * m_grid->m_nodes.x() );
+          offset = offset % ( m_grid->m_nodes.y() * m_grid->m_nodes.x() );
+          res.y() = offset / m_grid->m_nodes.x();
+          res.x() = offset % m_grid->m_nodes.x();
           return res;
         }
 
-        void operator+=( index_vector const & idx )
+        void operator+=(const Eigen::Matrix<size_t, 3, 1>& idx )
         {
-          m_pos += idx(0) + m_grid->I() * idx(1) + m_grid->I() * m_grid->J() * idx(2);
+          m_pos += idx.x() + m_grid->m_nodes.x() * idx.y() + m_grid->m_nodes.x() * m_grid->m_nodes.y() * idx.z();
         }
 
-        self_type const & operator=( index_vector const & idx )
+        self_type const & operator=(const Eigen::Matrix<size_t, 3, 1>& idx )
         {
-          m_pos = m_grid->data() + idx(0) + m_grid->I() * idx(1) + m_grid->I() * m_grid->J() * idx(2);
+          m_pos = m_grid->data() + idx(0) + m_grid->m_nodes.x() * idx(1) + m_grid->m_nodes.x() * m_grid->m_nodes.y() * idx(2);
           return *this;
         }
 
@@ -159,12 +160,12 @@ namespace OpenTissue
       {
       public:
 
-        typedef typename grid_type::math_types  math_types;
+        //typedef typename grid_type::math_types  math_types;
 
       protected:
 
-        typedef typename math_types::vector3_type   vector3_type;
-        typedef typename math_types::index_vector3_type   index_vector;
+        //typedef typename math_types::vector3_type   vector3_type;
+        //typedef typename math_types::index_vector3_type   index_vector;
 
       private:
 
@@ -172,30 +173,26 @@ namespace OpenTissue
         typedef OpenTissue::grid::detail::IndexIterator<grid_type, reference_type, pointer_type> self_type;
 
         // TODO: Use index_vector directly when vector is implemented as it should be!
-        size_t m_i;
-        size_t m_j;
-        size_t m_k;
+        Eigen::Matrix<size_t, 3, 1> m_nodes;
 
         static size_t const m_out_of_bounds = 0u - 1u;
 
         void update_indices()
         {
-          index_vector v = this->compute_index();
-          m_i = v(0);
-          m_j = v(1);
-          m_k = v(2);
+            Eigen::Matrix<size_t, 3, 1> v = this->compute_index();
+            m_nodes.x() = v.x();
+            m_nodes.y() = v.y();
+            m_nodes.z() = v.z();
         }
 
       public:
 
         IndexIterator()
           : base_type()
-          , m_i(0)
-          , m_j(0)
-          , m_k(0)
+          , m_nodes(0, 0, 0)
         {}
 
-        IndexIterator( base_type const& other ) 
+        IndexIterator( base_type const& other )
           : base_type( other )
         {
           operator=( other );
@@ -211,23 +208,27 @@ namespace OpenTissue
           }
         }
 
-      public:
+    public:
 
-        size_t const& i() const { return m_i; }
-        size_t const& j() const { return m_j; }
-        size_t const& k() const { return m_k; }
+        //Keeping these for backwards compatib
+        size_t const& i() const { return m_nodes.x(); }
+        size_t const& j() const { return m_nodes.y(); }
+        size_t const& k() const { return m_nodes.z(); }
+        const Eigen::Matrix<size_t, 3, 1>& nodes() const {return m_nodes;}
 
-        index_vector get_index() const
+        Eigen::Matrix<size_t, 3, 1> get_index() const
         {
-          return index_vector( m_i, m_j, m_k );
+            //Uneeded conversion!
+            return Eigen::Matrix<size_t, 3, 1>( m_nodes );
         }
 
-        vector3_type get_coord() const
+        template <typename T>
+        Eigen::Matrix<T, 3, 1> get_coord() const
         {
-          return vector3_type(
-            m_i * this->m_grid->dx() + this->m_grid->min_coord( 0 )
-            , m_j * this->m_grid->dy() + this->m_grid->min_coord( 1 )
-            , m_k * this->m_grid->dz() + this->m_grid->min_coord( 2 )
+          return Eigen::Matrix<T, 3, 1>(
+            m_nodes.x() * this->m_grid->m_dir.x() + this->m_grid->min.x( )
+            , m_nodes.y() * this->m_grid->m_dir.y() + this->m_grid->min.y( )
+            , m_nodes.z() * this->m_grid->m_dir.z() + this->m_grid->min.z()
             );
         }
 
@@ -243,15 +244,15 @@ namespace OpenTissue
         self_type &operator++()
         {
           ++this->m_pos;
-          ++m_i;
-          if ( m_i >= this->m_grid->I() )
+          ++m_nodes.x();
+          if ( m_nodes.x() >= this->m_grid->I() )
           {
-            m_i = 0u;
-            ++m_j;
-            if ( m_j >= this->m_grid->J() )
+            m_nodes.x() = 0u;
+              ++m_nodes.y();
+            if (m_nodes.y() >= this->m_grid->m_nodes.y() )
             {
-              m_j = 0u;
-              ++m_k;
+                m_nodes.y() = 0u;
+                ++m_nodes.z();
             }
           }
           return *this;
@@ -267,26 +268,26 @@ namespace OpenTissue
         self_type &operator--()
         {
           --this->m_pos;
-          --m_i;
-          if ( m_i == m_out_of_bounds )
+            --m_nodes.x();
+          if ( m_nodes.x() == m_out_of_bounds )
           {
-            m_i = this->m_grid->I() - 1;
-            --m_j;
-            if ( m_j == m_out_of_bounds )
+              m_nodes.x() = this->m_grid->I() - 1;
+              --m_nodes.y();
+              if ( m_nodes.y() == m_out_of_bounds )
             {
-              m_j = this->m_grid->J() - 1;
-              --m_k;
+                  m_nodes.y() = this->m_grid->m_nodes.y() - 1;
+                --m_nodes.z();
             }
           }
           return *this;
         }
 
         // jump to new location
-        self_type const & operator=( index_vector const& idx )
+        self_type const & operator=(const Eigen::Matrix<size_t, 3, 1>& idx )
         {
-          m_i = idx(0);
-          m_j = idx(1);
-          m_k = idx(2);
+            m_nodes.x() = idx.x();
+            m_nodes.y() = idx.y();
+            m_nodes.z() = idx.z();
           this->m_pos = &( *this->m_grid ) ( idx );
           return *this;
         }
@@ -325,9 +326,7 @@ namespace OpenTissue
           this->m_pos  = other.get_pointer();
           if ( this->m_pos == this->m_grid->data() )
           {
-            m_i = 0u;
-            m_j = 0u;
-            m_k = 0u;
+              m_nodes = Eigen::Matrix<size_t, 3, 1>(0u);
           }
           else
           {

@@ -3,7 +3,12 @@
 
 #include <tiny_value_traits.h>
 
-#include <vector>
+//#include <vector>
+#include <iostream>
+
+#include "eigen3/Eigen/Dense"
+
+
 
 namespace grid
 {
@@ -14,51 +19,45 @@ namespace grid
   {
   public:
 
-    typedef  tiny::ValueTraits<T>  VT;
+    //typedef  tiny::ValueTraits<T>  VT;
 
   protected:
 
-    T      m_min_x;      ///< Minimum x coordinate (x coordinate of node (0,0,0)
-    T      m_min_y;      ///< Minimum y coordinate (y coordinate of node (0,0,0)
-    T      m_min_z;      ///< Minimum z coordinate (z coordinate of node (0,0,0)
-    T      m_max_x;      ///< Maximum x coordinate (x coordinate of node (I-1,J-1,K-1)
-    T      m_max_y;      ///< Maximum y coordinate (y coordinate of node (I-1,J-1,K-1)
-    T      m_max_z;      ///< Maximum z coordinate (z coordinate of node (I-1,J-1,K-1)
-    T      m_dx;         ///< Space between nodes in x direction.
-    T      m_dy;         ///< Space between nodes in y direction.
-    T      m_dz;         ///< Space between nodes in z direction.
-    size_t m_I;          ///< Number of nodes along x-axis.
-    size_t m_J;          ///< Number of nodes along y-axis.
-    size_t m_K;          ///< Number of nodes along z-axis.
+    Eigen::Matrix<T, 3, 1> m_min;
+    Eigen::Matrix<T, 3, 1> m_max;
+    Eigen::Matrix<T, 3, 1> m_dir;
+    Eigen::Matrix<size_t, 3, 1> m_nodes;
+    //T      m_min_x;      ///< Minimum x coordinate (x coordinate of node (0,0,0)
+    //T      m_min_y;      ///< Minimum y coordinate (y coordinate of node (0,0,0)
+    //T      m_min_z;      ///< Minimum z coordinate (z coordinate of node (0,0,0)
+    //T      m_max_x;      ///< Maximum x coordinate (x coordinate of node (I-1,J-1,K-1)
+    //T      m_max_y;      ///< Maximum y coordinate (y coordinate of node (I-1,J-1,K-1)
+    //T      m_max_z;      ///< Maximum z coordinate (z coordinate of node (I-1,J-1,K-1)
+    //T      m_dx;         ///< Space between nodes in x direction.
+    //T      m_dy;         ///< Space between nodes in y direction.
+    //T      m_dz;         ///< Space between nodes in z direction.
+    //size_t m_I;          ///< Number of nodes along x-axis.
+    //size_t m_J;          ///< Number of nodes along y-axis.
+    //size_t m_K;          ///< Number of nodes along z-axis.
 
     std::vector<D> m_data; ///< The data values stored at the grid nodes.
 
   protected:
 
-    size_t index(size_t const & i,size_t const & j,size_t const & k) const
+    size_t index(const Eigen::Matrix<size_t, 3, 1>& nodes) const
     {
-      assert( i < this->m_I || !"index(): i was out of bounds");
-      assert( j < this->m_J || !"index(): j was out of bounds");
-      assert( k < this->m_K || !"index(): k was out of bounds");
+      assert( nodes < this->m_nodes|| !"index(): i, j, or k was out of bounds");
 
-      return (k*this->m_J + j)*this->m_I + i;
+        return (nodes.z()*this->m_nodes.y() + nodes.y())*this->m_nodes.x() + nodes.x();
     }
 
   public:
 
     Grid()
-    : m_min_x(VT::zero())
-    , m_min_y(VT::zero())
-    , m_min_z(VT::zero())
-    , m_max_x(VT::zero())
-    , m_max_y(VT::zero())
-    , m_max_z(VT::zero())
-    , m_dx(VT::zero())
-    , m_dy(VT::zero())
-    , m_dz(VT::zero())
-    , m_I(0u)
-    , m_J(0u)
-    , m_K(0u)
+    : m_min(T(0.0), T(0.0), T(0.0))
+    , m_max(T(0.0), T(0.0), T(0.0))
+    , m_dir(T(0.0), T(0.0), T(0.0))
+    , m_nodes(0u, 0u, 0u)
     , m_data( )
     {}
 
@@ -73,18 +72,10 @@ namespace grid
     {
       if( this != &grid)
       {
-        this->m_min_x = grid.m_min_x;
-        this->m_min_y = grid.m_min_y;
-        this->m_min_z = grid.m_min_z;
-        this->m_max_x = grid.m_max_x;
-        this->m_max_y = grid.m_max_y;
-        this->m_max_z = grid.m_max_z;
-        this->m_dx    = grid.m_dx;
-        this->m_dy    = grid.m_dy;
-        this->m_dz    = grid.m_dz;
-        this->m_I     = grid.m_I;
-        this->m_J     = grid.m_J;
-        this->m_K     = grid.m_K;
+        this->m_min = grid.m_min;
+        this->m_max = grid.m_max;
+        this->m_dir = grid.m_dir;
+        this->m_nodes = grid.m_nodes;
         this->m_data  = grid.m_data;
       }
       return (*this);
@@ -92,80 +83,56 @@ namespace grid
 
   public:
 
-    void create(
-                  T const & min_x
-                , T const & min_y
-                , T const & min_z
-                , T const & max_x
-                , T const & max_y
-                , T const & max_z
-                , size_t const & I
-                , size_t const & J
-                , size_t const & K
+    void create(const Eigen::Matrix<T, 3, 1>& min, const Eigen::Matrix<T, 3, 1>& max,
+                const Eigen::Matrix<size_t, 3, 1>& nodes
                 )
     {
-      assert( max_x > min_x || !"create(): max_x was less than equal min_x");
-      assert( max_y > min_y || !"create(): max_y was less than equal min_y");
-      assert( max_z > min_z || !"create(): max_z was less than equal min_z");
-      assert( I>0           || !"create(): I must be positive");
-      assert( J>0           || !"create(): J must be positive");
-      assert( K>0           || !"create(): K must be positive");
+      assert( max > min || !"create(): max was less than or equal min");
 
-      this->m_min_x = min_x;
-      this->m_min_y = min_y;
-      this->m_min_z = min_z;
+      assert( nodes>0u           || !"create(): all nodes must be positive");
 
-      this->m_max_x = max_x;
-      this->m_max_y = max_y;
-      this->m_max_z = max_z;
+      this->m_min = min;
 
-      this->m_dx = (max_x-min_x)/(I-1);
-      this->m_dy = (max_y-min_y)/(J-1);
-      this->m_dz = (max_z-min_z)/(K-1);
+      this->m_max = max;
 
-      this->m_I = I;
-      this->m_J = J;
-      this->m_K = K;
+      this->m_dir.x = (max.x()-min.x())/(nodes.x()-1);
+      this->m_dir.y = (max.y()-min.y())/(nodes.y()-1);
+      this->m_dir.z = (max.z()-min.z())/(nodes.z()-1);
 
-      m_data.resize( I*J*K );
+
+      this->m_nodes = nodes;
+
+      m_data.resize( nodes.x()*nodes.y()*nodes.z() );
     }
 
-    D & operator()(size_t const & i,size_t const & j,size_t const & k)
+    D & operator()(const Eigen::Matrix<size_t, 3, 1>& nodes)
     {
       assert(this->m_data.size()>0 || !"operator(): no data");
 
-      return this->m_data[ this->index(i,j,k) ];
+        return this->m_data[ this->index(nodes.x(),nodes.y(),nodes.z()) ];
     }
 
-    D const & operator() (size_t const & i,size_t const & j,size_t const & k) const
+    D const & operator() (const Eigen::Matrix<size_t, 3, 1>& nodes) const
     {
       assert(this->m_data.size()>0 || !"operator(): no data");
 
-      return this->m_data[ this->index(i,j,k) ];
+      return this->m_data[ this->index(nodes.x(),nodes.y(),nodes.z()) ];
     }
 
-    T width()  const { return this->m_max_x - this->m_min_x; }
-    T height() const { return this->m_max_y - this->m_min_y; }
-    T depth()  const { return this->m_max_z - this->m_min_z; }
+    Eigen::Matrix<T, 3, 1> dims()  const { return this->m_max - this->m_min; }
+    /*T height() const { return this->m_max_y - this->m_min_y; }
+    T depth()  const { return this->m_max_z - this->m_min_z; }*/
 
     size_t size()  const { return this->m_data.size(); }
     bool   empty() const { return this->m_data.empty(); }
 
-    T const & min_x() const { return this->m_min_x; }
-    T const & min_y() const { return this->m_min_y; }
-    T const & min_z() const { return this->m_min_z; }
+    const Eigen::Matrix<T, 3, 1>& min() const { return this->m_min; }
+    const Eigen::Matrix<T, 3, 1>& max() const { return this->m_max; }
 
-    T const & max_x() const { return this->m_max_x; }
-    T const & max_y() const { return this->m_max_y; }
-    T const & max_z() const { return this->m_max_z; }
+    const Eigen::Matrix<T, 3, 1>& dir() const { return this->m_dir; }
 
-    T const & dx() const { return this->m_dx; }
-    T const & dy() const { return this->m_dy; }
-    T const & dz() const { return this->m_dz; }
+    const Eigen::Matrix<size_t, 3, 1>& nodes() const { return this->m_nodes; }
 
-    size_t const & I() const { return this->m_I; }
-    size_t const & J() const { return this->m_J; }
-    size_t const & K() const { return this->m_K; }
 
     D       * data_ptr()       { return this->m_data[0]; }
     D const * data_ptr() const { return this->m_data[0]; }
