@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <tiny_math_types.h>
 
 namespace convex
 {
@@ -24,28 +25,25 @@ namespace convex
    *
    * @return     The signed distance of p to the edge-face voronoi plane.
    */
-  template< typename V >
-  inline typename V::real_type signed_distance_to_edge_face_voronoi_plane(
-                                                                   V const & p
-                                                                   , V const & A
-                                                                   , V const & B
-                                                                   , V const & C
+  template< typename T>
+  inline T signed_distance_to_edge_face_voronoi_plane(
+                                                                   const EigenVector3<T>& p
+                                                                   , const EigenVector3<T> & A
+                                                                   , const EigenVector3<T> & B
+                                                                   , const EigenVector3<T> & C
                                                                    )
   {
     using std::fabs;
 
-    typedef typename V::value_traits    VT;
-    typedef typename V::real_type       T;
-
-    V m      = tiny::cross( A-C, B-C );
+      EigenVector3<T>  m      = ( A-C).cross(B-C );
 
     assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_edge_face_voronoi_plane(): Degenerate triangle encountered");
 
-    V l      = tiny::cross( B-A, m );
-    V n      = tiny::unit( l );
+      EigenVector3<T>  l      = ( B-A).cross( m );
+    EigenVector3<T>  n      = ( l ).norm();
 
-    T sign_p = tiny::inner_prod( n, p-B );
-    T sign_C = tiny::inner_prod( n, C-B );
+      T sign_p = ( n).dot( p-B );
+    T sign_C = ( n).dot( C-B );
     T abs_p  = fabs( sign_p );
 
     assert( is_number( sign_p ) || !"signed_distance_to_edge_face_voronoi_plane(): Not a Number encountered");
