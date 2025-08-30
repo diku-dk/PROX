@@ -806,19 +806,13 @@ namespace procedural
                               );
 			}
 		} /// top triangles
-	}
-	
-  typedef tiny::MathTypes<float> MTf;
+    }
 
-  template
-	void make_temple<MTf>(  content::API * engine
-                        , MTf::vector3_type const & position
-                        , MTf::quaternion_type const & orientation
-                        , MTf::real_type const & temple_height
-                        , MTf::real_type const & pillar_width
-                        , size_t const & num_pillars_x
-                        , size_t const & num_pillars_z
-                        , MaterialInfo<MTf::real_type> mat_info
-                        );
+    using MTf = tiny::MathTypes<float>;
+
+    template void make_temple<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                   MTf::quaternion_type const& orientation, MTf::real_type const& temple_height,
+                                   MTf::real_type const& pillar_width, size_t const& num_pillars_x,
+                                   size_t const& num_pillars_z, MaterialInfo<MTf::real_type> mat_info);
 	
 } //namespace procedural

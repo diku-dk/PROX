@@ -19,13 +19,11 @@ namespace geometry
   : public SupportMapping<V>
   {
   public:
-
-    typedef typename V::real_type       T;
-    typedef typename V::value_traits    VT;
+      using T = typename V::real_type;
+      using VT = typename V::value_traits;
 
   protected:
-
-    V m_point[4];
+      V m_point[4];
 
   public:
 

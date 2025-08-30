@@ -14,13 +14,12 @@
 #include <boost/test/unit_test_suite.hpp>
 #include <boost/test/test_tools.hpp>
 
-typedef prox::MathPolicy<float>      math_policy;
-typedef math_policy::tiny_types      tiny_types;
-typedef math_policy::real_type       real_type;
-typedef math_policy::vector3_type    vector3_type;
-typedef math_policy::vector6_type    vector6_type;
-typedef math_policy::matrix3x3_type  matrix3x3_type;
-
+using math_policy = prox::MathPolicy<float>;
+using tiny_types = math_policy::tiny_types;
+using real_type = math_policy::real_type;
+using vector3_type = math_policy::vector3_type;
+using vector6_type = math_policy::vector6_type;
+using matrix3x3_type = math_policy::matrix3x3_type;
 
 BOOST_AUTO_TEST_SUITE(velocity_vector);
 BOOST_AUTO_TEST_CASE(get_velocity_vector_test)

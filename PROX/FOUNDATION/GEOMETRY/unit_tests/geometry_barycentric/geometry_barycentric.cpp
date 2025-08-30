@@ -7,9 +7,9 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-typedef double                       T;
-typedef tiny::MathTypes<T>          MT;
-typedef MT::vector3_type             V;
+using T = double;
+using MT = tiny::MathTypes<T>;
+using V = MT::vector3_type;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 

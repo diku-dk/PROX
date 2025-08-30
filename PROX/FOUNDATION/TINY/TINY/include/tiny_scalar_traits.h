@@ -14,11 +14,13 @@ namespace tiny
   class ScalarTraits
     {
     public:
+        using real_type = T;
+        using op_type = T;
 
-      typedef T  real_type;
-      typedef T  op_type;
-
-      enum { stride = 1 };
+        enum
+        {
+            stride = 1
+        };
 
       /**
        * op_type Creation
@@ -27,21 +29,14 @@ namespace tiny
        *  \param[in] scalar The Scalar to be copied into the op_type.
        *  \return op_type with all elements set to scalar value.
        */
-      static op_type set_op_type(real_type const & scalar)
-      {
-        return scalar;
-      }
+        static op_type set_op_type(real_type const& scalar) { return scalar; }
 
-      static op_type load_op_type(real_type const * scalars)
-      {
-        return scalars[0];
-      }
+        static op_type load_op_type(real_type const* scalars) { return scalars[0]; }
 
-
-      static real_type* store_op_type(real_type * const rt, op_type const & ot)
-      {
-        *rt = ot;
-        return rt;
+        static real_type* store_op_type(real_type* const rt, op_type const& ot)
+        {
+            *rt = ot;
+            return rt;
       }
 
       template<size_t N>

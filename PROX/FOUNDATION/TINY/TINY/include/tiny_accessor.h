@@ -18,23 +18,16 @@ namespace tiny
     class Accessor
       {
       public:
+          using op_type = typename M::op_type;
 
-        typedef typename M::op_type  op_type;
+          static op_type& cast(M& m, size_t const& i, size_t const& j) { return m.get_op_type(i, j); }
 
-        static op_type & cast (M & m, size_t const & i, size_t const & j)
-        {
-          return m.get_op_type(i,j);
-        }
+          static op_type cast(M const& m, size_t const i, size_t const j) { return m.get_op_type(i, j); }
 
-        static op_type cast (M const & m, size_t const i, size_t const j)
-        {
-          return m.get_op_type(i,j);
-        }
-
-        static size_t stride   ()  { return M::stride;    }
-        static size_t padding  ()  { return M::padding;   }
-        static size_t J_padded ()  { return M::J_padded;  }
-        static size_t allocsize()  { return M::allocsize; }
+          static size_t stride() { return M::stride; }
+          static size_t padding() { return M::padding; }
+          static size_t J_padded() { return M::J_padded; }
+          static size_t allocsize() { return M::allocsize; }
 
       };
 

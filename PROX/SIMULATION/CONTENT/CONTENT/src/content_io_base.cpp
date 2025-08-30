@@ -71,12 +71,12 @@ namespace content
       {
         if(mandatory)
           throw std::runtime_error( name + " on " + parent->Value() + " did not exist" );
-        return 0;
+        return nullptr;
       }
       if ( child->NextSiblingElement ( name ) )
       {
         throw std::runtime_error( name + " on " + parent->Value() + " was not a singleton" );
-        return 0;
+        return nullptr;
       }
       // Everything okay, child existed and it was the only child
       return child;

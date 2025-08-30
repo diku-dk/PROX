@@ -18,27 +18,29 @@ namespace sparse
     class TwoColumnMatrixAccessor
       {
       public:
-        typedef M matrix_type;
+          using matrix_type = M;
 
-        typedef typename M::data_container_type     data_container_type;
-        typedef typename M::cols_container_type     cols_container_type;
-        typedef typename M::is_init_container_type  is_init_container_type;
+          using data_container_type = typename M::data_container_type;
+          using cols_container_type = typename M::cols_container_type;
+          using is_init_container_type = typename M::is_init_container_type;
 
-        static size_t       & ncols(matrix_type       & src) { return src.m_ncols; }
-        static size_t const & ncols(matrix_type const & src) { return src.m_ncols; }
+          static size_t& ncols(matrix_type& src) { return src.m_ncols; }
+          static size_t const& ncols(matrix_type const& src) { return src.m_ncols; }
 
-        static data_container_type       & data(matrix_type       & src) { return src.m_data; }
-        static data_container_type const & data(matrix_type const & src) { return src.m_data; }
-        static cols_container_type       & cols(matrix_type       & src) { return src.m_cols; }
-        static cols_container_type const & cols(matrix_type const & src) { return src.m_cols; }
+          static data_container_type& data(matrix_type& src) { return src.m_data; }
+          static data_container_type const& data(matrix_type const& src) { return src.m_data; }
+          static cols_container_type& cols(matrix_type& src) { return src.m_cols; }
+          static cols_container_type const& cols(matrix_type const& src) { return src.m_cols; }
 
-        static size_t       & n_not_init(matrix_type       & src) { return src.n_not_init_; }
-        static size_t const & n_not_init(matrix_type const & src) { return src.m_n_not_init; }
+          static size_t& n_not_init(matrix_type& src) { return src.n_not_init_; }
+          static size_t const& n_not_init(matrix_type const& src) { return src.m_n_not_init; }
 
-        static is_init_container_type       & is_init(matrix_type       & src) { return src.m_is_init; }
-        static is_init_container_type const & is_init(matrix_type const & src) { return src.m_is_init; }
+          static is_init_container_type& is_init(matrix_type& src) { return src.m_is_init; }
+          static is_init_container_type const& is_init(matrix_type const& src) { return src.m_is_init; }
 
-        static typename matrix_type::reference init_block(size_t const i, size_t const j, matrix_type const& src) { return src.init_block_(i, j); }
+          static typename matrix_type::reference init_block(size_t const i, size_t const j, matrix_type const& src)
+          {
+              return src.init_block_(i, j); }
       };
 
   }//namespace detail
@@ -52,27 +54,24 @@ namespace sparse
 	class TwoColumnMatrix
     {
     protected:
-
-      typedef std::vector<B>                          data_container_type;
-      typedef std::vector<size_t>                     cols_container_type;
-      typedef std::vector<bool>                       is_init_container_type;
+        using data_container_type = std::vector<B>;
+        using cols_container_type = std::vector<size_t>;
+        using is_init_container_type = std::vector<bool>;
 
     public:
+        using matrix_type = TwoColumnMatrix<B>;
+        using block_type = B;
+        using reference = block_type&;
+        using const_reference = const block_type&;
+        using pointer = block_type*;
+        using const_pointer = const block_type*;
+        using iterator = IndexIterator<false, matrix_type>;
+        using const_iterator = IndexIterator<true, matrix_type>;
 
-      typedef TwoColumnMatrix<B>                      matrix_type;
-      typedef B                                       block_type;
-      typedef block_type&                             reference;
-      typedef block_type const&                       const_reference;
-      typedef block_type*                             pointer;
-      typedef block_type const*                       const_pointer;
-      typedef IndexIterator<false, matrix_type>       iterator;
-      typedef IndexIterator<true, matrix_type>        const_iterator;
-
-      typedef detail::TwoColumnMatrixAccessor<matrix_type>    accessor;
+        using accessor = detail::TwoColumnMatrixAccessor<matrix_type>;
 
     private:
-
-      friend class detail::TwoColumnMatrixAccessor<matrix_type>;
+        friend class detail::TwoColumnMatrixAccessor<matrix_type>;
 
     protected:
 

@@ -29,33 +29,30 @@ namespace procedural
 		class GeometryHandle
 		{
     public:
-
-      typedef typename MT::real_type       T;
-      typedef typename MT::vector3_type    V;
-      typedef typename MT::quaternion_type Q;
-      typedef typename MT::value_traits    VT;
+        using T = typename MT::real_type;
+        using V = typename MT::vector3_type;
+        using Q = typename MT::quaternion_type;
+        using VT = typename MT::value_traits;
 
     public:
+        T m_m;    ///< Total mass
+        T m_Ixx;  ///< Body frame inertia tensor
+        T m_Iyy;  ///< Body frame inertia tensor
+        T m_Izz;  ///< Body frame inertia tensor
+        V m_T;    ///< Body to model transformation
+        Q m_Q;    ///< Body to model transformation
+        size_t m_gid;  ///< unique identifier of the geometry in the physics engine
 
-      T       m_m;    ///< Total mass
-      T       m_Ixx;  ///< Body frame inertia tensor
-      T       m_Iyy;  ///< Body frame inertia tensor
-      T       m_Izz;  ///< Body frame inertia tensor
-      V       m_T;    ///< Body to model transformation
-      Q       m_Q;    ///< Body to model transformation
-			size_t  m_gid;  ///< unique identifier of the geometry in the physics engine
-
-		public:
-
-			GeometryHandle()
-      : m_m(0)
-      , m_Ixx(0)
-      , m_Iyy(0)
-      , m_Izz(0)
-      , m_T()
-      , m_Q()
-			, m_gid()
-			{}
+    public:
+        GeometryHandle()
+            : m_m(0)
+            , m_Ixx(0)
+            , m_Iyy(0)
+            , m_Izz(0)
+            , m_T()
+            , m_Q()
+            , m_gid()
+        {}
 			
 			GeometryHandle(
                      T const & m

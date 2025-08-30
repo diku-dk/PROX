@@ -268,9 +268,9 @@ namespace kdop
     {
       Tetrahedron const tet = M_in.tetrahedron(i);
 
-      unsigned long long x = (unsigned long long) centroids_X[ tet ];
-      unsigned long long y = (unsigned long long) centroids_Y[ tet ];
-      unsigned long long z = (unsigned long long) centroids_Z[ tet ];
+      auto x = (unsigned long long)centroids_X[tet];
+      auto y = (unsigned long long)centroids_Y[tet];
+      auto z = (unsigned long long)centroids_Z[tet];
       unsigned long long morton_code = 0;
 
       for(unsigned long k = 0; k < K; ++k)

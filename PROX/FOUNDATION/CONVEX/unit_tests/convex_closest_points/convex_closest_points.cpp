@@ -10,13 +10,12 @@
 
 #include <cmath>
 
-typedef tiny::MathTypes<double>  M;
-typedef M::quaternion_type       Q;
-typedef M::vector3_type          V;
-typedef M::real_type             T;
-typedef M::coordsys_type         C;
-typedef M::value_traits          VT;
-
+using M = tiny::MathTypes<double>;
+using Q = M::quaternion_type;
+using V = M::vector3_type;
+using T = M::real_type;
+using C = M::coordsys_type;
+using VT = M::value_traits;
 
 BOOST_AUTO_TEST_SUITE(convex_compute_closest_points);
 

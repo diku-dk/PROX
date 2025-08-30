@@ -7,8 +7,8 @@
 namespace tiny
 {
 
-  typedef ScalarTraits<float>						 float_traits;
-  typedef ScalarTraits<double>					 double_traits;
+using float_traits = ScalarTraits<float>;
+using double_traits = ScalarTraits<double>;
 //  typedef SSETraits<float>						   sse_float_traits;  // 2009-07-13 Kenny: Temporarily disabled to ease debugging
 
 } // namespace tiny

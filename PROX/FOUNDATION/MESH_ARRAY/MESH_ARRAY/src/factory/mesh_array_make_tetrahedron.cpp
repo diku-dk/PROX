@@ -41,30 +41,18 @@ namespace mesh_array
 		mesh.push_triangle( vk, vi, vm );
 	}
 
-  typedef tiny::MathTypes<float> MTf;
-  typedef tiny::MathTypes<double> MTd;
+    using MTf = tiny::MathTypes<float>;
+    using MTd = tiny::MathTypes<double>;
 
-  template
-  void make_tetrahedron<MTf>(
-                        MTf::vector3_type const & p0
-                        , MTf::vector3_type const & p1
-                        , MTf::vector3_type const & p2
-                        , MTf::vector3_type const & p3
-                        , T3Mesh & mesh
-                        , VertexAttribute<MTf::real_type,T3Mesh> & X
-                        , VertexAttribute<MTf::real_type,T3Mesh> & Y
-                        , VertexAttribute<MTf::real_type,T3Mesh> & Z
-                        );
-  template
-  void make_tetrahedron<MTd>(
-                         MTd::vector3_type const & p0
-                        , MTd::vector3_type const & p1
-                        , MTd::vector3_type const & p2
-                        , MTd::vector3_type const & p3
-                        , T3Mesh & mesh
-                        , VertexAttribute<MTd::real_type,T3Mesh> & X
-                        , VertexAttribute<MTd::real_type,T3Mesh> & Y
-                        , VertexAttribute<MTd::real_type,T3Mesh> & Z
-                        );
+    template void make_tetrahedron<MTf>(MTf::vector3_type const& p0, MTf::vector3_type const& p1,
+                                        MTf::vector3_type const& p2, MTf::vector3_type const& p3, T3Mesh& mesh,
+                                        VertexAttribute<MTf::real_type, T3Mesh>& X,
+                                        VertexAttribute<MTf::real_type, T3Mesh>& Y,
+                                        VertexAttribute<MTf::real_type, T3Mesh>& Z);
+    template void make_tetrahedron<MTd>(MTd::vector3_type const& p0, MTd::vector3_type const& p1,
+                                        MTd::vector3_type const& p2, MTd::vector3_type const& p3, T3Mesh& mesh,
+                                        VertexAttribute<MTd::real_type, T3Mesh>& X,
+                                        VertexAttribute<MTd::real_type, T3Mesh>& Y,
+                                        VertexAttribute<MTd::real_type, T3Mesh>& Z);
 
 } //namespace mesh_array

@@ -76,12 +76,11 @@ namespace big
   class Random
   {
   protected:
+      using T = value_type;
+      using self = Random<T>;
 
-    typedef value_type  T;
-    typedef Random<T>   self;
-
-    T m_lower;
-    T m_upper;
+      T m_lower;
+      T m_upper;
 
   protected:
 
@@ -100,8 +99,8 @@ namespace big
       using std::time;
       if(!is_initialized())
       {
-        std::srand(static_cast<unsigned int>(std::time(0)));
-        is_initialized() = true;
+          std::srand(static_cast<unsigned int>(std::time(nullptr)));
+          is_initialized() = true;
       }
     }
 

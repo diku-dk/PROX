@@ -18,30 +18,30 @@ namespace tiny
     class VectorOpsPolicy
       {
       protected:
+          using type_traits = typename V::type_traits;
+          using value_traits = typename V::value_traits;
 
-        typedef typename V::type_traits	  type_traits;
-        typedef typename V::value_traits  value_traits;
-
-        enum {stride = type_traits::stride};
-        enum {J = V::J};
+          enum
+          {
+              stride = type_traits::stride
+          };
+          enum
+          {
+              J = V::J
+          };
 
       public:
+          using real_type = typename V::real_type;
+          using op_type = typename V::op_type;
 
-        typedef typename V::real_type			real_type;
-        typedef typename V::op_type			  op_type;
+          static real_type inner_prod(V const& lhs, V const& rhs)
+          {
+              op_type dot = type_traits::set_op_type(0);
 
-        static real_type inner_prod (V const & lhs, V const & rhs)
-        {
-          op_type dot = type_traits::set_op_type(0);
-
-          for (size_t j = 0 ; j < J ; j+=stride )
-            type_traits::add_assign(  dot
-                                    , type_traits::mul(
-                                                       V::accessor::cast(lhs,0,j)
-                                                       , V::accessor::cast(rhs,0,j)
-                                                       )
-                                    );
-          return type_traits::sum(dot);
+              for (size_t j = 0; j < J; j += stride)
+                  type_traits::add_assign(dot,
+                                          type_traits::mul(V::accessor::cast(lhs, 0, j), V::accessor::cast(rhs, 0, j)));
+              return type_traits::sum(dot);
         }
 
         static V cross (V const & lhs, V const & rhs)

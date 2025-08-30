@@ -71,10 +71,9 @@ namespace content
          */
         size_t const & get_idx_from_name( std::string const & name ) const
         {
-          std::map<std::string, size_t>::const_iterator iter = m_name_to_idx.find( name );
-          if(iter==m_name_to_idx.end())
-            throw std::runtime_error("no entry existed for " + name);
-          return iter->second;
+            auto iter = m_name_to_idx.find(name);
+            if (iter == m_name_to_idx.end()) throw std::runtime_error("no entry existed for " + name);
+            return iter->second;
         }
 
         /**
@@ -85,10 +84,9 @@ namespace content
          */
         void set_idx_for_name( std::string const & name, size_t const & idx )
         {
-          std::map<std::string, size_t>::const_iterator iter = m_name_to_idx.find( name );
-          if(iter!=m_name_to_idx.end())
-            throw std::runtime_error("entry already existed for " + name);
-          m_name_to_idx[ name ] = idx;
+            auto iter = m_name_to_idx.find(name);
+            if (iter != m_name_to_idx.end()) throw std::runtime_error("entry already existed for " + name);
+            m_name_to_idx[name] = idx;
         }
 
         /**
@@ -100,18 +98,16 @@ namespace content
          */
         Transform const & get_transform_from_name( std::string const & name ) const
         {
-          std::map<std::string, Transform>::const_iterator iter = m_transforms.find( name );
-          if(iter==m_transforms.end())
-            throw std::runtime_error("no entry existed for " + name);
-          return iter->second;
+            auto iter = m_transforms.find(name);
+            if (iter == m_transforms.end()) throw std::runtime_error("no entry existed for " + name);
+            return iter->second;
         }
 
         void set_transform_for_name( std::string const & name, Transform const & T )
         {
-          std::map<std::string, Transform>::const_iterator iter = m_transforms.find( name );
-          if(iter!=m_transforms.end())
-            throw std::runtime_error("entry already existed for " + name);
-          m_transforms[ name ] = T;
+            auto iter = m_transforms.find(name);
+            if (iter != m_transforms.end()) throw std::runtime_error("entry already existed for " + name);
+            m_transforms[name] = T;
         }
 
         /**
@@ -123,18 +119,16 @@ namespace content
          */
         Motion const & get_motion_from_name( std::string const & name ) const
         {
-          std::map<std::string, Motion>::const_iterator iter = m_motions.find( name );
-          if(iter==m_motions.end())
-            throw std::runtime_error("no entry existed for " + name);
-          return iter->second;
+            auto iter = m_motions.find(name);
+            if (iter == m_motions.end()) throw std::runtime_error("no entry existed for " + name);
+            return iter->second;
         }
 
         void set_motion_for_name( std::string const & name, Motion const & M )
         {
-          std::map<std::string, Motion>::const_iterator iter = m_motions.find( name );
-          if(iter!=m_motions.end())
-            throw std::runtime_error("entry already existed for " + name);
-          m_motions[ name ] = M;
+            auto iter = m_motions.find(name);
+            if (iter != m_motions.end()) throw std::runtime_error("entry already existed for " + name);
+            m_motions[name] = M;
         }
 
         /**
@@ -146,18 +140,16 @@ namespace content
          */
         RigidBodyState const & get_state_from_name( std::string const & name ) const
         {
-          std::map<std::string, RigidBodyState>::const_iterator iter = m_rigid_body_states.find( name );
-          if(iter==m_rigid_body_states.end())
-            throw std::runtime_error("no entry existed for " + name);
-          return iter->second;
+            auto iter = m_rigid_body_states.find(name);
+            if (iter == m_rigid_body_states.end()) throw std::runtime_error("no entry existed for " + name);
+            return iter->second;
         }
 
         void set_state_for_name( std::string const & name, RigidBodyState const & S )
         {
-          std::map<std::string, RigidBodyState>::const_iterator iter = m_rigid_body_states.find( name );
-          if(iter!=m_rigid_body_states.end())
-            throw std::runtime_error("entry already existed for " + name);
-          m_rigid_body_states[ name ] = S;
+            auto iter = m_rigid_body_states.find(name);
+            if (iter != m_rigid_body_states.end()) throw std::runtime_error("entry already existed for " + name);
+            m_rigid_body_states[name] = S;
         }
 
       public:
@@ -179,7 +171,7 @@ namespace content
          *
          * @return   A pointer to the first element in an array of points
          */
-        Point const * get_points() const { return m_points.empty() ? 0 : &m_points[0]; }
+        Point const* get_points() const { return m_points.empty() ? nullptr : &m_points[0]; }
 
         /**
          * Get Number of Points in Internal Storage.
@@ -191,15 +183,17 @@ namespace content
       public:
 
         void clear_vertices() { m_vertices.clear(); }
-        void add_vertex( Vertex const & v ) {  m_vertices.push_back(v); }
-        Vertex const * get_vertices() const { return m_vertices.empty() ? 0 : &m_vertices[0]; }
+        void add_vertex(Vertex const& v) { m_vertices.push_back(v); }
+
+        Vertex const* get_vertices() const { return m_vertices.empty() ? nullptr : &m_vertices[0]; }
         size_t size_vertices() const { return m_vertices.size(); }
 
       public:
 
         void clear_tetrahedra() { m_tetrahedra.clear(); }
-        void add_tetrahedron( Tetrahedron const & t ) {  m_tetrahedra.push_back(t); }
-        Tetrahedron const * get_tetrahedra() const { return m_tetrahedra.empty() ? 0 : &m_tetrahedra[0]; }
+        void add_tetrahedron(Tetrahedron const& t) { m_tetrahedra.push_back(t); }
+
+        Tetrahedron const* get_tetrahedra() const { return m_tetrahedra.empty() ? nullptr : &m_tetrahedra[0]; }
         size_t size_tetrahedra() const { return m_tetrahedra.size(); }
 
       protected:
@@ -207,29 +201,28 @@ namespace content
         Cache(){}
 
       public:
-
-        Cache(content::Input * input)
-        : m_input( input )
-        , m_output(0)
-        , m_index(0u)
-        , m_name_to_idx()
-        , m_motions()
-        , m_transforms()
-        , m_rigid_body_states()
-        , m_points()
-        {
-          assert( input || !"input manager was null");
+          Cache(content::Input* input)
+              : m_input(input)
+              , m_output(nullptr)
+              , m_index(0u)
+              , m_name_to_idx()
+              , m_motions()
+              , m_transforms()
+              , m_rigid_body_states()
+              , m_points()
+          {
+              assert(input || !"input manager was null");
         }
 
-        Cache(content::Output * output)
-        : m_input(0)
-        , m_output( output )
-        , m_index(0u)
-        , m_name_to_idx()
-        , m_motions()
-        , m_transforms()
-        , m_rigid_body_states()
-        , m_points()
+        Cache(content::Output* output)
+            : m_input(nullptr)
+            , m_output(output)
+            , m_index(0u)
+            , m_name_to_idx()
+            , m_motions()
+            , m_transforms()
+            , m_rigid_body_states()
+            , m_points()
         {
           assert( output || !"output manager was null");
         }

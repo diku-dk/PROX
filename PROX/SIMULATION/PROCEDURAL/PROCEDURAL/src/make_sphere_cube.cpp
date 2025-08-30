@@ -75,17 +75,11 @@ namespace procedural
     }
 	}
 
-  typedef tiny::MathTypes<float> MTf;
+    using MTf = tiny::MathTypes<float>;
 
-  template
-	void make_sphere_cube<MTf>(
-                             content::API *  engine
-                             , MTf::vector3_type const & position
-                             , MTf::quaternion_type const & orientation
-                             , MTf::real_type const & sphere_radius
-                             , size_t const & spheres
-                             , MaterialInfo<MTf::real_type> mat_info
-                             );
+    template void make_sphere_cube<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                        MTf::quaternion_type const& orientation, MTf::real_type const& sphere_radius,
+                                        size_t const& spheres, MaterialInfo<MTf::real_type> mat_info);
 	
 } //namespace procedural
 

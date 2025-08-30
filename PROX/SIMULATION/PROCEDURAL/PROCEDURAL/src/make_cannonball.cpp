@@ -19,11 +19,9 @@ namespace procedural
   {
     GeometryHandle<MT> cannon_ball = make_cannonball_geometry<MT>(engine, radius);
     make_cannonball_rigid_body(engine, cannon_ball, position, orientation, velocity, mat_info);
-
   }
 
-
-  typedef tiny::MathTypes<float> MTf;
+  using MTf = tiny::MathTypes<float>;
 
   template
   void make_cannonball<MTf>(  content::API * engine

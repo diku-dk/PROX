@@ -37,7 +37,7 @@ namespace gl3
   inline bool vol_read(std::string const & filename, VolumeHeader & header, std::vector<unsigned char> & data)
   {
     FILE *stream;
-    if((stream = fopen( filename.c_str(), "rb" )) == NULL )
+    if ((stream = fopen(filename.c_str(), "rb")) == nullptr)
     {
       util::Log logging;
 

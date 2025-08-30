@@ -6,10 +6,8 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-
-typedef tiny::MathTypes<double>  MT;
-typedef MT::value_traits         VT;
-
+using MT = tiny::MathTypes<double>;
+using VT = MT::value_traits;
 
 BOOST_AUTO_TEST_SUITE(tiny_degrees_and_radians);
 

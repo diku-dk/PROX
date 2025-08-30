@@ -18,19 +18,17 @@ namespace hyper
   class TractionInfo
   {
   public:
-
-    typedef typename MT::matrix3x3_type          M;
-    typedef typename MT::vector3_type            V;
-    typedef typename MT::real_type               T;
-    typedef typename MT::value_traits            VT;
+      using M = typename MT::matrix3x3_type;
+      using V = typename MT::vector3_type;
+      using T = typename MT::real_type;
+      using VT = typename MT::value_traits;
 
   protected:
+      unsigned int m_i;
+      unsigned int m_j;
+      unsigned int m_k;
 
-    unsigned int m_i;
-    unsigned int m_j;
-    unsigned int m_k;
-
-    V m_traction;
+      V m_traction;
 
   public:
 

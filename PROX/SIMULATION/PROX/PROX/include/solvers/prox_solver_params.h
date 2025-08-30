@@ -20,21 +20,19 @@ namespace prox
   class SolverParams
   {
   public:
-
-    typedef typename MT::real_type           T;
-    typedef typename MT::value_traits        VT;
+      using T = typename MT::real_type;
+      using VT = typename MT::value_traits;
 
   protected:
+      size_t m_max_iterations;           ///< The maximum number of allowed outer iterations.
+      T m_absolute_tolerance;       ///< The absolute tolerance value.
+      T m_relative_tolerance;       ///< The relative tolerance value.
+      bool m_use_warm_starting;        ///< Boolean flag that indicates whether warmstarting is used or not.
 
-    size_t                   m_max_iterations;           ///< The maximum number of allowed outer iterations.
-    T                        m_absolute_tolerance;       ///< The absolute tolerance value.
-    T                        m_relative_tolerance;       ///< The relative tolerance value.
-    bool                     m_use_warm_starting;        ///< Boolean flag that indicates whether warmstarting is used or not.
-
-    solver_type              m_solver;                   ///< The solver type.
-    strategy_type            m_r_factor_strategy;        ///< The R-factor strategy type.
-    normal_sub_solver_type   m_normal_sub_solver;        ///< The normal sub solver type.
-    friction_sub_solver_type m_friction_sub_solver;      ///< The friction sub solver type.
+      solver_type m_solver;                   ///< The solver type.
+      strategy_type m_r_factor_strategy;        ///< The R-factor strategy type.
+      normal_sub_solver_type m_normal_sub_solver;        ///< The normal sub solver type.
+      friction_sub_solver_type m_friction_sub_solver;      ///< The friction sub solver type.
 
   public:
 

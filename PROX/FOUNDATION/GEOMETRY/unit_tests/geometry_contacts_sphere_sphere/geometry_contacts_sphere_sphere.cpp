@@ -10,9 +10,9 @@
 
 #include <vector>
 
-typedef tiny::MathTypes<float> MT;
-typedef MT::vector3_type       V;
-typedef MT::real_type          T;
+using MT = tiny::MathTypes<float>;
+using V = MT::vector3_type;
+using T = MT::real_type;
 
 class ContactInfo
 {

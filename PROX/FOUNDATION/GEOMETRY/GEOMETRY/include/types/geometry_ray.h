@@ -8,14 +8,12 @@ namespace geometry
   class Ray
   {
   public:
-
-    typedef typename V::real_type       T;
-    typedef typename V::value_traits    VT;
+      using T = typename V::real_type;
+      using VT = typename V::value_traits;
 
   protected:
-
-    V m_origin;
-    V m_direction;
+      V m_origin;
+      V m_direction;
 
   public:
 

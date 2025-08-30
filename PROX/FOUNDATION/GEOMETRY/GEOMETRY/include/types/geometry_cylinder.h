@@ -8,16 +8,14 @@ namespace geometry
   class Cylinder
   {
   public:
-
-    typedef typename V::real_type       T;
-    typedef typename V::value_traits    VT;
+      using T = typename V::real_type;
+      using VT = typename V::value_traits;
 
   protected:
-
-    T m_radius;
-    T m_height;
-    V m_axis;
-    V m_center;
+      T m_radius;
+      T m_height;
+      V m_axis;
+      V m_center;
 
   public:
 

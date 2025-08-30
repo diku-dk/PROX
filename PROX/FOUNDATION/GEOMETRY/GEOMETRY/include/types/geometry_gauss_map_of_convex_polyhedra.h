@@ -43,9 +43,9 @@ namespace geometry
         unsigned int const & s = min(i,j);
         unsigned int const & t = max(i,j);
 
-        std::map<unsigned int, unsigned int>::const_iterator lookup = m_data[s].find(t);
+        auto lookup = m_data[s].find(t);
 
-        if( lookup == m_data[s].end() )
+        if (lookup == m_data[s].end())
         {
           m_data[s].insert(
                            std::pair<unsigned int, unsigned int>(t, m_unique_edges)
@@ -74,17 +74,14 @@ namespace geometry
   class GaussMapOfConvexPolyhedra
   {
   public:
-
-    typedef typename V::real_type       T;
-    typedef typename V::value_traits    VT;
+      using T = typename V::real_type;
+      using VT = typename V::value_traits;
 
   protected:
-
-    class MapOfFace
-    {
-    public:
-
-      std::vector<unsigned int>   m_point_indices;
+      class MapOfFace
+      {
+      public:
+          std::vector<unsigned int> m_point_indices;
     };
 
     class MapOfEdge

@@ -24,12 +24,11 @@ namespace sparse
     class VectorAccessor
       {
       public:
+          using vector_type = V;
+          using data_container_type = typename V::data_container_type;
 
-        typedef V vector_type;
-        typedef typename V::data_container_type data_container_type;
-
-        static data_container_type       & data(vector_type       & src) { return src.m_data; }
-        static data_container_type const & data(vector_type const & src) { return src.m_data; }
+          static data_container_type& data(vector_type& src) { return src.m_data; }
+          static data_container_type const& data(vector_type const& src) { return src.m_data; }
       };
 
   }//namespace detail
@@ -44,25 +43,22 @@ namespace sparse
   class Vector
     {
     protected:
-
-      typedef std::vector<B>                          data_container_type;
+        using data_container_type = std::vector<B>;
 
     public:
+        using vector_type = Vector<B>;
+        using block_type = B;
+        using reference = block_type&;
+        using const_reference = const block_type&;
+        using pointer = block_type*;
+        using const_pointer = const block_type*;
+        using iterator = IndexIterator<false, vector_type>;
+        using const_iterator = IndexIterator<true, vector_type>;
 
-      typedef Vector<B>                               vector_type;
-      typedef B                                       block_type;
-      typedef block_type&                             reference;
-      typedef block_type const&                       const_reference;
-      typedef block_type*                             pointer;
-      typedef block_type const*                       const_pointer;
-      typedef IndexIterator<false, vector_type>       iterator;
-      typedef IndexIterator<true, vector_type>        const_iterator;
-
-      typedef detail::VectorAccessor<vector_type>             accessor;
+        using accessor = detail::VectorAccessor<vector_type>;
 
     private:
-
-      friend class detail::VectorAccessor<vector_type>;
+        friend class detail::VectorAccessor<vector_type>;
 
     protected:
 

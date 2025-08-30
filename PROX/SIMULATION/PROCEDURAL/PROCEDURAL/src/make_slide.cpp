@@ -107,17 +107,13 @@ namespace procedural
      , stone_density
      );
      */
-  }
-	
-  typedef tiny::MathTypes<float> MTf;
+    }
 
-  template
-	void make_slide<MTf>(  content::API * engine
-                       , MTf::vector3_type const & position
-                       , MTf::quaternion_type const & orientation
-                       , MTf::real_type const & pi_frac
-                       , MaterialInfo<MTf::real_type> mat_info
-                       );
+    using MTf = tiny::MathTypes<float>;
+
+    template void make_slide<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                  MTf::quaternion_type const& orientation, MTf::real_type const& pi_frac,
+                                  MaterialInfo<MTf::real_type> mat_info);
 
 }
 //namespace procedural

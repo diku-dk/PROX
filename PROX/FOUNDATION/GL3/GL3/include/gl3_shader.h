@@ -15,8 +15,7 @@ namespace gl3
   class Shader
   {
   public:
-
-    typedef enum {no_shader, vertex_shader, fragment_shader, geometry_shader} shader_type;
+      using shader_type = enum { no_shader, vertex_shader, fragment_shader, geometry_shader };
 
   protected:
 
@@ -132,7 +131,7 @@ namespace gl3
     gl3::check_errors("make_shader_from_file(): glCreateShader");
 
     char const * source = shader.source_code().c_str();
-    glShaderSource( shader.gl_name(), 1, &source, 0 );
+    glShaderSource(shader.gl_name(), 1, &source, nullptr);
     gl3::check_errors("glShaderSource");
 
     glCompileShader( shader.gl_name() );

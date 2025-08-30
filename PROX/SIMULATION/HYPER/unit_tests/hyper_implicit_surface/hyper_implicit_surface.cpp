@@ -6,16 +6,13 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-
-typedef hyper::MathPolicy<float> MT;
-typedef MT::real_type          T;
-typedef MT::vector3_type       V;
-typedef MT::matrix3x3_type     M;
-typedef MT::quaternion_type    Q;
-typedef MT::coordsys_type      C;
-typedef MT::value_traits       VT;
-
-
+using MT = hyper::MathPolicy<float>;
+using T = MT::real_type;
+using V = MT::vector3_type;
+using M = MT::matrix3x3_type;
+using Q = MT::quaternion_type;
+using C = MT::coordsys_type;
+using VT = MT::value_traits;
 
 BOOST_AUTO_TEST_SUITE(hyper);
 

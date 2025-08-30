@@ -27,12 +27,11 @@ namespace geometry
   class Plane
   {
   protected:
+      using T = typename V::real_type;
+      using VT = typename V::value_traits;
 
-    typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
-
-    V  m_normal;
-    T  m_offset;
+      V m_normal;
+      T m_offset;
 
   public:
 

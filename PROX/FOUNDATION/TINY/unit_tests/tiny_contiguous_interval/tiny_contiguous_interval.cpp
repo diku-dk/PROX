@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(minus_pi_to_plus_pi_intervals)
 {
   // precomputed interval end-points
 
-  double const pi = tiny::detail::pi<double>();
+  auto const pi = tiny::detail::pi<double>();
   double const two_pi = tiny::detail::pi<double>()*2.0;
   double const pi_sixth = tiny::detail::pi<double>()/6.0;
   double const pi_third = tiny::detail::pi<double>()/3.0;

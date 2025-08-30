@@ -25,27 +25,26 @@ namespace sparse
     class CompressedRowMatrixAccessor
       {
       public:
+          using matrix_type = M;
+          using data_container_type = typename M::data_container_type;
+          using cols_container_type = typename M::cols_container_type;
+          using row_ptrs_container_type = typename M::row_ptrs_container_type;
 
-        typedef M matrix_type;
-        typedef typename M::data_container_type     data_container_type;
-        typedef typename M::cols_container_type     cols_container_type;
-        typedef typename M::row_ptrs_container_type row_ptrs_container_type;
+          static size_t& nrows(matrix_type& src) { return src.m_nrows; }
+          static size_t const& nrows(matrix_type const& src) { return src.m_nrows; }
+          static size_t& ncols(matrix_type& src) { return src.m_ncols; }
+          static size_t const& ncols(matrix_type const& src) { return src.m_ncols; }
 
-        static size_t       & nrows(matrix_type& src)       { return src.m_nrows; }
-        static size_t const & nrows(matrix_type const& src) { return src.m_nrows; }
-        static size_t       & ncols(matrix_type& src)       { return src.m_ncols; }
-        static size_t const & ncols(matrix_type const& src) { return src.m_ncols; }
+          static size_t find_row(size_t const i, matrix_type const& src) { return src.safe_find_row(i); }
+          static size_t upd_row_ptrs(size_t const i, matrix_type const& src) { return src.safe_update_row_ptrs(i); }
 
-        static size_t find_row(size_t const i, matrix_type const& src)     { return src.safe_find_row(i);        }
-        static size_t upd_row_ptrs(size_t const i, matrix_type const& src) { return src.safe_update_row_ptrs(i); }
+          static data_container_type& data(matrix_type& src) { return src.m_data; }
+          static data_container_type const& data(matrix_type const& src) { return src.m_data; }
+          static cols_container_type& cols(matrix_type& src) { return src.m_cols; }
+          static cols_container_type const& cols(matrix_type const& src) { return src.m_cols; }
 
-        static data_container_type           & data(matrix_type       & src) { return src.m_data; }
-        static data_container_type const     & data(matrix_type const & src) { return src.m_data; }
-        static cols_container_type           & cols(matrix_type       & src) { return src.m_cols; }
-        static cols_container_type const     & cols(matrix_type const & src) { return src.m_cols; }
-
-        static row_ptrs_container_type       & row_ptrs(matrix_type       & src) { return src.m_row_ptrs; }
-        static row_ptrs_container_type const & row_ptrs(matrix_type const & src) { return src.m_row_ptrs; }
+          static row_ptrs_container_type& row_ptrs(matrix_type& src) { return src.m_row_ptrs; }
+          static row_ptrs_container_type const& row_ptrs(matrix_type const& src) { return src.m_row_ptrs; }
       };
 
   } // namespace detail
@@ -59,33 +58,31 @@ namespace sparse
   class CompressedRowMatrix
     {
     public:
+        using matrix_type = CompressedRowMatrix<B>;
+        using block_type = B;
+        using reference = block_type&;
+        using const_reference = const block_type&;
+        using pointer = block_type*;
+        using const_pointer = const block_type*;
 
-      typedef CompressedRowMatrix<B>                  matrix_type;
-      typedef B                                       block_type;
-      typedef block_type&                             reference;
-      typedef block_type const&                       const_reference;
-      typedef block_type*                             pointer;
-      typedef block_type const*                       const_pointer;
+        using iterator = IndexIterator<false, matrix_type>;
+        using const_iterator = IndexIterator<true, matrix_type>;
+        using row_iterator = RowIterator<false, matrix_type>;
+        using const_row_iterator = RowIterator<true, matrix_type>;
 
-      typedef IndexIterator<false, matrix_type>       iterator;
-      typedef IndexIterator<true,  matrix_type>       const_iterator;
-      typedef RowIterator<false, matrix_type>         row_iterator;
-      typedef RowIterator<true,  matrix_type>         const_row_iterator;
-
-      typedef detail::CompressedRowMatrixAccessor<matrix_type>  accessor;
+        using accessor = detail::CompressedRowMatrixAccessor<matrix_type>;
 
     protected:
+        using data_container_type = std::vector<block_type>;
+        using cols_container_type = std::vector<size_t>;
+        using row_ptrs_container_type = std::vector<size_t>;
 
-      typedef std::vector<block_type>                 data_container_type;
-      typedef std::vector<size_t>                     cols_container_type;
-      typedef std::vector<size_t>                     row_ptrs_container_type;
-
-      typedef typename data_container_type::iterator            data_iterator;
-      typedef typename data_container_type::const_iterator      const_data_iterator;
-      typedef typename cols_container_type::iterator            cols_iterator;
-      typedef typename cols_container_type::const_iterator      const_cols_iterator;
-      typedef typename row_ptrs_container_type::iterator        row_ptrs_iterator;
-      typedef typename row_ptrs_container_type::const_iterator  const_row_ptrs_iterator;
+        using data_iterator = typename data_container_type::iterator;
+        using const_data_iterator = typename data_container_type::const_iterator;
+        using cols_iterator = typename cols_container_type::iterator;
+        using const_cols_iterator = typename cols_container_type::const_iterator;
+        using row_ptrs_iterator = typename row_ptrs_container_type::iterator;
+        using const_row_ptrs_iterator = typename row_ptrs_container_type::const_iterator;
 
     private:
 
@@ -121,7 +118,7 @@ namespace sparse
         assert(i < size() || !"i was too large");
 
         // 2009-06-30 Kenny: proper ADL support
-        const_row_ptrs_iterator iter = std::upper_bound(m_row_ptrs.begin(), m_row_ptrs.end(), i);
+        auto iter = std::upper_bound(m_row_ptrs.begin(), m_row_ptrs.end(), i);
         return std::distance(m_row_ptrs.begin(), iter) - 1;
       }
 
@@ -200,15 +197,15 @@ namespace sparse
           size_t row_last  = m_row_ptrs[i+1];
           if (row_first != row_last)
           {
-            const_cols_iterator cols_first = m_cols.begin()+row_first;
-            const_cols_iterator cols_last  = m_cols.begin()+row_last;
+              auto cols_first = m_cols.begin() + row_first;
+              auto cols_last = m_cols.begin() + row_last;
 
-            const_cols_iterator cols_iter = std::lower_bound(m_cols.begin()+row_first, cols_last, j);
+              auto cols_iter = std::lower_bound(m_cols.begin() + row_first, cols_last, j);
 
-            if (cols_iter != cols_last && *cols_iter == j)
-            {
-              size_t const idx = row_first + std::distance(cols_first, cols_iter);
-              return m_data[idx];
+              if (cols_iter != cols_last && *cols_iter == j)
+              {
+                  size_t const idx = row_first + std::distance(cols_first, cols_iter);
+                  return m_data[idx];
             }
           }
         }
@@ -250,12 +247,12 @@ namespace sparse
           size_t const row_last  = m_row_ptrs[i+1];
           if (row_first != row_last)
           {
-            cols_iterator cols_last = m_cols.begin() + row_last;
-            cols_iterator cols_iter = std::lower_bound(m_cols.begin() + row_first, cols_last, j);
-            if (cols_iter != cols_last && *cols_iter == j)
-            {
-              size_t idx = std::distance(m_cols.begin(), cols_iter);
-              return m_data[idx];
+              auto cols_last = m_cols.begin() + row_last;
+              auto cols_iter = std::lower_bound(m_cols.begin() + row_first, cols_last, j);
+              if (cols_iter != cols_last && *cols_iter == j)
+              {
+                  size_t idx = std::distance(m_cols.begin(), cols_iter);
+                  return m_data[idx];
             }
           }
           assert(false && "CompressedRowMatrix.operator(i,j): invalid access");
@@ -379,14 +376,11 @@ namespace sparse
 
           if (row_first != row_last)
           {
-            const_cols_iterator cols_last  = m_cols.begin()+row_last;
+              auto cols_last = m_cols.begin() + row_last;
 
-            const_cols_iterator cols_iter = std::lower_bound(m_cols.begin()+row_first, cols_last, j);
+              auto cols_iter = std::lower_bound(m_cols.begin() + row_first, cols_last, j);
 
-            if (cols_iter != cols_last && *cols_iter == j)
-            {
-              return true;
-            }
+              if (cols_iter != cols_last && *cols_iter == j) { return true; }
           }
         }
         return false;

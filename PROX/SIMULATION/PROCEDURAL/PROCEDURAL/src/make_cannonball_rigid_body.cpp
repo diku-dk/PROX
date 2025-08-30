@@ -53,16 +53,11 @@ namespace procedural
 		return rid;
 	}
 
-  typedef tiny::MathTypes<float>  MTf;
+    using MTf = tiny::MathTypes<float>;
 
-  template
-	size_t make_cannonball_rigid_body<MTf>(
-                                         content::API * engine
-                                         , GeometryHandle<MTf> const & ball
-                                         , MTf::vector3_type const & xbf
-                                         , MTf::quaternion_type const & Qbf
-                                         , MTf::vector3_type const & vbf
-                                         , MaterialInfo<MTf::real_type> mat_info
-                                         );
+    template size_t make_cannonball_rigid_body<MTf>(content::API* engine, GeometryHandle<MTf> const& ball,
+                                                    MTf::vector3_type const& xbf, MTf::quaternion_type const& Qbf,
+                                                    MTf::vector3_type const& vbf,
+                                                    MaterialInfo<MTf::real_type> mat_info);
 
 } //namespace procedural

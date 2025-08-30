@@ -191,7 +191,7 @@ namespace gl3
       gl3::check_errors("glGetProgram");
 
       std::string message(length,' ');
-      glGetProgramInfoLog( m_gl_name, length, 0, &message[0] );
+      glGetProgramInfoLog(m_gl_name, length, nullptr, &message[0]);
       gl3::check_errors("glGetProgramInfoLog");
 
       {
@@ -251,7 +251,7 @@ namespace gl3
       gl3::check_errors("glGetProgram");
 
       std::string message(length,' ');
-      glGetProgramInfoLog( program.gl_name(), length, 0, &message[0] );
+      glGetProgramInfoLog(program.gl_name(), length, nullptr, &message[0]);
       gl3::check_errors("glGetProgramInfoLog");
 
       {
@@ -301,7 +301,7 @@ namespace gl3
       gl3::check_errors("glGetProgram");
 
       std::string message(length,' ');
-      glGetProgramInfoLog( program.gl_name(), length, 0, &message[0] );
+      glGetProgramInfoLog(program.gl_name(), length, nullptr, &message[0]);
       gl3::check_errors("glGetProgramInfoLog");
 
       {

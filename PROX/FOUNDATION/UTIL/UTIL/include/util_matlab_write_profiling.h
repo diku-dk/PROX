@@ -45,10 +45,10 @@ namespace util
     {
       Profiling::monitors_container const * monitors = Profiling::get_monitors_instance();
 
-      Profiling::monitors_container::const_iterator m   = monitors->begin();
-      Profiling::monitors_container::const_iterator end = monitors->end();
+      auto m = monitors->begin();
+      auto end = monitors->end();
 
-      for( ; m != end; ++m)
+      for (; m != end; ++m)
       {
         std::string              const & name    = m->first;
         Profiling::Monitor       const & monitor = m->second;
@@ -61,10 +61,10 @@ namespace util
     {
       Profiling::timer_monitors_container const * monitors = Profiling::get_timer_monitors_instance();
 
-      Profiling::timer_monitors_container::const_iterator m   = monitors->begin();
-      Profiling::timer_monitors_container::const_iterator end = monitors->end();
+      auto m = monitors->begin();
+      auto end = monitors->end();
 
-      for( ; m != end; ++m)
+      for (; m != end; ++m)
       {
         std::string                   const & name    = m->first;
         Profiling::TimerMonitor       const & monitor = m->second;
@@ -78,10 +78,10 @@ namespace util
     {
       Profiling::vector_monitors_container const * monitors = Profiling::get_vector_monitors_instance();
 
-      Profiling::vector_monitors_container::const_iterator m   = monitors->begin();
-      Profiling::vector_monitors_container::const_iterator end = monitors->end();
+      auto m = monitors->begin();
+      auto end = monitors->end();
 
-      for( ; m != end; ++m)
+      for (; m != end; ++m)
       {
         std::string                    const & name    = m->first;
         Profiling::VectorMonitor       const & monitor = m->second;

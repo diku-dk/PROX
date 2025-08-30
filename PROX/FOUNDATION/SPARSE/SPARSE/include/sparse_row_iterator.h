@@ -30,29 +30,26 @@ namespace sparse
 #endif
 
     private:
+        using matrix_type = M;
 
-      typedef M matrix_type;
-
-      typedef typename detail::if_then_else<is_const, matrix_type const*, matrix_type*>::result    matrix_type_ptr;
-      typedef typename matrix_type::accessor::data_container_type                          data_container_type;
-      typedef typename data_container_type::iterator                                       data_iterator;
-      typedef typename data_container_type::const_iterator                                 const_data_iterator;
-      typedef typename detail::if_then_else<is_const, const_data_iterator, data_iterator>::result  data_iterator_type;
+        using matrix_type_ptr = typename detail::if_then_else<is_const, const matrix_type*, matrix_type*>::result;
+        using data_container_type = typename matrix_type::accessor::data_container_type;
+        using data_iterator = typename data_container_type::iterator;
+        using const_data_iterator = typename data_container_type::const_iterator;
+        using data_iterator_type = typename detail::if_then_else<is_const, const_data_iterator, data_iterator>::result;
 
     public:
+        using iterator_category = typename std::iterator_traits<data_iterator_type>::iterator_category;
 
-      typedef typename std::iterator_traits<data_iterator_type>::iterator_category iterator_category;
-
-      typedef typename data_iterator_type::value_type       value_type;
-      typedef typename data_iterator_type::difference_type  difference_type;
-      typedef typename data_iterator_type::pointer          pointer;
-      typedef typename data_iterator_type::reference        reference;
+        using value_type = typename data_iterator_type::value_type;
+        using difference_type = typename data_iterator_type::difference_type;
+        using pointer = typename data_iterator_type::pointer;
+        using reference = typename data_iterator_type::reference;
 
     protected:
-
-      matrix_type_ptr m_src;
-      size_t          m_idx;
-      size_t          m_row;
+        matrix_type_ptr m_src;
+        size_t m_idx;
+        size_t m_row;
 
     public:
 

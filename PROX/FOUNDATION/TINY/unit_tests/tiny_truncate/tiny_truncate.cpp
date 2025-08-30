@@ -6,10 +6,8 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-
-typedef tiny::Vector<3u, tiny::float_traits>  Vf;
-typedef tiny::Vector<3u, tiny::double_traits> Vd;
-
+using Vf = tiny::Vector<3U, tiny::float_traits>;
+using Vd = tiny::Vector<3U, tiny::double_traits>;
 
 BOOST_AUTO_TEST_SUITE(tiny_truncate);
 

@@ -18,29 +18,16 @@ namespace prox
     class MassBlockAccessor
       {
       public:
+          using block_type = B;
+          using data_container_type = typename B::data_container_type;
 
-        typedef B block_type;
-        typedef typename B::data_container_type data_container_type;
+          static data_container_type& data(block_type& src) { return src.m_data; }
 
-        static data_container_type& data(block_type& src)
-        {
-          return src.m_data;
-        }
+          static data_container_type const& data(block_type const& src) { return src.m_data; }
 
-        static data_container_type const& data(block_type const& src)
-        {
-          return src.m_data;
-        }
+          static int idx_into(size_t const i, size_t const j, block_type const& src) { return src.safe_idx_into(i, j); }
 
-        static int idx_into(size_t const i, size_t const j, block_type const& src)
-        {
-          return src.safe_idx_into(i,j);
-        }
-
-        static void copy(block_type const& orig, block_type& src)
-        {
-          src.safe_copy(orig);
-        }
+          static void copy(block_type const& orig, block_type& src) { src.safe_copy(orig); }
       };
 
   }//namespace detail
@@ -63,31 +50,28 @@ namespace prox
     {
 
     public:
+        using block_type = MassBlock<T>;
+        using value_type = T;
+        using reference = T&;
+        using const_reference = const T&;
+        using pointer = T*;
+        using const_pointer = const T*;
+        using iterator = T*;
+        using const_iterator = const T*;
 
-      typedef MassBlock<T>          block_type;
-      typedef T                     value_type;
-      typedef T&                    reference;
-      typedef T const&              const_reference;
-      typedef T*                    pointer;
-      typedef T const*              const_pointer;
-      typedef T*                    iterator;
-      typedef T const*              const_iterator;
+        using value_traits = tiny::ValueTraits<T>;
 
-      typedef tiny::ValueTraits<T>   value_traits;
-
-      typedef detail::MassBlockAccessor<block_type>   accessor;
+        using accessor = detail::MassBlockAccessor<block_type>;
 
     private:
 
       friend class detail::MassBlockAccessor<block_type>;
 
     protected:
-
-      typedef T*                data_container_type;
+        using data_container_type = T*;
 
     protected:
-
-      value_type m_data[7];
+        value_type m_data[7];
 
     protected:
 

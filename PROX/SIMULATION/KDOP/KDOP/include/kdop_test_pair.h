@@ -37,22 +37,21 @@ namespace kdop
     geometry::ContactsCallback<V> * m_callback;
 
   public:
-
-    TestPair()
-    : m_tree_a(0)
-    , m_tree_b(0)
-    , m_mesh_a(0)
-    , m_mesh_b(0)
-    , m_x_a(0)
-    , m_x_b(0)
-    , m_y_a(0)
-    , m_y_b(0)
-    , m_z_a(0)
-    , m_z_b(0)
-    , m_surface_map_a(0)
-    , m_surface_map_b(0)
-    , m_callback(0)
-    {}
+      TestPair()
+          : m_tree_a(0)
+          , m_tree_b(0)
+          , m_mesh_a(nullptr)
+          , m_mesh_b(nullptr)
+          , m_x_a(0)
+          , m_x_b(0)
+          , m_y_a(0)
+          , m_y_b(0)
+          , m_z_a(0)
+          , m_z_b(0)
+          , m_surface_map_a(nullptr)
+          , m_surface_map_b(nullptr)
+          , m_callback(0)
+      {}
 
     TestPair(
                Tree<T, K> const & tree_A

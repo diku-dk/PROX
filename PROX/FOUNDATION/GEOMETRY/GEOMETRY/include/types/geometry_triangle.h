@@ -8,13 +8,11 @@ namespace geometry
   class Triangle
   {
   public:
-
-    typedef typename V::real_type       T;
-    typedef typename V::value_traits    VT;
+      using T = typename V::real_type;
+      using VT = typename V::value_traits;
 
   protected:
-
-    V m_point[3];
+      V m_point[3];
 
   public:
 

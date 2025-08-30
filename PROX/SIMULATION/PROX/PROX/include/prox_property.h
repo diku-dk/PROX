@@ -10,19 +10,17 @@ namespace prox
   class Property
   {
   public:
-
-    typedef typename math_policy::real_type       real_type;
-    typedef typename math_policy::vector3_type    vector3_type;
-    typedef typename math_policy::value_traits    value_traits;
+      using real_type = typename math_policy::real_type;
+      using vector3_type = typename math_policy::vector3_type;
+      using value_traits = typename math_policy::value_traits;
 
   protected:
-
-    vector3_type     m_mu;
-    real_type        m_e;
+      vector3_type m_mu;
+      real_type m_e;
 
     //given in local frame of the master matrial body
-    vector3_type     m_s;
-    size_t           m_master_material_idx;
+      vector3_type m_s;
+      size_t m_master_material_idx;
 
   public:
 

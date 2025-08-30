@@ -15,28 +15,26 @@ namespace rigid_body
     class SelectTool
     {
     public:
-
-      typedef tiny::MathTypes<float> MT;
-      typedef MT::real_type          T;
-      typedef MT::vector3_type       V;
-      typedef MT::matrix3x3_type     M;
-      typedef MT::quaternion_type    Q;
-      typedef MT::coordsys_type      C;
-      typedef MT::value_traits       VT;
+        using MT = tiny::MathTypes<float>;
+        using T = MT::real_type;
+        using V = MT::vector3_type;
+        using M = MT::matrix3x3_type;
+        using Q = MT::quaternion_type;
+        using C = MT::coordsys_type;
+        using VT = MT::value_traits;
 
     protected:
+        size_t m_id;                ///< Identifier of current selection. Only valid if m_is_selected is true.
+        bool m_has_selected;       ///< Boolean flag indicating whether something is selected or not.
 
-      size_t         m_id;                ///< Identifier of current selection. Only valid if m_is_selected is true.
-      bool           m_has_selected;       ///< Boolean flag indicating whether something is selected or not.
+        V m_ray_direction;
+        V m_ray_origin;
+        V m_hit_point;
+        T m_hit_distance;
 
-      V m_ray_direction;
-      V m_ray_origin;
-      V m_hit_point;
-      T m_hit_distance;
-
-      float m_anchor_x;   ///< Selection anchor point x coordinate.
-      float m_anchor_y;   ///< Selection anchor point y coordinate.
-      float m_anchor_z;   ///< Selection anchor point z coordinate.
+        float m_anchor_x;   ///< Selection anchor point x coordinate.
+        float m_anchor_y;   ///< Selection anchor point y coordinate.
+        float m_anchor_z;   ///< Selection anchor point z coordinate.
 
     public:
 

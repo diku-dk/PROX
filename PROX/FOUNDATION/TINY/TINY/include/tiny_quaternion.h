@@ -15,23 +15,23 @@ namespace tiny
   : public detail::Container< 1, 4, T >
   {
   protected:
+      using base_class_type = detail::Container<1, 4, T>;
 
-    typedef detail::Container<1,4,T>	base_class_type;
-
-    enum {J_padded = base_class_type::J_padded };
-
-  public:
-
-    typedef typename T::real_type			        real_type;
-    typedef typename T::op_type				        op_type;
-    typedef          ValueTraits<real_type>   value_traits;
-    typedef          Vector<3,T>		          vector3_type;
+      enum
+      {
+          J_padded = base_class_type::J_padded
+      };
 
   public:
+      using real_type = typename T::real_type;
+      using op_type = typename T::op_type;
+      using value_traits = ValueTraits<real_type>;
+      using vector3_type = Vector<3, T>;
 
-    Quaternion ()
-		: base_class_type()
-    {}
+  public:
+      Quaternion()
+          : base_class_type()
+      {}
 
     ~Quaternion() {}
 

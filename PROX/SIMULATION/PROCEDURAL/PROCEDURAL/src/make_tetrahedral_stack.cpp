@@ -127,7 +127,7 @@ namespace procedural
     }
   }
 
-  typedef tiny::MathTypes<float> MTf;
+  using MTf = tiny::MathTypes<float>;
 
   template
 	void make_tetrahedral_stack<MTf>(

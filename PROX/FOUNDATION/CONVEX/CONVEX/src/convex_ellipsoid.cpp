@@ -151,8 +151,8 @@ namespace convex
     return min(w, min(h, d));
   }
 
-  typedef tiny::MathTypes<float>  Mf;
-  typedef tiny::MathTypes<double> Md;
+  using Mf = tiny::MathTypes<float>;
+  using Md = tiny::MathTypes<double>;
 
   template class Ellipsoid<Mf>;
   template class Ellipsoid<Md>;

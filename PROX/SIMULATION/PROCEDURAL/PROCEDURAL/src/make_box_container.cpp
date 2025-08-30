@@ -152,19 +152,13 @@ namespace procedural
                             , "Visualizer/ground"
                             );
     }
-	}
+    }
 
-	typedef tiny::MathTypes<float> MTf;
+    using MTf = tiny::MathTypes<float>;
 
-  template
-	void make_box_container<MTf>(  content::API *  engine
-                        , MTf::vector3_type const & position
-                        , MTf::quaternion_type const & orientation
-                        , MTf::real_type const & width
-                        , MTf::real_type const & height
-                        , MTf::real_type const & depth
-                        , MTf::real_type const & wall_thickness
-                        , MaterialInfo<MTf::real_type> mat_info
-                        );
+    template void make_box_container<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                          MTf::quaternion_type const& orientation, MTf::real_type const& width,
+                                          MTf::real_type const& height, MTf::real_type const& depth,
+                                          MTf::real_type const& wall_thickness, MaterialInfo<MTf::real_type> mat_info);
 
 } //namespace procedural

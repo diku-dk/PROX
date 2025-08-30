@@ -34,30 +34,29 @@ namespace sparse
 #endif
 
     protected:
+        using container_type = M;
+        using container_type_ptr =
+            typename detail::if_then_else<is_const, const container_type*, container_type*>::result;
 
-      typedef M container_type;
-      typedef typename detail::if_then_else<is_const, container_type const*, container_type*>::result container_type_ptr;
+        using data_container_type = typename M::accessor::data_container_type;
+        using data_iterator = typename data_container_type::iterator;
+        using const_data_iterator = typename data_container_type::const_iterator;
 
-      typedef typename M::accessor::data_container_type     data_container_type;
-      typedef typename data_container_type::iterator        data_iterator;
-      typedef typename data_container_type::const_iterator  const_data_iterator;
-
-      typedef typename detail::if_then_else<is_const, const_data_iterator, data_iterator>::result data_iterator_type;
+        using data_iterator_type = typename detail::if_then_else<is_const, const_data_iterator, data_iterator>::result;
 
     public:
 
       // 2009-07-01 Kenny: STL dependency may be problematic?
-      typedef typename std::iterator_traits<data_iterator_type>::iterator_category iterator_category;
+        using iterator_category = typename std::iterator_traits<data_iterator_type>::iterator_category;
 
-      typedef typename data_iterator_type::value_type      value_type;
-      typedef typename data_iterator_type::difference_type difference_type;
-      typedef typename data_iterator_type::pointer         pointer;
-      typedef typename data_iterator_type::reference       reference;
+        using value_type = typename data_iterator_type::value_type;
+        using difference_type = typename data_iterator_type::difference_type;
+        using pointer = typename data_iterator_type::pointer;
+        using reference = typename data_iterator_type::reference;
 
     protected:
-
-      container_type_ptr m_src;
-      size_t             m_idx;
+        container_type_ptr m_src;
+        size_t m_idx;
 
     public:
 

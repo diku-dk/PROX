@@ -20,14 +20,14 @@ namespace sparse
     class if_then_else<true, T, F>
     {
     public:
-      typedef T result;
+        using result = T;
     };
 
     template <typename T, typename F>
     class if_then_else<false, T, F>
     {
     public:
-      typedef F result;
+        using result = F;
     };
 
   } // namespace detail

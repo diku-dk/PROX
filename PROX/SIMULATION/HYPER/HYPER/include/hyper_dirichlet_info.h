@@ -8,8 +8,7 @@ namespace hyper
   class DirichletInfo
   {
   public:
-
-    typedef typename MT::vector3_type V;
+      using V = typename MT::vector3_type;
 
   protected:
 

@@ -19,16 +19,14 @@ namespace prox
   class Params
   {
   public:
-
-    typedef SolverParams<MT>            solver_params_type;
-    typedef StepperParams<MT>           stepper_params_type;
+      using solver_params_type = SolverParams<MT>;
+      using stepper_params_type = StepperParams<MT>;
 
   protected:
+      solver_params_type m_solver_params;     ///< Parameters used for prox solvers.
+      stepper_params_type m_stepper_params;    ///< Parameters used for prox steppers.
 
-    solver_params_type  m_solver_params;     ///< Parameters used for prox solvers.
-    stepper_params_type m_stepper_params;    ///< Parameters used for prox steppers.
-
-    bool   m_use_all_pair;                   ///< Parameter for controlling if
+      bool m_use_all_pair;                   ///< Parameter for controlling if
                                              ///< all-pair or grid algorithm should
                                              ///< be used for broad phase collision
                                              ///< detetection. Default is false (=off).

@@ -41,26 +41,24 @@ namespace tiny
         enum { N    = I_*J_ };
 
       private:
+          using self_type = Container<I, J, T>;
 
-        typedef Container< I , J, T>   self_type;
-
-        friend class detail::Accessor< self_type >;
+          friend class detail::Accessor< self_type >;
 
       public:
+          using accessor = detail::Accessor<self_type>;
+          using type_traits = T;
+          using real_type = typename T::real_type;
+          using op_type = typename T::op_type;
 
-        typedef          detail::Accessor< self_type >    accessor;
-        typedef          T                                type_traits;
-        typedef typename T::real_type                     real_type;
-        typedef typename T::op_type                       op_type;
+          using value_traits = ValueTraits<real_type>;
 
-        typedef          ValueTraits<real_type>           value_traits;
+          using iterator = IndexIterator<false, self_type>;
+          using const_iterator = IndexIterator<true, self_type>;
 
-        typedef IndexIterator< false, self_type >   iterator;
-        typedef IndexIterator<  true, self_type >   const_iterator;
-
-        static size_t size()  { return I*J; }
-        static size_t size1() { return I;   }
-        static size_t size2() { return J;   }
+          static size_t size() { return I * J; }
+          static size_t size1() { return I; }
+          static size_t size2() { return J; }
 
       protected:
 
@@ -70,12 +68,11 @@ namespace tiny
         enum { allocsize = I * J_padded }; ///< Total number of elements including padding.
 
       private:
-
-        typedef union
+          using Converter = union
           {
-            real_type real[stride];
-            op_type op;
-          } Converter;
+              real_type real[stride];
+              op_type op;
+          };
 
 /*      op_type get_op_type ( size_t const & i , size_t const & j ) const
       {

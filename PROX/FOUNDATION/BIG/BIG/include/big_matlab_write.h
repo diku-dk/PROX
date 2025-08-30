@@ -54,8 +54,8 @@ namespace big
                                        )
     {
       //--- get dimensions
-      unsigned int m = static_cast<unsigned int>(A.size1());
-      unsigned int n = static_cast<unsigned int>(A.size2());
+      auto m = static_cast<unsigned int>(A.size1());
+      auto n = static_cast<unsigned int>(A.size2());
       unsigned int nzeros = 0;
       unsigned int idx = 0;
       nzeros = 0;

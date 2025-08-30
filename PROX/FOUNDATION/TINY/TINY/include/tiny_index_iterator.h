@@ -21,23 +21,22 @@ namespace tiny
     : public std::iterator< std::forward_iterator_tag, typename if_then_else< is_const, typename M::real_type const, typename M::real_type >::result >
     {
     protected:
-
-      typedef typename std::iterator< std::forward_iterator_tag, typename if_then_else< is_const, typename M::real_type const, typename M::real_type >::result >  base_class_type;
+        using base_class_type = typename std::iterator<
+            std::forward_iterator_tag,
+            typename if_then_else<is_const, const typename M::real_type, typename M::real_type>::result>;
 
     public:
+        using iterator_category = typename std::iterator_traits<base_class_type>::iterator_category;
 
-      typedef typename std::iterator_traits<base_class_type>::iterator_category iterator_category;
-
-      typedef typename base_class_type::value_type      value_type;
-      typedef typename base_class_type::difference_type difference_type;
-      typedef typename base_class_type::pointer         pointer;
-      typedef typename base_class_type::reference       reference;
+        using value_type = typename base_class_type::value_type;
+        using difference_type = typename base_class_type::difference_type;
+        using pointer = typename base_class_type::pointer;
+        using reference = typename base_class_type::reference;
 
     protected:
+        using matrix_type_ptr = typename if_then_else<is_const, const M*, M*>::result;
 
-      typedef typename if_then_else<is_const, M const*, M*>::result matrix_type_ptr;
-
-      typedef typename if_then_else<is_const, typename M::real_type const, typename M::real_type >::result real_type;
+        using real_type = typename if_then_else<is_const, const typename M::real_type, typename M::real_type>::result;
 
     protected:
 

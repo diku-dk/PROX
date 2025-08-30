@@ -22,17 +22,15 @@ namespace tiny
   class CoordSys
     {
     public:
-
-      typedef typename T_::real_type           real_type;
-      typedef          ValueTraits<real_type>  value_traits;
-      typedef          Vector<3,T_>            vector3_type;
-      typedef          Quaternion<T_>          quaternion_type;
-      typedef          Matrix<3,3,T_>          matrix3x3_type;
+        using real_type = typename T_::real_type;
+        using value_traits = ValueTraits<real_type>;
+        using vector3_type = Vector<3, T_>;
+        using quaternion_type = Quaternion<T_>;
+        using matrix3x3_type = Matrix<3, 3, T_>;
 
     protected:
-
-      vector3_type     m_T;      ///< The Position.
-      quaternion_type  m_Q;      ///< The orientation in Quaternion form.
+        vector3_type m_T;      ///< The Position.
+        quaternion_type m_Q;      ///< The orientation in Quaternion form.
 
     public:
 

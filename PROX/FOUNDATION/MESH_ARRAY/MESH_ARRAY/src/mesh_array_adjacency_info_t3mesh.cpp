@@ -35,8 +35,8 @@ namespace mesh_array
 
   void AdjacencyInfo<T3Mesh>::release()
   {
-    this->m_owner = 0;
-    this->m_info.clear();
+      this->m_owner = nullptr;
+      this->m_info.clear();
   }
 
   void AdjacencyInfo<T3Mesh>::bind(VertexRing<T3Mesh> const & VR)

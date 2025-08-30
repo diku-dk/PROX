@@ -44,31 +44,17 @@ namespace mesh_array
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z );
 	}
 
-  typedef tiny::MathTypes<float> MTf;
-  typedef tiny::MathTypes<double> MTd;
+    using MTf = tiny::MathTypes<float>;
+    using MTd = tiny::MathTypes<double>;
 
-  template
-  void make_capsule<MTf>(
-                         MTf::real_type const & radius
-                         , MTf::real_type const & height
-                         , size_t const & slices
-                         , size_t const & segments
-                         , T3Mesh & mesh
-                         , VertexAttribute<MTf::real_type,T3Mesh> & X
-                         , VertexAttribute<MTf::real_type,T3Mesh> & Y
-                         , VertexAttribute<MTf::real_type,T3Mesh> & Z
-                         );
-	
-  template
-  void make_capsule<MTd>(
-                         MTd::real_type const & radius
-                         , MTd::real_type const & height
-                         , size_t const & slices
-                         , size_t const & segments
-                         , T3Mesh & mesh
-                         , VertexAttribute<MTd::real_type,T3Mesh> & X
-                         , VertexAttribute<MTd::real_type,T3Mesh> & Y
-                         , VertexAttribute<MTd::real_type,T3Mesh> & Z
-                         );
+    template void make_capsule<MTf>(MTf::real_type const& radius, MTf::real_type const& height, size_t const& slices,
+                                    size_t const& segments, T3Mesh& mesh, VertexAttribute<MTf::real_type, T3Mesh>& X,
+                                    VertexAttribute<MTf::real_type, T3Mesh>& Y,
+                                    VertexAttribute<MTf::real_type, T3Mesh>& Z);
+
+    template void make_capsule<MTd>(MTd::real_type const& radius, MTd::real_type const& height, size_t const& slices,
+                                    size_t const& segments, T3Mesh& mesh, VertexAttribute<MTd::real_type, T3Mesh>& X,
+                                    VertexAttribute<MTd::real_type, T3Mesh>& Y,
+                                    VertexAttribute<MTd::real_type, T3Mesh>& Z);
 
 } //namespace mesh_array

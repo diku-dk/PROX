@@ -13,9 +13,8 @@ namespace mesh_array
   class TetrahedronAttribute<T,T4Mesh>
   {
   public:
-
-    typedef typename std::vector<T>::reference       reference;
-		typedef typename std::vector<T>::const_reference const_reference;
+      using reference = typename std::vector<T>::reference;
+      using const_reference = typename std::vector<T>::const_reference;
 
   protected:
 
@@ -53,12 +52,10 @@ namespace mesh_array
 //    reference operator[](Tetrahedron const & t);
 //
 
-
-
-    TetrahedronAttribute()
-    : m_mesh(0)
-    , m_data()
-    {
+      TetrahedronAttribute()
+          : m_mesh(nullptr)
+          , m_data()
+      {
     }
 
     ~TetrahedronAttribute()
@@ -131,12 +128,12 @@ namespace mesh_array
 
   };
 
-  typedef TetrahedronAttribute<float,  T4Mesh> t4_tetrahedron_float_attribute;
-  typedef TetrahedronAttribute<int,    T4Mesh> t4_tetrahedron_int_attribute;
-  typedef TetrahedronAttribute<size_t, T4Mesh> t4_tetrahedron_uint_attribute;
-  typedef TetrahedronAttribute<bool,   T4Mesh>  t4_tetrahedron_bool_attribute;
+  using t4_tetrahedron_float_attribute = TetrahedronAttribute<float, T4Mesh>;
+  using t4_tetrahedron_int_attribute = TetrahedronAttribute<int, T4Mesh>;
+  using t4_tetrahedron_uint_attribute = TetrahedronAttribute<size_t, T4Mesh>;
+  using t4_tetrahedron_bool_attribute = TetrahedronAttribute<bool, T4Mesh>;
 
-} // end namespace mesh_array
+  } // end namespace mesh_array
 
 // MESH_ARRAY_TETRAHEDRON_ATTRIBUTE_T4MESH_H
 #endif

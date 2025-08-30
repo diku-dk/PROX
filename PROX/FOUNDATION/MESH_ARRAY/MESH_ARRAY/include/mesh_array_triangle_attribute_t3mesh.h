@@ -14,9 +14,8 @@ namespace mesh_array
   class TriangleAttribute< T,T3Mesh>
   {
   public:
-
-    typedef typename std::vector<T>::reference       reference;
-		typedef typename std::vector<T>::const_reference const_reference;
+      using reference = typename std::vector<T>::reference;
+      using const_reference = typename std::vector<T>::const_reference;
 
   protected:
 
@@ -55,10 +54,10 @@ namespace mesh_array
 
   };
 
-  typedef TriangleAttribute<bool,   T3Mesh> t3_triangle_bool_attribute;
-  typedef TriangleAttribute<float,  T3Mesh> t3_triangle_float_attribute;
-  typedef TriangleAttribute<int,    T3Mesh> t3_triangle_int_attribute;
-  typedef TriangleAttribute<size_t, T3Mesh> t3_triangle_uint_attribute;
+  using t3_triangle_bool_attribute = TriangleAttribute<bool, T3Mesh>;
+  using t3_triangle_float_attribute = TriangleAttribute<float, T3Mesh>;
+  using t3_triangle_int_attribute = TriangleAttribute<int, T3Mesh>;
+  using t3_triangle_uint_attribute = TriangleAttribute<size_t, T3Mesh>;
 
 } // end namespace mesh_array
 

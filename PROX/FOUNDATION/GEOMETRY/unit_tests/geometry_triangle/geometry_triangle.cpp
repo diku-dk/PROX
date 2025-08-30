@@ -7,10 +7,9 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-typedef tiny::MathTypes<float> MT;
-typedef MT::vector3_type       V;
-typedef MT::real_type          T;
-
+using MT = tiny::MathTypes<float>;
+using V = MT::vector3_type;
+using T = MT::real_type;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 

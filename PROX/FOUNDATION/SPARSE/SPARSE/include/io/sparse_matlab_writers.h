@@ -115,9 +115,9 @@ namespace sparse
 
         size_t       const n_data   = n_blocks*block_type::nrows()*block_type::ncols();
         // 2009-07-01 Kenny: new/delete unsafe?
-        size_t     * const row_idxs = new size_t[n_data];
-        size_t     * const col_idxs = new size_t[n_data];
-        value_type * const data     = new value_type[n_data];
+        auto* const row_idxs = new size_t[n_data];
+        auto* const col_idxs = new size_t[n_data];
+        auto* const data = new value_type[n_data];
 
         size_t n = 0;
         for (size_t i = 0; i < n_blocks ; ++i)
@@ -151,7 +151,7 @@ namespace sparse
         size_t       const n_blocks = u.size();
         size_t       const n_data = n_blocks * block_type::size();
         // 2009-07-01 Kenny: new/delete unsafe?
-        value_type * const data = new value_type[n_data];
+        auto* const data = new value_type[n_data];
         size_t n = 0;
         for (size_t i = 0; i < n_blocks; ++i)
         {

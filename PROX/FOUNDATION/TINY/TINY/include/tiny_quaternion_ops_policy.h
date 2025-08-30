@@ -16,25 +16,23 @@ namespace tiny
     class QuaternionOpsPolicy
       {
       protected:
-
-        typedef typename Q::type_traits         type_traits;
-        typedef typename Q::value_traits   	    value_traits;
-        typedef typename type_traits::op_type		op_type;
+          using type_traits = typename Q::type_traits;
+          using value_traits = typename Q::value_traits;
+          using op_type = typename type_traits::op_type;
 
       public:
+          using real_type = typename type_traits::real_type;
+          using vector3_type = typename Q::vector3_type;
 
-        typedef typename type_traits::real_type  real_type;
-        typedef typename Q::vector3_type         vector3_type;
-
-        static Q & mul_assign (Q & lhs, Q const &rhs)
-        {
-          real_type	    const   a = lhs.real(); // temporary backup
-          vector3_type	const & A = lhs.imag();   // for readability
-          real_type	    const & b = rhs.real();   // for readability
-          vector3_type	const & B = rhs.imag();   // for readability
-          lhs.real() = a*b - tiny::inner_prod( A, B );
-          lhs.imag() = a*B + A*b + cross(A,B);
-          return lhs;
+          static Q& mul_assign(Q& lhs, Q const& rhs)
+          {
+              real_type const a = lhs.real(); // temporary backup
+              vector3_type const& A = lhs.imag();   // for readability
+              real_type const& b = rhs.real();   // for readability
+              vector3_type const& B = rhs.imag();   // for readability
+              lhs.real() = a * b - tiny::inner_prod(A, B);
+              lhs.imag() = a * B + A * b + cross(A, B);
+              return lhs;
         }
 
         static Q mul (Q const & lhs, Q const &rhs)

@@ -15,15 +15,14 @@ inline void test(matrix_type const & A, vector_type  & x, vector_type const & b,
   typedef typename matrix_type::size_type  size_type;
 
   size_type max_iter = 100;
-  real_type tol_abs  = boost::numeric_cast<real_type>(1e-6);
-  real_type tol_rel  = boost::numeric_cast<real_type>(0.000000001);
-  real_type tol_stag = boost::numeric_cast<real_type>(0.000000001);
+  auto tol_abs = boost::numeric_cast<real_type>(1e-6);
+  auto tol_rel = boost::numeric_cast<real_type>(0.000000001);
+  auto tol_stag = boost::numeric_cast<real_type>(0.000000001);
   size_t status      = 0;
   size_type iter     = 0;
-  real_type err      = boost::numeric_cast<real_type>(0.0);
-  real_type alpha    = boost::numeric_cast<real_type>(0.0001);
-  real_type beta     = boost::numeric_cast<real_type>(0.5);
-
+  auto err = boost::numeric_cast<real_type>(0.0);
+  auto alpha = boost::numeric_cast<real_type>(0.0001);
+  auto beta = boost::numeric_cast<real_type>(0.5);
 
   // 2012-09-30 Kenny: Here we warmstart Newton method with PGS solution, try out commenting this
   //                   On a note we could use Mueller's and Nuttapongs MG-LCP solver for warmstarting

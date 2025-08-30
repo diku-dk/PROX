@@ -9,12 +9,12 @@
 
 class Measure
   {
-    typedef std::map<size_t,double>       Samples;
-    typedef std::map<std::string,Samples> Rows;
-    typedef std::map<std::string,Rows>    Tables;
+      using Samples = std::map<size_t, double>;
+      using Rows = std::map<std::string, Samples>;
+      using Tables = std::map<std::string, Rows>;
 
-    std::string table;
-    std::string row;
+      std::string table;
+      std::string row;
 
   private:
 
@@ -47,23 +47,23 @@ class Measure
       util::Log logging;
 
       typedef Tables::iterator iterator;
-      iterator begin = measures.begin();
-      iterator end = measures.end();
+      auto begin = measures.begin();
+      auto end = measures.end();
 
-      for (iterator i = begin ; i!=end; ++i)
+      for (auto i = begin; i != end; ++i)
       {
         typedef Rows::iterator rowiterator;
-        rowiterator rbegin = (*i).second.begin();
-        rowiterator rend = (*i).second.end();
+        auto rbegin = (*i).second.begin();
+        auto rend = (*i).second.end();
 
-        for (rowiterator j = rbegin ; j!=rend; ++j)
+        for (auto j = rbegin; j != rend; ++j)
         {
           logging << (*i).first << " " << (*j).first << "\t";
 
           for (size_t k = 1; k <= (*j).second.size() ; ++k)
           {
             typedef Samples::iterator siterator;
-            siterator s = (*j).second.find(k);
+            auto s = (*j).second.find(k);
             logging << (*s).second << "\t";
           }
           logging << util::Log::newline();

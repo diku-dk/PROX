@@ -11,15 +11,13 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
+using MT = tiny::MathTypes<double>;
+using Q = MT::quaternion_type;
+using M = MT::matrix3x3_type;
+using T = MT::real_type;
+using VT = MT::value_traits;
 
-typedef tiny::MathTypes<double>  MT;
-typedef MT::quaternion_type      Q;
-typedef MT::matrix3x3_type       M;
-typedef MT::real_type            T;
-typedef MT::value_traits         VT;
-
-
-void do_zyz_test( T const & phi_in, T const & psi_in, T const & theta_in)
+void do_zyz_test(T const& phi_in, T const& psi_in, T const& theta_in)
 {
   Q Q_in;
   Q Q_out;

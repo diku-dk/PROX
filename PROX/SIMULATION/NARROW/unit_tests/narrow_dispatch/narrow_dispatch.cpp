@@ -7,22 +7,22 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-typedef tiny::MathTypes<float>   M;
-typedef M::real_type             T;
-typedef M::vector3_type          V;
-typedef M::quaternion_type       Q;
-typedef M::coordsys_type         C;
+using M = tiny::MathTypes<float>;
+using T = M::real_type;
+using V = M::vector3_type;
+using Q = M::quaternion_type;
+using C = M::coordsys_type;
 
-class MyObject : public narrow::Object< M > {};
+class MyObject : public narrow::Object< M >
+{
+};
 
-typedef narrow::Geometry< M >          geometry_type;
+using geometry_type = narrow::Geometry<M>;
 
-typedef geometry_type::box_type        box_type;
-typedef geometry_type::convex_type     convex_type;
-typedef geometry_type::sphere_type     sphere_type;
-typedef geometry_type::tetramesh_type  tetramesh_type;
-
-
+using box_type = geometry_type::box_type;
+using convex_type = geometry_type::convex_type;
+using sphere_type = geometry_type::sphere_type;
+using tetramesh_type = geometry_type::tetramesh_type;
 
 class MyCallback
   : public geometry::ContactsCallback<V>

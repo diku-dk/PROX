@@ -23,16 +23,15 @@ namespace soft_body
       QTimer        m_timer;
 
     public:
+        Widget(QGLFormat const& format, QWidget* parent = nullptr);
+        ~Widget();
 
-      Widget( QGLFormat const & format, QWidget *parent = 0);
-      ~Widget();
+        QSize minimumSizeHint() const;
+        QSize sizeHint() const;
 
-      QSize minimumSizeHint() const;
-      QSize sizeHint() const;
+    public slots:
 
-      public slots:
-
-      void animate();
+        void animate();
 
       //signals:
 

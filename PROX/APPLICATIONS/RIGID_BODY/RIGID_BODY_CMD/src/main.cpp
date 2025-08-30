@@ -24,40 +24,38 @@ namespace rigid_body
     class Application
     {
     public:
-
-      typedef tiny::MathTypes<float> MT;
-      typedef MT::real_type          T;
-      typedef MT::vector3_type       V;
-      typedef MT::matrix3x3_type     M;
-      typedef MT::quaternion_type    Q;
-      typedef MT::coordsys_type      C;
-      typedef MT::value_traits       VT;
+        using MT = tiny::MathTypes<float>;
+        using T = MT::real_type;
+        using V = MT::vector3_type;
+        using M = MT::matrix3x3_type;
+        using Q = MT::quaternion_type;
+        using C = MT::coordsys_type;
+        using VT = MT::value_traits;
 
     protected:
+        T m_time;
+        T m_time_step;
+        T m_total_time;
+        T m_fps;
+        bool m_profiling;
+        bool m_xml_record;
+        bool m_save_contact_data;
 
-      T             m_time;
-      T             m_time_step;
-      T             m_total_time;
-      T             m_fps;
-      bool          m_profiling;
-      bool          m_xml_record;
-      bool          m_save_contact_data;
+        std::string m_matlab_file;
+        std::string m_procedural_scene;
+        std::string m_xml_save_scene_file;
+        std::string m_xml_save_channel_file;
 
-      std::string   m_matlab_file;
-      std::string   m_procedural_scene;
-      std::string   m_xml_save_scene_file;
-      std::string   m_xml_save_channel_file;
+        std::string m_obj_path;
+        std::string m_output_path;
+        std::string m_working_directory;
 
-      std::string                       m_obj_path;
-      std::string                       m_output_path;
-      std::string                       m_working_directory;
-
-      util::ConfigFile                    m_config_file;
-      procedural::MaterialInfo<T>         m_mat_info;
-      simulators::ProxEngine              m_engine;
-      content::ChannelStorage             m_channel_storage;
-      size_t                              m_key_idx;
-      size_t                              m_max_keys;
+        util::ConfigFile m_config_file;
+        procedural::MaterialInfo<T> m_mat_info;
+        simulators::ProxEngine m_engine;
+        content::ChannelStorage m_channel_storage;
+        size_t m_key_idx;
+        size_t m_max_keys;
 
     protected:
 

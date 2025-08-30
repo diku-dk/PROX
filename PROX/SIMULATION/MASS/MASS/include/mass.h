@@ -74,37 +74,36 @@ namespace mass
   /**
    * Various known materials.
    */
-  typedef enum
-    {
-      AIR
-      , ALUMINUM
-      , BALSA_WOOD
-      , BRICK
-      , COPPER
-      , CORK
-      , DIAMOND
-      , EARTH
-      , EARTH_CORE
-      , EARTH_CRUST
-      , GLASS
-      , GOLD
-      , HELIUM
-      , HYDROGEN
-      , ICE
-      , IRON
-      , LEAD
-      , MERCURY
-      , NICKEL
-      , OLIVE_OIL
-      , OXYGEN
-      , PLATINUM
-      , SILVER
-      , STYROFOAM
-      , TUNGSTEN
-      , URANIUM
-      , WATER
-      , SEAWATER
-    } material_type;
+  using material_type = enum {
+      AIR,
+      ALUMINUM,
+      BALSA_WOOD,
+      BRICK,
+      COPPER,
+      CORK,
+      DIAMOND,
+      EARTH,
+      EARTH_CORE,
+      EARTH_CRUST,
+      GLASS,
+      GOLD,
+      HELIUM,
+      HYDROGEN,
+      ICE,
+      IRON,
+      LEAD,
+      MERCURY,
+      NICKEL,
+      OLIVE_OIL,
+      OXYGEN,
+      PLATINUM,
+      SILVER,
+      STYROFOAM,
+      TUNGSTEN,
+      URANIUM,
+      WATER,
+      SEAWATER
+  };
 
   /**
    * Get SI units for the material densities known by this library.

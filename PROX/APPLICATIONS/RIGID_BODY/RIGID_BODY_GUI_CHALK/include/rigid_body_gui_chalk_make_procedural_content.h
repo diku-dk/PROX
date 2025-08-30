@@ -40,13 +40,14 @@ namespace rigid_body
         std::string  const grain_data_file = params.get_value( "procedural_param_1", "chalk/ellipsoid_50_hard_final.txt");
 
         // Get voxel size in meters [m], voxel size is the unit of the input data from the file
-        float        const voxel_size              =  util::to_value<float>(        params.get_value( "procedural_param_2", "50e-9")  );
-        float        const grain_scale             =  util::to_value<float>(        params.get_value( "procedural_param_3", "400000") );
-        unsigned int const total_number_of_grains  =  util::to_value<unsigned int>( params.get_value( "procedural_param_4", "1200")   );
-        unsigned int const number_of_grains_in_x   =  util::to_value<unsigned int>( params.get_value( "procedural_param_5", "10")     );
-        unsigned int const number_of_grains_in_y   =  util::to_value<unsigned int>( params.get_value( "procedural_param_6", "5O")      );
-        unsigned int const number_of_grains_in_z   =  util::to_value<unsigned int>( params.get_value( "procedural_param_7", "10")     );
-        float        const grain_density           =  util::to_value<float>(        params.get_value( "procedural_param_8", "1000")   );
+        auto const voxel_size = util::to_value<float>(params.get_value("procedural_param_2", "50e-9"));
+        auto const grain_scale = util::to_value<float>(params.get_value("procedural_param_3", "400000"));
+        auto const total_number_of_grains
+            = util::to_value<unsigned int>(params.get_value("procedural_param_4", "1200"));
+        auto const number_of_grains_in_x = util::to_value<unsigned int>(params.get_value("procedural_param_5", "10"));
+        auto const number_of_grains_in_y = util::to_value<unsigned int>(params.get_value("procedural_param_6", "5O"));
+        auto const number_of_grains_in_z = util::to_value<unsigned int>(params.get_value("procedural_param_7", "10"));
+        auto const grain_density = util::to_value<float>(params.get_value("procedural_param_8", "1000"));
 
         float grain_size = 1.0f;
 
@@ -82,14 +83,17 @@ namespace rigid_body
                                            );
 
         bool         const oscillation_on  =  util::to_value<bool>(    params.get_value( "procedural_param_9",  "false") );
-        float        const amplitude_vx  =  util::to_value<float>(     params.get_value( "procedural_param_10",  "1.0")   );  // Amplitude in voxel units
-        float        const frequency  =  util::to_value<float>(        params.get_value( "procedural_param_11", "6.0")   );  // Frequency, 2 pi / T where T is the period of the oscillation
-        float        const phase      =  util::to_value<float>(        params.get_value( "procedural_param_12", "0")     );  // Phase shift
-        float        const dir_x      =  util::to_value<float>(        params.get_value( "procedural_param_13", "0")     );  // x-component of direction of oscilation
-        float        const dir_y      =  util::to_value<float>(        params.get_value( "procedural_param_14", "1")     );  // y-component of direction of oscilation
-        float        const dir_z      =  util::to_value<float>(        params.get_value( "procedural_param_15", "0")     );  // z-component of direction of oscilation
-
-
+        auto const amplitude_vx
+            = util::to_value<float>(params.get_value("procedural_param_10", "1.0"));  // Amplitude in voxel units
+        auto const frequency = util::to_value<float>(params.get_value(
+            "procedural_param_11", "6.0"));  // Frequency, 2 pi / T where T is the period of the oscillation
+        auto const phase = util::to_value<float>(params.get_value("procedural_param_12", "0"));  // Phase shift
+        auto const dir_x = util::to_value<float>(
+            params.get_value("procedural_param_13", "0"));  // x-component of direction of oscilation
+        auto const dir_y = util::to_value<float>(
+            params.get_value("procedural_param_14", "1"));  // y-component of direction of oscilation
+        auto const dir_z = util::to_value<float>(
+            params.get_value("procedural_param_15", "0"));  // z-component of direction of oscilation
 
         if(oscillation_on)
         {

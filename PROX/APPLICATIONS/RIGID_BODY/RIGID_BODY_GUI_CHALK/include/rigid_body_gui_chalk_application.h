@@ -60,16 +60,15 @@ namespace rigid_body
       class Application
       {
       public:
+          using MT = tiny::MathTypes<float>;
+          using T = MT::real_type;
+          using V = MT::vector3_type;
+          using M = MT::matrix3x3_type;
+          using Q = MT::quaternion_type;
+          using C = MT::coordsys_type;
+          using VT = MT::value_traits;
 
-        typedef tiny::MathTypes<float> MT;
-        typedef MT::real_type          T;
-        typedef MT::vector3_type       V;
-        typedef MT::matrix3x3_type     M;
-        typedef MT::quaternion_type    Q;
-        typedef MT::coordsys_type      C;
-        typedef MT::value_traits       VT;
-
-        Widget * gl_widget;
+          Widget* gl_widget;
 
       protected:
 
@@ -504,17 +503,17 @@ namespace rigid_body
 
           init_shadowmaps( m_lights, m_shadowmap_manager);
 
-          float const cam_eye_x = util::to_value<float>( m_config_file.get_value("camera_position_x", "0.0"));
-          float const cam_eye_y = util::to_value<float>( m_config_file.get_value("camera_position_y", "4.0"));
-          float const cam_eye_z = util::to_value<float>( m_config_file.get_value("camera_position_z", "10.0"));
+          auto const cam_eye_x = util::to_value<float>(m_config_file.get_value("camera_position_x", "0.0"));
+          auto const cam_eye_y = util::to_value<float>(m_config_file.get_value("camera_position_y", "4.0"));
+          auto const cam_eye_z = util::to_value<float>(m_config_file.get_value("camera_position_z", "10.0"));
 
-          float const cam_target_x = util::to_value<float>( m_config_file.get_value("camera_target_x", "0.0"));
-          float const cam_target_y = util::to_value<float>( m_config_file.get_value("camera_target_y", "0.0"));
-          float const cam_target_z = util::to_value<float>( m_config_file.get_value("camera_target_z", "0.0"));
+          auto const cam_target_x = util::to_value<float>(m_config_file.get_value("camera_target_x", "0.0"));
+          auto const cam_target_y = util::to_value<float>(m_config_file.get_value("camera_target_y", "0.0"));
+          auto const cam_target_z = util::to_value<float>(m_config_file.get_value("camera_target_z", "0.0"));
 
-          float const cam_up_x = util::to_value<float>( m_config_file.get_value("camera_up_x", "0.0"));
-          float const cam_up_y = util::to_value<float>( m_config_file.get_value("camera_up_y", "1.0"));
-          float const cam_up_z = util::to_value<float>( m_config_file.get_value("camera_up_z", "0.0"));
+          auto const cam_up_x = util::to_value<float>(m_config_file.get_value("camera_up_x", "0.0"));
+          auto const cam_up_y = util::to_value<float>(m_config_file.get_value("camera_up_y", "1.0"));
+          auto const cam_up_z = util::to_value<float>(m_config_file.get_value("camera_up_z", "0.0"));
 
           glm::vec3 const eye    = glm::vec3(cam_eye_x, cam_eye_y, cam_eye_z);
           glm::vec3 const center = glm::vec3(cam_target_x, cam_target_y, cam_target_z);
@@ -538,7 +537,7 @@ namespace rigid_body
 
           int   const ssao_kernel_size   = util::to_value<int>( m_config_file.get_value("ssao_kernel_size", "64"));
           int   const ssao_blur_size     = util::to_value<int>( m_config_file.get_value("ssao_blur_size", "4"));
-          float const ssao_radius        = util::to_value<float>( m_config_file.get_value("ssao_radius", "1.0"));
+          auto const ssao_radius = util::to_value<float>(m_config_file.get_value("ssao_radius", "1.0"));
 
           m_ssao_buffer.m_kernel_size    = min(16, max( ssao_kernel_size, 128 ) );  // Clamping between 16..128
           m_ssao_buffer.m_blur_size      = ssao_blur_size;

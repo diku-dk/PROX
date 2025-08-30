@@ -43,8 +43,8 @@ namespace soft_body
 
       set_lighting_uniforms(program, lights);
 
-      std::vector<SceneObject>::const_iterator object = scene_manager.m_objects.begin();
-      std::vector<SceneObject>::const_iterator end    = scene_manager.m_objects.end();
+      auto object = scene_manager.m_objects.begin();
+      auto end = scene_manager.m_objects.end();
 
       for(;object!=end;++object)
       {

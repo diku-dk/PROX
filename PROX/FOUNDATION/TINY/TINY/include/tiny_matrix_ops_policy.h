@@ -12,37 +12,35 @@ namespace tiny
     class MatrixOpsPolicy
       {
       protected:
-
-        typedef typename M::value_traits   	      value_traits;
-        typedef typename M::type_traits   	      type_traits;
-        typedef typename type_traits::op_type     op_type;
+          using value_traits = typename M::value_traits;
+          using type_traits = typename M::type_traits;
+          using op_type = typename type_traits::op_type;
 
       public:
+          using real_type = typename type_traits::real_type;
 
-        typedef typename type_traits::real_type             real_type;
-
-        template <typename matrix_left,  typename matrix_right>
-        static M mul_matrix (matrix_left const & lhs, matrix_right const & rhs)
-        {
-          typedef typename matrix_left::row_type              left_row_type;
-          typedef typename matrix_right::column_type          right_column_type;
-          typedef          VectorOpsPolicy< left_row_type >   vector_ops_policy;
-
-          M result;
-
-          size_t const I = lhs.size1();
-          size_t const K = rhs.size2();
-
-          for (size_t k=0 ; k<K ; ++k)
+          template <typename matrix_left, typename matrix_right>
+          static M mul_matrix(matrix_left const& lhs, matrix_right const& rhs)
           {
-            right_column_type const column( rhs.get_column_copy(k) );
-            for (size_t i=0 ; i<I ; ++i)
-            {
-              left_row_type const row( lhs.get_row_copy(i) );
-              result(i,k) = vector_ops_policy::inner_prod(row,column);
-            }
-          }
-          return result;
+              typedef typename matrix_left::row_type left_row_type;
+              typedef typename matrix_right::column_type right_column_type;
+              typedef VectorOpsPolicy< left_row_type > vector_ops_policy;
+
+              M result;
+
+              size_t const I = lhs.size1();
+              size_t const K = rhs.size2();
+
+              for (size_t k = 0; k < K; ++k)
+              {
+                  right_column_type const column(rhs.get_column_copy(k));
+                  for (size_t i = 0; i < I; ++i)
+                  {
+                      left_row_type const row(lhs.get_row_copy(i));
+                      result(i, k) = vector_ops_policy::inner_prod(row, column);
+                  }
+              }
+              return result;
         }
 
         static M& mul_assign (M & lhs, M const & rhs)

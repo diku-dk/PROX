@@ -65,17 +65,11 @@ namespace procedural
 
 	}
 
-  typedef tiny::MathTypes<float>  MTf;
+    using MTf = tiny::MathTypes<float>;
 
-  template
-  void make_box<MTf>(
-                content::API *  engine
-                , MTf::vector3_type const & position
-                , MTf::quaternion_type const & orientation
-                , MTf::real_type const & width
-                , MTf::real_type const & height
-                , MTf::real_type const & depth
-                , MaterialInfo<typename MTf::real_type> mat_info
-                , bool const fixed);
+    template void make_box<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                MTf::quaternion_type const& orientation, MTf::real_type const& width,
+                                MTf::real_type const& height, MTf::real_type const& depth,
+                                MaterialInfo<typename MTf::real_type> mat_info, bool const fixed);
 
 } //namespace procedural

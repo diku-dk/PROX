@@ -228,14 +228,13 @@ namespace util
       }
     };
 
-    typedef std::map<std::string, Monitor >               monitors_container;
-    typedef std::map<std::string, TimerMonitor>           timer_monitors_container;
-    typedef std::map<std::string, VectorMonitor >         vector_monitors_container;
-    typedef std::map<std::string, size_t >                counter_container;
+    using monitors_container = std::map<std::string, Monitor>;
+    using timer_monitors_container = std::map<std::string, TimerMonitor>;
+    using vector_monitors_container = std::map<std::string, VectorMonitor>;
+    using counter_container = std::map<std::string, size_t>;
 
-  private:
-
-    static counter_container & counters()
+private:
+    static counter_container& counters()
     {
       static counter_container data;
 

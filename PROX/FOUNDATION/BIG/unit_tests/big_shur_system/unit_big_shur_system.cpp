@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(test_case)
     vector_type dx_b;
     big::shur_system( A_aa, A_ab, C, invD, rhs_a, rhs_b, dx_a, dx_b, &big::svd<matrix_type, vector_type> );
 
-    real_type tol  = real_type(5.0);
+    auto tol = real_type(5.0);
 
     BOOST_CHECK_CLOSE( real_type( dx_a(0) ), real_type(5.828000e-001), tol );
     BOOST_CHECK_CLOSE( real_type( dx_a(1) ), real_type(4.235000e-001), tol );

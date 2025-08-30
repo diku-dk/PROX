@@ -14,19 +14,17 @@ namespace tiny
   : public detail::Container<I,J,T >
   {
   public:
-
-    typedef          detail::Container<I,J,T>		    base_class_type;
-    typedef typename T::real_type	        		      real_type;
-    typedef typename T::op_type     			          op_type;
-    typedef          ValueTraits<real_type>         value_traits;
-    typedef          Vector<J,T>		                row_type;
-    typedef          Vector<I,T>                    column_type;
+      using base_class_type = detail::Container<I, J, T>;
+      using real_type = typename T::real_type;
+      using op_type = typename T::op_type;
+      using value_traits = ValueTraits<real_type>;
+      using row_type = Vector<J, T>;
+      using column_type = Vector<I, T>;
 
   public:
-
-    Matrix()
-    : base_class_type()
-    {}
+      Matrix()
+          : base_class_type()
+      {}
 
     explicit Matrix( real_type const & value )
     : base_class_type(value)

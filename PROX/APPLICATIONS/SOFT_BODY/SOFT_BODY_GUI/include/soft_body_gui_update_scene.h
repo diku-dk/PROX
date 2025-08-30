@@ -19,21 +19,21 @@ namespace soft_body
                              , hyper::Engine<MT> & engine
                              )
     {
-      std::vector<SceneObject>::iterator object = scene_manager.m_objects.begin();
-      std::vector<SceneObject>::iterator end    = scene_manager.m_objects.end();
+        auto object = scene_manager.m_objects.begin();
+        auto end = scene_manager.m_objects.end();
 
-      for(;object!=end;++object)
-      {
-        typename hyper::Engine<MT>::body_type const & body = engine.get_body(object->m_body_idx);
+        for (; object != end; ++object)
+        {
+            typename hyper::Engine<MT>::body_type const& body = engine.get_body(object->m_body_idx);
 
-        mesh_array::T3Mesh mesh;
-        mesh_array::VertexAttribute<float, mesh_array::T3Mesh> X;
-        mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Y;
-        mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Z;
+            mesh_array::T3Mesh mesh;
+            mesh_array::VertexAttribute<float, mesh_array::T3Mesh> X;
+            mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Y;
+            mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Z;
 
-        mesh_array::make_t3mesh( body.m_mesh, body.m_X, body.m_Y, body.m_Z, mesh, X, Y, Z );
+            mesh_array::make_t3mesh(body.m_mesh, body.m_X, body.m_Y, body.m_Z, mesh, X, Y, Z);
 
-        gl3::update_vbo(object->m_vbo,mesh, X, Y, Z);
+            gl3::update_vbo(object->m_vbo, mesh, X, Y, Z);
       }
     }
 

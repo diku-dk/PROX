@@ -6,58 +6,39 @@ namespace prox
   /**
    * Different time stepping methods.
    */
-  typedef enum {
-      moreau
-    , semi_implicit
-    , empty
-  } stepper_type;
-
+using stepper_type = enum { moreau, semi_implicit, empty };
 
   /**
    * Different sovler types.
    */
-  typedef enum {
-    jacobi
-    , gauss_seidel
-  } solver_type;
-
+using solver_type = enum { jacobi, gauss_seidel };
 
   /**
    * Different R-factor strategies for PROX formulation.
    */
-  typedef enum {
-    local_strategy
-    , global_strategy
-    , blocked_strategy
-  } strategy_type;
-
+using strategy_type = enum { local_strategy, global_strategy, blocked_strategy };
 
   /**
    * Normal sub solver type.
    * Numerical subroutine used for projecting the normal force onto the normal
    * cone. Different solvers allow for different behaviors of numerical methods.
    */
-  typedef enum {
-    nonnegative
-    , normal_origin
-    , normal_infinity
-  } normal_sub_solver_type;
+using normal_sub_solver_type = enum { nonnegative, normal_origin, normal_infinity };
 
   /**
    * Frictional sub solver type.
    * Numerical subroutine used for projecting the friction force onto the friction
    * cone. Different solvers allow for different shaped friction cones.
    */
-  typedef enum {
-    analytical_sphere
-    , analytical_ellipsoid
-    , numerical_ellipsoid
-    , gjk_ellipsoid
-    , box_model
-    , friction_origin
-    , friction_infinity
-  } friction_sub_solver_type;
-
+using friction_sub_solver_type = enum {
+    analytical_sphere,
+    analytical_ellipsoid,
+    numerical_ellipsoid,
+    gjk_ellipsoid,
+    box_model,
+    friction_origin,
+    friction_infinity
+};
 
 } // namespace prox
 

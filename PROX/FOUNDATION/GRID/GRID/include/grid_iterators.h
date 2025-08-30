@@ -22,15 +22,12 @@ namespace grid
             : public std::iterator< std::random_access_iterator_tag, typename grid_type_::value_type >
         {
         public:
-
-            typedef grid_type_                                            grid_type;
+            using grid_type = grid_type_;
 
         private:
-
-            typedef Iterator<grid_type, reference_type, pointer_type>     self_type;
+            using self_type = Iterator<grid_type, reference_type, pointer_type>;
 
         protected:
-
             grid_type *   m_grid;
             pointer_type m_pos;
 
@@ -156,9 +153,8 @@ namespace grid
             : public Iterator<grid_type, reference_type, pointer_type>
         {
         private:
-
-            typedef Iterator<grid_type, reference_type, pointer_type>      base_type;
-            typedef IndexIterator<grid_type, reference_type, pointer_type> self_type;
+            using base_type = Iterator<grid_type, reference_type, pointer_type>;
+            using self_type = IndexIterator<grid_type, reference_type, pointer_type>;
 
             Eigen::Matrix<size_t, 3, 1> m_nodes;
 

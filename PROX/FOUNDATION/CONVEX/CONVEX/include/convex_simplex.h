@@ -262,13 +262,11 @@ namespace convex
   class Simplex
   {
   public:
-
-    typedef typename V::value_traits  VT;
-    typedef typename V::real_type     T;
+      using VT = typename V::value_traits;
+      using T = typename V::real_type;
 
   public:
-
-    int m_bitmask;    ///< Bit mask that identifies currently used
+      int m_bitmask;    ///< Bit mask that identifies currently used
                       ///< entries. If (0x0001 & m_bitmask)==1 then
                       ///< it means that the first entry is used. If
                       ///< (0x0002 & m_bitmask)==1 the second is used
@@ -276,11 +274,11 @@ namespace convex
                       ///< third one is used and if (0x0008 & m_bitmask)==1 the
                       ///< fourth entry is used.  In general if \f$(2^i & m_bitmask) == 1\f$
                       ///< then the i'th array entry is used.
-    V m_v[4];         ///< The simplex vertices.
-    T m_w[4];         ///< Barycentric coordinates for the closest point on
+      V m_v[4];         ///< The simplex vertices.
+      T m_w[4];         ///< Barycentric coordinates for the closest point on
                       ///< the simplex wrt. the simplex vertices.
-    V m_a[4];         ///< The support points from object A corresponding to the simplex vertices.
-    V m_b[4];         ///< The support points from object B corresponding to the simplex vertices.
+      V m_a[4];         ///< The support points from object A corresponding to the simplex vertices.
+      V m_b[4];         ///< The support points from object B corresponding to the simplex vertices.
 
   public:
 

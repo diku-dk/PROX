@@ -242,21 +242,13 @@ namespace procedural
 		}
 	}
 
-  typedef tiny::MathTypes<float> MTf;
+    using MTf = tiny::MathTypes<float>;
 
-  template
-	void make_greek_pillar<MTf>(
-                              content::API *  engine
-                              , MTf::vector3_type const & position
-                              , MTf::quaternion_type const & orientation
-                              , MTf::real_type const & pillar_width
-                              , MTf::real_type const & pillar_height
-                              , MTf::real_type const & pillar_depth
-                              , size_t const & pillar_segments
-                              , size_t const & pillar_slices
-                              , MaterialInfo<MTf::real_type> mat_info
-                              , mesh_array::TetGenSettings tetset
-                            );
+    template void make_greek_pillar<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                         MTf::quaternion_type const& orientation, MTf::real_type const& pillar_width,
+                                         MTf::real_type const& pillar_height, MTf::real_type const& pillar_depth,
+                                         size_t const& pillar_segments, size_t const& pillar_slices,
+                                         MaterialInfo<MTf::real_type> mat_info, mesh_array::TetGenSettings tetset);
 	
 } //namespace procedural
 

@@ -14,9 +14,9 @@ void test(matrix_type const & A, vector_type  & x, vector_type const & b, vector
   typedef typename matrix_type::value_type real_type;
   typedef typename matrix_type::size_type  size_type;
 
-  real_type const tol = boost::numeric_cast<real_type>(1.0);
+  auto const tol = boost::numeric_cast<real_type>(1.0);
 
-  real_type epsilon = boost::numeric_cast<real_type>(10e-10);
+  auto epsilon = boost::numeric_cast<real_type>(10e-10);
   size_t max_iterations = 100;
   size_t iterations;
 

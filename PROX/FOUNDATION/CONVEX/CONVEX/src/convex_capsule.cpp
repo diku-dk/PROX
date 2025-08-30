@@ -94,8 +94,8 @@ namespace convex
     return min(h, d);
   }
 
-  typedef tiny::MathTypes<float>  Mf;
-  typedef tiny::MathTypes<double> Md;
+  using Mf = tiny::MathTypes<float>;
+  using Md = tiny::MathTypes<double>;
 
   template class Capsule<Mf>;
   template class Capsule<Md>;

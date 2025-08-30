@@ -66,8 +66,8 @@ namespace util
 
       }
 
-      std::vector<std::string>::const_iterator search_path = m_search_paths.begin();
-      std::vector<std::string>::const_iterator end         = m_search_paths.end();
+      auto search_path = m_search_paths.begin();
+      auto end = m_search_paths.end();
 
       for (; search_path != end; ++search_path)
       {

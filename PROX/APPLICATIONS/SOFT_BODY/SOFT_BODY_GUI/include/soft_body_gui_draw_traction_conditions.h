@@ -127,7 +127,7 @@ namespace soft_body
 
           float const radians = acos(cos_theta);
 
-          float const scale = util::to_value<float>(params.get_value("draw_traction_scale", "1.0"));
+          auto const scale = util::to_value<float>(params.get_value("draw_traction_scale", "1.0"));
 
           glm::mat4 const scale_matrix       = glm::scale(glm::mat4(1.0), glm::vec3(scale,scale,scale));
           glm::mat4 const translation_matrix = glm::translate( glm::mat4(1.0), p);

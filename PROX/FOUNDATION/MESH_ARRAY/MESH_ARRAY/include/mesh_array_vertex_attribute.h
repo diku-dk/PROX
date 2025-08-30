@@ -22,9 +22,8 @@ namespace mesh_array
   class VertexAttribute
   {
   public:
-
-    typedef typename std::vector<T>::reference       reference;
-		typedef typename std::vector<T>::const_reference const_reference;
+      using reference = typename std::vector<T>::reference;
+      using const_reference = typename std::vector<T>::const_reference;
 
   protected:
 
@@ -109,16 +108,16 @@ namespace mesh_array
 
   };
 
-  typedef VertexAttribute<bool,   T3Mesh>   t3_vertex_bool_attribute;
-  typedef VertexAttribute<float,  T3Mesh>   t3_vertex_float_attribute;
-  typedef VertexAttribute<int,    T3Mesh>   t3_vertex_int_attribute;
-  typedef VertexAttribute<size_t, T3Mesh>   t3_vertex_uint_attribute;
+  using t3_vertex_bool_attribute = VertexAttribute<bool, T3Mesh>;
+  using t3_vertex_float_attribute = VertexAttribute<float, T3Mesh>;
+  using t3_vertex_int_attribute = VertexAttribute<int, T3Mesh>;
+  using t3_vertex_uint_attribute = VertexAttribute<size_t, T3Mesh>;
 
-  typedef VertexAttribute<bool,   T4Mesh> t4_vertex_bool_attribute;
-  typedef VertexAttribute<float,  T4Mesh> t4_vertex_float_attribute;
-  typedef VertexAttribute<double, T4Mesh> t4_vertex_double_attribute;
-  typedef VertexAttribute<int,    T4Mesh> t4_vertex_int_attribute;
-  typedef VertexAttribute<size_t, T4Mesh> t4_vertex_uint_attribute;
+  using t4_vertex_bool_attribute = VertexAttribute<bool, T4Mesh>;
+  using t4_vertex_float_attribute = VertexAttribute<float, T4Mesh>;
+  using t4_vertex_double_attribute = VertexAttribute<double, T4Mesh>;
+  using t4_vertex_int_attribute = VertexAttribute<int, T4Mesh>;
+  using t4_vertex_uint_attribute = VertexAttribute<size_t, T4Mesh>;
 
 } // end namespace mesh_array
 

@@ -72,34 +72,19 @@ namespace procedural
     }
     if (scene.compare("pillar") == 0)
     {
-      float const ground_width = util::to_value<float>( params.get_value(        "procedural_param_1", "10.0" ) );
-      float const pillar_height = util::to_value<float>( params.get_value(        "procedural_param_2", "3.5" ) );
-      float const pillar_width = util::to_value<float>( params.get_value(        "procedural_param_3", "0.5" ) );
+        auto const ground_width = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        auto const pillar_height = util::to_value<float>(params.get_value("procedural_param_2", "3.5"));
+        auto const pillar_width = util::to_value<float>(params.get_value("procedural_param_3", "0.5"));
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_width
-                                  , ground_width/10.0  // ground height
-                                  , ground_width
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width,
+                                    ground_width / 10.0  // ground height
+                                    ,
+                                    ground_width);
 
-      if(tetset.m_maximum_volume>0.0)
-        tetset.m_maximum_volume /=  1000.0;
+        if (tetset.m_maximum_volume > 0.0) tetset.m_maximum_volume /= 1000.0;
 
-      procedural::make_greek_pillar<MT>(
-                                        engine
-                                        , V::zero()
-                                        , Q::identity()
-                                        , pillar_width
-                                        , pillar_height
-                                        , pillar_width
-                                        , 3, 6
-                                        , mat_info
-                                        , tetset
-                                        );
+        procedural::make_greek_pillar<MT>(engine, V::zero(), Q::identity(), pillar_width, pillar_height, pillar_width,
+                                          3, 6, mat_info, tetset);
     }
     if (scene.compare("twist") == 0)
     {
@@ -113,8 +98,8 @@ namespace procedural
                                   , 10.0f
                                   );
 
-      unsigned int const layers = util::to_value<unsigned int>( params.get_value( "procedural_param_1", "5"    ) );
-      float        const degree = util::to_value<float>( params.get_value(        "procedural_param_2", "25.0" ) );
+      auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
+      auto const degree = util::to_value<float>(params.get_value("procedural_param_2", "25.0"));
 
       procedural::make_twisted_stack<MT>(
                                          engine
@@ -139,7 +124,7 @@ namespace procedural
                                   , 10.0f
                                   );
 
-      unsigned int const layers = util::to_value<unsigned int>( params.get_value( "procedural_param_1", "5") );
+      auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
 
       procedural::make_stack<MT>(
                                  engine
@@ -165,8 +150,8 @@ namespace procedural
       T            const width  = util::to_value<T>(            params.get_value( "procedural_param_1", "5.0") );
       T            const height = util::to_value<T>(            params.get_value( "procedural_param_2", "4.0") );
       T            const depth  = util::to_value<T>(            params.get_value( "procedural_param_3", "1.0") );
-      unsigned int const layers = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "5")   );
-      unsigned int const span   = util::to_value<unsigned int>( params.get_value( "procedural_param_5", "5")   );
+      auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5"));
+      auto const span = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5"));
 
       procedural::make_wall<MT>(
                                 engine
@@ -195,8 +180,8 @@ namespace procedural
       T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
       T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
       T const height              = util::to_value<T>(            params.get_value( "procedural_param_3", "3.0") );
-      unsigned int const slices   = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "12") );
-      unsigned int const segments = util::to_value<unsigned int>( params.get_value( "procedural_param_5", "4") );
+      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
+      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
 
       procedural::make_tower<MT>(
                                  engine
@@ -226,8 +211,8 @@ namespace procedural
       T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
       T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
       T const height              = util::to_value<T>(            params.get_value( "procedural_param_3", "3.0") );
-      unsigned int const slices   = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "12") );
-      unsigned int const segments = util::to_value<unsigned int>( params.get_value( "procedural_param_5", "4") );
+      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
+      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
 
       procedural::make_tower<MT>(
                                  engine
@@ -258,9 +243,8 @@ namespace procedural
 
       T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
       T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
-      unsigned int const slices   = util::to_value<unsigned int>( params.get_value( "procedural_param_3", "10") );
-      unsigned int const segments = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "8") );
-
+      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_3", "10"));
+      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
       procedural::make_dome<MT>(
                                 engine
@@ -288,8 +272,8 @@ namespace procedural
       T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
       T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
       T const height              = util::to_value<T>(            params.get_value( "procedural_param_3", "2.0") );
-      unsigned int const slices   = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "11") );
-      unsigned int const segments = util::to_value<unsigned int>( params.get_value( "procedural_param_5", "11") );
+      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "11"));
+      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "11"));
 
       procedural::make_pantheon<MT>(
                                     engine
@@ -317,8 +301,8 @@ namespace procedural
 
       T            const temple_height = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
       T            const pillar_width  = util::to_value<T>(            params.get_value( "procedural_param_2", "0.5") );
-      unsigned int const cnt_pillars_x = util::to_value<unsigned int>( params.get_value( "procedural_param_3", "6") );
-      unsigned int const cnt_pillars_y = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "8") );
+      auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
+      auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
       procedural::make_temple<MT>(
                                   engine
@@ -335,9 +319,8 @@ namespace procedural
     {
       T const outer_radius                 = util::to_value<T>( params.get_value( "procedural_param_1", "13.0") );
       T const inner_radius                 = util::to_value<T>( params.get_value( "procedural_param_2", "10.0") );
-      unsigned int const number_of_arches  = util::to_value<unsigned int>( params.get_value( "procedural_param_3", "14") );
-      unsigned int const layers_of_archs   = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "3") );
-
+      auto const number_of_arches = util::to_value<unsigned int>(params.get_value("procedural_param_3", "14"));
+      auto const layers_of_archs = util::to_value<unsigned int>(params.get_value("procedural_param_4", "3"));
 
       procedural::make_ground<MT>(
                                   engine
@@ -458,56 +441,28 @@ namespace procedural
     }
     if(scene.compare("funnel_dims") == 0)
     {
-      float const funnel_size            = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
-      float const funnel_height          = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
-      float const object_size            = util::to_value<float>(params.get_value("procedural_param_3", "1.0"));
-      float const ground_size            = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
-      float const object_spacing         = util::to_value<float>(params.get_value("procedural_param_5", "0.1"));
-      float const number_of_objects_in_x = util::to_value<float>(params.get_value("procedural_param_6", "20.0"));
-      float const number_of_objects_in_y = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
-      float const number_of_objects_in_z = util::to_value<float>(params.get_value("procedural_param_8", "20.0"));
+        auto const funnel_size = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
+        auto const funnel_height = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
+        auto const object_size = util::to_value<float>(params.get_value("procedural_param_3", "1.0"));
+        auto const ground_size = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
+        auto const object_spacing = util::to_value<float>(params.get_value("procedural_param_5", "0.1"));
+        auto const number_of_objects_in_x = util::to_value<float>(params.get_value("procedural_param_6", "20.0"));
+        auto const number_of_objects_in_y = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
+        auto const number_of_objects_in_z = util::to_value<float>(params.get_value("procedural_param_8", "20.0"));
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_size
-                                  , 1.0f
-                                  , ground_size
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_size, 1.0f, ground_size);
 
-      // A funnel is 1.0x0.34x1.0
-      // It is also upside-down.
-      procedural::make_obj<MT>(
-                               engine
-                               , obj_path + "funnel.obj"
-                               , funnel_size
-                               , V::make(0, funnel_height, 0)
-                               , Q::Rz(VT::pi())
-                               , mat_info
-                               , true
-                               , false
-                               , "Stone"
-                               , tetset
-                               );
+        // A funnel is 1.0x0.34x1.0
+        // It is also upside-down.
+        procedural::make_obj<MT>(engine, obj_path + "funnel.obj", funnel_size, V::make(0, funnel_height, 0),
+                                 Q::Rz(VT::pi()), mat_info, true, false, "Stone", tetset);
 
-      std::vector<std::string> obj_names;
-      obj_names.push_back(obj_path + "dims.obj");
+        std::vector<std::string> obj_names;
+        obj_names.push_back(obj_path + "dims.obj");
 
-      procedural::make_obj_packing<MT>(
-                                       engine
-                                       , V::make(0.0f , funnel_size+funnel_height  , 0.0f )
-                                       , Q::identity()
-                                       , obj_names
-                                       , number_of_objects_in_x
-                                       , number_of_objects_in_y
-                                       , number_of_objects_in_z
-                                       , object_size
-                                       , object_spacing
-                                       , mat_info
-                                       , tetset
-                                       );
+        procedural::make_obj_packing<MT>(engine, V::make(0.0f, funnel_size + funnel_height, 0.0f), Q::identity(),
+                                         obj_names, number_of_objects_in_x, number_of_objects_in_y,
+                                         number_of_objects_in_z, object_size, object_spacing, mat_info, tetset);
 
     }
     if (scene.compare("earthquake") == 0)
@@ -524,8 +479,8 @@ namespace procedural
 
       T            const temple_height = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
       T            const pillar_width  = util::to_value<T>(            params.get_value( "procedural_param_2", "0.5") );
-      unsigned int const cnt_pillars_x = util::to_value<unsigned int>( params.get_value( "procedural_param_3", "6") );
-      unsigned int const cnt_pillars_y = util::to_value<unsigned int>( params.get_value( "procedural_param_4", "8") );
+      auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
+      auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
       procedural::make_temple<MT>(
                                   engine
@@ -571,19 +526,18 @@ namespace procedural
     if(scene.compare("shoot") == 0)
     {
       T     const radius     = util::to_value<T>(     params.get_value( "procedural_param_1", "1.0" ) );
-      float const pos_x      = util::to_value<float>( params.get_value( "procedural_param_2", "0"   ) );
-      float const pos_y      = util::to_value<float>( params.get_value( "procedural_param_3", "0"   ) );
-      float const pos_z      = util::to_value<float>( params.get_value( "procedural_param_4", "0"   ) );
+      auto const pos_x = util::to_value<float>(params.get_value("procedural_param_2", "0"));
+      auto const pos_y = util::to_value<float>(params.get_value("procedural_param_3", "0"));
+      auto const pos_z = util::to_value<float>(params.get_value("procedural_param_4", "0"));
 
-      float const vel_x      = util::to_value<float>( params.get_value( "procedural_param_5", "0"   ) );
-      float const vel_y      = util::to_value<float>( params.get_value( "procedural_param_6", "0"   ) );
-      float const vel_z      = util::to_value<float>( params.get_value( "procedural_param_7", "10"  ) );
+      auto const vel_x = util::to_value<float>(params.get_value("procedural_param_5", "0"));
+      auto const vel_y = util::to_value<float>(params.get_value("procedural_param_6", "0"));
+      auto const vel_z = util::to_value<float>(params.get_value("procedural_param_7", "10"));
 
-      float const colosseum_radius = util::to_value<float>( params.get_value( "procedural_param_8", "10"  ) );
-      float const colosseum_width  = util::to_value<float>( params.get_value( "procedural_param_9", "2"   ) );
-      float const colosseum_arches = util::to_value<float>( params.get_value( "procedural_param_10", "12" ) );
-      float const colosseum_layers = util::to_value<float>( params.get_value( "procedural_param_11", "3"  ) );
-
+      auto const colosseum_radius = util::to_value<float>(params.get_value("procedural_param_8", "10"));
+      auto const colosseum_width = util::to_value<float>(params.get_value("procedural_param_9", "2"));
+      auto const colosseum_arches = util::to_value<float>(params.get_value("procedural_param_10", "12"));
+      auto const colosseum_layers = util::to_value<float>(params.get_value("procedural_param_11", "3"));
 
       procedural::make_cannonball<MT>(
                                       engine
@@ -617,152 +571,75 @@ namespace procedural
     }
     if (scene.compare("glass_glasses") == 0)
     {
-      float const large_glass_size  = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
-      float const small_glass_size  = util::to_value<float>(params.get_value("procedural_param_2", "0.9"));
+        auto const large_glass_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        auto const small_glass_size = util::to_value<float>(params.get_value("procedural_param_2", "0.9"));
 
-      unsigned int const number_of_glasses_in_x     = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5.0"));
-      unsigned int const number_of_glasses_in_y     = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5.0"));
-      unsigned int const number_of_glasses_in_z    = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5.0"));
+        auto const number_of_glasses_in_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5.0"));
+        auto const number_of_glasses_in_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5.0"));
+        auto const number_of_glasses_in_z = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5.0"));
 
-      float const glass_spacing  = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
-      float const ground_width   = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
+        auto const glass_spacing = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
+        auto const ground_width = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_width
-                                  , 1.0f
-                                  , ground_width
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
 
-      // A glass is 0.89x1.0x0.89
-      // Draw glass second because it may be see through and will blend only
-      // with the rest of the scene if drawn last.
-      procedural::make_obj<MT>(
-                               engine
-                               , obj_path + "glass.obj"
-                               , large_glass_size
-                               , V::make(0, 0.5 * large_glass_size, 0)
-                               , Q::identity()
-                               , mat_info
-                               , true
-                               , false
-                               , "Stone"
-                               , tetset
-                               );
+        // A glass is 0.89x1.0x0.89
+        // Draw glass second because it may be see through and will blend only
+        // with the rest of the scene if drawn last.
+        procedural::make_obj<MT>(engine, obj_path + "glass.obj", large_glass_size,
+                                 V::make(0, 0.5 * large_glass_size, 0), Q::identity(), mat_info, true, false, "Stone",
+                                 tetset);
 
-      std::vector<std::string> obj_names;
-      obj_names.push_back(obj_path + "glass.obj");
+        std::vector<std::string> obj_names;
+        obj_names.push_back(obj_path + "glass.obj");
 
-      procedural::make_obj_packing<MT>(
-                                       engine
-                                       , V::make(0.0f , large_glass_size*1.5f, 0.0f )
-                                       , Q::identity()
-                                       , obj_names
-                                       , number_of_glasses_in_x
-                                       , number_of_glasses_in_y
-                                       , number_of_glasses_in_z
-                                       , small_glass_size
-                                       , glass_spacing
-                                       , mat_info
-                                       , tetset
-                                       );
+        procedural::make_obj_packing<MT>(engine, V::make(0.0f, large_glass_size * 1.5f, 0.0f), Q::identity(), obj_names,
+                                         number_of_glasses_in_x, number_of_glasses_in_y, number_of_glasses_in_z,
+                                         small_glass_size, glass_spacing, mat_info, tetset);
 
     }
     if (scene.compare("glass_dims") == 0)
     {
-      float const large_glass_size  = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
-      float const small_dims_size  = util::to_value<float>(params.get_value("procedural_param_2", "0.9"));
+        auto const large_glass_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        auto const small_dims_size = util::to_value<float>(params.get_value("procedural_param_2", "0.9"));
 
-      unsigned int const number_of_dims_in_x     = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5.0"));
-      unsigned int const number_of_dims_in_y     = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5.0"));
-      unsigned int const number_of_dims_in_z    = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5.0"));
+        auto const number_of_dims_in_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5.0"));
+        auto const number_of_dims_in_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5.0"));
+        auto const number_of_dims_in_z = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5.0"));
 
-      float const dims_spacing  = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
-      float const ground_width   = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
+        auto const dims_spacing = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
+        auto const ground_width = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_width
-                                  , 1.0f
-                                  , ground_width
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
 
-      // A glass is 0.89x1.0x0.89
-      // Draw glass second because it may be see through and will blend only
-      // with the rest of the scene if drawn last.
-      procedural::make_obj<MT>(
-                               engine
-                               , obj_path + "glass.obj"
-                               , large_glass_size
-                               , V::make(0, 0.5 * large_glass_size, 0)
-                               , Q::identity()
-                               , mat_info
-                               , true
-                               , false
-                               , "Stone"
-                               , tetset
-                               );
+        // A glass is 0.89x1.0x0.89
+        // Draw glass second because it may be see through and will blend only
+        // with the rest of the scene if drawn last.
+        procedural::make_obj<MT>(engine, obj_path + "glass.obj", large_glass_size,
+                                 V::make(0, 0.5 * large_glass_size, 0), Q::identity(), mat_info, true, false, "Stone",
+                                 tetset);
 
-      std::vector<std::string> obj_names;
-      obj_names.push_back(obj_path + "dims.obj");
+        std::vector<std::string> obj_names;
+        obj_names.push_back(obj_path + "dims.obj");
 
-      procedural::make_obj_packing<MT>(
-                                       engine
-                                       , V::make(0.0f , large_glass_size*1.5f, 0.0f )
-                                       , Q::identity()
-                                       , obj_names
-                                       , number_of_dims_in_x
-                                       , number_of_dims_in_y
-                                       , number_of_dims_in_z
-                                       , small_dims_size
-                                       , dims_spacing
-                                       , mat_info
-                                       , tetset
-                                       );
+        procedural::make_obj_packing<MT>(engine, V::make(0.0f, large_glass_size * 1.5f, 0.0f), Q::identity(), obj_names,
+                                         number_of_dims_in_x, number_of_dims_in_y, number_of_dims_in_z, small_dims_size,
+                                         dims_spacing, mat_info, tetset);
     }
     if (scene.compare("glass_spheres") == 0)
     {
-      float const glass_scale    = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
-      float const ground_width   = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
-      float const sphere_radius  = util::to_value<float>(params.get_value("procedural_param_3", "0.25"));
-      int   const cube_width     = util::to_value<int>(params.get_value("procedural_param_4", "4"));
+        auto const glass_scale = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
+        auto const ground_width = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
+        auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_3", "0.25"));
+        int const cube_width = util::to_value<int>(params.get_value("procedural_param_4", "4"));
 
-      procedural::make_sphere_cube<MT>(
-                                       engine
-                                       , V::make( 0, glass_scale + sphere_radius *cube_width, 0 )
-                                       , Q::identity()
-                                       , sphere_radius
-                                       , cube_width
-                                       , mat_info
-                                       );
+        procedural::make_sphere_cube<MT>(engine, V::make(0, glass_scale + sphere_radius * cube_width, 0), Q::identity(),
+                                         sphere_radius, cube_width, mat_info);
 
-      procedural::make_obj<MT>(
-                               engine
-                               , obj_path + "glass.obj"
-                               , glass_scale
-                               , V::make(0, 0.5 * glass_scale, 0)
-                               , Q::identity()
-                               , mat_info
-                               , true
-                               , false
-                               , "Cannonball"
-                               , tetset);
+        procedural::make_obj<MT>(engine, obj_path + "glass.obj", glass_scale, V::make(0, 0.5 * glass_scale, 0),
+                                 Q::identity(), mat_info, true, false, "Cannonball", tetset);
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_width
-                                  , 1.0f
-                                  , ground_width
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
 
     }
     if (scene.compare("wall_pins") == 0)
@@ -841,58 +718,33 @@ namespace procedural
     }
     if (scene.compare("bunny_boxes") == 0)
     {
-      float const obstacle_scale         = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
-      float const obstacle_height        = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
-      float const object_size            = util::to_value<float>(params.get_value("procedural_param_3", "1.0"));
-      float const ground_size            = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
-      float const object_spacing         = util::to_value<float>(params.get_value("procedural_param_5", "0.1"));
-      float const number_of_objects_in_x = util::to_value<float>(params.get_value("procedural_param_6", "20.0"));
-      float const number_of_objects_in_y = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
-      float const number_of_objects_in_z = util::to_value<float>(params.get_value("procedural_param_8", "20.0"));
+        auto const obstacle_scale = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
+        auto const obstacle_height = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
+        auto const object_size = util::to_value<float>(params.get_value("procedural_param_3", "1.0"));
+        auto const ground_size = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
+        auto const object_spacing = util::to_value<float>(params.get_value("procedural_param_5", "0.1"));
+        auto const number_of_objects_in_x = util::to_value<float>(params.get_value("procedural_param_6", "20.0"));
+        auto const number_of_objects_in_y = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
+        auto const number_of_objects_in_z = util::to_value<float>(params.get_value("procedural_param_8", "20.0"));
 
-      // The bunny is 0.31 x 1.0 x 0.14
-      std::string const obstacle_obj_filename  = params.get_value("procedural_param_9", obj_path + "bunny.obj");
-      std::string const objects_obj_filename   = params.get_value("procedural_param_10", obj_path + "box.obj");
+        // The bunny is 0.31 x 1.0 x 0.14
+        std::string const obstacle_obj_filename = params.get_value("procedural_param_9", obj_path + "bunny.obj");
+        std::string const objects_obj_filename = params.get_value("procedural_param_10", obj_path + "box.obj");
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_size
-                                  , 1.0f
-                                  , ground_size
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_size, 1.0f, ground_size);
 
-      procedural::make_obj<MT>(
-                               engine
-                               , obstacle_obj_filename
-                               , obstacle_scale
-                               , V::make(0, obstacle_height, 0)
-                               , Q::Rz(0)
-                               , mat_info
-                               , false
-                               , false
-                               , "Cannonball"
-                               , tetset
-                               );
+        procedural::make_obj<MT>(engine, obstacle_obj_filename, obstacle_scale, V::make(0, obstacle_height, 0),
+                                 Q::Rz(0), mat_info, false, false, "Cannonball", tetset);
 
-      std::vector<std::string> obj_names;
-      obj_names.push_back(objects_obj_filename);
+        std::vector<std::string> obj_names;
+        obj_names.push_back(objects_obj_filename);
 
-      procedural::make_obj_packing<MT>(
-                                       engine
-                                       , V::make(0.0f , number_of_objects_in_y*(object_size+object_spacing) + obstacle_scale + obstacle_height  , 0.0f )
-                                       , Q::identity()
-                                       , obj_names
-                                       , number_of_objects_in_x
-                                       , number_of_objects_in_y
-                                       , number_of_objects_in_z
-                                       , object_size
-                                       , object_spacing
-                                       , mat_info
-                                       , tetset
-                                       );
+        procedural::make_obj_packing<MT>(
+            engine,
+            V::make(0.0f, number_of_objects_in_y * (object_size + object_spacing) + obstacle_scale + obstacle_height,
+                    0.0f),
+            Q::identity(), obj_names, number_of_objects_in_x, number_of_objects_in_y, number_of_objects_in_z,
+            object_size, object_spacing, mat_info, tetset);
 
 
     }
@@ -909,7 +761,7 @@ namespace procedural
                                   );
 
       T            const sphere_radius      = util::to_value<T>( params.get_value( "procedural_param_1", "0.5") );
-      unsigned int const number_of_spheres  = util::to_value<unsigned int>( params.get_value( "procedural_param_2", "4") );
+      auto const number_of_spheres = util::to_value<unsigned int>(params.get_value("procedural_param_2", "4"));
 
       procedural::make_sphere_cube<MT>(
                                        engine
@@ -970,8 +822,8 @@ namespace procedural
                                   , 10.0f
                                   );
 
-      float const sphere_radius  = util::to_value<float>( params.get_value( "procedural_param_1", "1.0") );
-      float const scale          = util::to_value<float>( params.get_value( "procedural_param_2", "1000.0") );
+      auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
+      auto const scale = util::to_value<float>(params.get_value("procedural_param_2", "1000.0"));
 
       procedural::make_heavy_sphere_light_sphere<MT>(
                                                      engine
@@ -994,10 +846,10 @@ namespace procedural
                                   , 10.0f
                                   );
 
-      float const sphere_radius  = util::to_value<float>( params.get_value( "procedural_param_1", "0.15") );
-      float const width          = util::to_value<float>( params.get_value( "procedural_param_2", "10.0") );
-      float const height         = util::to_value<float>( params.get_value( "procedural_param_3", "10.0") );
-      float const depth          = util::to_value<float>( params.get_value( "procedural_param_4", "10.0") );
+      auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.15"));
+      auto const width = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
+      auto const height = util::to_value<float>(params.get_value("procedural_param_3", "10.0"));
+      auto const depth = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
 
       procedural::make_dropping_spheres<MT>(
                                             engine
@@ -1035,10 +887,9 @@ namespace procedural
                                , "Stone"
                                , tetset);
 
-
-      float        const sphere_radius  = util::to_value<float>( params.get_value( "procedural_param_1", "0.2") );
-      unsigned int const spheres_width  = util::to_value<unsigned int>( params.get_value( "procedural_param_2", "5") );
-      unsigned int const spheres_length = util::to_value<unsigned int>( params.get_value( "procedural_param_3", "5") );
+      auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.2"));
+      auto const spheres_width = util::to_value<unsigned int>(params.get_value("procedural_param_2", "5"));
+      auto const spheres_length = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5"));
 
       procedural::make_sphere_layer<MT>(
                                         engine
@@ -1052,190 +903,107 @@ namespace procedural
     }
     if (scene.compare("propella_glass") == 0)
     {
-      float        const large_glass_size     = util::to_value<float>(        params.get_value("procedural_param_1", "10.0")  );
-      float        const small_props_size     = util::to_value<float>(        params.get_value("procedural_param_2", "0.9")   );
-      unsigned int const number_of_props_in_x = util::to_value<unsigned int>( params.get_value("procedural_param_3", "5.0")   );
-      unsigned int const number_of_props_in_y = util::to_value<unsigned int>( params.get_value("procedural_param_4", "5.0")   );
-      unsigned int const number_of_props_in_z = util::to_value<unsigned int>( params.get_value("procedural_param_5", "5.0")   );
-      float        const props_spacing        = util::to_value<float>(        params.get_value("procedural_param_6", "0.1")   );
-      float        const ground_width         = util::to_value<float>(        params.get_value("procedural_param_7", "20.0")  );
+        auto const large_glass_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        auto const small_props_size = util::to_value<float>(params.get_value("procedural_param_2", "0.9"));
+        auto const number_of_props_in_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5.0"));
+        auto const number_of_props_in_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5.0"));
+        auto const number_of_props_in_z = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5.0"));
+        auto const props_spacing = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
+        auto const ground_width = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_width
-                                  , 1.0f
-                                  , ground_width
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
 
-      // A glass is 0.89x1.0x0.89
-      // Draw glass second because it may be see through and will blend only
-      // with the rest of the scene if drawn last.
-      procedural::make_obj<MT>(
-                               engine
-                               , obj_path + "glass.obj"
-                               , large_glass_size
-                               , V::make(0, 0.5 * large_glass_size, 0)
-                               , Q::identity()
-                               , mat_info
-                               , true
-                               , false
-                               , "Stone"
-                               , tetset
-                               );
+        // A glass is 0.89x1.0x0.89
+        // Draw glass second because it may be see through and will blend only
+        // with the rest of the scene if drawn last.
+        procedural::make_obj<MT>(engine, obj_path + "glass.obj", large_glass_size,
+                                 V::make(0, 0.5 * large_glass_size, 0), Q::identity(), mat_info, true, false, "Stone",
+                                 tetset);
 
-      std::vector<std::string> obj_names;
-      obj_names.push_back(obj_path + "propella.obj");
+        std::vector<std::string> obj_names;
+        obj_names.push_back(obj_path + "propella.obj");
 
-      procedural::make_obj_packing<MT>(
-                                       engine
-                                       , V::make(0.0f , large_glass_size*1.5f + number_of_props_in_y*small_props_size, 0.0f )
-                                       , Q::identity()
-                                       , obj_names
-                                       , number_of_props_in_x
-                                       , number_of_props_in_y
-                                       , number_of_props_in_z
-                                       , small_props_size
-                                       , props_spacing
-                                       , mat_info
-                                       , tetset
-                                       );
+        procedural::make_obj_packing<MT>(
+            engine, V::make(0.0f, large_glass_size * 1.5f + number_of_props_in_y * small_props_size, 0.0f),
+            Q::identity(), obj_names, number_of_props_in_x, number_of_props_in_y, number_of_props_in_z,
+            small_props_size, props_spacing, mat_info, tetset);
 
     }
     if (scene.compare("packing") == 0)
     {
-      unsigned int const number_of_spheres = util::to_value<unsigned int>( params.get_value( "procedural_param_1", "10") );
+        auto const number_of_spheres = util::to_value<unsigned int>(params.get_value("procedural_param_1", "10"));
 
-      procedural::make_box_container<MT>(
-                                         engine
-                                         , V::zero()
-                                         , Q::identity()
-                                         , 5.0f     // width x height x depth of space inside box
-                                         , 5.0f
-                                         , 5.0f
-                                         , 1.0f      // wall thickness
-                                         , mat_info
-                                         );
+        procedural::make_box_container<MT>(engine, V::zero(), Q::identity(),
+                                           5.0f // width x height x depth of space inside box
+                                           ,
+                                           5.0f, 5.0f, 1.0f // wall thickness
+                                           ,
+                                           mat_info);
 
-      procedural::make_box_container<MT>(
-                                         engine
-                                         , V::make( 0.0f, -5.0f, 0.0f )
-                                         , Q::identity()
-                                         , 25.0f     // width x height x depth of space inside box
-                                         , 1.0f
-                                         , 25.0f
-                                         , 1.0f      // wall thickness
-                                         , mat_info
-                                         );
+        procedural::make_box_container<MT>(engine, V::make(0.0f, -5.0f, 0.0f), Q::identity(),
+                                           25.0f // width x height x depth of space inside box
+                                           ,
+                                           1.0f, 25.0f, 1.0f // wall thickness
+                                           ,
+                                           mat_info);
 
-
-      procedural::make_sphere_packing<MT>(
-                                          engine
-                                          , V::zero()
-                                          , Q::identity()
-                                          , 0.1f     // minimum sphere radius
-                                          , 0.5f     // maximum sphere radius
-                                          , 5.0f     // width x height x depth of space to fill up
-                                          , 5.0f
-                                          , 5.0f
-                                          , number_of_spheres     // total number of sphere objects
-                                          , mat_info
-                                          );
+        procedural::make_sphere_packing<MT>(engine, V::zero(), Q::identity(), 0.1f // minimum sphere radius
+                                            ,
+                                            0.5f // maximum sphere radius
+                                            ,
+                                            5.0f // width x height x depth of space to fill up
+                                            ,
+                                            5.0f, 5.0f, number_of_spheres // total number of sphere objects
+                                            ,
+                                            mat_info);
     }
     if (scene.compare("sliding_point") == 0)
     {
-      float const scene_size  = util::to_value<float>(       params.get_value("procedural_param_1", "10.0")  );
-      bool  const use_spike   = util::to_value<bool>(        params.get_value("procedural_param_2", "true")  );
-      bool  const use_wedge   = util::to_value<bool>(        params.get_value("procedural_param_3", "true")  );
+        auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        bool const use_spike = util::to_value<bool>(params.get_value("procedural_param_2", "true"));
+        bool const use_wedge = util::to_value<bool>(params.get_value("procedural_param_3", "true"));
 
-      float const ground_width = scene_size;
-      float const ground_height = scene_size/10.0;
-      float const ground_depth = scene_size;
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , ground_width
-                                  , ground_height
-                                  , ground_depth
-                                  );
+        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, ground_height,
+                                    ground_depth);
 
-      procedural::make_sliding_point<MT>(
-                                         engine
-                                         , V::make( 0.0, 0.0, 0.0 )
-                                         , Q::identity()
-                                         , scene_size
-                                         , mat_info
-                                         , use_spike
-                                         , use_wedge
-                                         );
+        procedural::make_sliding_point<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info,
+                                           use_spike, use_wedge);
     }
     if (scene.compare("two_points") == 0)
     {
-      float const scene_size          = util::to_value<float>(       params.get_value("procedural_param_1", "10.0")  );
-      bool  const use_spike           = util::to_value<bool>(        params.get_value("procedural_param_2", "true")  );
-      bool  const use_wedge           = util::to_value<bool>(        params.get_value("procedural_param_3", "true")  );
-      bool  const use_spike_and_wedge = util::to_value<bool>(        params.get_value("procedural_param_4", "true")  );
+        auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        bool const use_spike = util::to_value<bool>(params.get_value("procedural_param_2", "true"));
+        bool const use_wedge = util::to_value<bool>(params.get_value("procedural_param_3", "true"));
+        bool const use_spike_and_wedge = util::to_value<bool>(params.get_value("procedural_param_4", "true"));
 
-      procedural::make_two_points<MT>(
-                                      engine
-                                      , V::make( 0.0, 0.0, 0.0 )
-                                      , Q::identity()
-                                      , scene_size
-                                      , mat_info
-                                      , use_spike
-                                      , use_wedge
-                                      , use_spike_and_wedge
-                                      );
+        procedural::make_two_points<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info, use_spike,
+                                        use_wedge, use_spike_and_wedge);
     }
     if (scene.compare("point_in_crack") == 0)
     {
-      float const scene_size          = util::to_value<float>(       params.get_value("procedural_param_1", "10.0")  );
-      bool  const use_spike_in_hole   = util::to_value<bool>(        params.get_value("procedural_param_2", "true")  );
-      bool  const use_spike_in_crack  = util::to_value<bool>(        params.get_value("procedural_param_3", "true")  );
-      bool  const use_wedge_in_crack  = util::to_value<bool>(        params.get_value("procedural_param_4", "true")  );
+        auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));
+        bool const use_spike_in_hole = util::to_value<bool>(params.get_value("procedural_param_2", "true"));
+        bool const use_spike_in_crack = util::to_value<bool>(params.get_value("procedural_param_3", "true"));
+        bool const use_wedge_in_crack = util::to_value<bool>(params.get_value("procedural_param_4", "true"));
 
-
-      procedural::make_point_in_crack<MT>(
-                                      engine
-                                      , V::make( 0.0, 0.0, 0.0 )
-                                      , Q::identity()
-                                      , scene_size
-                                      , mat_info
-                                      , obj_path
-                                      , use_spike_in_hole
-                                      , use_spike_in_crack
-                                      , use_wedge_in_crack
-                                      );
+        procedural::make_point_in_crack<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info,
+                                            obj_path, use_spike_in_hole, use_spike_in_crack, use_wedge_in_crack);
     }
     if (scene.compare("cliff_edge") == 0)
     {
-      float const scene_size = util::to_value<float>( params.get_value("procedural_param_1", "20.0")  );
+        auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "20.0"));
 
-      procedural::make_cliff_edge<MT>(
-                                      engine
-                                      , V::make( 0.0, 0.0, 0.0 )
-                                      , Q::identity()
-                                      , scene_size
-                                      , mat_info
-                                      );
+        procedural::make_cliff_edge<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info);
     }
     if (scene.compare("internal_edge") == 0)
     {
-      float const scene_size = util::to_value<float>( params.get_value("procedural_param_1", "20.0")  );
+        auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "20.0"));
 
-      procedural::make_internal_edge<MT>(
-                                         engine
-                                         , V::make( 0.0, 0.0, 0.0 )
-                                         , Q::identity()
-                                         , scene_size
-                                         , mat_info
-                                         , tetset
-                                         );
+        procedural::make_internal_edge<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info, tetset);
     }
   }
 

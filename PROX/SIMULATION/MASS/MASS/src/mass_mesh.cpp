@@ -138,8 +138,7 @@ namespace mass
     class ProjectionIntegralInfo
       {
       public:
-
-        typedef typename tiny::ValueTraits<T> VT;
+          using VT = typename tiny::ValueTraits<T>;
 
       public:
 
@@ -248,8 +247,7 @@ namespace mass
     class FaceIntegralInfo
       {
       public:
-
-        typedef typename tiny::ValueTraits<T> VT;
+          using VT = typename tiny::ValueTraits<T>;
 
       public:
 
@@ -332,8 +330,7 @@ namespace mass
     class VolumeIntegralInfo
       {
       public:
-
-        typedef typename tiny::ValueTraits<T> VT;
+          using VT = typename tiny::ValueTraits<T>;
 
       public:
 

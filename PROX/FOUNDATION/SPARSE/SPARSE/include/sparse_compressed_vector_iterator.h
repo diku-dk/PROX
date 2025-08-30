@@ -29,28 +29,25 @@ namespace sparse
 #endif
 
     private:
+        using vector_type = V;
 
-      typedef V vector_type;
-
-      typedef typename detail::if_then_else<is_const, vector_type const*, vector_type*>::result    vector_type_ptr;
-      typedef typename vector_type::accessor::data_container_type                          data_container_type;
-      typedef typename data_container_type::iterator                                       data_iterator;
-      typedef typename data_container_type::const_iterator                                 const_data_iterator;
-      typedef typename detail::if_then_else<is_const, const_data_iterator, data_iterator>::result  data_iterator_type;
+        using vector_type_ptr = typename detail::if_then_else<is_const, const vector_type*, vector_type*>::result;
+        using data_container_type = typename vector_type::accessor::data_container_type;
+        using data_iterator = typename data_container_type::iterator;
+        using const_data_iterator = typename data_container_type::const_iterator;
+        using data_iterator_type = typename detail::if_then_else<is_const, const_data_iterator, data_iterator>::result;
 
     public:
+        using iterator_category = typename std::iterator_traits<data_iterator_type>::iterator_category;
 
-      typedef typename std::iterator_traits<data_iterator_type>::iterator_category iterator_category;
-
-      typedef typename data_iterator_type::value_type       value_type;
-      typedef typename data_iterator_type::difference_type  difference_type;
-      typedef typename data_iterator_type::pointer          pointer;
-      typedef typename data_iterator_type::reference        reference;
+        using value_type = typename data_iterator_type::value_type;
+        using difference_type = typename data_iterator_type::difference_type;
+        using pointer = typename data_iterator_type::pointer;
+        using reference = typename data_iterator_type::reference;
 
     protected:
-
-      vector_type_ptr m_src;
-      size_t          m_idx;
+        vector_type_ptr m_src;
+        size_t m_idx;
 
     public:
 

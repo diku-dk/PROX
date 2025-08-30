@@ -45,8 +45,8 @@ BOOST_AUTO_TEST_SUITE(tiny_math_types);
       typedef tiny::MathTypes<double > type2;
       void (*ptr1)() = &(compile_test_math_types<type1>);
       void (*ptr2)() = &(compile_test_math_types<type2>);
-      ptr1 = 0;
-      ptr2 = 0;
+      ptr1 = nullptr;
+      ptr2 = nullptr;
     }
 
 BOOST_AUTO_TEST_SUITE_END();

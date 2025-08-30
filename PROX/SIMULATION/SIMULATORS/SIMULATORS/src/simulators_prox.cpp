@@ -10,14 +10,14 @@
 namespace simulators
 {
 
-  typedef tiny::MathTypes<float> MT;
-  typedef MT::vector3_type       V;
-  typedef MT::quaternion_type    Q;
-  typedef MT::value_traits       VT;
-  typedef MT::real_type          T;
+using MT = tiny::MathTypes<float>;
+using V = MT::vector3_type;
+using Q = MT::quaternion_type;
+using VT = MT::value_traits;
+using T = MT::real_type;
 
-  ProxEngine::ProxEngine()
-  {
+ProxEngine::ProxEngine()
+{
     m_data = new ProxData();
 
     assert( m_data || !"ProxEngine(): internal error, null pointer");
@@ -1911,7 +1911,7 @@ namespace simulators
     assert( m_data                                        || !"connect_scripted_motion(): Data was null");
     assert( body_idx < m_data->m_bodies.size()            || !"connect_scripted_motion(): No such rigid body exist");
     assert( !(m_data->m_bodies[ body_idx ].is_scripted()) || !"connect_scripted_motion(): Rigid body is already scripted");
-    assert( m_data->find_motion(motion_idx)!=0            || !"connect_scripted_motion(): No such motion exist");
+    assert(m_data->find_motion(motion_idx) != nullptr || !"connect_scripted_motion(): No such motion exist");
 
     m_data->m_bodies[ body_idx ].set_scripted( true );
 
@@ -1932,7 +1932,7 @@ namespace simulators
   {
     assert( m_data || !"internal error: null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     assert( lookup  != m_data->m_keyframe_motions.end() || !"set_scripted_key_position(): Motion did not exist");
 
@@ -1950,7 +1950,7 @@ namespace simulators
   {
     assert( m_data || !"internal error: null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     assert( lookup  != m_data->m_keyframe_motions.end() || !"set_scripted_key_position(): Motion did not exist");
 
@@ -1971,7 +1971,7 @@ namespace simulators
     assert( body_index < m_data->m_bodies.size() || !"get_scripted_motion(): no such rigid body");
     assert( m_data->m_bodies[ body_index ].is_scripted() || !"get_scripted_motion(): rigid body was not scripted");
 
-    std::map<size_t, ProxData::ScriptedMotion * > ::iterator lookup = m_data->m_motion_callbacks.find(body_index);
+    auto lookup = m_data->m_motion_callbacks.find(body_index);
 
     assert(lookup!=m_data->m_motion_callbacks.end() || !"get_scripted_motion(): No scripted motion was connected to this body");
 
@@ -2021,7 +2021,7 @@ namespace simulators
   {
     assert( m_data || !"set_scripted_oscilation_paramters(): data was null pointer");
 
-    std::map<size_t, ProxData::OscillationMotion>::iterator lookup = m_data->m_oscillation_motions.find(motion_index);
+    auto lookup = m_data->m_oscillation_motions.find(motion_index);
 
     assert( lookup  != m_data->m_oscillation_motions.end() || !"set_scripted_oscilation_paramters(): Motion did not exist");
 
@@ -2052,22 +2052,16 @@ namespace simulators
     size_t count = 0;
 
     {
-      std::map<size_t, ProxData::OscillationMotion>::const_iterator oscilation = m_data->m_oscillation_motions.begin();
-      std::map<size_t, ProxData::OscillationMotion>::const_iterator end        = m_data->m_oscillation_motions.end();
+        auto oscilation = m_data->m_oscillation_motions.begin();
+        auto end = m_data->m_oscillation_motions.end();
 
-      for(;oscilation!=end;++oscilation,++count)
-      {
-        index_array[count] = oscilation->second.m_index;
-      }
+        for (; oscilation != end; ++oscilation, ++count) { index_array[count] = oscilation->second.m_index; }
     }
     {
-      std::map<size_t, ProxData::KeyframeMotion>::const_iterator keyframe = m_data->m_keyframe_motions.begin();
-      std::map<size_t, ProxData::KeyframeMotion>::const_iterator end      = m_data->m_keyframe_motions.end();
+        auto keyframe = m_data->m_keyframe_motions.begin();
+        auto end = m_data->m_keyframe_motions.end();
 
-      for(;keyframe!=end;++keyframe,++count)
-      {
-        index_array[count] = keyframe->second.m_index;
-      }
+        for (; keyframe != end; ++keyframe, ++count) { index_array[count] = keyframe->second.m_index; }
     }
   }
 
@@ -2075,7 +2069,7 @@ namespace simulators
   {
     assert( m_data || !"is_scripted_motion_keyframe(): data was null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     return lookup  != m_data->m_keyframe_motions.end();
   }
@@ -2084,7 +2078,7 @@ namespace simulators
   {
     assert( m_data || !"is_scripted_motion_oscilation(): data was null pointer");
 
-    std::map<size_t, ProxData::OscillationMotion>::iterator lookup = m_data->m_oscillation_motions.find(motion_index);
+    auto lookup = m_data->m_oscillation_motions.find(motion_index);
 
     return lookup  != m_data->m_oscillation_motions.end();
   }
@@ -2101,7 +2095,7 @@ namespace simulators
   {
     assert( m_data || !"get_scripted_oscilation_paramters(): data was null pointer");
 
-    std::map<size_t, ProxData::OscillationMotion>::iterator lookup = m_data->m_oscillation_motions.find(motion_index);
+    auto lookup = m_data->m_oscillation_motions.find(motion_index);
 
     assert( lookup  != m_data->m_oscillation_motions.end() || !"get_scripted_oscilation_paramters(): motion was not oscilation scripted motion");
 
@@ -2117,7 +2111,7 @@ namespace simulators
   {
     assert( m_data || !"get_number_of_key_frame_positions(): data was null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     assert( lookup  != m_data->m_keyframe_motions.end() || !"get_number_of_key_frame_positions(): motion was not keyframe scripted motion");
 
@@ -2128,7 +2122,7 @@ namespace simulators
   {
     assert( m_data || !"get_number_of_key_frame_orientations(): data was null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     assert( lookup  != m_data->m_keyframe_motions.end() || !"get_number_of_key_frame_positions(): motion was not keyframe scripted motion");
 
@@ -2145,12 +2139,12 @@ namespace simulators
   {
     assert( m_data || !"get_key_frame_positions(): data was null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     assert( lookup  != m_data->m_keyframe_motions.end() || !"get_number_of_key_frame_positions(): motion was not keyframe scripted motion");
 
-    std::vector<ProxData::KeyPosition>::const_iterator key = lookup->second.m_positions.begin();
-    std::vector<ProxData::KeyPosition>::const_iterator end = lookup->second.m_positions.end();
+    auto key = lookup->second.m_positions.begin();
+    auto end = lookup->second.m_positions.end();
 
     size_t count = 0u;
     for(;key!=end;++key,++count)
@@ -2173,12 +2167,12 @@ namespace simulators
   {
     assert( m_data || !"get_key_frame_orientations(): data was null pointer");
 
-    std::map<size_t, ProxData::KeyframeMotion>::iterator lookup = m_data->m_keyframe_motions.find(motion_index);
+    auto lookup = m_data->m_keyframe_motions.find(motion_index);
 
     assert( lookup  != m_data->m_keyframe_motions.end() || !"get_key_frame_orientations(): motion was not keyframe scripted motion");
 
-    std::vector<ProxData::KeyOrientation>::const_iterator key = lookup->second.m_orientations.begin();
-    std::vector<ProxData::KeyOrientation>::const_iterator end = lookup->second.m_orientations.end();
+    auto key = lookup->second.m_orientations.begin();
+    auto end = lookup->second.m_orientations.end();
 
     size_t count = 0u;
     for(;key!=end;++key,++count)

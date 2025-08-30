@@ -10,13 +10,11 @@ namespace hyper
   class ImplicitSurfaceFunctor
   {
   public:
+      using T = typename MT::real_type;
+      using V = typename MT::vector3_type;
+      using VT = typename MT::value_traits;
 
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::value_traits    VT;
-
-    virtual T operator()(V const & p) const = 0;
-
+      virtual T operator()(V const& p) const = 0;
   };
 
 
@@ -25,15 +23,13 @@ namespace hyper
   : public ImplicitSurfaceFunctor<MT>
   {
   public:
-
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::value_traits    VT;
+      using T = typename MT::real_type;
+      using V = typename MT::vector3_type;
+      using VT = typename MT::value_traits;
 
   protected:
-
-    V m_position;
-    V m_dimension;
+      V m_position;
+      V m_dimension;
 
   public:
 

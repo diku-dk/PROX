@@ -15,8 +15,7 @@ namespace kdop
   class Node
   {
   public:
-
-    typedef geometry::DOP<T,K> volume_type;
+      using volume_type = geometry::DOP<T, K>;
 
   public:
 
@@ -78,8 +77,7 @@ namespace kdop
   class SubTree
   {
   public:
-
-    typedef Node<T,K> node_type;
+      using node_type = Node<T, K>;
 
   public:
 
@@ -116,21 +114,19 @@ namespace kdop
   class Tree
   {
   public:
-
-    typedef geometry::DOP<T,K>     volume_type;
-    typedef SubTree<T,K>           subtree_type;
+      using volume_type = geometry::DOP<T, K>;
+      using subtree_type = SubTree<T, K>;
 
   public:
+      geometry::DOP<T, K> m_root; ///< A root kDOP that contains the whole tree.
 
-    geometry::DOP<T,K>                       m_root;            ///< A root kDOP that contains the whole tree.
-
-    std::vector< std::vector<subtree_type> > m_chunk_levels;    ///< Levels of chuncks, each level
-                                                                ///< has more refined details. The lowest
-                                                                ///< level, back(), are the leaves pointing to the
-                                                                ///< tetrahedrons of the mesh.
-                                                                ///< We call the lowest level, branches, and
-                                                                ///< the intermediate levels are called super
-                                                                ///< chuncks (they are chunks of chunks).
+      std::vector< std::vector<subtree_type> > m_chunk_levels; ///< Levels of chuncks, each level
+          ///< has more refined details. The lowest
+          ///< level, back(), are the leaves pointing to the
+          ///< tetrahedrons of the mesh.
+          ///< We call the lowest level, branches, and
+          ///< the intermediate levels are called super
+          ///< chuncks (they are chunks of chunks).
 
   public:
 

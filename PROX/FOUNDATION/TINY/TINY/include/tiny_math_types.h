@@ -27,33 +27,31 @@ namespace tiny
   class MathTypes<float>
   {
   public:
+      using type_traits = float_traits;
+      using real_type = type_traits::real_type;
+      using vector3_type = Vector<3, type_traits>;
+      using vector4_type = Vector<4, type_traits>;
 
-    typedef float_traits                  type_traits;
-    typedef type_traits::real_type        real_type;
-    typedef Vector<3,type_traits>         vector3_type;
-    typedef Vector<4,type_traits>         vector4_type;
-
-    typedef Quaternion<type_traits>       quaternion_type;
-    typedef Matrix<3,3,type_traits>       matrix3x3_type;
-    typedef Matrix<4,4,type_traits>       matrix4x4_type;
-    typedef CoordSys<type_traits>         coordsys_type;
-    typedef ValueTraits<real_type>        value_traits;
+      using quaternion_type = Quaternion<type_traits>;
+      using matrix3x3_type = Matrix<3, 3, type_traits>;
+      using matrix4x4_type = Matrix<4, 4, type_traits>;
+      using coordsys_type = CoordSys<type_traits>;
+      using value_traits = ValueTraits<real_type>;
   };
 
   template<  >
   class MathTypes<double>
   {
   public:
+      using type_traits = double_traits;
+      using real_type = type_traits::real_type;
+      using vector3_type = Vector<3, type_traits>;
+      using vector4_type = Vector<4, type_traits>;
 
-    typedef double_traits                 type_traits;
-    typedef type_traits::real_type        real_type;
-    typedef Vector<3,type_traits>         vector3_type;
-    typedef Vector<4,type_traits>         vector4_type;
-
-    typedef Quaternion<type_traits>       quaternion_type;
-    typedef Matrix<3,3,type_traits>       matrix3x3_type;
-    typedef CoordSys<type_traits>         coordsys_type;
-    typedef ValueTraits<real_type>        value_traits;
+      using quaternion_type = Quaternion<type_traits>;
+      using matrix3x3_type = Matrix<3, 3, type_traits>;
+      using coordsys_type = CoordSys<type_traits>;
+      using value_traits = ValueTraits<real_type>;
   };
 
 } // namespace tiny

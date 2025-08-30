@@ -15,8 +15,7 @@ namespace procedural
     : public mass::FaceCallbackInterface<typename MT::real_type>
     {
     protected:
-
-      typedef typename MT::real_type T;
+        using T = typename MT::real_type;
 
     public:
 

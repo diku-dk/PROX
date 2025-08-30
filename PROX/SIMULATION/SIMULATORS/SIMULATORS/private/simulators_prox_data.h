@@ -25,59 +25,56 @@ namespace simulators
 	class ProxData
 	{
   public:
+      using MT = prox::MathPolicy<float>;
+      using TT = MT::tiny_types;
+      using V = TT::vector3_type;
+      using Q = TT::quaternion_type;
+      using T = TT::real_type;
+      using VT = TT::value_traits;
+      using M = TT::matrix3x3_type;
 
-    typedef prox::MathPolicy< float >          MT;
-    typedef MT::tiny_types                     TT;
-    typedef TT::vector3_type                   V;
-    typedef TT::quaternion_type                Q;
-    typedef TT::real_type                      T;
-    typedef TT::value_traits                   VT;
-    typedef TT::matrix3x3_type                 M;
-
-    typedef prox::RigidBody< MT >              rigid_body_type;
-    typedef prox::ContactPoint< MT >           contact_type;
-    typedef narrow::Geometry< TT >             geometry_type;
-    typedef prox::Property< MT >               property_type;
-    typedef prox::Params< MT >                 params_type;
-    typedef prox::ForceCallback<MT>            force_callback;
+      using rigid_body_type = prox::RigidBody<MT>;
+      using contact_type = prox::ContactPoint<MT>;
+      using geometry_type = narrow::Geometry<TT>;
+      using property_type = prox::Property<MT>;
+      using params_type = prox::Params<MT>;
+      using force_callback = prox::ForceCallback<MT>;
 
   public:
+      using broad_phase_type = broad::System<T>;
+      using narrow_phase_type = narrow::System<TT>;
 
-    typedef broad::System< T >              broad_phase_type;
-    typedef narrow::System< TT >            narrow_phase_type;
+      std::vector< std::string > m_geometry_names;
+      std::vector< std::string > m_materials;
+      std::vector< rigid_body_type > m_bodies;
+      std::vector< contact_type > m_contacts;
 
-    std::vector< std::string >       m_geometry_names;
-    std::vector< std::string >       m_materials;
-    std::vector< rigid_body_type  >  m_bodies;
-    std::vector< contact_type >      m_contacts;
+      broad_phase_type m_broad;
+      narrow_phase_type m_narrow;
 
-    broad_phase_type                 m_broad;
-    narrow_phase_type                m_narrow;
+      size_t m_property_counter;
 
-    size_t                           m_property_counter;
+      std::vector< std::vector< property_type > > m_properties;
 
-    std::vector< std::vector< property_type > > m_properties;
+      bool m_exist_property[m_number_of_materials][m_number_of_materials];
+      float m_time_step;
+      float m_time;      ///< Simulated time
 
-    bool                             m_exist_property[m_number_of_materials][m_number_of_materials];
-    float                            m_time_step;
-    float                            m_time;      ///< Simulated time
+      params_type m_params;
+      bool m_use_only_tetrameshes;
 
-    params_type                      m_params;
-    bool                             m_use_only_tetrameshes;
+      prox::Gravity<MT> m_gravity;
+      prox::Damping<MT> m_damping;
 
-    prox::Gravity<MT>       m_gravity;
-    prox::Damping<MT>       m_damping;
-
-
-    std::vector< force_callback * >    m_force_callbacks;
-    std::map< size_t, prox::Pin<MT> >  m_pin_forces;        ///< Container of pin forces. We on
+      std::vector< force_callback* > m_force_callbacks;
+      std::map< size_t, prox::Pin<MT> > m_pin_forces;        ///< Container of pin forces. We on
                                                             ///< purpose use a map here to make
                                                             ///< sure pointers to elements stay
                                                             ///< the same when the data structure
                                                             ///< grows. Otherwise we can not use
                                                             ///< vectors of points to these elements.
 
-    mesh_array::TetGenSettings m_tetgen_settings;           ///< Tetget settings
+      mesh_array::TetGenSettings m_tetgen_settings;           ///< Tetget settings
 
   public:
 
@@ -322,17 +319,17 @@ namespace simulators
     {
       assert( motion_idx < ScriptedMotion::get_next_index() || !"No motion exist with this index value" );
 
-      std::map<size_t, KeyframeMotion>::iterator keyframe = this->m_keyframe_motions.find(motion_idx);
+      auto keyframe = this->m_keyframe_motions.find(motion_idx);
 
       if(keyframe != this->m_keyframe_motions.end() )
         return &(keyframe->second);
 
-      std::map<size_t, OscillationMotion>::iterator oscillation = this->m_oscillation_motions.find(motion_idx);
+      auto oscillation = this->m_oscillation_motions.find(motion_idx);
 
       if(oscillation != this->m_oscillation_motions.end() )
         return &(oscillation->second);
 
-      return 0;
+      return nullptr;
     }
 
   public:

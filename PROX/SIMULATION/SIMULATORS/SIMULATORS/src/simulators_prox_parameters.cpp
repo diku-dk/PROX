@@ -388,25 +388,27 @@ namespace simulators
     set_parameter(PARAM_USE_ONLY_TETRAMESHES,        use_only_tetrameshes      );
     set_parameter(PARAM_BOUNCE_ON,                   bounce_on_value           );
 
-    unsigned int const max_iteration_value         = util::to_value<unsigned int>( settings.get_value(PARAM_MAX_ITERATION,             "1000"   ) );
-    unsigned int const narrow_open_cl_platform     = util::to_value<unsigned int>( settings.get_value(PARAM_NARROW_OPEN_CL_PLATFORM,   "0"      ) );
-    unsigned int const narrow_open_cl_device       = util::to_value<unsigned int>( settings.get_value(PARAM_NARROW_OPEN_CL_DEVICE,     "0"      ) );
-    unsigned int const narrow_chunk_bytes          = util::to_value<unsigned int>( settings.get_value(PARAM_NARROW_CHUNK_BYTES,        "8000"   ) );
+    auto const max_iteration_value = util::to_value<unsigned int>(settings.get_value(PARAM_MAX_ITERATION, "1000"));
+    auto const narrow_open_cl_platform
+        = util::to_value<unsigned int>(settings.get_value(PARAM_NARROW_OPEN_CL_PLATFORM, "0"));
+    auto const narrow_open_cl_device
+        = util::to_value<unsigned int>(settings.get_value(PARAM_NARROW_OPEN_CL_DEVICE, "0"));
+    auto const narrow_chunk_bytes = util::to_value<unsigned int>(settings.get_value(PARAM_NARROW_CHUNK_BYTES, "8000"));
 
     set_parameter(PARAM_MAX_ITERATION,               max_iteration_value       );
     set_parameter(PARAM_NARROW_OPEN_CL_PLATFORM,     narrow_open_cl_platform   );
     set_parameter(PARAM_NARROW_OPEN_CL_DEVICE,       narrow_open_cl_device     );
     set_parameter(PARAM_NARROW_CHUNK_BYTES,          narrow_chunk_bytes        );
 
-    float        const absolute_tolerance_value    = util::to_value<float>(        settings.get_value(PARAM_ABSOLUTE_TOLERANCE,        "0.0"    ) );
-    float        const relative_tolerance_value    = util::to_value<float>(        settings.get_value(PARAM_RELATIVE_TOLERANCE,        "0.0"    ) );
-    float        const gap_reduction_value         = util::to_value<float>(        settings.get_value(PARAM_GAP_REDUCTION,             "0.5"    ) );
-    float        const min_gap_value               = util::to_value<float>(        settings.get_value(PARAM_MIN_GAP,                   "0.001"  ) );
-    float        const max_gap_value               = util::to_value<float>(        settings.get_value(PARAM_MAX_GAP,                   "0.01"   ) );
-    float        const tetgen_quality_ratio        = util::to_value<float>(        settings.get_value(PARAM_TETGEN_QUALITY_RATIO,      "2.0"    ) );
-    float        const tetgen_maximum_volume       = util::to_value<float>(        settings.get_value(PARAM_TETGEN_MAXIMUM_VOLUME,     "0.1"    ) );
-    float        const narrow_envelope             = util::to_value<float>(        settings.get_value(PARAM_NARROW_ENVELOPE,           "0.01"   ) );
-    float        const time_step                   = util::to_value<float>(        settings.get_value(PARAM_TIME_STEP,                 "0.01"   ) );
+    auto const absolute_tolerance_value = util::to_value<float>(settings.get_value(PARAM_ABSOLUTE_TOLERANCE, "0.0"));
+    auto const relative_tolerance_value = util::to_value<float>(settings.get_value(PARAM_RELATIVE_TOLERANCE, "0.0"));
+    auto const gap_reduction_value = util::to_value<float>(settings.get_value(PARAM_GAP_REDUCTION, "0.5"));
+    auto const min_gap_value = util::to_value<float>(settings.get_value(PARAM_MIN_GAP, "0.001"));
+    auto const max_gap_value = util::to_value<float>(settings.get_value(PARAM_MAX_GAP, "0.01"));
+    auto const tetgen_quality_ratio = util::to_value<float>(settings.get_value(PARAM_TETGEN_QUALITY_RATIO, "2.0"));
+    auto const tetgen_maximum_volume = util::to_value<float>(settings.get_value(PARAM_TETGEN_MAXIMUM_VOLUME, "0.1"));
+    auto const narrow_envelope = util::to_value<float>(settings.get_value(PARAM_NARROW_ENVELOPE, "0.01"));
+    auto const time_step = util::to_value<float>(settings.get_value(PARAM_TIME_STEP, "0.01"));
 
     set_parameter(PARAM_ABSOLUTE_TOLERANCE,          absolute_tolerance_value  );
     set_parameter(PARAM_RELATIVE_TOLERANCE,          relative_tolerance_value  );
@@ -418,12 +420,12 @@ namespace simulators
     set_parameter(PARAM_NARROW_ENVELOPE,             narrow_envelope           );
     set_parameter(PARAM_TIME_STEP,                   time_step                 );
 
-    float        const gravity_x_value             = util::to_value<float>(        settings.get_value("gravity_x",                 "0.0"    ) );
-    float        const gravity_y_value             = util::to_value<float>(        settings.get_value("gravity_y",                 "1.0"    ) );
-    float        const gravity_z_value             = util::to_value<float>(        settings.get_value("gravity_z",                 "0.0"    ) );
-    float        const gravity_acceleration_value  = util::to_value<float>(        settings.get_value("gravity_acceleration",      "9.82"   ) );
-    float        const damping_linear_value        = util::to_value<float>(        settings.get_value("damping_linear",            "0.01"   ) );
-    float        const damping_angular_value       = util::to_value<float>(        settings.get_value("damping_angular",           "0.01"   ) );
+    auto const gravity_x_value = util::to_value<float>(settings.get_value("gravity_x", "0.0"));
+    auto const gravity_y_value = util::to_value<float>(settings.get_value("gravity_y", "1.0"));
+    auto const gravity_z_value = util::to_value<float>(settings.get_value("gravity_z", "0.0"));
+    auto const gravity_acceleration_value = util::to_value<float>(settings.get_value("gravity_acceleration", "9.82"));
+    auto const damping_linear_value = util::to_value<float>(settings.get_value("damping_linear", "0.01"));
+    auto const damping_angular_value = util::to_value<float>(settings.get_value("damping_angular", "0.01"));
 
     set_gravity_acceleration(gravity_acceleration_value);
     set_gravity_up(gravity_x_value,gravity_y_value,gravity_z_value);

@@ -17,23 +17,14 @@ namespace sparse
     class BlockAccessor
       {
       public:
-        typedef B block_type;
-        typedef typename B::data_container_type data_container_type;
+          using block_type = B;
+          using data_container_type = typename B::data_container_type;
 
-        static data_container_type& data(block_type& src)
-        {
-          return src.m_data;
-        }
+          static data_container_type& data(block_type& src) { return src.m_data; }
 
-        static data_container_type const& data(block_type const& src)
-        {
-          return src.m_data;
-        }
+          static data_container_type const& data(block_type const& src) { return src.m_data; }
 
-        static void copy(block_type const& orig, block_type& src)
-        {
-          src.copy_(orig);
-        }
+          static void copy(block_type const& orig, block_type& src) { src.copy_(orig); }
       };
 
   } // namespace detail
@@ -53,21 +44,19 @@ namespace sparse
   class Block
     {
     public:
+        using block_type = Block<M, N, T>;
+        using value_type = T;
+        using reference = T&;
+        using const_reference = const T&;
+        using pointer = T*;
+        using const_pointer = const T*;
+        using iterator = T*;
+        using const_iterator = const T*;
 
-      typedef Block<M,N,T> block_type;
-      typedef T            value_type;
-      typedef T&           reference;
-      typedef T const&     const_reference;
-      typedef T*           pointer;
-      typedef T const*     const_pointer;
-      typedef T*           iterator;
-      typedef T const*     const_iterator;
-
-      typedef detail::BlockAccessor<block_type> accessor;
+        using accessor = detail::BlockAccessor<block_type>;
 
     protected:
-
-      typedef T * data_container_type;
+        using data_container_type = T*;
 
     private:
 
@@ -228,23 +217,20 @@ namespace sparse
   class Block<M,1,T>
   {
   public:
-
-    typedef Block<M,1,T> block_type;
-    typedef T            value_type;
-    typedef T&           reference;
-    typedef T const&     const_reference;
-    typedef T*           pointer;
-    typedef T const*     const_pointer;
-    typedef T*           iterator;
-    typedef T const*     const_iterator;
+      using block_type = Block<M, 1, T>;
+      using value_type = T;
+      using reference = T&;
+      using const_reference = const T&;
+      using pointer = T*;
+      using const_pointer = const T*;
+      using iterator = T*;
+      using const_iterator = const T*;
 
   protected:
-
-    typedef T*           data_container_type;
+      using data_container_type = T*;
 
   private:
-
-    friend class detail::BlockAccessor<block_type>;
+      friend class detail::BlockAccessor<block_type>;
 
   protected:
 
@@ -387,19 +373,17 @@ namespace sparse
   class Block<1,1,T>
   {
   public:
-
-    typedef Block<1,1,T> block_type;
-    typedef T            value_type;
-    typedef T&           reference;
-    typedef T const&     const_reference;
-    typedef T*           pointer;
-    typedef T const*     const_pointer;
-    typedef T*           iterator;
-    typedef T const*     const_iterator;
+      using block_type = Block<1, 1, T>;
+      using value_type = T;
+      using reference = T&;
+      using const_reference = const T&;
+      using pointer = T*;
+      using const_pointer = const T*;
+      using iterator = T*;
+      using const_iterator = const T*;
 
   protected:
-
-    typedef T data_container_type;
+      using data_container_type = T;
 
   private:
 

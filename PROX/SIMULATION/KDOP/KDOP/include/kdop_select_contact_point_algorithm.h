@@ -11,17 +11,16 @@ namespace kdop
   class SelectContactPointAlgorithm
   {
   public:
-
-    typedef enum {
-      use_sat
-      , use_restricted_sat
-      , use_most_opposing_surfaces
-      , use_triangle_intersection
-      , use_vertex_only
-      , use_consistent_vertex
-      , use_growth
-      , use_closest_points
-    } algorithm_type;
+      using algorithm_type = enum {
+          use_sat,
+          use_restricted_sat,
+          use_most_opposing_surfaces,
+          use_triangle_intersection,
+          use_vertex_only,
+          use_consistent_vertex,
+          use_growth,
+          use_closest_points
+      };
 
   protected:
 

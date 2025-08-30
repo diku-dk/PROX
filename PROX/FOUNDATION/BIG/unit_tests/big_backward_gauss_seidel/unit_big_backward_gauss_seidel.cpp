@@ -14,7 +14,7 @@ void test(matrix_type const & A, vector_type & x, vector_type const & b, vector_
   typedef typename matrix_type::value_type real_type;
   typedef typename matrix_type::size_type  size_type;
 
-  real_type tol = boost::numeric_cast<real_type>(0.001);
+  auto tol = boost::numeric_cast<real_type>(0.001);
 
   big::backward_gauss_seidel(A,x,b);
   for(size_type i = 0; i < x.size();++i)

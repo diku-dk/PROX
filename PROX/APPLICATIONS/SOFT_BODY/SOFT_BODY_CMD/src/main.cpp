@@ -21,28 +21,26 @@ namespace soft_body
     class Application
     {
     public:
-
-      typedef hyper::MathPolicy<float> MT;
-      typedef MT::real_type             T;
-      typedef MT::value_traits         VT;
+        using MT = hyper::MathPolicy<float>;
+        using T = MT::real_type;
+        using VT = MT::value_traits;
 
     protected:
+        T m_time;
+        T m_total_time;
+        T m_time_step;
 
-      T m_time;
-      T m_total_time;
-      T m_time_step;
+        bool m_profiling;
+        bool m_did_auto_save;
+        bool m_write_obj_files;
 
-      bool m_profiling;
-      bool m_did_auto_save;
-      bool m_write_obj_files;
-
-      std::string       m_obj_path;
-      std::string       m_output_path;
-      std::string       m_working_directory;
-      std::string       m_matlab_file;
-      util::ConfigFile  m_config_file;
-      hyper::Engine<MT> m_engine;
-      unsigned int      m_frame_number;
+        std::string m_obj_path;
+        std::string m_output_path;
+        std::string m_working_directory;
+        std::string m_matlab_file;
+        util::ConfigFile m_config_file;
+        hyper::Engine<MT> m_engine;
+        unsigned int m_frame_number;
 
     protected:
 
@@ -111,12 +109,9 @@ namespace soft_body
 
         m_engine.params().set_time_step(m_time_step);
 
-        float const tetgen_quality_ratio = util::to_value<float>(
-                                                                 m_config_file.get_value("tetgen_quality_ratio", "2.0")
-                                                                 );
-        float const tetgen_maximum_volume = util::to_value<float>(
-                                                                  m_config_file.get_value("tetgen_maximum_volume", "0.1")
-                                                                  );
+        auto const tetgen_quality_ratio = util::to_value<float>(m_config_file.get_value("tetgen_quality_ratio", "2.0"));
+        auto const tetgen_maximum_volume
+            = util::to_value<float>(m_config_file.get_value("tetgen_maximum_volume", "0.1"));
         bool const tetgen_quiet_output = util::to_value<bool>(
                                                               m_config_file.get_value("tetgen_quiet_output", "true")
                                                               );
@@ -132,21 +127,15 @@ namespace soft_body
         bool const use_open_cl = util::to_value<bool>(
                                                       m_config_file.get_value("use_open_cl", "false")
                                                       );
-        size_t const open_cl_platform = util::to_value<size_t>(
-                                                               m_config_file.get_value("open_cl_platform", "0")
-                                                               );
-        size_t const open_cl_device = util::to_value<size_t>(
-                                                             m_config_file.get_value("open_cl_device", "0")
-                                                             );
+        auto const open_cl_platform = util::to_value<size_t>(m_config_file.get_value("open_cl_platform", "0"));
+        auto const open_cl_device = util::to_value<size_t>(m_config_file.get_value("open_cl_device", "0"));
         bool const use_gproximity = util::to_value<bool>(
                                                          m_config_file.get_value("use_gproximity", "false")
                                                          );
         bool const use_batching = util::to_value<bool>(
                                                        m_config_file.get_value("use_batching", "true")
                                                        );
-        float const envelope = util::to_value<float>(
-                                                     m_config_file.get_value("envelope", "0.01")
-                                                     );
+        auto const envelope = util::to_value<float>(m_config_file.get_value("envelope", "0.01"));
 
         m_engine.params().set_use_open_cl(use_open_cl);
         m_engine.params().set_open_cl_device(open_cl_platform);

@@ -3,11 +3,11 @@
 namespace mesh_array
 {
 
-  template<typename T>
-  TriangleAttribute<T,T3Mesh>::TriangleAttribute()
-  : m_mesh(0)
-  , m_data()
-  {
+template <typename T>
+TriangleAttribute<T, T3Mesh>::TriangleAttribute()
+    : m_mesh(nullptr)
+    , m_data()
+{
   }
 
   template<typename T>
@@ -57,8 +57,8 @@ namespace mesh_array
   template<typename T>
   void TriangleAttribute<T,T3Mesh>::release()
   {
-    this->m_mesh = 0;
-    this->m_data.clear();
+      this->m_mesh = nullptr;
+      this->m_data.clear();
   }
 
   template<typename T>

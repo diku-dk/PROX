@@ -42,11 +42,11 @@ public:
 
 };
 
-typedef broad::Object<float>                              base_object_type;
-typedef MyObject<float>                                   object_type;
-typedef broad::System<float>                              system_type;
-typedef std::pair< base_object_type*, base_object_type* > overlap_type;
-typedef std::vector< overlap_type  >                        overlap_container;
+using base_object_type = broad::Object<float>;
+using object_type = MyObject<float>;
+using system_type = broad::System<float>;
+using overlap_type = std::pair<base_object_type*, base_object_type*>;
+using overlap_container = std::vector<overlap_type>;
 
 /**
  * This function tests if the specified pair of objects are reported uniquely as an overlap.
@@ -58,7 +58,7 @@ inline bool exist_unique_overlap( object_type const & A, object_type const & B, 
   base_object_type const * a =  &A;
   base_object_type const * b =  &B;
 
-  for( overlap_container::const_iterator o = O.begin(); o != O.end(); ++o)
+  for (auto o = O.begin(); o != O.end(); ++o)
   {
     BOOST_CHECK( o->first < o->second );
     if( o->first == a && o->second == b)

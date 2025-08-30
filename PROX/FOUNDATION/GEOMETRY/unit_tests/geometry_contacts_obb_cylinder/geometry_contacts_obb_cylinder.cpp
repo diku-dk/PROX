@@ -10,11 +10,11 @@
 
 #include <vector>
 
-typedef tiny::MathTypes<float> MT;
-typedef MT::vector3_type       V;
-typedef MT::quaternion_type    Q;
-typedef MT::real_type          T;
-typedef MT::value_traits       VT;
+using MT = tiny::MathTypes<float>;
+using V = MT::vector3_type;
+using Q = MT::quaternion_type;
+using T = MT::real_type;
+using VT = MT::value_traits;
 
 class ContactInfo
 {

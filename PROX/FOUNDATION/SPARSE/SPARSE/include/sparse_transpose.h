@@ -66,7 +66,8 @@ namespace sparse
     // ----------------------------------
     // array used to correctly place transposed elements into B
 
-    size_t * B_row_count = new size_t[B_row_ptrs.size()];   // kenny: Argh new/delete... unsafe? why not just use row_ptrs_container_type?
+    auto* B_row_count
+        = new size_t[B_row_ptrs.size()]; // kenny: Argh new/delete... unsafe? why not just use row_ptrs_container_type?
     std::copy(B_row_ptrs.begin(), B_row_ptrs.end(), B_row_count);
 
     for (size_t i = 0; i < A.nrows(); ++i)
@@ -135,7 +136,7 @@ namespace sparse
     // step 2 : create cols and data of B
     // ----------------------------------
     // array used to correctly place transposed elements into B
-    size_t *B_row_count = new size_t[B_row_ptrs.size()];            // kenny: Argh new/delete... unsafe?
+    auto* B_row_count = new size_t[B_row_ptrs.size()]; // kenny: Argh new/delete... unsafe?
     std::copy(B_row_ptrs.begin(), B_row_ptrs.end(), B_row_count);
 
     for (size_t i = 0; i < A.nrows(); ++i)
@@ -217,7 +218,7 @@ namespace sparse
     // step 2 : create cols and data of B
     // ----------------------------------
     // array used to correctly place transposed elements into B
-    size_t *B_row_count = new size_t[B_row_ptrs.size()];         // kenny: Yrgh! new/delete???
+    auto* B_row_count = new size_t[B_row_ptrs.size()]; // kenny: Yrgh! new/delete???
     std::copy(B_row_ptrs.begin(), B_row_ptrs.end(), B_row_count);
 
     size_t A_row = 0;
@@ -285,7 +286,7 @@ namespace sparse
     // step 2 : create cols and data of B
     // ----------------------------------
     // array used to correctly place transposed elements into B
-    size_t *B_row_count = new size_t[B_row_ptrs.size()];                // kenny: jeeze new/delete????
+    auto* B_row_count = new size_t[B_row_ptrs.size()]; // kenny: jeeze new/delete????
     std::copy(B_row_ptrs.begin(), B_row_ptrs.end(), B_row_count);
 
     size_t A_row = 0;

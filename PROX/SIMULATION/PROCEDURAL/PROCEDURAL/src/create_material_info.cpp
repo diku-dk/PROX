@@ -150,7 +150,7 @@ namespace procedural
     return mat_info;
   }
 
-  typedef tiny::MathTypes<float> MTf;
+  using MTf = tiny::MathTypes<float>;
 
   template
   MaterialInfo<MTf::real_type> create_material_info<MTf>( content::API * engine );

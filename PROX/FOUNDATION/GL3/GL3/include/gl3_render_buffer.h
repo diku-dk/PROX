@@ -130,7 +130,7 @@ namespace gl3
       GLint tmp = 0;
       glGetIntegerv( GL_RENDERBUFFER_BINDING, &tmp );
       check_errors("RenderBuffer::set(): glGetIntegerv");
-      GLuint saved_id = static_cast<GLuint>(tmp);
+      auto saved_id = static_cast<GLuint>(tmp);
       if (saved_id != m_buffer_id)
       {
         bind();

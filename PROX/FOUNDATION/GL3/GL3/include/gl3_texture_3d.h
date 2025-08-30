@@ -121,7 +121,8 @@ namespace gl3
       //--- If successfull this does not imply that texture will be resident in texture memory!!!
       unsigned int proxy_texture_target = GL_PROXY_TEXTURE_3D;
 
-      glTexImage3D( proxy_texture_target, 0, internal_format, width, height, depth, 0, external_format, external_type, 0 );
+      glTexImage3D(proxy_texture_target, 0, internal_format, width, height, depth, 0, external_format, external_type,
+                   nullptr);
       gl3::check_errors("check_texture_size: glTexImage3D");
 
       GLint tex_size[ 3 ] = { 0, 0, 0 };
@@ -153,7 +154,7 @@ namespace gl3
 
       int total_bits = channel_size[ 0 ] + channel_size[ 1 ] + channel_size[ 2 ] + channel_size[ 3 ] + channel_size[ 4 ] + channel_size[ 5 ];
 
-      float bytes = static_cast< float >( ceil( total_bits / 8.0 ));
+      auto bytes = static_cast< float >(ceil(total_bits / 8.0));
 
       int memory_size = static_cast<int>(tex_size[ 0 ] * tex_size[ 1 ] * tex_size[ 2 ] * bytes);
 

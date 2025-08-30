@@ -10,9 +10,9 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-typedef tiny::MathTypes<double> math_types;
-typedef math_types::vector3_type    V;
-typedef math_types::quaternion_type Q;
+using math_types = tiny::MathTypes<double>;
+using V = math_types::vector3_type;
+using Q = math_types::quaternion_type;
 
 class CuboidMesh
 : public mass::FaceCallbackInterface<double>

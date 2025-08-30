@@ -34,8 +34,8 @@ namespace mesh_array
 
   void AdjacencyInfo<T4Mesh>::release()
   {
-    this->m_owner = 0;
-    this->m_info.clear();
+      this->m_owner = nullptr;
+      this->m_info.clear();
   }
 
   void AdjacencyInfo<T4Mesh>::bind(VertexRing<T4Mesh> const & VR)

@@ -24,11 +24,10 @@ namespace content
       size_t           m_idx;
 
     public:
-
-      ChannelCache()
-      : m_storage(0)
-      , m_idx(0u)
-      {}
+        ChannelCache()
+            : m_storage(nullptr)
+            , m_idx(0u)
+        {}
 
     };
 

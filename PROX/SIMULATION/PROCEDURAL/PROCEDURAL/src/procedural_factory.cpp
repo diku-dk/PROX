@@ -17,14 +17,12 @@
 namespace procedural
 {
 
-  typedef tiny::MathTypes<float> MTf;
+using MTf = tiny::MathTypes<float>;
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_convex(
-                                                   content::API * engine
-                                                   , std::vector<typename MT::vector3_type> const &  vertices
-                                                   )
-  {
+template <typename MT>
+GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
+                                                 std::vector<typename MT::vector3_type> const& vertices)
+{
     typedef typename MT::real_type        T;
     typedef typename MT::vector3_type     V;
     typedef typename MT::quaternion_type  Q;

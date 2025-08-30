@@ -79,10 +79,10 @@ namespace rigid_body
           texture_scale_params.push_back( glm::vec3(1.0,1.0,1.0) );
         else
         {
-          float sx = util::to_value<float>( values[0] );
-          float sy = util::to_value<float>( values[1] );
-          float sz = util::to_value<float>( values[2] );
-          texture_scale_params.push_back( glm::vec3(sx,sy,sz) );
+            auto sx = util::to_value<float>(values[0]);
+            auto sy = util::to_value<float>(values[1]);
+            auto sz = util::to_value<float>(values[2]);
+            texture_scale_params.push_back(glm::vec3(sx, sy, sz));
         }
 
         MaterialInfo const material = make_material_from_config_file(material_name, params);

@@ -16,9 +16,8 @@ namespace convex
   : public geometry::SupportMapping<typename M::vector3_type>
   {
   public:
-
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
+      using T = typename M::real_type;
+      using V = typename M::vector3_type;
 
   protected:
 
@@ -52,9 +51,8 @@ namespace convex
   : public geometry::SupportMapping<typename M::vector3_type>
   {
   public:
-
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
+      using T = typename M::real_type;
+      using V = typename M::vector3_type;
 
   protected:
 
@@ -85,9 +83,8 @@ namespace convex
   : public geometry::SupportMapping<typename M::vector3_type>
   {
   public:
-
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
+      using T = typename M::real_type;
+      using V = typename M::vector3_type;
 
   protected:
 
@@ -127,9 +124,8 @@ namespace convex
   : public geometry::SupportMapping<typename M::vector3_type>
   {
   public:
-
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
+      using T = typename M::real_type;
+      using V = typename M::vector3_type;
 
   protected:
 
@@ -160,9 +156,8 @@ namespace convex
   : public geometry::SupportMapping<typename M::vector3_type>
   {
   public:
-
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
+      using T = typename M::real_type;
+      using V = typename M::vector3_type;
 
   protected:
 

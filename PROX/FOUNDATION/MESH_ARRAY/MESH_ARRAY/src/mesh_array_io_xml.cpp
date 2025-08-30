@@ -43,8 +43,8 @@ namespace mesh_array
     assert( xml_t4mesh->Attribute("nodes")      || !"read_xml(): missing nodes attribute");
     assert( xml_t4mesh->Attribute("tetrahedra") || !"read_xml(): missing tetrahedra attribute");
 
-    size_t const cntV = util::to_value<size_t>(  xml_t4mesh->Attribute("nodes")  );
-    size_t const cntT = util::to_value<size_t>(  xml_t4mesh->Attribute("tetrahedra")  );
+    auto const cntV = util::to_value<size_t>(xml_t4mesh->Attribute("nodes"));
+    auto const cntT = util::to_value<size_t>(xml_t4mesh->Attribute("tetrahedra"));
 
     mesh.clear();
 
@@ -62,10 +62,10 @@ namespace mesh_array
       assert( xml_tetrahedron->Attribute("k") || !"read_xml(): missing k index");
       assert( xml_tetrahedron->Attribute("m") || !"read_xml(): missing m index");
 
-      size_t const i = util::to_value<size_t>( xml_tetrahedron->Attribute("i") );
-      size_t const j = util::to_value<size_t>( xml_tetrahedron->Attribute("j") );
-      size_t const k = util::to_value<size_t>( xml_tetrahedron->Attribute("k") );
-      size_t const m = util::to_value<size_t>( xml_tetrahedron->Attribute("m") );
+      auto const i = util::to_value<size_t>(xml_tetrahedron->Attribute("i"));
+      auto const j = util::to_value<size_t>(xml_tetrahedron->Attribute("j"));
+      auto const k = util::to_value<size_t>(xml_tetrahedron->Attribute("k"));
+      auto const m = util::to_value<size_t>(xml_tetrahedron->Attribute("m"));
 
       assert( i < cntV || !"read_xml(): i was out of range");
       assert( j < cntV || !"read_xml(): j was out of range");
@@ -93,7 +93,7 @@ namespace mesh_array
       assert( xml_point->Attribute("y")   || !"read_xml(): missing y coordinate");
       assert( xml_point->Attribute("z")   || !"read_xml(): missing z coordinate");
 
-      size_t const idx = util::to_value<size_t>( xml_point->Attribute("idx") ) ;
+      auto const idx = util::to_value<size_t>(xml_point->Attribute("idx"));
 
       assert( idx < cntV || !"read_xml(): index out of range");
 
@@ -159,8 +159,8 @@ namespace mesh_array
     // build document
     TiXmlDocument doc;
 
-    TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "" );
-    TiXmlElement * meshelem = new TiXmlElement( "T4MESH" );
+    auto* decl = new TiXmlDeclaration("1.0", "", "");
+    auto* meshelem = new TiXmlElement("T4MESH");
 
     meshelem->SetAttribute( "nodes", mesh.vertex_size() );
     meshelem->SetAttribute( "tetrahedra", mesh.tetrahedron_size() );
@@ -170,30 +170,30 @@ namespace mesh_array
 
     for(size_t idx = 0u; idx < mesh.tetrahedron_size(); ++idx)
     {
-      TiXmlElement * elem = new TiXmlElement( "TETRAHEDRON" );
+        auto* elem = new TiXmlElement("TETRAHEDRON");
 
-      Tetrahedron const & tetrahedron = mesh.tetrahedron( idx );
+        Tetrahedron const& tetrahedron = mesh.tetrahedron(idx);
 
-      elem->SetAttribute( "i", util::to_string( tetrahedron.i() )  );
-      elem->SetAttribute( "j", util::to_string( tetrahedron.j() )  );
-      elem->SetAttribute( "k", util::to_string( tetrahedron.k() )  );
-      elem->SetAttribute( "m", util::to_string( tetrahedron.m() )  );
+        elem->SetAttribute("i", util::to_string(tetrahedron.i()));
+        elem->SetAttribute("j", util::to_string(tetrahedron.j()));
+        elem->SetAttribute("k", util::to_string(tetrahedron.k()));
+        elem->SetAttribute("m", util::to_string(tetrahedron.m()));
 
-      meshelem->LinkEndChild( elem );
+        meshelem->LinkEndChild(elem);
     }
 
     for(size_t idx = 0u; idx < mesh.vertex_size(); ++idx)
     {
-      TiXmlElement * elem = new TiXmlElement( "NODE" );
+        auto* elem = new TiXmlElement("NODE");
 
-      Vertex const & vertex = mesh.vertex(idx);
+        Vertex const& vertex = mesh.vertex(idx);
 
-      elem->SetAttribute( "idx", util::to_string( idx )  );
-      elem->SetAttribute( "x", util::to_string( X(vertex) ) );
-      elem->SetAttribute( "y", util::to_string( Y(vertex) ) );
-      elem->SetAttribute( "z", util::to_string( Z(vertex) ) );
+        elem->SetAttribute("idx", util::to_string(idx));
+        elem->SetAttribute("x", util::to_string(X(vertex)));
+        elem->SetAttribute("y", util::to_string(Y(vertex)));
+        elem->SetAttribute("z", util::to_string(Z(vertex)));
 
-      meshelem->LinkEndChild( elem );
+        meshelem->LinkEndChild(elem);
     }
 
     // write the document

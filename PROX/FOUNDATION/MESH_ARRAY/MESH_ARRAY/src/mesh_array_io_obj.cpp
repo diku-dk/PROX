@@ -216,7 +216,7 @@ namespace mesh_array
           //for(;value != end; ++value)
           //  face.push_back(boost::lexical_cast<size_t>(*value));  // if we wanted to extract texture and normal indices too
 
-          size_t const idx = boost::lexical_cast<size_t>( split_vector[0] );
+          auto const idx = boost::lexical_cast<size_t>(split_vector[0]);
           face.push_back( idx ); // we only care about vertex indices
 
         }

@@ -12,7 +12,7 @@ void test(matrix_type const & A, vector_type  & x, vector_type const & b, vector
   typedef typename matrix_type::value_type real_type;
   typedef typename matrix_type::size_type  size_type;
 
-  real_type const tol = boost::numeric_cast<real_type>(0.01);
+  auto const tol = boost::numeric_cast<real_type>(0.01);
 
   big::jacobi(A,x,b);
 

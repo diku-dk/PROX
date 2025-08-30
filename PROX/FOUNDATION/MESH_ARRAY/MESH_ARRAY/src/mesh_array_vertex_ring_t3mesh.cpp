@@ -112,9 +112,9 @@ namespace mesh_array
 
   void VertexRing<T3Mesh>::release()
   {
-    this->m_mesh = 0;
-    this->m_V2T.clear();
-    this->m_offset.clear();
+      this->m_mesh = nullptr;
+      this->m_V2T.clear();
+      this->m_offset.clear();
   }
 
   std::vector< size_t > const & VertexRing<T3Mesh>::offset() const

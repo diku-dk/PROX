@@ -153,21 +153,13 @@ namespace procedural
 		}
 	}
 
-  typedef tiny::MathTypes<float>  MTf;
+    using MTf = tiny::MathTypes<float>;
 
-  template
-	void make_arch<MTf>(
-                        content::API *  engine
-                        , MTf::vector3_type const & position
-                        , MTf::quaternion_type const & orientation
-                        , MTf::real_type const & r_outer
-                        , MTf::real_type const & r_inner
-                        , MTf::real_type const & pillar_height
-                        , MTf::real_type const & stone_depth
-                        , size_t const & arch_slices
-                        , size_t const & pillar_segments
-                        , MaterialInfo<MTf::real_type> mat_info
-                        );
+    template void make_arch<MTf>(content::API* engine, MTf::vector3_type const& position,
+                                 MTf::quaternion_type const& orientation, MTf::real_type const& r_outer,
+                                 MTf::real_type const& r_inner, MTf::real_type const& pillar_height,
+                                 MTf::real_type const& stone_depth, size_t const& arch_slices,
+                                 size_t const& pillar_segments, MaterialInfo<MTf::real_type> mat_info);
 
 
 } //namespace procedural

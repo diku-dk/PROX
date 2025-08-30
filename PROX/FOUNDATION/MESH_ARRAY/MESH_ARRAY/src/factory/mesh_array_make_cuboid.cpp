@@ -90,10 +90,10 @@ namespace mesh_array
     Z(vertices[5]) = v5(2);
     Z(vertices[6]) = v6(2);
     Z(vertices[7]) = v7(2);
-	}
-	
-  typedef tiny::MathTypes<float> MTf;
-  typedef tiny::MathTypes<double> MTd;
+  }
+
+  using MTf = tiny::MathTypes<float>;
+  using MTd = tiny::MathTypes<double>;
 
   template
   void make_cuboid<MTf>(

@@ -84,9 +84,8 @@ namespace mesh_array
     return this->m_data[v][this->m_idx];
   }
 
-
-  typedef tiny::MathTypes<float>  MTf;
-  typedef tiny::MathTypes<double> MTd;
+  using MTf = tiny::MathTypes<float>;
+  using MTd = tiny::MathTypes<double>;
 
   template class IndexedVertexAttribute<MTf::vector3_type, T3Mesh>;
   template class IndexedVertexAttribute<MTf::vector3_type, T4Mesh>;

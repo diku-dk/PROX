@@ -12,7 +12,7 @@ void Verify (op_type _result, real_type value)
 {
     real_type result[stride];
     type_traits::store_op_type(result,_result);
-    real_type tol = real_type(0.1); // 1/10 percent
+    auto tol = real_type(0.1); // 1/10 percent
     for (size_t i=0; i<stride;++i)
       {
         BOOST_CHECK_CLOSE(result[i],value,tol);
@@ -186,7 +186,7 @@ void test_traits()
 
     // TODO: For horizontal functions - consider cases where padding has been used
 
-    real_type const tol = real_type(0.1);
+    auto const tol = real_type(0.1);
 
     // Verify correctness of horizontal sum
     switch (stride)
