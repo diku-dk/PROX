@@ -797,17 +797,16 @@ namespace simulators
     size_t const segments = 12u;
     size_t const slices   = 12u;
 
-    mesh_array::make_ellipsoid<MT>(
-                                   sx
-                                   , sy
-                                   , sz
-                                   , slices
-                                   , segments
-                                   , surface
-                                   , surface_X
-                                   , surface_Y
-                                   , surface_Z
-                                   );
+    mesh_array::make_ellipsoid(sx
+                               , sy
+                               , sz
+                               , slices
+                               , segments
+                               , surface
+                               , surface_X
+                               , surface_Y
+                               , surface_Z
+                               );
 
     m_data->make_tetramesh_geoemtry(
                                     geometry

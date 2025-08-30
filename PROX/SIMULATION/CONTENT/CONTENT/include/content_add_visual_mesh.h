@@ -271,7 +271,7 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_ellipsoid<MT>( a, b, c, 12, 12, submesh, subX, subY, subZ );
+      mesh_array::make_ellipsoid( a, b, c, 12, 12, submesh, subX, subY, subZ );
 
       float x;
       float y;

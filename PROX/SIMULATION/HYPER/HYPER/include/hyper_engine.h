@@ -321,7 +321,7 @@ namespace hyper
       size_t const segments = 12u;
       size_t const slices   = 12u;
 
-      mesh_array::make_ellipsoid<typename MT::base_type>(
+      mesh_array::make_ellipsoid(
                                      sx
                                      , sy
                                      , sz
