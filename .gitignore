@@ -32,6 +32,12 @@
 *.out
 *.app
 
+# CMake user configs.
+*.user
+
+TOOLS/PROX2BLENDER/textures/
+
+bin/
 bin/mesh_array_demo
 bin/rigid_body_cmd/rigid_body_cmdD
 bin/rigid_body_gui/rigid_body_guiD
