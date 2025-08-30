@@ -4,7 +4,7 @@
 #include <tiny_vector_functions.h>
 
 #include <cassert>
-
+#include <tiny_math_types.h>
 namespace convex
 {
   /**
@@ -19,22 +19,19 @@ namespace convex
    *
    * @return     The signed distance of the point p.
    */
-  template< typename V >
-  inline typename V::real_type signed_distance_to_vertex_edge_voronoi_plane(
-                                                                     V const & p
-                                                                     , V const & A
-                                                                     , V const & B
-                                                                     )
+  template< typename T>
+  inline T signed_distance_to_vertex_edge_voronoi_plane(const EigenVector3<T> & p, const EigenVector3<T> & A,
+                                                        const EigenVector3<T> & B)
   {
-    typedef typename V::real_type      T;
 
-    V const m = (A-B);
 
-    assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
+    const EigenVector3<T> m = (A-B);
 
-    V const n = tiny::unit( m );
+    assert( dot( m, m ) > 0 || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
 
-    T sign_p = tiny::inner_prod( n, (p-A) );
+    const EigenVector3<T> n = ( m ).norm();
+
+    T sign_p = (n).dot((p-A) );
 
     assert( is_number( sign_p ) || !"signed_distance_to_vertex_edge_voronoi_plane(): Not a Number encountered");
 
