@@ -74,56 +74,6 @@ namespace geometry
         return toEigen(m_center) + EigenVector3<T>{m_radius, 0, 0};
     }
 
-    V get_support_point(V const & v ) const
-    {
-      using std::sqrt;
-
-      T const & vx = v(0);
-      T const & vy = v(1);
-      T const & vz = v(2);
-
-      assert( is_number(vx) || !"get_support_point(): NAN encountered");
-      assert( is_number(vy) || !"get_support_point(): NAN encountered");
-      assert( is_number(vz) || !"get_support_point(): NAN encountered");
-      assert( is_finite(vx) || !"get_support_point(): INF encountered");
-      assert( is_finite(vy) || !"get_support_point(): INF encountered");
-      assert( is_finite(vz) || !"get_support_point(): INF encountered");
-
-      assert( is_number( this->m_radius)  || !"get_support_point(): NAN encountered");
-      assert( is_finite( this->m_radius)  || !"get_support_point(): INF encountered");
-      assert( this->m_radius > 0 || !"get_support_point(): radius was non-positive");
-
-      T const vv = vx*vx + vy*vy + vz*vz;
-
-      assert( is_number(vv) || !"get_support_point(): NAN encountered");
-      assert( is_finite(vv) || !"get_support_point(): INF encountered");
-
-      T px = this->m_radius;
-      T py = 0;
-      T pz = 0;
-
-      if (vv > 0 )
-      {
-        T const tmp =  this->m_radius / sqrt(vv);
-
-        assert( is_number(tmp) || !"get_support_point(): NAN encountered");
-        assert( is_finite(tmp) || !"get_support_point(): INF encountered");
-
-        px = vx*tmp;
-        py = vy*tmp;
-        pz = vz*tmp;
-      }
-
-      assert( is_number(px) || !"NAN encountered");
-      assert( is_number(py) || !"NAN encountered");
-      assert( is_number(pz) || !"NAN encountered");
-      assert( is_finite(px) || !"INF encountered");
-      assert( is_finite(py) || !"INF encountered");
-      assert( is_finite(pz) || !"INF encountered");
-
-      return V::make(px,py,pz) + this->m_center;
-    }
-
     T get_scale() const
     {
       assert( is_number(this->m_radius)   || !"get_scale(): NAN encountered");

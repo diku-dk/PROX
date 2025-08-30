@@ -47,6 +47,7 @@ void gjk_demo()
   T      distance    = std::numeric_limits<T>::max();
 
   // Ask GJK for closest points between the two geometries
+
   convex::compute_closest_points<M>(
                               X_A
                               , &A
@@ -149,5 +150,5 @@ int main()
   gjk_demo();
   continuous_demo();
 
-	return 0;
+    return 0;
 }

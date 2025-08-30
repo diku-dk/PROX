@@ -36,8 +36,6 @@ namespace convex
     Cylinder();
 
   public:
-
-    V get_support_point( V const & v ) const;
     EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
@@ -72,8 +70,6 @@ namespace convex
     Capsule();
 
   public:
-
-    V get_support_point( V const & v ) const;
       EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
@@ -102,8 +98,6 @@ namespace convex
     Ellipsoid();
 
   public:
-
-    V get_support_point( V const & v ) const;
     EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
@@ -147,8 +141,6 @@ namespace convex
     Cone();
 
   public:
-
-    V get_support_point( V const & v ) const;
       EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
@@ -170,6 +162,8 @@ namespace convex
   public:
 
     void add_point( V const & p);
+    void add_point(EigenVector3<T> point);
+
 
     V const & get_point( std::size_t const & idx) const;
 
@@ -182,8 +176,6 @@ namespace convex
     ConvexHull();
 
   public:
-
-    V get_support_point( V const & v ) const;
       EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;

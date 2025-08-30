@@ -68,8 +68,8 @@ namespace convex
     V s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
     V s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
 
-    V w_a = A->get_support_point( s_a );
-    V w_b = B->get_support_point( s_b );
+    auto w_a = fromEigen(A->get_support_point( toEigen(s_a) ));
+    auto w_b = fromEigen(B->get_support_point( toEigen(s_b )));
 
     w_a = tiny::rotate( X_A.Q(), w_a ) + X_A.T();
     w_b = tiny::rotate( X_B.Q(), w_b ) + X_B.T();

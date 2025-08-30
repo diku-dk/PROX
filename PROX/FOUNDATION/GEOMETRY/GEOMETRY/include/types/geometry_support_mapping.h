@@ -20,10 +20,7 @@ namespace geometry
      *
      * @return     The support point.
      */
-    virtual V get_support_point( V const & v ) const = 0;
-
       virtual EigenVector3<T> get_support_point(EigenVector3<T> dir) const = 0;
-
   };
 
 } // namespace geometry

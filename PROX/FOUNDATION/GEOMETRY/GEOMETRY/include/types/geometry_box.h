@@ -51,48 +51,6 @@ namespace geometry
     }
 
   public:
-
-    V get_support_point(V const & v) const
-    {
-      T const & vx = v(0);
-      T const & vy = v(1);
-      T const & vz = v(2);
-
-      assert( is_number(vx) || !"NAN encountered");
-      assert( is_number(vy) || !"NAN encountered");
-      assert( is_number(vz) || !"NAN encountered");
-      assert( is_finite(vx) || !"INF encountered");
-      assert( is_finite(vy) || !"INF encountered");
-      assert( is_finite(vz) || !"INF encountered");
-
-      T const & hx = this->m_half_extent(0);
-      T const & hy = this->m_half_extent(1);
-      T const & hz = this->m_half_extent(2);
-
-      assert( is_number(hx)    || !"NAN encountered");
-      assert( is_finite(hx)    || !"INF encountered");
-      assert( hx >= 0 || !"Negative half extent encountered");
-      assert( is_number(hy)    || !"NAN encountered");
-      assert( is_finite(hy)    || !"INF encountered");
-      assert( hy >= 0 || !"Negative half extent encountered");
-      assert( is_number(hz)    || !"NAN encountered");
-      assert( is_finite(hz)    || !"INF encountered");
-      assert( hz >= 0 || !"Negative half extent encountered");
-
-      T const px = (vx > 0) ? hx : - hx;
-      T const py = (vy > 0) ? hy : - hy;
-      T const pz = (vz > 0) ? hz : - hz;
-
-      assert( is_number(px) || !"NAN encountered");
-      assert( is_number(py) || !"NAN encountered");
-      assert( is_number(pz) || !"NAN encountered");
-      assert( is_finite(px) || !"INF encountered");
-      assert( is_finite(py) || !"INF encountered");
-      assert( is_finite(pz) || !"INF encountered");
-
-      return V::make( px, py, pz);
-    }
-
     EigenVector3<T> get_support_point(EigenVector3<T> v) const override
     {
         EigenVector3<T> result;

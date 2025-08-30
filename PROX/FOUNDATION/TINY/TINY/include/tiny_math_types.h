@@ -71,6 +71,16 @@ inline EigenVector3<double> toEigen(typename tiny::MathTypes<double>::vector3_ty
     return {input(0), input(1), input(2)};
 }
 
+inline typename tiny::MathTypes<float>::vector3_type fromEigen(EigenVector3<float> input)
+{
+    return tiny::MathTypes<float>::vector3_type::make(input.x(), input.y(), input.z());
+}
+
+inline typename tiny::MathTypes<double>::vector3_type fromEigen(EigenVector3<double> input)
+{
+    return tiny::MathTypes<double>::vector3_type::make(input.x(), input.y(), input.z());
+}
+
 template <typename Vector>
 inline auto dot(Vector a, Vector b)
 {
