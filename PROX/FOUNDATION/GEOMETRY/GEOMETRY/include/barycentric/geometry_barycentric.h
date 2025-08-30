@@ -49,7 +49,7 @@ namespace geometry
     T const uu = tiny::inner_prod(u,u);
 
     assert( is_number(uu)   || !"barycentric(): NaN encountered");
-    assert( uu > VT::zero() || !"barycentric(): Degenerate edge encountered");
+    assert( uu > 0 || !"barycentric(): Degenerate edge encountered");
 
     // Project p onto edge running from x1 to x2.
     V const q  = (tiny::inner_prod(u, p-x1)/ uu )*u + x1;
@@ -63,8 +63,8 @@ namespace geometry
     assert( is_number(aa) || !"barycentric(): NaN encountered");
     assert( is_number(bb) || !"barycentric(): NaN encountered");
 
-    w1 = ( tiny::inner_prod(u,a) <= VT::zero() ) ? sqrt( aa  / uu ) : - sqrt( aa  / uu );
-    w2 = ( tiny::inner_prod(u,b) >= VT::zero() ) ? sqrt( bb  / uu ) : - sqrt( bb  / uu );
+    w1 = ( tiny::inner_prod(u,a) <= 0 ) ? sqrt( aa  / uu ) : - sqrt( aa  / uu );
+    w2 = ( tiny::inner_prod(u,b) >= 0 ) ? sqrt( bb  / uu ) : - sqrt( bb  / uu );
 
     assert( is_number(w1) || !"barycentric(): NaN encountered");
     assert( is_number(w2) || !"barycentric(): NaN encountered");
@@ -121,7 +121,7 @@ namespace geometry
     // q is the point p transformed to the isoparametric system
     V const q = tiny::inverse(basis)*(p - x1);
 
-    w1 = VT::one() - q[0] - q[1];
+    w1 = 1 - q[0] - q[1];
     w2 = q[0];
     w3 = q[1];
 
@@ -181,7 +181,7 @@ namespace geometry
       // q is the point p transformed to the isoparametric system
       V const q = tiny::inverse(basis)*(p - x1);
 
-      w1 = VT::one() - q[0] - q[1] - q[2];
+      w1 = 1 - q[0] - q[1] - q[2];
       w2 = q[0];
       w3 = q[1];
       w4 = q[2];
@@ -194,7 +194,7 @@ namespace geometry
       // q is the point p transformed to the isoparametric system
       V const q = tiny::inverse(basis)*(p - x1);
 
-      w1 = VT::one() - q[0] - q[1] - q[2];
+      w1 = 1 - q[0] - q[1] - q[2];
       w2 = q[0];
       w3 = q[2];// we alter the sequence of barycentric coords to match altered basis
       w4 = q[1];

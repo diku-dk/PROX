@@ -87,7 +87,7 @@ namespace hyper
 
       T const vol = inner_prod(u_mi ,cross(u_ji,u_ki) ) / VT::numeric_cast(6.0);
 
-      assert( vol > VT::zero() || !"compute_damping_matrix(): degenerate tetrahedron found, negative volume");
+      assert( vol > 0 || !"compute_damping_matrix(): degenerate tetrahedron found, negative volume");
 
       Ce[idx] = NN * (vol * c );
     }

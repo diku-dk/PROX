@@ -30,7 +30,7 @@ namespace geometry
       return false;
     if(  !is_finite( capsule.radius() ) )
       return false;
-    if (capsule.radius() <= VT::zero() )
+    if (capsule.radius() <= 0 )
       return false;
 
 
@@ -74,14 +74,14 @@ namespace geometry
       return false;
     if(  !is_finite( cylinder.radius() ) )
       return false;
-    if (cylinder.radius() <= VT::zero() )
+    if (cylinder.radius() <= 0 )
       return false;
 
     if( !is_number( cylinder.height() ) )
       return false;
     if(  !is_finite( cylinder.height() ) )
       return false;
-    if (cylinder.height() <= VT::zero() )
+    if (cylinder.height() <= 0 )
       return false;
 
     if( !is_number( cylinder.axis()(0) ) )
@@ -96,7 +96,7 @@ namespace geometry
       return false;
     if(  !is_finite( cylinder.axis()(2) ) )
       return false;
-    if (  fabs( VT::one() - norm(cylinder.axis() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(cylinder.axis() ) ) > tiny::working_precision<T>() )
       return false;
 
     if( !is_number( cylinder.center()(0) ) )
@@ -174,7 +174,7 @@ namespace geometry
       return false;
     if(  !is_finite( line.direction()(2) ) )
       return false;
-    if (  fabs( VT::one() - length(line.direction() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - length(line.direction() ) ) > tiny::working_precision<T>() )
       return false;
     return true;
   }
@@ -214,11 +214,11 @@ namespace geometry
     if(  !is_finite( obb.half_extent()(2) ) )
       return false;
 
-    if( obb.half_extent()(0) <= VT::zero()  )
+    if( obb.half_extent()(0) <= 0  )
       return false;
-    if( obb.half_extent()(1) <= VT::zero()  )
+    if( obb.half_extent()(1) <= 0  )
       return false;
-    if( obb.half_extent()(2) <= VT::zero()  )
+    if( obb.half_extent()(2) <= 0  )
       return false;
 
 
@@ -240,7 +240,7 @@ namespace geometry
     if(  !is_finite( obb.orientation().imag()(2) ) )
       return false;
 
-    if (  fabs( VT::one() - norm(obb.orientation() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(obb.orientation() ) ) > tiny::working_precision<T>() )
       return false;
 
     return true;
@@ -267,7 +267,7 @@ namespace geometry
     if(  !is_finite( plane.normal()(2) ) )
       return false;
 
-    if (  fabs( VT::one() - norm(plane.normal() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(plane.normal() ) ) > tiny::working_precision<T>() )
       return false;
 
     if( !is_number( plane.offset() ) )
@@ -312,7 +312,7 @@ namespace geometry
     if(  !is_finite( ray.direction()(2) ) )
       return false;
 
-    if (  fabs( VT::one() - norm(ray.direction() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(ray.direction() ) ) > tiny::working_precision<T>() )
       return false;
     return true;
   }
@@ -340,7 +340,7 @@ namespace geometry
     if(  !is_finite( sphere.radius() ) )
       return false;
 
-    if(   sphere.radius() <= VT::zero() )
+    if(   sphere.radius() <= 0 )
       return false;
 
     return true;

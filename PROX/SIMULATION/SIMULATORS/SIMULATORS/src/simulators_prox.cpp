@@ -402,7 +402,7 @@ namespace simulators
 
     assert( box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    geometry.m_boxes[box_number].half_extent() = V::make(width, height, depth)/VT::two();
+    geometry.m_boxes[box_number].half_extent() = V::make(width, height, depth)/2;
   }
 
   void ProxEngine::set_box_position(  size_t const & geometry_index
@@ -1172,7 +1172,7 @@ namespace simulators
 
     assert( box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    V const ext = geometry.m_boxes[ box_number ].half_extent()*VT::two();
+    V const ext = geometry.m_boxes[ box_number ].half_extent()*2;
 
     width  = ext(0);
     height = ext(1);

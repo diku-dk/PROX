@@ -17,7 +17,7 @@ namespace convex
 
   template<typename M>
   Ellipsoid<M>::Ellipsoid()
-  : m_scale( M::value_traits::one() )
+  : m_scale( 1 )
   {}
 
   template<typename M>
@@ -50,9 +50,9 @@ namespace convex
     assert( sy  || !"INF encountered");
     assert( sz  || !"NAN encountered");
     assert( sz  || !"INF encountered");
-    assert( sx >= VT::zero() || !"Negative scale encountered");
-    assert( sy >= VT::zero() || !"Negative scale encountered");
-    assert( sz >= VT::zero() || !"Negative scale encountered");
+    assert( sx >= 0 || !"Negative scale encountered");
+    assert( sy >= 0 || !"Negative scale encountered");
+    assert( sz >= 0 || !"Negative scale encountered");
 
     /*
     // An ellipsoid, E, is simply a scaled unit ball, B, and a scale is a linear
@@ -82,11 +82,11 @@ namespace convex
     assert( is_number(vv) || !"NAN encountered");
     assert( is_finite(vv) || !"INF encountered");
 
-    T px = VT::zero();
-    T py = VT::zero();
-    T pz = VT::zero();
+    T px = 0;
+    T py = 0;
+    T pz = 0;
 
-    if (vv > VT::zero() )
+    if (vv > 0 )
     {
       T const wx = vx * sz;
       T const wy = vy * sy;
@@ -96,7 +96,7 @@ namespace convex
       assert( is_number(ww) || !"NAN encountered");
       assert( is_finite(ww) || !"INF encountered");
 
-      T const tmp = VT::one() / sqrt(ww);
+      T const tmp = 1 / sqrt(ww);
 
       assert( is_number(tmp) || !"NAN encountered");
       assert( is_finite(tmp) || !"INF encountered");
@@ -108,8 +108,8 @@ namespace convex
     else
     {
       px = sx;
-      py = VT::zero();
-      pz = VT::zero();
+      py = 0;
+      pz = 0;
     }
 
     assert( is_number(px) || !"NAN encountered");
@@ -140,13 +140,13 @@ namespace convex
     assert( is_finite(sy ) || !"INF encountered");
     assert( is_number(sz ) || !"NAN encountered");
     assert( is_finite(sz ) || !"INF encountered");
-    assert( sx >= VT::zero() || !"Negative scale encountered");
-    assert( sy >= VT::zero() || !"Negative scale encountered");
-    assert( sz >= VT::zero() || !"Negative scale encountered");
+    assert( sx >= 0 || !"Negative scale encountered");
+    assert( sy >= 0 || !"Negative scale encountered");
+    assert( sz >= 0 || !"Negative scale encountered");
 
-    T const w = VT::two() * ((sx > VT::zero()) ? sx : VT::infinity());
-    T const h = VT::two() * ((sy > VT::zero()) ? sy : VT::infinity());
-    T const d = VT::two() * ((sz > VT::zero()) ? sz : VT::infinity());
+    T const w = 2 * ((sx > 0) ? sx : VT::infinity());
+    T const h = 2 * ((sy > 0) ? sy : VT::infinity());
+    T const d = 2 * ((sz > 0) ? sz : VT::infinity());
 
     return min(w, min(h, d));
   }

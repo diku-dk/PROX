@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(mass_vec_prod_test_case)
   typedef math_policy::vector6_type         vector_type;
 
   matrix_type M(1);
-  sparse::fill(M(0,0), value_traits::zero() );// 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+  sparse::fill(M(0,0), 0 );// 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
   M(0,0)[0] = value_traits::numeric_cast(2.5);
 
   BOOST_CHECK_EQUAL( M(0,0)[0] , value_traits::numeric_cast(2.5) );

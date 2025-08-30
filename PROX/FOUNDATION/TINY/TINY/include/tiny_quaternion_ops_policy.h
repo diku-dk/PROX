@@ -68,9 +68,9 @@ namespace tiny
 
           real_type l = norm(q);
 
-          if(fabs(l) > value_traits::zero())
+          if(fabs(l) > 0)
             return Q(q.real()/l , q.imag()/l) ;
-          return Q(value_traits::zero(),value_traits::zero(),value_traits::zero(),value_traits::zero());
+          return Q(0,0,0,0);
         }
 
       };

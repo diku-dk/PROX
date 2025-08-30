@@ -43,13 +43,13 @@ namespace big
         if(max_iter <= 0u)
           throw std::invalid_argument("max_iterations must be larger than zero");
 
-        if(tol_abs < value_traits::zero() )
+        if(tol_abs < 0 )
           throw std::invalid_argument("absolute_tolerance must be non-negative");
 
-        if(tol_rel < value_traits::zero() )
+        if(tol_rel < 0 )
           throw std::invalid_argument("relative_tolerance must be non-negative");
 
-        if(tol_stag < value_traits::zero() )
+        if(tol_stag < 0 )
           throw std::invalid_argument("stagnation_tolerance must be non-negative");
 
         if(profiling == &x)
@@ -78,13 +78,13 @@ namespace big
 
         // Create a boolean flag indicating whether we need to compute
         // the value of the merit function or not.
-        bool const compute_merit = profiling || (tol_abs > value_traits::zero()) || (tol_rel > value_traits::zero());
+        bool const compute_merit = profiling || (tol_abs > 0) || (tol_rel > 0);
 
         status = ITERATING;
 
         for ( ;iter < max_iter;  ++iter)
         {
-          T max_dx = value_traits::zero();
+          T max_dx = 0;
 
           for (size_type i = 0u; i < N; ++ i)
           {
@@ -92,14 +92,14 @@ namespace big
 
             T const A_ii = A(i,i);
 
-            assert(A_ii> value_traits::zero() || A_ii<value_traits::zero() || !"projected_gauss_seidel: diagonal entry is zero?");
+            assert(A_ii> 0 || A_ii<0 || !"projected_gauss_seidel: diagonal entry is zero?");
 
             T const old_x = x(i);
             T const x_tmp = - (y_i / A_ii) + old_x;
 
             assert(is_number(x_tmp) || !"projected_gauss_seidel: not a number encountered");
 
-            T const x_i =  (x_tmp < value_traits::zero() ) ? value_traits::zero() :  x_tmp ;
+            T const x_i =  (x_tmp < 0 ) ? 0 :  x_tmp ;
 
             assert(is_number(x_i) || !"projected_gauss_seidel: not a number encountered");
 

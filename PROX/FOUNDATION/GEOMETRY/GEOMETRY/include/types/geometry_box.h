@@ -29,7 +29,7 @@ namespace geometry
   public:
 
     Box()
-    : m_half_extent( V::make(VT::one(),VT::one(), VT::one()) )
+    : m_half_extent( V::make(1,1, 1) )
     {}
 
     Box(V const &  half_extent )
@@ -71,17 +71,17 @@ namespace geometry
 
       assert( is_number(hx)    || !"NAN encountered");
       assert( is_finite(hx)    || !"INF encountered");
-      assert( hx >= VT::zero() || !"Negative half extent encountered");
+      assert( hx >= 0 || !"Negative half extent encountered");
       assert( is_number(hy)    || !"NAN encountered");
       assert( is_finite(hy)    || !"INF encountered");
-      assert( hy >= VT::zero() || !"Negative half extent encountered");
+      assert( hy >= 0 || !"Negative half extent encountered");
       assert( is_number(hz)    || !"NAN encountered");
       assert( is_finite(hz)    || !"INF encountered");
-      assert( hz >= VT::zero() || !"Negative half extent encountered");
+      assert( hz >= 0 || !"Negative half extent encountered");
 
-      T const px = (vx > VT::zero()) ? hx : - hx;
-      T const py = (vy > VT::zero()) ? hy : - hy;
-      T const pz = (vz > VT::zero()) ? hz : - hz;
+      T const px = (vx > 0) ? hx : - hx;
+      T const py = (vy > 0) ? hy : - hy;
+      T const pz = (vz > 0) ? hz : - hz;
 
       assert( is_number(px) || !"NAN encountered");
       assert( is_number(py) || !"NAN encountered");
@@ -103,17 +103,17 @@ namespace geometry
 
       assert( is_number(hx)    || !"NAN encountered");
       assert( is_finite(hx)    || !"INF encountered");
-      assert( hx >= VT::zero() || !"Negative half extent encountered");
+      assert( hx >= 0 || !"Negative half extent encountered");
       assert( is_number(hy)    || !"NAN encountered");
       assert( is_finite(hy)    || !"INF encountered");
-      assert( hy >= VT::zero() || !"Negative half extent encountered");
+      assert( hy >= 0 || !"Negative half extent encountered");
       assert( is_number(hz)    || !"NAN encountered");
       assert( is_finite(hz)    || !"INF encountered");
-      assert( hz >= VT::zero() || !"Negative half extent encountered");
+      assert( hz >= 0 || !"Negative half extent encountered");
 
-      T const w = VT::two() * ((hx > VT::zero()) ? hx : VT::infinity());
-      T const h = VT::two() * ((hy > VT::zero()) ? hy : VT::infinity());
-      T const d = VT::two() * ((hz > VT::zero()) ? hz : VT::infinity());
+      T const w = 2 * ((hx > 0) ? hx : VT::infinity());
+      T const h = 2 * ((hy > 0) ? hy : VT::infinity());
+      T const d = 2 * ((hz > 0) ? hz : VT::infinity());
 
       return min( w, min(h, d) );
     }

@@ -25,7 +25,7 @@ namespace procedural
 
     V const Pw = rotate(
                         orientation
-                        , V::make( VT::zero(), -height*VT::half(), VT::zero())
+                        , V::make( 0, -height*VT::half(), 0)
                         ) + position;
     Q const Qw = orientation;
 
@@ -34,7 +34,7 @@ namespace procedural
                           , Qw
                           , ground
                           , mid
-                          , VT::one()
+                          , 1
                           , true
                           , "Visualizer/ground"
                           );

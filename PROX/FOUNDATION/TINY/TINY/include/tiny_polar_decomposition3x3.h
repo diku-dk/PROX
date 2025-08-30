@@ -61,7 +61,7 @@ namespace tiny
         eigen(S2,V,d);
 
         //--- Test if all eigenvalues are positive
-        if( d(0) <= value_traits::zero() || d(1) <= value_traits::zero() || d(2) <= value_traits::zero() )
+        if( d(0) <= 0 || d(1) <= 0 || d(2) <= 0 )
           return false;
 
         vector3_type v0 = vector3_type::make( V(0,0), V(1,0), V(2,0) );
@@ -95,7 +95,7 @@ namespace tiny
         typedef typename matrix3x3_type::real_type     real_type;
 
         assert(max_iterations>0 || !"polar_decompostion_newton() max_iterations must be positive");
-        assert(threshold>(matrix3x3_type::value_traits::zero()) || !"polar_decomposition_newton(): theshold must be positive");
+        assert(threshold>(0) || !"polar_decomposition_newton(): theshold must be positive");
 
         matrix3x3_type Q[2];
         int cur = 0, next = 1;

@@ -181,7 +181,7 @@ namespace rigid_body
           m_working_directory                 = "";
           m_output_path              = "";
 
-          m_time      = VT::zero();
+          m_time      = 0;
           m_time_step = VT::numeric_cast(0.01f);
 
           m_draw_debug           = false;
@@ -708,7 +708,7 @@ namespace rigid_body
               if(m_xml_play)
               {
                 m_xml_record = false;
-                m_time       = VT::zero();
+                m_time       = 0;
               }
               break;
 

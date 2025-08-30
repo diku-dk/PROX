@@ -28,7 +28,7 @@ namespace geometry
 
     void set_radius(T const & radius)
     {
-      assert(radius >= VT::zero() || !"Capsule::set_radius(): Value was negative");
+      assert(radius >= 0 || !"Capsule::set_radius(): Value was negative");
 
       this->m_radius = radius;
     }
@@ -37,7 +37,7 @@ namespace geometry
   public:
 
     Capsule()
-    : m_radius( VT::one() )
+    : m_radius( 1 )
     , m_point0( V::zero() )
     , m_point1( V::zero() )
     {}
@@ -47,7 +47,7 @@ namespace geometry
     , m_point0( point0 )
     , m_point1( point1 )
     {
-      assert(radius >= VT::zero() || !"Capsule(): radius was negative"  );
+      assert(radius >= 0 || !"Capsule(): radius was negative"  );
     }
 
     Capsule( Capsule const & capsule)

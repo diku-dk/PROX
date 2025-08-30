@@ -217,7 +217,7 @@ namespace geometry
       V const dP = p1-p0;
 
       T const a = tiny::inner_prod(dP,dP);
-      T const b = VT::two()*tiny::inner_prod(dP,p0);
+      T const b = 2*tiny::inner_prod(dP,p0);
       T const c = tiny::inner_prod(p0,p0) - radius*radius;
 
 
@@ -228,8 +228,8 @@ namespace geometry
       assert(is_finite(c) || !"intersect_line_circle(): inf number");
       assert(is_number(c) || !"intersect_line_circle(): nan number");
 
-      assert(      a > VT::zero() || !"intersect_line_circle(): internal error");
-      assert(fabs(b) > VT::zero() || !"intersect_line_circle(): internal error");
+      assert(      a > 0 || !"intersect_line_circle(): internal error");
+      assert(fabs(b) > 0 || !"intersect_line_circle(): internal error");
 
       const auto d = b*b - 4*a*c;
 
@@ -237,15 +237,15 @@ namespace geometry
       assert(is_number(d) || !"intersect_line_circle(): nan number");
 
 
-      if(d>VT::zero())
+      if(d>0)
       {
         T const sqrt_d = sqrt(d);
 
         assert(is_finite(sqrt_d) || !"intersect_line_circle(): inf number");
         assert(is_number(sqrt_d) || !"intersect_line_circle(): nan number");
 
-        T const t0 = (-b - sqrt_d)/ VT::two()*a;
-        T const t1 = (-b + sqrt_d)/ VT::two()*a;
+        T const t0 = (-b - sqrt_d)/ 2*a;
+        T const t1 = (-b + sqrt_d)/ 2*a;
 
         assert(is_finite(t0) || !"intersect_line_circle(): inf number");
         assert(is_number(t0) || !"intersect_line_circle(): nan number");
@@ -258,9 +258,9 @@ namespace geometry
         return 2u;
       }
 
-      if(d==VT::zero())
+      if(d==0)
       {
-        T const t = -b / VT::two()*a;
+        T const t = -b / 2*a;
 
         assert(is_finite(t) || !"intersect_line_circle(): inf number");
         assert(is_number(t) || !"intersect_line_circle(): nan number");
@@ -289,7 +289,7 @@ namespace geometry
 
         T const tst = tiny::cross(a, b)[2];
 
-        if( tst < VT::zero())
+        if( tst < 0)
           return false;
 
       }
@@ -311,7 +311,7 @@ namespace geometry
 
       if (feature.size()==1u)
       {
-        T const distance = tiny::norm(V::make(feature[0](0), feature[0](1), VT::zero()) );
+        T const distance = tiny::norm(V::make(feature[0](0), feature[0](1), 0) );
 
         if (distance <=  radius )
         {
@@ -324,8 +324,8 @@ namespace geometry
 
       if (feature.size()==2u)
       {
-        T const distance0 = tiny::norm(V::make(feature[0](0), feature[0](1), VT::zero()) );
-        T const distance1 = tiny::norm(V::make(feature[1](0), feature[1](1), VT::zero()) );
+        T const distance0 = tiny::norm(V::make(feature[0](0), feature[0](1), 0) );
+        T const distance1 = tiny::norm(V::make(feature[1](0), feature[1](1), 0) );
         bool const inside0 = (distance0 <=  radius ) ? true : false;
         bool const inside1 = (distance1 <=  radius ) ? true : false;
 
@@ -385,10 +385,10 @@ namespace geometry
       {
         // First we generate the part of the contact area perimeter that are from quad perimeter
 
-        T const distance0 = tiny::norm(V::make(feature[0](0), feature[0](1), VT::zero()) );
-        T const distance1 = tiny::norm(V::make(feature[1](0), feature[1](1), VT::zero()) );
-        T const distance2 = tiny::norm(V::make(feature[2](0), feature[2](1), VT::zero()) );
-        T const distance3 = tiny::norm(V::make(feature[3](0), feature[3](1), VT::zero()) );
+        T const distance0 = tiny::norm(V::make(feature[0](0), feature[0](1), 0) );
+        T const distance1 = tiny::norm(V::make(feature[1](0), feature[1](1), 0) );
+        T const distance2 = tiny::norm(V::make(feature[2](0), feature[2](1), 0) );
+        T const distance3 = tiny::norm(V::make(feature[3](0), feature[3](1), 0) );
 
         bool const inside0 = (distance0 <=  radius ) ? true : false;
         bool const inside1 = (distance1 <=  radius ) ? true : false;
@@ -438,8 +438,8 @@ namespace geometry
         unsigned int const max_samples = 12u;  // Magic number....
 
         T const half_height = (feature[0](2) + feature[1](2) + feature[2](2) + feature[3](2)) / 4;
-        T const dtheta = VT::two()*VT::pi() / max_samples;
-        T       theta = VT::zero();
+        T const dtheta = 2*VT::pi() / max_samples;
+        T       theta = 0;
 
         for (unsigned int sample = 0u; sample < max_samples; ++sample)
         {
@@ -526,7 +526,7 @@ namespace geometry
         continue;
       }
 
-      T const distance = tiny::norm( V::make(b[i](0), b[i](1), VT::zero()) );
+      T const distance = tiny::norm( V::make(b[i](0), b[i](1), 0) );
 
       if( distance > B.radius() )
         continue;
@@ -580,7 +580,7 @@ namespace geometry
         {
           V const  point      = transform_from_cylinder(*p, B);
           V const  normal     = flip ? B.axis() : -B.axis();
-          T const  distance   = VT::zero();
+          T const  distance   = 0;
           callback(point, normal, distance);
         }
       }
@@ -603,7 +603,7 @@ namespace geometry
         {
           V const  point      = transform_from_cylinder(*p, B);
           V const  normal     = flip ? -B.axis() : B.axis();
-          T const  distance   = VT::zero();
+          T const  distance   = 0;
           callback(point, normal, distance);
         }
       }

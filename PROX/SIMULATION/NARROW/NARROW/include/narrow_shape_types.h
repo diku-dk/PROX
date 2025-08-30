@@ -148,8 +148,8 @@ namespace narrow
         , m_Y0()
         , m_Z0()
         , m_surface_map()
-        , m_mesh_radius( VT::zero() )
-        , m_mesh_scale(VT::zero() )
+        , m_mesh_radius( 0 )
+        , m_mesh_scale(0 )
         {}
 
         virtual ~Tetramesh() {}
@@ -186,7 +186,7 @@ namespace narrow
                                     , m_surface_map
                                     );
 
-          m_mesh_radius = VT::zero();
+          m_mesh_radius = 0;
 
           size_t const N = m_mesh.vertex_size();
 
@@ -223,8 +223,8 @@ namespace narrow
           m_surface_map.release();
 
           m_mesh.clear();
-          m_mesh_radius = VT::zero();
-          m_mesh_scale  = VT::zero();
+          m_mesh_radius = 0;
+          m_mesh_scale  = 0;
         }
 
 

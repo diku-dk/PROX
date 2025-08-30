@@ -42,7 +42,7 @@ namespace mesh_array
 
       T const volume =  ( e_mi * cross( e_ji, e_ki) ) / VT::numeric_cast(6.0) ;
 
-      if( volume <= VT::zero() )
+      if( volume <= 0 )
         return false;
     }
     return true;

@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
                                                                 , toi
                                                                 , iterations
                                                                 , epsilon
-                                                                , VT::one()
+                                                                , 1
                                                                 , max_iterations
                                                                 );
 
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
                                                                  , toi
                                                                  , iterations
                                                                  , epsilon
-                                                                 , VT::one()
+                                                                 , 1
                                                                  , max_iterations
                                                                  );
 
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
                                                                 , toi
                                                                 , iterations
                                                                 , epsilon
-                                                                , VT::one()
+                                                                , 1
                                                                 , max_iterations
                                                                 );
 
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
                                                                 , toi
                                                                 , iterations
                                                                 , epsilon
-                                                                , VT::one()
+                                                                , 1
                                                                 , max_iterations
                                                                 );
 

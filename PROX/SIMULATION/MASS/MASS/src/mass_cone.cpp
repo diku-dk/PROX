@@ -27,13 +27,13 @@ namespace mass
 
     assert( is_number( density )     || !"density must be a number"            );
     assert( is_finite( density )     || !"density must be a finite number"     );
-    assert( density > VT::zero()     || !"density must be positive"            );
+    assert( density > 0     || !"density must be positive"            );
     assert( is_number( base_radius ) || !"base_radius must be a  number"       );
     assert( is_finite( base_radius ) || !"base_radius must be a finite number" );
-    assert( base_radius > VT::zero() || !"base_radius must be positive"        );
+    assert( base_radius > 0 || !"base_radius must be positive"        );
     assert( is_number( height )      || !"height must be a number"             );
     assert( is_finite( height )      || !"height must be a finite number"      );
-    assert( height > VT::zero()      || !"height must be positive"             );
+    assert( height > 0      || !"height must be positive"             );
 
     T const R      = base_radius;
     T const h      = height;

@@ -41,10 +41,10 @@ namespace hyper
     typedef typename engine_type::params_type              params_type;
 
 
-    assert( time > VT::zero()                        || !"simulate(): time to simulate forward must be positive");
-    assert( engine.params().time_step() > VT::zero() || !"simulate(): time to simulate forward must be positive");
+    assert( time > 0                        || !"simulate(): time to simulate forward must be positive");
+    assert( engine.params().time_step() > 0 || !"simulate(): time to simulate forward must be positive");
 
-    if( norm(engine.gravity())> VT::zero() )
+    if( norm(engine.gravity())> 0 )
     {
       for (body_iterator body = engine.body_begin();body != engine.body_end(); ++body)
       {
@@ -64,7 +64,7 @@ namespace hyper
 
     T time_left = time;
 
-    while(time_left > VT::zero())
+    while(time_left > 0)
     {
       T const dt_wanted  = min(time_left, time_step);
       T const dt_CFL     = engine.params().use_cfl_condition() ? compute_CFL_time_step_size( engine, dt_wanted ) : dt_wanted;

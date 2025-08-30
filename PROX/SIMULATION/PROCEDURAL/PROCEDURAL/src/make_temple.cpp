@@ -32,8 +32,8 @@ namespace procedural
 		T const	gable_ratio	 = VT::numeric_cast( 0.3f  );
 		T const beam_ratio	 = VT::numeric_cast( 0.03f );
 		
-		T const temple_width	= (VT::two()*num_pillars_x-VT::one())*pillar_width;
-		T const temple_depth	= (VT::two()*num_pillars_z-VT::one())*pillar_width;
+		T const temple_width	= (2*num_pillars_x-1)*pillar_width;
+		T const temple_depth	= (2*num_pillars_z-1)*pillar_width;
 
 		T const beam_spacing_ratio = VT::numeric_cast( 0.7f );
 		T const spacing            = (temple_depth - 4*pillar_width) / floor(beam_spacing_ratio*num_pillars_z);
@@ -45,8 +45,8 @@ namespace procedural
 		T const beam_length_s	= (temple_depth - VT::numeric_cast(5.0f)*pillar_width) / (num_pillars_z-3);
 		
 		T const  gable_height		  = temple_height*gable_ratio;
-		T		     gable_num_brick	= VT::one()*num_pillars_x - VT::two();
-		T  const gable_incline		= atan(VT::two()*gable_height/temple_width);
+		T		     gable_num_brick	= 1*num_pillars_x - 2;
+		T  const gable_incline		= atan(2*gable_height/temple_width);
 		T  const gable_brick_w		= (temple_width-3*pillar_width)/gable_num_brick;
 		T  const gable_brick_h		= tan(gable_incline)*VT::half()*gable_brick_w;
 		T		     gable_num_layers	= (gable_height/gable_brick_h);
@@ -77,7 +77,7 @@ namespace procedural
                                                                  , pillar_width + temple_depth
                                                                  );
 			
-			V     P = rotate( orientation, V::make( VT::zero(), plane_1_y , VT::zero()) ) + position;
+			V     P = rotate( orientation, V::make( 0, plane_1_y , 0) ) + position;
 			
 			create_rigid_body<MT>(  engine
                             , P
@@ -93,7 +93,7 @@ namespace procedural
                                                                  , temple_depth
                                                                  );
 			
-			P = rotate( orientation, V::make( VT::zero(), plane_2_y, VT::zero()) ) + position;
+			P = rotate( orientation, V::make( 0, plane_2_y, 0) ) + position;
 			
 			create_rigid_body<MT>(  engine
                             , P
@@ -111,7 +111,7 @@ namespace procedural
                                                                    , bottom_ratio*temple_height
                                                                    , temple_depth - 4*pillar_width);
 				
-				P = rotate( orientation, V::make( VT::zero(), plane_3_y, VT::zero())) + position;
+				P = rotate( orientation, V::make( 0, plane_3_y, 0)) + position;
 				
 				create_rigid_body<MT>(  engine
                               , P
@@ -129,12 +129,12 @@ namespace procedural
 			/// front and back pillar row
 			for (size_t i = 0u; i < num_pillars_x; ++i)
 			{
-				T const xf = (pillar_width-temple_width)*VT::half() + VT::two()*i*pillar_width;
+				T const xf = (pillar_width-temple_width)*VT::half() + 2*i*pillar_width;
 				T const zf = (-pillar_width+temple_depth)*VT::half();
 				V       P  = rotate( orientation, V::make( xf, outer_pillar_y, zf) ) + position;
 				make_greek_pillar<MT>(engine, P, orientation ,pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 				
-				T const xb = (pillar_width-temple_width)*VT::half() + VT::two()*i*pillar_width;
+				T const xb = (pillar_width-temple_width)*VT::half() + 2*i*pillar_width;
 				T const zb = (pillar_width-temple_depth)*VT::half();
 				P          = rotate( orientation , V::make( xb, outer_pillar_y, zb)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
@@ -145,12 +145,12 @@ namespace procedural
 			{
 				
 				T const xe = (pillar_width-temple_width)*VT::half();
-				T const ze = (-pillar_width+temple_depth)*VT::half() - VT::two()*i*pillar_width;
+				T const ze = (-pillar_width+temple_depth)*VT::half() - 2*i*pillar_width;
 				V       P  = rotate( orientation, V::make( xe, outer_pillar_y, ze)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 				
 				T const xw = (-pillar_width+temple_width)*VT::half();
-				T const zw = (-pillar_width+temple_depth)*VT::half() - VT::two()*i*pillar_width;
+				T const zw = (-pillar_width+temple_depth)*VT::half() - 2*i*pillar_width;
 				P          = rotate(orientation, V::make( xw, outer_pillar_y, zw)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 			}
@@ -160,14 +160,14 @@ namespace procedural
 			if ((num_pillars_z >= 4 )&& (num_pillars_x>2))
 			{
 				/// end bricks
-				vertices[0] = V::make(VT::zero()					                , VT::zero()	  , VT::zero() );
-				vertices[1] = V::make(VT::numeric_cast(1.1f)*pillar_width	, VT::zero()		, VT::zero() );
-				vertices[2] = V::make(VT::numeric_cast(1.1f)*pillar_width	, gable_brick_h	, VT::zero() );
-				vertices[3] = V::make(pillar_width		                    , gable_brick_h	, VT::zero() );
-				vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), pillar_width);
-				vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), pillar_width);
-				vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), pillar_width);
-				vertices[7] = vertices[3] - V::make(VT::zero(), VT::zero(), pillar_width);
+				vertices[0] = V::make(0					                , 0	  , 0 );
+				vertices[1] = V::make(VT::numeric_cast(1.1f)*pillar_width	, 0		, 0 );
+				vertices[2] = V::make(VT::numeric_cast(1.1f)*pillar_width	, gable_brick_h	, 0 );
+				vertices[3] = V::make(pillar_width		                    , gable_brick_h	, 0 );
+				vertices[4] = vertices[0] - V::make(0, 0, pillar_width);
+				vertices[5] = vertices[1] - V::make(0, 0, pillar_width);
+				vertices[6] = vertices[2] - V::make(0, 0, pillar_width);
+				vertices[7] = vertices[3] - V::make(0, 0, pillar_width);
 				
 				GeometryHandle<MT> gable_end_brick = create_geometry_handle_cuboid<MT>( engine, vertices );
 				
@@ -177,11 +177,11 @@ namespace procedural
 				/// inner pillars
 				for (size_t i = 0u; i < floor(beam_spacing_ratio*num_pillars_z); ++i)
 				{
-					T z = VT::half()*temple_depth - VT::two()*pillar_width - (VT::half()+i)*spacing;
+					T z = VT::half()*temple_depth - 2*pillar_width - (VT::half()+i)*spacing;
 					
 					for (size_t j = 0u; j < num_pillars_x-2; ++j)
 					{
-						T x = (pillar_width-temple_width)*VT::half() + (VT::two()+VT::two()*j)*pillar_width;
+						T x = (pillar_width-temple_width)*VT::half() + (2+2*j)*pillar_width;
 						V P = rotate( orientation, V::make( x, inner_pillar_y, z)) + position;
 						
 						make_greek_pillar<MT>(engine, P, orientation ,pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
@@ -332,14 +332,14 @@ namespace procedural
                               );
 			}
 			
-			vertices[0] = V::make(VT::zero()				                 , VT::zero(), VT::zero()   );
-			vertices[1] = V::make(VT::numeric_cast(2.5f)*pillar_width, VT::zero(), VT::zero()   );
-			vertices[2] = V::make(VT::numeric_cast(2.5f)*pillar_width, VT::zero(), pillar_width );
-			vertices[3] = V::make(pillar_width	                     , VT::zero(), pillar_width );
-			vertices[4] = vertices[0] + V::make(VT::zero(), beam_height, VT::zero() );
-			vertices[5] = vertices[1] + V::make(VT::zero(), beam_height, VT::zero() );
-			vertices[6] = vertices[2] + V::make(VT::zero(), beam_height, VT::zero() );
-			vertices[7] = vertices[3] + V::make(VT::zero(), beam_height, VT::zero() );
+			vertices[0] = V::make(0				                 , 0, 0   );
+			vertices[1] = V::make(VT::numeric_cast(2.5f)*pillar_width, 0, 0   );
+			vertices[2] = V::make(VT::numeric_cast(2.5f)*pillar_width, 0, pillar_width );
+			vertices[3] = V::make(pillar_width	                     , 0, pillar_width );
+			vertices[4] = vertices[0] + V::make(0, beam_height, 0 );
+			vertices[5] = vertices[1] + V::make(0, beam_height, 0 );
+			vertices[6] = vertices[2] + V::make(0, beam_height, 0 );
+			vertices[7] = vertices[3] + V::make(0, beam_height, 0 );
 			
 			GeometryHandle<MT> beam_c = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			
@@ -508,15 +508,15 @@ namespace procedural
 		
 		{ /// gables
 			/// end bricks
-			vertices[0] = V::make(VT::zero()					               , VT::zero()				, VT::zero());
-			vertices[1] = V::make(VT::numeric_cast(1.1f)*pillar_width, VT::zero()				, VT::zero());
-			vertices[2] = V::make(VT::numeric_cast(1.1f)*pillar_width, gable_brick_h	  , VT::zero());
-			vertices[3] = V::make(pillar_width		                   , gable_brick_h	  , VT::zero());
+			vertices[0] = V::make(0					               , 0				, 0);
+			vertices[1] = V::make(VT::numeric_cast(1.1f)*pillar_width, 0				, 0);
+			vertices[2] = V::make(VT::numeric_cast(1.1f)*pillar_width, gable_brick_h	  , 0);
+			vertices[3] = V::make(pillar_width		                   , gable_brick_h	  , 0);
 
-			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
-			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
-			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
-			vertices[7] = vertices[3] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
+			vertices[4] = vertices[0] - V::make(0, 0, pillar_width*VT::numeric_cast(0.7f));
+			vertices[5] = vertices[1] - V::make(0, 0, pillar_width*VT::numeric_cast(0.7f));
+			vertices[6] = vertices[2] - V::make(0, 0, pillar_width*VT::numeric_cast(0.7f));
+			vertices[7] = vertices[3] - V::make(0, 0, pillar_width*VT::numeric_cast(0.7f));
 			
 			GeometryHandle<MT> gable_end_brick = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			
@@ -618,33 +618,33 @@ namespace procedural
 			Q Qm, Qb, Qw, Qu;
 			
 			/// roof tiles
-			vertices[0] = V::make(VT::zero()					                , VT::zero()	  , VT::zero());
-			vertices[1] = V::make(VT::numeric_cast(0.4f)*pillar_width	, VT::zero()	  , VT::zero());
-			vertices[2] = V::make(VT::numeric_cast(1.4f)*pillar_width	, gable_brick_h	, VT::zero());
-			vertices[3] = V::make(pillar_width		                    , gable_brick_h	, VT::zero());
+			vertices[0] = V::make(0					                , 0	  , 0);
+			vertices[1] = V::make(VT::numeric_cast(0.4f)*pillar_width	, 0	  , 0);
+			vertices[2] = V::make(VT::numeric_cast(1.4f)*pillar_width	, gable_brick_h	, 0);
+			vertices[3] = V::make(pillar_width		                    , gable_brick_h	, 0);
 
-			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
-			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
-			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
-			vertices[7] = vertices[3] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
+			vertices[4] = vertices[0] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[5] = vertices[1] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[6] = vertices[2] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[7] = vertices[3] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
 			
 			GeometryHandle<MT> roof_end_tile = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			
-			vertices[0] = V::make(VT::zero()					                , VT::zero()		, VT::zero() );
-			vertices[1] = V::make(VT::numeric_cast(0.4f)*pillar_width	, VT::zero()	  , VT::zero() );
-			vertices[2] = V::make(VT::numeric_cast(1.4f)*pillar_width	, gable_brick_h	, VT::zero() );
-			vertices[3] = V::make(pillar_width		                    , gable_brick_h	, VT::zero() );
-			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), spacing);
-			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), spacing);
-			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), spacing);
-			vertices[7] = vertices[3] - V::make(VT::zero(), VT::zero(), spacing);
+			vertices[0] = V::make(0					                , 0		, 0 );
+			vertices[1] = V::make(VT::numeric_cast(0.4f)*pillar_width	, 0	  , 0 );
+			vertices[2] = V::make(VT::numeric_cast(1.4f)*pillar_width	, gable_brick_h	, 0 );
+			vertices[3] = V::make(pillar_width		                    , gable_brick_h	, 0 );
+			vertices[4] = vertices[0] - V::make(0, 0, spacing);
+			vertices[5] = vertices[1] - V::make(0, 0, spacing);
+			vertices[6] = vertices[2] - V::make(0, 0, spacing);
+			vertices[7] = vertices[3] - V::make(0, 0, spacing);
 			
 			GeometryHandle<MT> roof_tile = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			
 			/// regular roof tiles
 			for (size_t i = 0u; i < floor(beam_spacing_ratio*num_pillars_z)-1; ++i)
 			{
-				T z = VT::half()*temple_depth - VT::two()*pillar_width - (VT::half()+i)*spacing;
+				T z = VT::half()*temple_depth - 2*pillar_width - (VT::half()+i)*spacing;
 				
 				for (size_t i = 0; i < gable_num_layers-1; ++i)
         {
@@ -770,15 +770,15 @@ namespace procedural
 		{ /// top triangles
 			
 			/// top triangle brick
-			vertices[0] = V::make(VT::zero()					                 , VT::zero()              , VT::zero() );
-			vertices[1] = V::make(pillar_width		                     , VT::zero()              , VT::zero() );
-			vertices[2] = V::make(VT::numeric_cast(0.51f)*pillar_width , VT::half()*gable_brick_h, VT::zero() );
-			vertices[3] = V::make(VT::numeric_cast(0.49f)*pillar_width , VT::half()*gable_brick_h, VT::zero() );
+			vertices[0] = V::make(0					                 , 0              , 0 );
+			vertices[1] = V::make(pillar_width		                     , 0              , 0 );
+			vertices[2] = V::make(VT::numeric_cast(0.51f)*pillar_width , VT::half()*gable_brick_h, 0 );
+			vertices[3] = V::make(VT::numeric_cast(0.49f)*pillar_width , VT::half()*gable_brick_h, 0 );
 
-			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), pillar_width);
-			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), pillar_width);
-			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), pillar_width);
-			vertices[7] = vertices[3] - V::make(VT::zero(), VT::zero(), pillar_width);
+			vertices[4] = vertices[0] - V::make(0, 0, pillar_width);
+			vertices[5] = vertices[1] - V::make(0, 0, pillar_width);
+			vertices[6] = vertices[2] - V::make(0, 0, pillar_width);
+			vertices[7] = vertices[3] - V::make(0, 0, pillar_width);
 			
 			GeometryHandle<MT> gable_top_brick = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			

@@ -256,7 +256,7 @@ namespace geometry
     if( distance == VT::infinity() )
       return false;
 
-    T const max_distance = VT::two()*min( distance, VT::numeric_cast(0.01)* (min(A.get_scale(), B.get_scale() )) );
+    T const max_distance = 2*min( distance, VT::numeric_cast(0.01)* (min(A.get_scale(), B.get_scale() )) );
 
     T tau = delta;
 
@@ -271,7 +271,7 @@ namespace geometry
       V const ds             = sB - sA;
       T const gap_procentage =  tiny::inner_prod(ds, dc) / dcdc;
 
-      T const enlarge = VT::one() - gap_procentage;
+      T const enlarge = 1 - gap_procentage;
 
       assert(enlarge < 1.0 );
 

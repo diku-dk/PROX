@@ -1,6 +1,7 @@
 #ifndef PROX_NUMERICAL_ELLIPSOID_H
 #define PROX_NUMERICAL_ELLIPSOID_H
 
+#include <algorithm>
 #include <tiny_is_number.h>
 
 #include <cmath>
@@ -40,11 +41,11 @@ namespace prox
 
       typedef tiny::ValueTraits<T> value_traits;
 
-      lambda_s = value_traits::zero();
-      lambda_t = value_traits::zero();
-      lambda_tau = value_traits::zero();
+      lambda_s = 0;
+      lambda_t = 0;
+      lambda_tau = 0;
 
-      if ( lambda_n <= value_traits::zero() )
+      if ( lambda_n <= 0 )
         return;
 
       T const a = mu_s*lambda_n;
@@ -54,9 +55,9 @@ namespace prox
       assert( is_number( a ) || !"numerical_ellipsoid(): a was not a number");
       assert( is_number( b ) || !"numerical_ellipsoid(): b was not a number");
       assert( is_number( c ) || !"numerical_ellipsoid(): c was not a number");
-      assert( a > value_traits::zero()       || !"numerical_ellipsoid(): a non-positive");
-      assert( b > value_traits::zero()       || !"numerical_ellipsoid(): b non-positive");
-      assert( c > value_traits::zero()       || !"numerical_ellipsoid(): c non-positive");
+      assert( a > 0       || !"numerical_ellipsoid(): a non-positive");
+      assert( b > 0       || !"numerical_ellipsoid(): b non-positive");
+      assert( c > 0       || !"numerical_ellipsoid(): c non-positive");
 
       //
       // Let a,b,c >0 be given these parameters defines an ellipsoid surface.
@@ -120,7 +121,7 @@ namespace prox
       // Scale problem to get most accurate numerical precision, that is fit
       // ellipsoid and z-point to be within unit-cube
       //
-      T const scale = max( value_traits::one(), max( a, max( b, max( c, max( fabs(z_s), max( fabs(z_t), fabs(z_tau) ) ) ) ) ) );
+      const auto scale = std::max<T>({1, a, b, c, std::abs(z_s), std::abs(z_t), std::abs(z_tau)});
 
       T const sx = z_s   / scale;
       T const sy = z_t   / scale;
@@ -141,7 +142,7 @@ namespace prox
       T const yy = sy*sy;
       T const zz = sz*sz;
 
-      T const f0 = (xx/aa) + (yy/bb) + (zz/cc) - value_traits::one();
+      T const f0 = (xx/aa) + (yy/bb) + (zz/cc) - 1;
 
       if ( f0 < tol )
       {
@@ -225,16 +226,16 @@ namespace prox
       //
       //    Initiate bracketing
       //
-      T t0 = value_traits::zero();
+      T t0 = 0;
       T t1 =  max( sa, max( sb, sc ) ) * sqrt( xx + yy + zz );
-      T g0 = (aaxx)/((aa+t0)*(aa+t0)) + (bbyy)/((aa+t0)*(aa+t0)) + (cczz)/((aa+t0)*(aa+t0)) - value_traits::one();
-      T g1 = (aaxx)/((aa+t1)*(aa+t1)) + (bbyy)/((bb+t1)*(bb+t1)) + (cczz)/((cc+t1)*(cc+t1)) - value_traits::one();
+      T g0 = (aaxx)/((aa+t0)*(aa+t0)) + (bbyy)/((aa+t0)*(aa+t0)) + (cczz)/((aa+t0)*(aa+t0)) - 1;
+      T g1 = (aaxx)/((aa+t1)*(aa+t1)) + (bbyy)/((bb+t1)*(bb+t1)) + (cczz)/((cc+t1)*(cc+t1)) - 1;
 
       T const expansion = value_traits::numeric_cast(1.5);
-      while(g1>value_traits::zero())
+      while(g1>0)
       {
         t1 *= expansion;
-        g1 = (aaxx)/((aa+t1)*(aa+t1)) + (bbyy)/((bb+t1)*(bb+t1)) + (cczz)/((cc+t1)*(cc+t1)) - value_traits::one();
+        g1 = (aaxx)/((aa+t1)*(aa+t1)) + (bbyy)/((bb+t1)*(bb+t1)) + (cczz)/((cc+t1)*(cc+t1)) - 1;
       }
 
       //
@@ -250,12 +251,12 @@ namespace prox
         T const aat = aa + t_k;
         T const bbt = bb + t_k;
         T const cct = cc + t_k;
-        T const g_k = aaxx/(aat*aat) + bbyy/(bbt*bbt) + cczz/(cct*cct) - value_traits::one();
+        T const g_k = aaxx/(aat*aat) + bbyy/(bbt*bbt) + cczz/(cct*cct) - 1;
         if( fabs( g_k) < tol) // absolute convergence test
         {
           break;
         }
-        if( g_k > value_traits::zero() )
+        if( g_k > 0 )
         {
           t0 = t_k;
           g0 = g_k;

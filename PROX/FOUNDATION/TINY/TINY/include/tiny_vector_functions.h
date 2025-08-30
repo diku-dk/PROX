@@ -333,16 +333,16 @@ namespace tiny
     if ( m_abs_k( 0 ) > m_abs_k( 1 ) )
     {
       if ( m_abs_k( 0 ) > m_abs_k( 2 ) )
-        i = Vector<3,T>::make( value_traits::zero(), value_traits::one(), value_traits::zero() );
+        i = Vector<3,T>::make( 0, 1, 0 );
       else
-        i = Vector<3,T>::make( value_traits::one(), value_traits::zero(), value_traits::zero() );
+        i = Vector<3,T>::make( 1, 0, 0 );
     }
     else
     {
       if ( m_abs_k( 1 ) > m_abs_k( 2 ) )
-        i = Vector<3,T>::make( value_traits::zero(), value_traits::zero(), value_traits::one() );
+        i = Vector<3,T>::make( 0, 0, 1 );
       else
-        i = Vector<3,T>::make( value_traits::one(), value_traits::zero(), value_traits::zero() );
+        i = Vector<3,T>::make( 1, 0, 0 );
     }
     j = unit( cross(k,i) );
     i = cross(j,k);
@@ -366,11 +366,11 @@ namespace tiny
 
     assert(is_number(tol)             || !"truncate(): nan");
     assert(is_finite(tol)             || !"truncate(): inf");
-    assert(tol > value_traits::zero() || !"truncate(): tol must be postive");
+    assert(tol > 0 || !"truncate(): tol must be postive");
 
-    real_type const x = (fabs(p(0)) > tol) ? p(0) : value_traits::zero();
-    real_type const y = (fabs(p(1)) > tol) ? p(1) : value_traits::zero();
-    real_type const z = (fabs(p(2)) > tol) ? p(2) : value_traits::zero();
+    real_type const x = (fabs(p(0)) > tol) ? p(0) : 0;
+    real_type const y = (fabs(p(1)) > tol) ? p(1) : 0;
+    real_type const z = (fabs(p(2)) > tol) ? p(2) : 0;
 
     assert(is_number(x)   || !"truncate(): nan");
     assert(is_finite(x)   || !"truncate(): inf");

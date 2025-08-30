@@ -43,7 +43,7 @@ namespace geometry
     OBB()
     : m_center( V::zero() )
     , m_orientation( Q::identity() )
-    , m_half_extent( V::make(VT::one(),VT::one(),VT::one()) )
+    , m_half_extent( V::make(1,1,1) )
     {}
 
     OBB( V const & center, Q const & orientation, V const &  half_extent )

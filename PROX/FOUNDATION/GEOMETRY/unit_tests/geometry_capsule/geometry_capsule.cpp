@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(capsule_test)
   {
     V const & center = V::zero();
     V const & axis   = V::k();
-    T const & height = VT::two();
+    T const & height = 2;
     const T radius = 3;
 
     geometry::Cylinder<V> const & C = geometry::make_cylinder(radius, height, axis, center);

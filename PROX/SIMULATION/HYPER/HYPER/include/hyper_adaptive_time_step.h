@@ -118,7 +118,7 @@ namespace hyper
 
     unsigned int const N = y.size();
 
-    T error = VT::zero();
+    T error = 0;
 
     for(unsigned int i = 0u; i < N; ++i)
     {
@@ -148,19 +148,19 @@ namespace hyper
     T dt_left = dt;
 
     // If adaptive time stepper is not initialized pick some sensible time-step value
-    if (body.m_adaptive_dt <= VT::zero() )
+    if (body.m_adaptive_dt <= 0 )
     {
       body.m_adaptive_dt = dt;
       body.m_adaptive_dt = max( params.adaptive_min_dt(), min( params.adaptive_max_dt(), body.m_adaptive_dt) ); // Clamp between min and max allowed time step
       body.m_adaptive_dt = min( body.m_adaptive_dt, dt_left);                                 // Make sure we do not step longer than needed
     }
 
-    while (dt_left> VT::zero() )
+    while (dt_left> 0 )
     {
       // First we try if we are allowed to increase the time-step size
       if( body.m_adaptive_unchanged > params.adaptive_doubling_count() )
       {
-        body.m_adaptive_dt = body.m_adaptive_dt*VT::two();
+        body.m_adaptive_dt = body.m_adaptive_dt*2;
 
         body.m_adaptive_dt = max( params.adaptive_min_dt(), min( params.adaptive_max_dt(), body.m_adaptive_dt) ); // Clamp between min and max allowed time step
         body.m_adaptive_dt = min( body.m_adaptive_dt, dt_left);                                 // Make sure we do not step longer than needed

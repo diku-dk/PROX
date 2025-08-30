@@ -13,10 +13,10 @@ namespace matrix_benchmark
   template<size_t I, size_t J, typename matrix_type, typename matrix_rot_type, typename vector_type>
   inline void benchmark(Measure& measures)
   {
-    matrix_type a(matrix_type::value_traits::zero()),b(matrix_type::value_traits::zero());
-    matrix_rot_type m( matrix_rot_type::value_traits::zero());
+    matrix_type a(0),b(0);
+    matrix_rot_type m(0);
 
-    vector_type v( vector_type::value_traits::one() );
+    vector_type v( 1 );
 
     size_t const loops = 10000;
 

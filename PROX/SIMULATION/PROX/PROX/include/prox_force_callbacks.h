@@ -65,14 +65,14 @@ namespace prox
 
     Gravity()
     : m_acceleration( VT::numeric_cast(9.81))
-    , m_up( V::make(VT::zero(), VT::one(), VT::zero())   )
+    , m_up( V::make(0, 1, 0)   )
     {}
 
   public:
 
     void compute_force_and_torque( B const & body, V & force, V & torque) const
     {
-      assert(this->m_acceleration >= VT::zero() || !"Gravity::compute_force_and_torque(): acceleration must be non-negative");
+      assert(this->m_acceleration >= 0 || !"Gravity::compute_force_and_torque(): acceleration must be non-negative");
 
       force = - this->m_up * (body.get_mass() * this->m_acceleration);
       torque = V::zero();
@@ -114,8 +114,8 @@ namespace prox
 
     void compute_force_and_torque( B const & body, V & force, V & torque) const
     {
-      assert(this->m_linear  >= VT::zero() || !"Damping::compute_force_and_torque(): damping must be non-negative");
-      assert(this->m_angular >= VT::zero() || !"Damping::compute_force_and_torque(): damping must be non-negative");
+      assert(this->m_linear  >= 0 || !"Damping::compute_force_and_torque(): damping must be non-negative");
+      assert(this->m_angular >= 0 || !"Damping::compute_force_and_torque(): damping must be non-negative");
 
 
       force = - (body.get_velocity() * m_linear);
@@ -166,7 +166,7 @@ namespace prox
       using std::min;
       using std::max;
 
-      assert( this->m_tau > VT::zero() || !"MoveToPoint::compute_force_and_torque(): tau must be positive");
+      assert( this->m_tau > 0 || !"MoveToPoint::compute_force_and_torque(): tau must be positive");
 
       V const r      = tiny::rotate(body.get_orientation(), this->m_anchor);
       V const D      = this->m_target -  (r + body.get_position());
@@ -174,7 +174,7 @@ namespace prox
       V const n      = tiny::unit( D );
       T const v      = tiny::inner_prod(body.get_velocity(), n);
       T const m      = body.get_mass();
-      T const b      = (VT::two() *m) / this->m_tau;
+      T const b      = (2 *m) / this->m_tau;
       T const k      = m / (this->m_tau*this->m_tau);
 
       force  =  ( k*l    -  b*v   )*n;

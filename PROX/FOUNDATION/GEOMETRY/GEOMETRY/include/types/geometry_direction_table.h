@@ -57,9 +57,9 @@ namespace geometry
 
     DirectionTable<V,3> D;
 
-    D(0) =  V::make( VT::one(),  VT::zero(), VT::zero() );
-    D(1) =  V::make( VT::zero(), VT::one(),  VT::zero() );
-    D(2) =  V::make( VT::zero(), VT::zero(), VT::one()  );
+    D(0) =  V::make( 1,  0, 0 );
+    D(1) =  V::make( 0, 1,  0 );
+    D(2) =  V::make( 0, 0, 1  );
 
     return D;
   }
@@ -71,10 +71,10 @@ namespace geometry
 
     DirectionTable<V,4> D;
 
-    D(0) = unit( V::make(  VT::one(),  VT::one(),  VT::one() ) );
-    D(1) = unit( V::make(  VT::one(),  VT::one(), -VT::one() ) );
-    D(2) = unit( V::make(  VT::one(), -VT::one(),  VT::one() ) );
-    D(3) = unit( V::make(  VT::one(), -VT::one(), -VT::one() ) );
+    D(0) = unit( V::make(  1,  1,  1 ) );
+    D(1) = unit( V::make(  1,  1, -1 ) );
+    D(2) = unit( V::make(  1, -1,  1 ) );
+    D(3) = unit( V::make(  1, -1, -1 ) );
 
     return D;
   }
@@ -86,12 +86,12 @@ namespace geometry
 
     DirectionTable<V,6> D;
 
-    D(0) = unit( V::make(  VT::one(),   VT::one(),  VT::zero()) );
-    D(1) = unit( V::make(  VT::one(),  -VT::one(),  VT::zero()) );
-    D(2) = unit( V::make(  VT::one(),   VT::zero(), VT::one() ) );
-    D(3) = unit( V::make(  VT::zero(),  VT::one(),  VT::one() ) );
-    D(4) = unit( V::make( -VT::one(),   VT::zero(), VT::one() ) );
-    D(5) = unit( V::make(  VT::zero(), -VT::one(),  VT::one() ) );
+    D(0) = unit( V::make(  1,   1,  0) );
+    D(1) = unit( V::make(  1,  -1,  0) );
+    D(2) = unit( V::make(  1,   0, 1 ) );
+    D(3) = unit( V::make(  0,  1,  1 ) );
+    D(4) = unit( V::make( -1,   0, 1 ) );
+    D(5) = unit( V::make(  0, -1,  1 ) );
 
     return D;
   }

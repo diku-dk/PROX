@@ -80,7 +80,7 @@ namespace mass
           }
 
           //--- Find face normal from the cross-product of the two edges that span the largest area
-          T max_area = VT::zero();
+          T max_area = 0;
 
           for(size_t i = 0u; i< N; ++i)
           {
@@ -157,16 +157,16 @@ namespace mass
       public:
 
         ProjectionIntegralInfo()
-        : m_P1( VT::zero() )
-        , m_Pa( VT::zero() )
-        , m_Pb( VT::zero() )
-        , m_Paa( VT::zero() )
-        , m_Pab( VT::zero() )
-        , m_Pbb( VT::zero() )
-        , m_Paaa( VT::zero() )
-        , m_Paab( VT::zero() )
-        , m_Pabb( VT::zero() )
-        , m_Pbbb( VT::zero() )
+        : m_P1( 0 )
+        , m_Pa( 0 )
+        , m_Pb( 0 )
+        , m_Paa( 0 )
+        , m_Pab( 0 )
+        , m_Pbb( 0 )
+        , m_Paaa( 0 )
+        , m_Paab( 0 )
+        , m_Pabb( 0 )
+        , m_Pbbb( 0 )
         {}
 
       };
@@ -211,12 +211,12 @@ namespace mass
         T const Cb   = b1*(b1 + b0) + b0_2;
         T const Cbb  = b1*Cb + b0_3;
         T const Cbbb = b1*Cbb + b0_4;
-        T const Cab  = 3*a1_2 + VT::two()*a1*a0 + a0_2;
-        T const Kab  = a1_2 + VT::two()*a1*a0 + 3*a0_2;
+        T const Cab  = 3*a1_2 + 2*a1*a0 + a0_2;
+        T const Kab  = a1_2 + 2*a1*a0 + 3*a0_2;
         T const Caab = a0*Cab + 4*a1_3;
         T const Kaab = a1*Kab + 4*a0_3;
-        T const Cabb = 4*b1_3 + 3*b1_2*b0 + VT::two()*b1*b0_2 + b0_3;
-        T const Kabb = b1_3 + VT::two()*b1_2*b0 + 3*b1*b0_2 + 4*b0_3;
+        T const Cabb = 4*b1_3 + 3*b1_2*b0 + 2*b1*b0_2 + b0_3;
+        T const Kabb = b1_3 + 2*b1_2*b0 + 3*b1*b0_2 + 4*b0_3;
 
         result.m_P1 += db*C1;
         result.m_Pa += db*Ca;
@@ -230,7 +230,7 @@ namespace mass
         result.m_Pabb += da*(a1*Cabb + a0*Kabb);
       }
 
-      result.m_P1   /=  VT::two();
+      result.m_P1   /=  2;
       result.m_Pa   /=  VT::numeric_cast(  6.0 );
       result.m_Paa  /=  VT::numeric_cast( 12.0 );
       result.m_Paaa /=  VT::numeric_cast( 20.0 );
@@ -269,18 +269,18 @@ namespace mass
       public:
 
         FaceIntegralInfo()
-        : m_Fa( VT::zero() )
-        , m_Fb( VT::zero() )
-        , m_Fc( VT::zero() )
-        , m_Faa( VT::zero() )
-        , m_Fbb( VT::zero() )
-        , m_Fcc( VT::zero() )
-        , m_Faaa( VT::zero() )
-        , m_Fbbb( VT::zero() )
-        , m_Fccc( VT::zero() )
-        , m_Faab( VT::zero() )
-        , m_Fbbc( VT::zero() )
-        , m_Fcca( VT::zero() )
+        : m_Fa( 0 )
+        , m_Fb( 0 )
+        , m_Fc( 0 )
+        , m_Faa( 0 )
+        , m_Fbb( 0 )
+        , m_Fcc( 0 )
+        , m_Faaa( 0 )
+        , m_Fbbb( 0 )
+        , m_Fccc( 0 )
+        , m_Faab( 0 )
+        , m_Fbbc( 0 )
+        , m_Fcca( 0 )
         {}
 
       };
@@ -299,7 +299,7 @@ namespace mass
       T const & nA = face.get_nA();
       T const & nB = face.get_nB();
       T const & nC = face.get_nC();
-      T const   k1 = VT::one() / nC;
+      T const   k1 = 1 / nC;
       T const   k2 = k1 * k1;
       T const   k3 = k2 * k1;
       T const   k4 = k3 * k1;
@@ -312,18 +312,18 @@ namespace mass
 
       result.m_Faa  =  k1 * term.m_Paa;
       result.m_Fbb  =  k1 * term.m_Pbb;
-      result.m_Fcc  =  k3 * (nA*nA*term.m_Paa + VT::two()*nA*nB*term.m_Pab + nB*nB*term.m_Pbb + w*(VT::two()*(nA*term.m_Pa + nB*term.m_Pb) + w*term.m_P1) );
+      result.m_Fcc  =  k3 * (nA*nA*term.m_Paa + 2*nA*nB*term.m_Pab + nB*nB*term.m_Pbb + w*(2*(nA*term.m_Pa + nB*term.m_Pb) + w*term.m_P1) );
 
       result.m_Faaa =  k1 * term.m_Paaa;
       result.m_Fbbb =  k1 * term.m_Pbbb;
       result.m_Fccc = -k4 * (  nA*nA*nA*term.m_Paaa + 3*nA*nA*nB*term.m_Paab + 3*nA*nB*nB*term.m_Pabb
-                             + nB*nB*nB*term.m_Pbbb + 3*w*( nA*nA*term.m_Paa + VT::two()*nA*nB*term.m_Pab + nB*nB*term.m_Pbb )
+                             + nB*nB*nB*term.m_Pbbb + 3*w*( nA*nA*term.m_Paa + 2*nA*nB*term.m_Pab + nB*nB*term.m_Pbb )
                              + w*w*(3*(nA*term.m_Pa + nB*term.m_Pb) + w*term.m_P1)
                              );
 
       result.m_Faab =  k1 * term.m_Paab;
       result.m_Fbbc = -k2 * ( nA*term.m_Pabb + nB*term.m_Pbbb + w*term.m_Pbb );
-      result.m_Fcca =  k3 * ( nA*nA*term.m_Paaa + VT::two()*nA*nB*term.m_Paab + nB*nB*term.m_Pabb + w*(VT::two()*(nA*term.m_Paa + nB*term.m_Pab) + w*term.m_Pa) );
+      result.m_Fcca =  k3 * ( nA*nA*term.m_Paaa + 2*nA*nB*term.m_Paab + nB*nB*term.m_Pabb + w*(2*(nA*term.m_Paa + nB*term.m_Pab) + w*term.m_Pa) );
 
       return result;
     }
@@ -345,11 +345,11 @@ namespace mass
       public:
 
         VolumeIntegralInfo()
-        : m_T0( VT::zero() )
+        : m_T0( 0 )
         {
-          m_T1[0] = VT::zero(); m_T1[1] = VT::zero(); m_T1[2] = VT::zero();
-          m_T2[0] = VT::zero(); m_T2[1] = VT::zero(); m_T2[2] = VT::zero();
-          m_TP[0] = VT::zero(); m_TP[1] = VT::zero(); m_TP[2] = VT::zero();
+          m_T1[0] = 0; m_T1[1] = 0; m_T1[2] = 0;
+          m_T2[0] = 0; m_T2[1] = 0; m_T2[2] = 0;
+          m_TP[0] = 0; m_TP[1] = 0; m_TP[2] = 0;
         }
 
       public:
@@ -365,7 +365,7 @@ namespace mass
         {
           assert( is_number( density )      || !"density must be a number"           );
           assert( is_finite( density )      || !"density must be a finite number"    );
-          assert( density > VT::zero()      || !"density must be positive"           );
+          assert( density > 0      || !"density must be positive"           );
 
           mass = density*m_T0;
         }
@@ -374,7 +374,7 @@ namespace mass
         {
           assert( is_number( density )      || !"density must be a number"           );
           assert( is_finite( density )      || !"density must be a finite number"    );
-          assert( density > VT::zero()      || !"density must be positive"           );
+          assert( density > 0      || !"density must be positive"           );
 
           Ixx =   density * (m_T2[1] + m_T2[2]);
           Iyy =   density * (m_T2[2] + m_T2[0]);
@@ -442,9 +442,9 @@ namespace mass
         result.m_TP[C] += nC * part.m_Fcca;
       }
 
-      result.m_T1[0] /= VT::two();   result.m_T1[1] /= VT::two();   result.m_T1[2] /= VT::two();
+      result.m_T1[0] /= 2;   result.m_T1[1] /= 2;   result.m_T1[2] /= 2;
       result.m_T2[0] /= 3; result.m_T2[1] /= 3; result.m_T2[2] /= 3;
-      result.m_TP[0] /= VT::two();   result.m_TP[1] /= VT::two();   result.m_TP[2] /= VT::two();
+      result.m_TP[0] /= 2;   result.m_TP[1] /= 2;   result.m_TP[2] /= 2;
 
       return result;
     }
@@ -464,7 +464,7 @@ namespace mass
 
     assert( is_number( density )      || !"density must be a number"           );
     assert( is_finite( density )      || !"density must be a finite number"    );
-    assert( density > VT::zero()      || !"density must be positive"           );
+    assert( density > 0      || !"density must be positive"           );
     assert(K > 0u                     || !"K must be positive"                 );
     details::VolumeIntegralInfo<T> result = details::compute_volume_integral(K, callback );
 

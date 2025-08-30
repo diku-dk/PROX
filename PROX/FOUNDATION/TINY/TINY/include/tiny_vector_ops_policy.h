@@ -32,7 +32,7 @@ namespace tiny
 
         static real_type inner_prod (V const & lhs, V const & rhs)
         {
-          op_type dot = type_traits::set_op_type(value_traits::zero());
+          op_type dot = type_traits::set_op_type(0);
 
           for (size_t j = 0 ; j < J ; j+=stride )
             type_traits::add_assign(  dot
@@ -65,9 +65,9 @@ namespace tiny
         {
           V res(m);
           real_type const lgth     = norm(m);
-          if(lgth>value_traits::zero())
+          if(lgth>0)
           {
-            op_type   const inv_norm = type_traits::set_op_type(value_traits::one()/lgth);
+            op_type   const inv_norm = type_traits::set_op_type(1/lgth);
             for (size_t j = 0 ; j < J ; j+=stride )
               type_traits::mul_assign(V::accessor::cast(res,0,j),inv_norm);
           }

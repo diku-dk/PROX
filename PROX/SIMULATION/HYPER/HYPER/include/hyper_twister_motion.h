@@ -38,14 +38,14 @@ namespace hyper
 
     TwisterMotion()
     : m_axis( V::k() )
-    , m_period( VT::two() )
+    , m_period( 2 )
     {}
 
     TwisterMotion(V const & a, T const & p)
     : m_axis( tiny::unit( a ) )
     , m_period( p )
     {
-      assert( this->m_period > VT::zero() || !"TwisterMotion(): period must be positive");
+      assert( this->m_period > 0 || !"TwisterMotion(): period must be positive");
     }
 
 

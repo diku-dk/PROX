@@ -48,7 +48,7 @@ namespace big
     {
       value_type lgth = ublas::norm_2( column(A,k) );
 
-      if( ! (fabs(lgth)> value_traits::zero()) )
+      if( ! (fabs(lgth)> 0) )
         return;
 
       column(A,k) = column(A,k) / lgth;

@@ -166,7 +166,7 @@ namespace soft_body
 
         m_engine.clear();
 
-        m_time      = VT::zero();
+        m_time      = 0;
         m_time_step = VT::numeric_cast(0.01f);
 
         m_draw_contacts             = false;

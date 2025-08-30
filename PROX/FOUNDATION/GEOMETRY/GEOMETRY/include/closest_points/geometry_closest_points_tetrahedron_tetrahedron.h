@@ -83,10 +83,10 @@ namespace geometry
 
         T const t = (tiny::inner_prod(da, db)/tiny::inner_prod(db, db));
 
-        if (t <= VT::zero())
+        if (t <= 0)
           continue;
 
-        if (t >= VT::one())
+        if (t >= 1)
           continue;
 
         V const p_b      = p_b0 + t * db;
@@ -110,10 +110,10 @@ namespace geometry
 
         T const t = (tiny::inner_prod(da, db)/tiny::inner_prod(da, da));
 
-        if (t <= VT::zero())
+        if (t <= 0)
           continue;
 
-        if (t >= VT::one())
+        if (t >= 1)
           continue;
 
         V const p_a      = p_a0 + t * da;
@@ -144,7 +144,7 @@ namespace geometry
         T const k  =   tiny::inner_prod(da, db);
         T const q1 =   tiny::inner_prod(da,r);
         T const q2 = - tiny::inner_prod(db,r);
-        T const w  =   VT::one() - k*k;
+        T const w  =   1 - k*k;
 
         // Test if edges too close to parallel
         if(fabs(w) < tiny::working_precision<T>())
@@ -155,10 +155,10 @@ namespace geometry
         T const s = (q2 + k*q1)/w;
 
         // Test if closest points are interior on edges
-        if (t<= VT::zero())
+        if (t<= 0)
           continue;
 
-        if (s<= VT::zero())
+        if (s<= 0)
           continue;
 
         if (t>= tiny::norm(aj - ai))
@@ -200,7 +200,7 @@ namespace geometry
           V const vp_n  = tiny::cross(n_b, e_b);
           T const tst  = tiny::inner_prod( p_a - p_b0, vp_n);
 
-          inside_voronoi_planes = tst < VT::zero() ? false : inside_voronoi_planes;
+          inside_voronoi_planes = tst < 0 ? false : inside_voronoi_planes;
         }
 
         if (!inside_voronoi_planes)
@@ -210,7 +210,7 @@ namespace geometry
         V const   p_b      =  p_a -  n_b * tiny::inner_prod(n_b, p_a - q_b)/tiny::inner_prod(n_b, n_b);
         T const   distance = tiny::inner_prod( p_a - q_b, n_b)/ tiny::norm( n_b );
 
-        if(distance < VT::zero() )
+        if(distance < 0 )
           continue;
 
         a            = (distance < min_distance) ? p_a   : a;
@@ -238,7 +238,7 @@ namespace geometry
           V const vp_n  = tiny::cross(n_a, e_a);
           T const tst  = tiny::inner_prod( p_b - p_a0, vp_n);
 
-          inside_voronoi_planes = tst < VT::zero() ? false : inside_voronoi_planes;
+          inside_voronoi_planes = tst < 0 ? false : inside_voronoi_planes;
         }
 
         if (!inside_voronoi_planes)
@@ -248,7 +248,7 @@ namespace geometry
         V const   p_a      =  p_b -  n_a * tiny::inner_prod(n_a, p_b - q_a)/tiny::inner_prod(n_a, n_a);
         T const   distance = tiny::inner_prod( p_b - q_a, n_a)/ tiny::norm( n_a );
 
-        if(distance < VT::zero() )
+        if(distance < 0 )
           continue;
 
         a            = (distance < min_distance) ? p_a   : a;

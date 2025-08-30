@@ -50,11 +50,11 @@ namespace hyper
 
     T lambda() const
     {
-      assert( m_poisson_ratio >= VT::zero() || !"lambda(): Illegal Poisson ratio value" );
-      assert( m_poisson_ratio > -VT::one()  || !"lambda(): Illegal Poisson ratio value" );
-      assert( m_young_modulus >  VT::zero() || !"lambda(): Illegal Young's Modulus value" );
+      assert( m_poisson_ratio >= 0 || !"lambda(): Illegal Poisson ratio value" );
+      assert( m_poisson_ratio > -1  || !"lambda(): Illegal Poisson ratio value" );
+      assert( m_young_modulus >  0 || !"lambda(): Illegal Young's Modulus value" );
 
-      return (m_young_modulus*m_poisson_ratio) / ( (VT::one() + m_poisson_ratio)*(VT::one() - VT::two()*m_poisson_ratio) );
+      return (m_young_modulus*m_poisson_ratio) / ( (1 + m_poisson_ratio)*(1 - 2*m_poisson_ratio) );
     }
 
     /**
@@ -67,11 +67,11 @@ namespace hyper
      */
     T mu() const
     {
-      assert( m_poisson_ratio >= VT::zero() || !"mu(): Illegal Poisson ratio value" );
-      assert( m_poisson_ratio > -VT::one()  || !"mu(): Illegal Poisson ratio value" );
-      assert( m_young_modulus >  VT::zero() || !"mu(): Illegal Young's Modulus value" );
+      assert( m_poisson_ratio >= 0 || !"mu(): Illegal Poisson ratio value" );
+      assert( m_poisson_ratio > -1  || !"mu(): Illegal Poisson ratio value" );
+      assert( m_young_modulus >  0 || !"mu(): Illegal Young's Modulus value" );
 
-      return m_young_modulus / ( VT::two()*(VT::one()+m_poisson_ratio) );
+      return m_young_modulus / ( 2*(1+m_poisson_ratio) );
     }
 
     bool const & lumped() const { return this->m_lumped; }
@@ -83,9 +83,9 @@ namespace hyper
     : m_young_modulus(     VT::numeric_cast(1000.0) )
     , m_poisson_ratio(     VT::numeric_cast(0.3   ) )
     , m_mass_density(      VT::numeric_cast(10.0  ) )
-    , m_mass_damping(      VT::zero()   )
-    , m_stiffness_damping( VT::zero()   )
-    , m_viscous_damping(   VT::zero()   )
+    , m_mass_damping(      0   )
+    , m_stiffness_damping( 0   )
+    , m_viscous_damping(   0   )
     , m_lumped( true )
     {}
 
@@ -101,8 +101,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(1000.0);
     MP.nu()     = VT::numeric_cast(0.3);
     MP.rho()    = VT::numeric_cast(10.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.0001);
     MP.lumped() = true;
 
@@ -119,8 +119,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(0.69e6);
     MP.nu()     = VT::numeric_cast(0.018);
     MP.rho()    = VT::numeric_cast(1000.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -137,8 +137,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(16.16e9);
     MP.nu()     = VT::numeric_cast(0.33);
     MP.rho()    = VT::numeric_cast(1600.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -155,8 +155,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(452e6);
     MP.nu()     = VT::numeric_cast(0.3);
     MP.rho()    = VT::numeric_cast(1600.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -173,8 +173,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(0.01e9);
     MP.nu()     = VT::numeric_cast(0.48);
     MP.rho()    = VT::numeric_cast(1050.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -191,8 +191,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(30e9);
     MP.nu()     = VT::numeric_cast(0.20);
     MP.rho()    = VT::numeric_cast(2320.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -209,8 +209,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(125e9);
     MP.nu()     = VT::numeric_cast(0.35);
     MP.rho()    = VT::numeric_cast(8900.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -227,8 +227,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(210e9);
     MP.nu()     = VT::numeric_cast(0.31);
     MP.rho()    = VT::numeric_cast(7800.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -245,8 +245,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(72e9);
     MP.nu()     = VT::numeric_cast(0.34);
     MP.rho()    = VT::numeric_cast(2700.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 
@@ -263,8 +263,8 @@ namespace hyper
     MP.E()      = VT::numeric_cast(50e9);
     MP.nu()     = VT::numeric_cast(0.18);
     MP.rho()    = VT::numeric_cast(2190.0);
-    MP.alpha()  = VT::zero();
-    MP.beta()   = VT::zero();
+    MP.alpha()  = 0;
+    MP.beta()   = 0;
     MP.c()      = VT::numeric_cast(0.001);
     MP.lumped() = true;
 

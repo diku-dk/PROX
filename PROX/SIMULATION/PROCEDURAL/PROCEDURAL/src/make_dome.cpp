@@ -28,7 +28,7 @@ namespace procedural
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
 
-        assert(r_inner > VT::zero() || !"invalid inner radius value");
+        assert(r_inner > 0 || !"invalid inner radius value");
         assert(r_outer > r_inner    || !"invalid outer radius value");
         assert( slices>2u           || !"at last three slices  must be used");
         assert( segments>0u         || !"at last one segment must be used");
@@ -45,8 +45,8 @@ namespace procedural
         //
         // Initially the up-direction of the dome corresponds to the positive z-axis.
 
-        T const offset_theta  = VT::zero();
-        T const delta_theta   = VT::two() * VT::pi() / VT::numeric_cast( slices );
+        T const offset_theta  = 0;
+        T const delta_theta   = 2 * VT::pi() / VT::numeric_cast( slices );
         T const delta_phi     = VT::pi_half() / VT::numeric_cast( segments + 1u );
         T const stone_density = get_material_density<MT>(mat_info, "Stone");
         T phi = delta_phi*VT::numeric_cast( 1.5f );
@@ -58,10 +58,10 @@ namespace procedural
             T const sin_phi_upper   = sin(   phi - delta_phi*VT::half() );
             T const cos_phi_lower   = cos(   phi + delta_phi*VT::half() );
             T const sin_phi_lower   = sin(   phi + delta_phi*VT::half() );
-            T const cos_theta_left  = cos(  -delta_theta / VT::two()    );
-            T const sin_theta_left  = sin(  -delta_theta / VT::two()    );
-            T const cos_theta_right = cos(   delta_theta / VT::two()    );
-            T const sin_theta_right = sin(   delta_theta / VT::two()    );
+            T const cos_theta_left  = cos(  -delta_theta / 2    );
+            T const sin_theta_left  = sin(  -delta_theta / 2    );
+            T const cos_theta_right = cos(   delta_theta / 2    );
+            T const sin_theta_right = sin(   delta_theta / 2    );
 
             V vertices[8];
 

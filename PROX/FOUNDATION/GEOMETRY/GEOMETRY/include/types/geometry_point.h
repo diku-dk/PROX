@@ -57,7 +57,7 @@ namespace geometry
 
     T get_scale() const
     {
-      return VT::zero();
+      return 0;
     }
   };
 

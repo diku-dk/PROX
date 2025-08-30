@@ -34,7 +34,7 @@ namespace mass
 
     assert( is_number( density )            || !"density must be a number"       );
     assert( is_finite( density )            || !"density must be a finite number");
-    assert( density > value_traits::zero()  || !"density must be positive"       );
+    assert( density > 0  || !"density must be positive"       );
 
     assert( is_number( x1 ) || !"x1 must be a  number"      );
     assert( is_finite( x1 ) || !"x1 must be a finite number");
@@ -68,7 +68,7 @@ namespace mass
     T const x_poly = x1*x1 + x2*x2 + x3*x3 + x4*x4 + x1*x2 + x1*x3 + x1*x4 + x2*x3 + x2*x4 + x3*x4;
     T const y_poly = y1*y1 + y2*y2 + y3*y3 + y4*y4 + y1*y2 + y1*y3 + y1*y4 + y2*y3 + y2*y4 + y3*y4;
     T const z_poly = z1*z1 + z2*z2 + z3*z3 + z4*z4 + z1*z2 + z1*z3 + z1*z4 + z2*z3 + z2*z4 + z3*z4;
-    T const two    = value_traits::two();
+    T const two    = 2;
 
     T const E00 = (x2 - x1);
     T const E01 = (x3 - x1);

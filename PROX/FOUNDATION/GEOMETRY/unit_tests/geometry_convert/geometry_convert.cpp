@@ -21,33 +21,33 @@ BOOST_AUTO_TEST_CASE(convert_test)
 
   {
     V                   const center = V::zero();
-    T                   const radius = VT::one();
+    T                   const radius = 1;
     geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
     geometry::DOP<T,6> const dop     = geometry::convert<6,V>(sphere);
 
     BOOST_CHECK_EQUAL(  dop.size(), 6u);
-    BOOST_CHECK_CLOSE(  dop(0).lower(), -VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(1).lower(), -VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(2).lower(), -VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(0).upper(),  VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(1).upper(),  VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(2).upper(),  VT::one(), 0.01 );
+    BOOST_CHECK_CLOSE(  dop(0).lower(), -1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(1).lower(), -1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(2).lower(), -1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(0).upper(),  1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(1).upper(),  1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(2).upper(),  1, 0.01 );
 
   }
 
   {
-    V                  const min_coord = V::make( -VT::one(), -VT::one(), -VT::one() );
-    V                  const max_coord = V::make(  VT::one(),  VT::one(),  VT::one() );
+    V                  const min_coord = V::make( -1, -1, -1 );
+    V                  const max_coord = V::make(  1,  1,  1 );
     geometry::AABB<V>  const aabb      = geometry::make_aabb(min_coord, max_coord);
     geometry::DOP<T,6> const dop       = geometry::convert<6,V>(aabb);
 
     BOOST_CHECK_EQUAL(  dop.size(), 6u);
-    BOOST_CHECK_CLOSE(  dop(0).lower(), -VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(1).lower(), -VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(2).lower(), -VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(0).upper(),  VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(1).upper(),  VT::one(), 0.01 );
-    BOOST_CHECK_CLOSE(  dop(2).upper(),  VT::one(), 0.01 );
+    BOOST_CHECK_CLOSE(  dop(0).lower(), -1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(1).lower(), -1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(2).lower(), -1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(0).upper(),  1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(1).upper(),  1, 0.01 );
+    BOOST_CHECK_CLOSE(  dop(2).upper(),  1, 0.01 );
 
   }
 

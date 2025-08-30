@@ -37,11 +37,11 @@ namespace big
     typedef          big::ValueTraits<value_type>   value_traits;
     typedef          ublas::vector<value_type>      vector_type;
 
-    assert( fraction >= value_traits::zero() || !"generate_PSD(): invalid fraction specified");
-    assert( fraction <= value_traits::one()  || !"generate_PSD(): invalid fraction specified");
+    assert( fraction >= 0 || !"generate_PSD(): invalid fraction specified");
+    assert( fraction <= 1  || !"generate_PSD(): invalid fraction specified");
     assert( n > 0                            || !"generate_PSD(): invalid problem size specified");
 
-    Random<value_type> value(value_traits::zero(),value_traits::one());
+    Random<value_type> value(0,1);
 
     matrix_type Q;
     matrix_type D;
@@ -50,12 +50,12 @@ namespace big
 
     big::generate_random( n, d );
 
-    if(fraction>value_traits::zero())
+    if(fraction>0)
     {
       for(size_t i = 0;i< n;++i)
       {
         if(value()<fraction)
-          d(i) = value_traits::zero();
+          d(i) = 0;
       }
     }
 

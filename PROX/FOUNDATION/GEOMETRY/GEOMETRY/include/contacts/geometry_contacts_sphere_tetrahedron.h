@@ -66,7 +66,7 @@ namespace geometry
     }
 
     // Test if sphere center is inside tetrahedron
-    if( d[0] < VT::zero() && d[1] < VT::zero() && d[2] < VT::zero() && d[3] < VT::zero() )
+    if( d[0] < 0 && d[1] < 0 && d[2] < 0 && d[3] < 0 )
     {
 
       // Find the tetrahedron plane with smallest penetration depth
@@ -105,7 +105,7 @@ namespace geometry
       T const d_vp_02 = get_signed_distance( A.center(), vp_02 );
       T const d_vp_03 = get_signed_distance( A.center(), vp_03 );
 
-      if(d_vp_01 >= VT::zero() && d_vp_02 >= VT::zero() && d_vp_03 >= VT::zero())
+      if(d_vp_01 >= 0 && d_vp_02 >= 0 && d_vp_03 >= 0)
       {
         V const m =  A.center() - B.p(i);
 
@@ -153,7 +153,7 @@ namespace geometry
         T const d_vp_k = get_signed_distance( A.center(), vp_k );
         T const d_vp_m = get_signed_distance( A.center(), vp_m );
 
-        if(d_vp_k >= VT::zero() && d_vp_m >= VT::zero())
+        if(d_vp_k >= 0 && d_vp_m >= 0)
         {
           V const p = closest_point_on_line(A.center(), make_line( B.p(i), B.p(j) ) );
 
@@ -181,7 +181,7 @@ namespace geometry
 
       T const d = get_signed_distance( A.center(), plane[v] );
 
-      if( d < VT::zero() )
+      if( d < 0 )
         continue;
 
       bool const inside = inside_triangle( A.center(), triangle[v], false );

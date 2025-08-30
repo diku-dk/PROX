@@ -46,7 +46,7 @@ namespace geometry
 
     assert( is_number(rs) || !"contacts_sphere_sphere(): nan");
     assert( is_finite(rs) || !"contacts_sphere_sphere(): inf");
-    assert( rs>VT::zero() || !"contacts_sphere_sphere(): radius sum non-positive");
+    assert( rs>0 || !"contacts_sphere_sphere(): radius sum non-positive");
 
     //--- If the distance between the two center spheres are greater than
     //--- the sum of their radius' then there can be no contact between
@@ -71,7 +71,7 @@ namespace geometry
 
     assert( is_number(lgh) || !"contacts_sphere_sphere(): nan");
     assert( is_finite(lgh) || !"contacts_sphere_sphere(): inf");
-    assert( lgh>VT::zero() || !"contacts_sphere_sphere(): lgh non-positive");
+    assert( lgh>0 || !"contacts_sphere_sphere(): lgh non-positive");
 
     V const n      = d/lgh;
 
@@ -95,7 +95,7 @@ namespace geometry
     //---      d-dA = d/(1+rA/rB)       /*  use d=dA+dB          */
     //---        dA = d - d/(1+rA/rB)
     //---
-    T const dB     = (lgh / ( (rA/rB) + VT::one()));
+    T const dB     = (lgh / ( (rA/rB) + 1));
     T const dA     = lgh - dB;
     T const depth  = lgh - rs;
 

@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
     V                const r   = V::make( 1.0, 1.0, 1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_plane(ray, plane, q, length);
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
     V                const r   = V::make( 1.0, 1.0, 1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_plane(ray, plane, q, length, true);
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
     V                const r   = V::make( -1.0, -1.0, -1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_plane(ray, plane, q, length, true);
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
     V                const r   = V::make( -1.0, 1.0, 0.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_plane(ray, plane, q, length);
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
     V                const r   = V::make( -1.0, 0.0, 0.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_plane(ray, plane, q, length);

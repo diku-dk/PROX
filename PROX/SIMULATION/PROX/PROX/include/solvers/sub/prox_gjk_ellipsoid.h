@@ -45,11 +45,11 @@ namespace prox
             typedef typename math_policy::coordsys_type       transformation_type;
             typedef typename math_policy::value_traits        value_traits;
 
-            if ( lambda_n <= value_traits::zero() )
+            if ( lambda_n <= 0 )
             {
-                lambda_s   = value_traits::zero();
-                lambda_t   = value_traits::zero();
-                lambda_tau = value_traits::zero();
+                lambda_s   = 0;
+                lambda_t   = 0;
+                lambda_tau = 0;
                 return;
             }
 
@@ -60,9 +60,9 @@ namespace prox
             assert( is_number( a ) || !"gjk_ellipsoid(): a was not a number");
             assert( is_number( b ) || !"gjk_ellipsoid(): b was not a number");
             assert( is_number( c ) || !"gjk_ellipsoid(): c was not a number");
-            assert( a > value_traits::zero()       || !"gjk_ellipsoid(): a non-positive");
-            assert( b > value_traits::zero()       || !"gjk_ellipsoid(): a non-positive");
-            assert( c > value_traits::zero()       || !"gjk_ellipsoid(): a non-positive");
+            assert( a > 0       || !"gjk_ellipsoid(): a non-positive");
+            assert( b > 0       || !"gjk_ellipsoid(): a non-positive");
+            assert( c > 0       || !"gjk_ellipsoid(): a non-positive");
 
             geometry::Point<vector3_type>                       point;
             convex::Ellipsoid<typename math_policy::base_type>  ellipsoid;

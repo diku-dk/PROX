@@ -17,9 +17,9 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
   mass_matrix_type A(1);
   sparse::fill(A(0,0), 0.0f);   // 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
 
-  BOOST_CHECK_EQUAL( A(0,0)[0] , value_traits::zero()  );
-  BOOST_CHECK_EQUAL( A(0,0)[1] , value_traits::one()   );
-  BOOST_CHECK_EQUAL( A(0,0)[2] , value_traits::two()   );
+  BOOST_CHECK_EQUAL( A(0,0)[0] , 0  );
+  BOOST_CHECK_EQUAL( A(0,0)[1] , 1   );
+  BOOST_CHECK_EQUAL( A(0,0)[2] , 2   );
   BOOST_CHECK_EQUAL( A(0,0)[3] , 3 );
   BOOST_CHECK_EQUAL( A(0,0)[4] , 4  );
   BOOST_CHECK_EQUAL( A(0,0)[5] , value_traits::numeric_cast(5) );
@@ -29,8 +29,8 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
   mass_matrix_type B(A);
 
   BOOST_CHECK_EQUAL( B(0,0)[0] , value_traits::numeric_cast(2.5));
-  BOOST_CHECK_EQUAL( B(0,0)[1] , value_traits::one()            );
-  BOOST_CHECK_EQUAL( B(0,0)[2] , value_traits::two()            );
+  BOOST_CHECK_EQUAL( B(0,0)[1] , 1            );
+  BOOST_CHECK_EQUAL( B(0,0)[2] , 2            );
   BOOST_CHECK_EQUAL( B(0,0)[3] , 3          );
   BOOST_CHECK_EQUAL( B(0,0)[4] , 4           );
   BOOST_CHECK_EQUAL( B(0,0)[5] , value_traits::numeric_cast(5) );
@@ -39,12 +39,12 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
   sparse::inverse(A);
 
   BOOST_CHECK_EQUAL( A(0,0)[0] , 1/value_traits::numeric_cast(2.5) );
-  BOOST_CHECK_EQUAL( A(0,0)[1] , value_traits::one()   );
+  BOOST_CHECK_EQUAL( A(0,0)[1] , 1   );
   BOOST_CHECK_EQUAL( A(0,0)[2] , value_traits::numeric_cast(-3)   );
-  BOOST_CHECK_EQUAL( A(0,0)[3] , value_traits::two() );
+  BOOST_CHECK_EQUAL( A(0,0)[3] , 2 );
   BOOST_CHECK_EQUAL( A(0,0)[4] , 3  );
   BOOST_CHECK_EQUAL( A(0,0)[5] , value_traits::numeric_cast(-1) );
-  BOOST_CHECK_EQUAL( A(0,0)[6] , value_traits::zero() );
+  BOOST_CHECK_EQUAL( A(0,0)[6] , 0 );
 }
 
 BOOST_AUTO_TEST_SUITE_END();

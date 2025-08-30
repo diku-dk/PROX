@@ -154,9 +154,9 @@ namespace geometry
 
       T const max_val = max( dot0, max( dot1, max( dot2, dot3) ) );
 
-      T const diameter = VT::two() * sqrt( max_val );
+      T const diameter = 2 * sqrt( max_val );
 
-      assert(diameter > VT::zero() || !"get_scale(): Internal error");
+      assert(diameter > 0 || !"get_scale(): Internal error");
       assert(is_finite(diameter)   || !"get_scale(): Inf");
       assert(is_number(diameter)   || !"get_scale(): Nan");
 

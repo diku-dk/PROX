@@ -73,9 +73,9 @@ namespace mass
       assert( is_number( Iyz )  || !"Iyz must be a number"       );
       assert( is_finite( Iyz )  || !"Iyz must be a finite number");
 
-      assert(  fabs(R00*R00 + R01*R01 + R02*R02 - value_traits::one()) <= working_precision<T>() || !"R is not special orthonormal matrix");
-      assert(  fabs(R10*R10 + R11*R11 + R12*R12 - value_traits::one()) <= working_precision<T>() || !"R is not special orthonormal matrix");
-      assert(  fabs(R20*R20 + R21*R21 + R22*R22 - value_traits::one()) <= working_precision<T>() || !"R is not special orthonormal matrix");
+      assert(  fabs(R00*R00 + R01*R01 + R02*R02 - 1) <= working_precision<T>() || !"R is not special orthonormal matrix");
+      assert(  fabs(R10*R10 + R11*R11 + R12*R12 - 1) <= working_precision<T>() || !"R is not special orthonormal matrix");
+      assert(  fabs(R20*R20 + R21*R21 + R22*R22 - 1) <= working_precision<T>() || !"R is not special orthonormal matrix");
       assert(  fabs(R00*R10 + R01*R11 + R02*R12 ) <= working_precision<T>()                      || !"R is not special orthonormal matrix");
       assert(  fabs(R00*R20 + R01*R21 + R02*R22 ) <= working_precision<T>()                      || !"R is not special orthonormal matrix");
       assert(  fabs(R10*R20 + R11*R21 + R12*R22 ) <= working_precision<T>()                      || !"R is not special orthonormal matrix");
@@ -86,7 +86,7 @@ namespace mass
       //---I = [ Jxx, Jxy , Jxz; Jxy, Jyy, Jyz; Jxz, Jyz, Jzz]
       //---R = [ R00, R01 , R02; R10, R11, R12; R20, R21, R22]
       //---simplify(R*I*R')
-      T const & two = value_traits::two();
+      T const & two = 2;
 
       T const Jxx = Ixx;
       T const Jyy = Iyy;
@@ -131,7 +131,7 @@ namespace mass
     assert( is_finite( qy )  || !"qy must be a finite number");
     assert( is_number( qz )  || !"qz must be a number"       );
     assert( is_finite( qz )  || !"qz must be a finite number");
-    assert(  fabs( (qs*qs + qx*qx + qy*qy + qz*qz)  - VT::one() ) <= working_precision<T>() || !"Q is not unit quaterion");
+    assert(  fabs( (qs*qs + qx*qx + qy*qy + qz*qz)  - 1 ) <= working_precision<T>() || !"Q is not unit quaterion");
 
     Properties<T> value = I;
 
@@ -186,7 +186,7 @@ namespace mass
 
     Properties<T> value = Imodel;
 
-    assert( fabs(VT::one() - Imodel.m_Qs) < working_precision<T>() || !"Internal error"  );
+    assert( fabs(1 - Imodel.m_Qs) < working_precision<T>() || !"Internal error"  );
     assert( fabs(Imodel.m_Qx) < working_precision<T>()             || !"Internal error"  );
     assert( fabs(Imodel.m_Qy) < working_precision<T>()             || !"Internal error"  );
     assert( fabs(Imodel.m_Qz) < working_precision<T>()             || !"Internal error"  );
@@ -233,7 +233,7 @@ namespace mass
                    );
 
     //--- We need to make sure that the eigenvectors form a special orthogonal matrix
-    if( det(RR) < VT::zero() )
+    if( det(RR) < 0 )
     {
       RR(0,0) = -RR(0,0);
       RR(1,0) = -RR(1,0);
@@ -251,9 +251,9 @@ namespace mass
     value.m_Ixx = d(order[0]);
     value.m_Iyy = d(order[1]);
     value.m_Izz = d(order[2]);
-    value.m_Ixy = VT::zero();
-    value.m_Ixz = VT::zero();
-    value.m_Iyz = VT::zero();
+    value.m_Ixy = 0;
+    value.m_Ixz = 0;
+    value.m_Iyz = 0;
 
     return value;
   }

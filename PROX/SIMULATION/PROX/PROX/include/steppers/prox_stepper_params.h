@@ -43,7 +43,7 @@ namespace prox
 
     void set_min_gap(T const & value)
     {
-      assert(value >= VT::zero() || !"set_min_gap(): value must be nonnegative");
+      assert(value >= 0 || !"set_min_gap(): value must be nonnegative");
       assert(is_number(value)    || !"set_min_gap(): value must be a number");
       assert(is_finite(value)    || !"set_min_gap(): value must be a finite value");
 
@@ -52,7 +52,7 @@ namespace prox
 
     void set_max_gap(T const & value)
     {
-      assert(value > VT::zero() || !"set_max_gap(): value must be positive");
+      assert(value > 0 || !"set_max_gap(): value must be positive");
       assert(is_number(value)   || !"set_max_gap(): value must be a number");
       assert(is_finite(value)   || !"set_max_gap(): value must be a finite value");
 
@@ -61,8 +61,8 @@ namespace prox
 
     void set_gap_reduction(T const & value)
     {
-      assert(value >  VT::zero() || !"set_gap_reduction(): value must be positive");
-      assert(value <= VT::one()  || !"set_gap_reduction(): value must be less than equal one");
+      assert(value >  0 || !"set_gap_reduction(): value must be positive");
+      assert(value <= 1  || !"set_gap_reduction(): value must be less than equal one");
       assert(is_number(value)    || !"set_gap_reduction(): value must be a number");
       assert(is_finite(value)    || !"set_gap_reduction(): value must be a finite value");
 

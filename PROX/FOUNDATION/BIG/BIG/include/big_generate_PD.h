@@ -23,7 +23,7 @@ namespace big
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
 
-    generate_PSD(n, A, value_traits::zero() );
+    generate_PSD(n, A, 0 );
   }
 
   /**
@@ -40,7 +40,7 @@ namespace big
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
 
-    Random<value_type> value(value_traits::zero(),value_traits::one());
+    Random<value_type> value(0,1);
 
     matrix_type R;
     R.resize(n,n,false);

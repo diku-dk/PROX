@@ -122,7 +122,7 @@ namespace geometry
         //--- Intersection with plane found, now compute intersection point p
         p(i) = E;
 
-        if( fabs(di) > VT::zero())
+        if( fabs(di) > 0)
         {
           T const dj = b(j) - a(j);
           T const dk = b(k) - a(k);
@@ -207,7 +207,7 @@ namespace geometry
     assert( is_finite( n(1) )    || !"contacts_obb_obb(): inf");
     assert( is_number( n(2) )    || !"contacts_obb_obb(): nan");
     assert( is_finite( n(2) )    || !"contacts_obb_obb(): inf");
-    assert( fabs(VT::one() - inner_prod(n,n)) < tiny::working_precision<T>() || !"contacts_obb_obb(): logic error");
+    assert( fabs(1 - inner_prod(n,n)) < tiny::working_precision<T>() || !"contacts_obb_obb(): logic error");
 
     std::vector<bool> a_in_b( 8u, false);
     a_in_b[0] = inside_obb( a[0], B );

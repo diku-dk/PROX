@@ -45,7 +45,7 @@ namespace procedural
                                 , data.m_Z
                                 );
 
-    mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
@@ -104,7 +104,7 @@ namespace procedural
 
     std::string const geom_name = "sphere_" + util::to_string( counter++ );
 
-    mass::Properties<T> props = mass::compute_sphere(VT::one(), radius);
+    mass::Properties<T> props = mass::compute_sphere<T>(1, radius);
 
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_sphere_shape( gid );
@@ -138,7 +138,7 @@ namespace procedural
 
     std::string const geom_name = "capsule_" + util::to_string( counter++ );
 
-    mass::Properties<T> props = mass::compute_capsule(VT::one(), radius, VT::half()*height);
+    mass::Properties<T> props = mass::compute_capsule<T>(1, radius, VT::half()*height);
 
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_capsule_shape( gid );
@@ -174,7 +174,7 @@ namespace procedural
 
     std::string const geom_name = "box_" + util::to_string( counter++ );
 
-    mass::Properties<T> props = mass::compute_box(VT::one(), width/VT::two(), height/VT::two(), depth/VT::two());
+    mass::Properties<T> props = mass::compute_box<T>(1, width/2, height/2, depth/2);
 
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_box_shape( gid );
@@ -214,7 +214,7 @@ namespace procedural
 
     mesh_array::make_tetrahedron<MT>(one, two, three, four, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
 
-    mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
@@ -293,7 +293,7 @@ namespace procedural
                                 , data.m_mesh, data.m_X, data.m_Y, data.m_Z
                                 );
 
-    mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
@@ -363,7 +363,7 @@ namespace procedural
 
     mesh_array::make_conical<MT>( bottom_radius, top_radius, height, slices, mesh, X, Y, Z );
 
-    mass::Properties<T> props_mf = mass::compute_conical_solid(VT::one(), bottom_radius, top_radius, height);
+    mass::Properties<T> props_mf = mass::compute_conical_solid<T>(1, bottom_radius, top_radius, height);
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
@@ -458,7 +458,7 @@ namespace procedural
 
       //2011-05-04 Mort: should these be passed as a parameter? Right now I have just hardcoded them to zero;
       //set_rigid_body spin?
-    engine->set_rigid_body_velocity( rid, VT::zero(), VT::zero(), VT::zero());
+    engine->set_rigid_body_velocity( rid, 0, 0, 0);
 
 
 
@@ -535,10 +535,10 @@ namespace procedural
     vertices[2] = V::make(   half_width_outer, max_height-center_height, half_depth );
     vertices[3] = V::make( - half_width_outer, max_height-center_height, half_depth );
 
-    vertices[4] =  vertices[0] - V::make( VT::zero(), VT::zero(), depth );
-    vertices[5] =  vertices[1] - V::make( VT::zero(), VT::zero(), depth );
-    vertices[6] =  vertices[2] - V::make( VT::zero(), VT::zero(), depth );
-    vertices[7] =  vertices[3] - V::make( VT::zero(), VT::zero(), depth );
+    vertices[4] =  vertices[0] - V::make( 0, 0, depth );
+    vertices[5] =  vertices[1] - V::make( 0, 0, depth );
+    vertices[6] =  vertices[2] - V::make( 0, 0, depth );
+    vertices[7] =  vertices[3] - V::make( 0, 0, depth );
   }
 
   template
@@ -627,7 +627,7 @@ namespace procedural
     if ( material.compare(  "Cannonball" ) == 0)
       return info.m_cannonball_density;
 
-    return VT::zero();
+    return 0;
   }
 
   template

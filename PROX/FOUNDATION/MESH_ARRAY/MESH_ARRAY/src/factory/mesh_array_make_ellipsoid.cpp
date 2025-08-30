@@ -22,7 +22,7 @@ namespace mesh_array
   {
     typedef typename MT::value_traits    VT;
 
-		make_sphere<MT>(VT::one(), slices, segments, mesh, X, Y, Z);
+		make_sphere<MT>(1, slices, segments, mesh, X, Y, Z);
 		scale<MT>(a,b,c, mesh, X, Y, Z);
 	}
 

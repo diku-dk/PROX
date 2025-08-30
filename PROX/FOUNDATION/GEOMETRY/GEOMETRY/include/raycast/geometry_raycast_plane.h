@@ -39,7 +39,7 @@ namespace geometry
     if (fabs(inner_prod(n,r)) <= tiny::working_precision<T>() )
       return false;
 
-    if (only_front_face && inner_prod(n,r) > VT::zero() )
+    if (only_front_face && inner_prod(n,r) > 0 )
       return false;
 
     T const test = ( w - inner_prod(n, p) )  / inner_prod(n,r);
@@ -48,7 +48,7 @@ namespace geometry
     assert( is_finite( test )    || !"compute_ray_plane(): inf");
 
     // Test if the ray hit will be "behind" the ray origin (shooting backwards)
-    if (test < VT::zero())
+    if (test < 0)
       return false;
 
     length = test;
@@ -56,7 +56,7 @@ namespace geometry
 
     assert( is_number( length )    || !"compute_ray_plane(): nan");
     assert( is_finite( length )    || !"compute_ray_plane(): inf");
-    assert( length >= VT::zero()    || !"compute_ray_plane(): non-positive");
+    assert( length >= 0    || !"compute_ray_plane(): non-positive");
 
     assert( is_number( hit(0) )    || !"compute_ray_plane(): nan");
     assert( is_finite( hit(0) )    || !"compute_ray_plane(): inf");

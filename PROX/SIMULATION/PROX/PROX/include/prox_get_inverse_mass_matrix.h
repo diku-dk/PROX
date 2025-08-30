@@ -33,22 +33,22 @@ namespace prox
     size_t index = 0u;
     for(body_iterator body = begin;body!=end;++body, ++index)
     {
-      T inv_mass = VT::zero();
+      T inv_mass = 0;
       M inv_I    = M::make(
-                             VT::zero(), VT::zero(), VT::zero()
-                           , VT::zero(), VT::zero(), VT::zero()
-                           , VT::zero(), VT::zero(), VT::zero()
+                             0, 0, 0
+                           , 0, 0, 0
+                           , 0, 0, 0
                            );
 
       if( !body->is_fixed() && !body->is_scripted() )
       {
-        assert( fabs(body->get_mass()) > VT::zero() || !"get_inverse_mass_matrix(): Divide by zero!");
+        assert( fabs(body->get_mass()) > 0 || !"get_inverse_mass_matrix(): Divide by zero!");
 
-        inv_mass = VT::one() / body->get_mass();
+        inv_mass = 1 / body->get_mass();
 
         assert(is_number(inv_mass)   || !"get_inverse_mass_matrix(): Nan");
         assert(is_finite(inv_mass)   || !"get_inverse_mass_matrix(): Inf");
-        assert(inv_mass > VT::zero() || !"get_inverse_mass_matrix(): Negative mass");
+        assert(inv_mass > 0 || !"get_inverse_mass_matrix(): Negative mass");
 
         M const I_bf = body->get_inertia_bf();
         M const R    = tiny::make( body->get_orientation() );

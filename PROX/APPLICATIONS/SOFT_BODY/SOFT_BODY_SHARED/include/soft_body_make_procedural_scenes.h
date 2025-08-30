@@ -201,11 +201,11 @@ namespace soft_body
 
     assert( slices      > 2u         || !"make_cantilever_tower_scene(): slices must be larger than two");
     assert( segments    > 0u         || !"make_cantilever_tower_scene(): segments must be positive");
-    assert( radius      > VT::zero() || !"make_cantilever_tower_scene(): radius must be positive");
-    assert( beam_depth  > VT::zero() || !"make_cantilever_tower_scene(): beam depth  must be positive");
-    assert( beam_height > VT::zero() || !"make_cantilever_tower_scene(): beam height must be positive");
+    assert( radius      > 0 || !"make_cantilever_tower_scene(): radius must be positive");
+    assert( beam_depth  > 0 || !"make_cantilever_tower_scene(): beam depth  must be positive");
+    assert( beam_height > 0 || !"make_cantilever_tower_scene(): beam height must be positive");
 
-    T const delta_theta    = VT::two()* VT::pi()/ slices;
+    T const delta_theta    = 2* VT::pi()/ slices;
     T const center_radius  = radius + beam_depth*VT::half();
     T const beam_width     = VT::numeric_cast(1.9)*radius*sin( delta_theta*VT::half() );
 
@@ -244,8 +244,8 @@ namespace soft_body
                   , disp
                   );
 
-        T const sign           = flip_dirichlet ?  -VT::one() : VT::one() ;
-        V const box_origo      = V::make( VT::zero() , VT::zero(), sign*beam_depth*VT::half());
+        T const sign           = flip_dirichlet ?  -1 : 1 ;
+        V const box_origo      = V::make( 0 , 0, sign*beam_depth*VT::half());
         V const box_dimensions = V::make(beam_width+VT::numeric_cast(0.01), beam_height+VT::numeric_cast(0.01), VT::numeric_cast(0.01) );
 
         hyper::make_dirichlet_conditions(
@@ -286,21 +286,21 @@ namespace soft_body
     bool   const use_scripted    = util::to_value<bool>(   config_file.get_value("use_scripted", "false")  );
 
     assert( layers       > 0u         || !"make_plate_stack_scene(): layers must be positive");
-    assert( plate_width  > VT::zero() || !"make_plate_stack_scene(): plate width must be positive");
-    assert( plate_depth  > VT::zero() || !"make_plate_stack_scene(): plate depth  must be positive");
-    assert( plate_height > VT::zero() || !"make_plate_stack_scene(): plate height must be positive");
+    assert( plate_width  > 0 || !"make_plate_stack_scene(): plate width must be positive");
+    assert( plate_depth  > 0 || !"make_plate_stack_scene(): plate depth  must be positive");
+    assert( plate_height > 0 || !"make_plate_stack_scene(): plate height must be positive");
 
     size_t const motion_idx0 = engine.create_twister_motion();
     //size_t const motion_idx1 = engine.create_twister_motion();
     //size_t const motion_idx2 = engine.create_twister_motion();
 
-    T theta = VT::zero();
+    T theta = 0;
 
     for(size_t i = 0u; i < layers; ++i)
     {
-      T const x     = VT::zero();
+      T const x     = 0;
       T const y     = (i + VT::half()) * plate_height;
-      T const z     = VT::zero();
+      T const z     = 0;
 
       V const disp = V::make( x, y, z );
 
@@ -336,7 +336,7 @@ namespace soft_body
       }
       else if(i==0)
       {
-        V const box_origo      = V::make( VT::zero() , -plate_height*VT::half(), VT::zero() );
+        V const box_origo      = V::make( 0 , -plate_height*VT::half(), 0 );
         V const box_dimensions = V::make(plate_width+VT::numeric_cast(0.01), VT::numeric_cast(0.01), plate_depth+VT::numeric_cast(0.01) );
 
         hyper::make_dirichlet_conditions(

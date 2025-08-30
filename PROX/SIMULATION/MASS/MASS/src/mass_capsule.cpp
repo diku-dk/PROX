@@ -22,13 +22,13 @@ namespace mass
 
     assert( is_number( density )                || !"density must be a number"           );
     assert( is_finite( density )                || !"density must be a finite number"    );
-    assert( density > value_traits::zero()      || !"density must be positive"           );
+    assert( density > 0      || !"density must be positive"           );
     assert( is_number( radius )                 || !"radius must be a  number"           );
     assert( is_finite( radius )                 || !"radius must be a finite number"     );
-    assert( radius >= value_traits::zero()      || !"radius must be non-negative"        );
+    assert( radius >= 0      || !"radius must be non-negative"        );
     assert( is_number( half_height )            || !"half_height must be a number"       );
     assert( is_finite( half_height )            || !"half_height must be a finite number");
-    assert( half_height >= value_traits::zero() || !"half_height must be non-negative"   );
+    assert( half_height >= 0 || !"half_height must be non-negative"   );
 
     Properties<T> const I_sphere   = compute_sphere  ( density, radius );
     Properties<T> const I_cylinder = compute_cylinder( density, radius, half_height );
@@ -44,14 +44,14 @@ namespace mass
 
     I_half_sphere.m_m = I_sphere.m_m * value_traits::half();
 
-    I_half_sphere = translate_to_model_frame( value_traits::zero(), half_height, value_traits::zero(), I_half_sphere);
+    I_half_sphere = translate_to_model_frame<T>( 0, half_height, 0, I_half_sphere);
 
     assert( I_half_sphere.m_Ixx >= I_sphere.m_Ixx       || !"Inertia transformation failed" );
     assert( I_half_sphere.m_Iyy == I_sphere.m_Iyy       || !"Inertia transformation failed" );
     assert( I_half_sphere.m_Izz >= I_sphere.m_Izz       || !"Inertia transformation failed" );
-    assert( I_half_sphere.m_Ixy == value_traits::zero() || !"Inertia transformation failed" );
-    assert( I_half_sphere.m_Ixz == value_traits::zero() || !"Inertia transformation failed" );
-    assert( I_half_sphere.m_Iyz == value_traits::zero() || !"Inertia transformation failed" );
+    assert( I_half_sphere.m_Ixy == 0 || !"Inertia transformation failed" );
+    assert( I_half_sphere.m_Ixz == 0 || !"Inertia transformation failed" );
+    assert( I_half_sphere.m_Iyz == 0 || !"Inertia transformation failed" );
 
     value.m_Ixx  += I_half_sphere.m_Ixx;
     value.m_Izz  += I_half_sphere.m_Izz;

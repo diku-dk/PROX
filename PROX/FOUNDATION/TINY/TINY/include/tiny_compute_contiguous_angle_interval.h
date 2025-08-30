@@ -51,7 +51,7 @@ namespace tiny
     typedef typename iterator_type::value_type         T;
     typedef          ValueTraits<T>                    value_traits;
 
-    T const two_pi = value_traits::pi()*value_traits::two();
+    T const two_pi = value_traits::pi()*2;
 
     // Determine the number of samples
     size_t const N = std::distance( begin, end);
@@ -65,7 +65,7 @@ namespace tiny
 
     // Find the two theta values with the largest gap inbetween. That
     // is the largest angle difference as measured in a counter-clock-wise manner.
-    T      max_delta_theta = value_traits::zero();
+    T      max_delta_theta = 0;
     size_t max_i           = N;
 
     for(size_t i = 0u;i<N;++i)
@@ -82,7 +82,7 @@ namespace tiny
       }
     }
 
-    while(theta_min < value_traits::zero())
+    while(theta_min < 0)
       theta_min += two_pi;
 
     while(theta_max < theta_min)

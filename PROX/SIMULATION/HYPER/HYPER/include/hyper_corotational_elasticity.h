@@ -57,7 +57,7 @@ namespace hyper
       T const mu     = this->m_material.mu();
       M const I      = M::identity();
 
-      return (lambda * tiny::trace(S-I)) * R  + (VT::two() * mu) * (F-R);
+      return (lambda * tiny::trace(S-I)) * R  + (2 * mu) * (F-R);
     }
 
     /**
@@ -92,8 +92,8 @@ namespace hyper
       assert( is_number(j) || !"sigma(): j was not a number");
       assert( is_finite(j) || !"sigma(): j was not finite");
 
-      //return (VT::one()/j)* tiny::prod(F, tiny::prod( this->S(F), tiny::trans(F) ) );
-      return (VT::one()/j)* tiny::prod( this->P(F), tiny::trans(F) );
+      //return (1/j)* tiny::prod(F, tiny::prod( this->S(F), tiny::trans(F) ) );
+      return (1/j)* tiny::prod( this->P(F), tiny::trans(F) );
     }
 
     std::string name() const

@@ -25,16 +25,16 @@ namespace mass
 
     assert( is_number( density )       || !"density must be a number"               );
     assert( is_finite( density )       || !"density must be a finite number"        );
-    assert( density > VT::zero()       || !"density must be positive"               );
+    assert( density > 0       || !"density must be positive"               );
     assert( is_number( bottom_radius ) || !"bottom radius must be a  number"        );
     assert( is_finite( bottom_radius ) || !"bottom radius must be a finite number"  );
-    assert( bottom_radius > VT::zero() || !"bottom radius must be positive"         );
+    assert( bottom_radius > 0 || !"bottom radius must be positive"         );
     assert( is_number( top_radius )    || !"top radius must be a  number"           );
     assert( is_finite( top_radius )    || !"top radius must be a finite number"     );
-    assert( top_radius > VT::zero()    || !"top radius must be positive"            );
+    assert( top_radius > 0    || !"top radius must be positive"            );
     assert( is_number( height )        || !"height must be a  number"               );
     assert( is_finite( height )        || !"height must be a finite number"         );
-    assert( height > VT::zero()        || !"height must be positive"                );
+    assert( height > 0        || !"height must be positive"                );
 
     // First we create a few constants to make the code more readable
     T const & a      = bottom_radius;
@@ -44,8 +44,8 @@ namespace mass
     T const H  = a*h/(a-b);              // Height of full cone with base a that exactly encloses the capped cone
     T const L  = H-h;                    // Height of cone tip (empty space) that is capped by the frustum
 
-    assert(H>VT::zero() || !"internal error");
-    assert(L>VT::zero() || !"internal error");
+    assert(H>0 || !"internal error");
+    assert(L>0 || !"internal error");
 
     Properties<T> cone = compute_cone(density, a, H);
     Properties<T> top  = compute_cone(density, b, L);
@@ -53,7 +53,7 @@ namespace mass
     T const tmp = top.m_y;  // Save center of mass position of top before moving it around
 
     top = translate_to_body_frame( top );
-    top = translate_to_model_frame( VT::zero(), h + tmp, VT::zero(), top );
+    top = translate_to_model_frame<T>( 0, h + tmp, 0, top );
 
     Properties<T> value;
 

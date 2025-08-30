@@ -67,10 +67,10 @@ namespace geometry
       T const b1 = get_signed_distance(B1, plane);
       T const b2 = get_signed_distance(B2, plane);
 
-      if ( b0 > VT::zero() && b1 > VT::zero() && b2 > VT::zero()  )
+      if ( b0 > 0 && b1 > 0 && b2 > 0  )
         return false;
 
-      if ( b0 < VT::zero() && b1 < VT::zero() && b2 < VT::zero()  )
+      if ( b0 < 0 && b1 < 0 && b2 < 0  )
         return false;
     }
 
@@ -82,10 +82,10 @@ namespace geometry
       T const a1 = get_signed_distance(A1, plane);
       T const a2 = get_signed_distance(A2, plane);
 
-      if ( a0 > VT::zero() && a1 > VT::zero() && a2 > VT::zero()  )
+      if ( a0 > 0 && a1 > 0 && a2 > 0  )
         return false;
 
-      if ( a0 < VT::zero() && a1 < VT::zero() && a2 < VT::zero()  )
+      if ( a0 < 0 && a1 < 0 && a2 < 0  )
         return false;
     }
 

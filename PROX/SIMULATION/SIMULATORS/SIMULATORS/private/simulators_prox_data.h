@@ -267,7 +267,7 @@ namespace simulators
             Q const & q1 = m_orientations[key].m_value;
             Q const q_rel  = tiny::prod( q1, tiny::conj(q0));
 
-            T theta = VT::zero();
+            T theta = 0;
             V axis  = V::zero();
             tiny::get_axis_angle(q_rel, axis, theta);
 

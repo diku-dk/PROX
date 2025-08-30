@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
     V                const r   = V::make( 0.2, 0.2,  1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = geometry::compute_raycast_tetrahedron(ray, tetrahedron, q, length );
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
     V                const r   = V::make( -0.2, -0.2,  1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = geometry::compute_raycast_tetrahedron(ray, tetrahedron, q, length );
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
     V                const r   = V::make( 0.2, 0.2,  1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = geometry::compute_raycast_tetrahedron(ray, tetrahedron, q, length, surface_map );
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
     V                const r   = V::make( 0.2, 0.2, -1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = geometry::compute_raycast_tetrahedron(ray, tetrahedron, q, length, surface_map );
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
     V                const ray_direction   = hit_point - ray_origin;
     geometry::Ray<V> const ray             = geometry::make_ray(ray_origin, ray_direction);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = geometry::compute_raycast_tetrahedron(ray, tetrahedron, q, length );

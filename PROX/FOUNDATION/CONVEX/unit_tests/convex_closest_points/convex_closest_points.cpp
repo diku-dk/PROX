@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
 
     X_A = C::identity();
     X_B = C::identity();
-    X_B.T() = V::make(VT::zero(), VT::two(), VT::zero());
+    X_B.T() = V::make(0, 2, 0);
 
     convex::compute_closest_points<M>(
                                       X_A
@@ -124,17 +124,17 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
                                       , max_iterations
                                       );
 
-    T true_distance = tiny::norm( X_A.T() - X_B.T() ) - VT::two();
+    T true_distance = tiny::norm( X_A.T() - X_B.T() ) - 2;
 
     BOOST_CHECK( fabs(distance - true_distance) < 10e-6);
 
-    BOOST_CHECK( p_A(0) == VT::zero() );
-    BOOST_CHECK( p_A(1) == VT::one() );
-    BOOST_CHECK( p_A(2) == VT::zero() );
+    BOOST_CHECK( p_A(0) == 0 );
+    BOOST_CHECK( p_A(1) == 1 );
+    BOOST_CHECK( p_A(2) == 0 );
 
-    BOOST_CHECK( p_B(0) == VT::zero() );
-    BOOST_CHECK( p_B(1) == VT::one()  );
-    BOOST_CHECK( p_B(2) == VT::zero() );
+    BOOST_CHECK( p_B(0) == 0 );
+    BOOST_CHECK( p_B(1) == 1  );
+    BOOST_CHECK( p_B(2) == 0 );
   }
   // Two unit-spheres overlapping but both placed on the x-axis
   {
@@ -167,17 +167,17 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
                                       , max_iterations
                                       );
 
-    T true_distance = tiny::norm( X_A.T() - X_B.T() ) - VT::two();
+    T true_distance = tiny::norm( X_A.T() - X_B.T() ) - 2;
 
     BOOST_CHECK( fabs(distance - true_distance) < 10e-6);
 
-    BOOST_CHECK( p_A(0) == VT::one()  );
-    BOOST_CHECK( p_A(1) == VT::zero() );
-    BOOST_CHECK( p_A(2) == VT::zero() );
+    BOOST_CHECK( p_A(0) == 1  );
+    BOOST_CHECK( p_A(1) == 0 );
+    BOOST_CHECK( p_A(2) == 0 );
 
     BOOST_CHECK( p_B(0) == VT::numeric_cast(1.5)  );
-    BOOST_CHECK( p_B(1) == VT::zero() );
-    BOOST_CHECK( p_B(2) == VT::zero() );
+    BOOST_CHECK( p_B(1) == 0 );
+    BOOST_CHECK( p_B(2) == 0 );
   }
   // Two unit-spheres exactly touching in one point (= one intersection point) and but both placed on the x-axis
   {
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(random_test)
                                       , max_iterations
                                       );
 
-    T const true_distance = tiny::norm( X_A.T() - X_B.T() ) - VT::two();
+    T const true_distance = tiny::norm( X_A.T() - X_B.T() ) - 2;
 
     if(  true_distance > absolute_tolerance )
     {

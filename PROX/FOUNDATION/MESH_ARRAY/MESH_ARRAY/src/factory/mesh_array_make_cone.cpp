@@ -26,9 +26,9 @@ namespace mesh_array
 		
 		profile.resize(3u);
 		
-		profile[ 0 ] = V::make(VT::zero(), VT::zero(), VT::zero() );
-		profile[ 1 ] = V::make(    radius, VT::zero(), VT::zero() );
-		profile[ 2 ] = V::make(VT::zero(), height,     VT::zero() );
+		profile[ 0 ] = V::make(0, 0, 0 );
+		profile[ 1 ] = V::make(    radius, 0, 0 );
+		profile[ 2 ] = V::make(0, height,     0 );
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z  );
 	}

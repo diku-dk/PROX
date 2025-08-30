@@ -47,7 +47,7 @@ namespace procedural
     data.m_Z = Z;
 
 
-    mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_mf);
 

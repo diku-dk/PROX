@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool const hit = compute_raycast(ray, object, q, length);

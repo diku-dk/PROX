@@ -43,7 +43,7 @@ namespace big
     if(max_iterations <= 0)
       throw std::invalid_argument("Max iterations should be positive" );
 
-    if(epsilon <= value_traits::zero())
+    if(epsilon <= 0)
       throw std::invalid_argument("epsilon should be positive" );
 
     if(A.size1() <= 0 || A.size2() <= 0)

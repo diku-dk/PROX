@@ -91,14 +91,14 @@ namespace hyper
 
     void set_tetgen_quality_ratio(T const & value)
     {
-      assert( value >= VT::zero() || !"set_tetgen_quality_ratio(): illegal value");
+      assert( value >= 0 || !"set_tetgen_quality_ratio(): illegal value");
 
       this->m_tetgen_settings.m_quality_ratio = value;
     }
 
     void set_tetgen_maximum_volume(T const & value)
     {
-      assert( value >= VT::zero() || !"set_tetgen_maximum_volume(): illegal value");
+      assert( value >= 0 || !"set_tetgen_maximum_volume(): illegal value");
 
       this->m_tetgen_settings.m_maximum_volume = value;
     }
@@ -132,7 +132,7 @@ namespace hyper
 
     void set_time_step(T const & value)
     {
-      assert( value >= VT::zero() || !"set_time_step(): illegal value");
+      assert( value >= 0 || !"set_time_step(): illegal value");
 
       this->m_time_step = value;
     }
@@ -144,7 +144,7 @@ namespace hyper
 
     void set_use_cfl_condition(bool const & value)
     {
-      assert( value >= VT::zero() || !"set_use_cfl_condition(): illegal value");
+      assert( value >= 0 || !"set_use_cfl_condition(): illegal value");
 
       this->m_use_cfl_condition = value;
     }
@@ -159,19 +159,19 @@ namespace hyper
 
     void set_adaptive_min_dt(T const & value)
     {
-      assert( value >= VT::zero() || !"set_adaptive_min_dt(): illegal value");
+      assert( value >= 0 || !"set_adaptive_min_dt(): illegal value");
       this->m_adaptive_min_dt = value;
     }
 
     void set_adaptive_max_dt(T const & value)
     {
-      assert( value >= VT::zero() || !"set_adaptive_max_dt(): illegal value");
+      assert( value >= 0 || !"set_adaptive_max_dt(): illegal value");
       this->m_adaptive_max_dt = value;
     }
 
     void set_adaptive_halving_tolerance(T const & value)
     {
-      assert( value > VT::zero() || !"set_adaptive_halving_tolerance(): illegal value");
+      assert( value > 0 || !"set_adaptive_halving_tolerance(): illegal value");
       this->m_adaptive_halving_tolerance = value;
     }
 

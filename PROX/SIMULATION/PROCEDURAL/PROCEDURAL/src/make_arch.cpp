@@ -56,7 +56,7 @@ namespace procedural
       V const T_b2m       = pillar_stone.Tb2m();
       Q const Q_b2m       = pillar_stone.Qb2m();
 
-			V const T_left_m2l  = V::make( -center_radius, y, VT::zero() );
+			V const T_left_m2l  = V::make( -center_radius, y, 0 );
 			Q const Q_left_m2l  = Q::Ru( VT::pi_half(),  V::k() );
 
 			V const T_l2w       = position;
@@ -85,7 +85,7 @@ namespace procedural
                             , stone_density
                             );
 
-      V const T_right_m2l = V::make(  center_radius, y, VT::zero() );
+      V const T_right_m2l = V::make(  center_radius, y, 0 );
       Q const Q_right_m2l = Q::Ru( VT::pi_half(),  V::k() );
 
       V T_right_b2w;
@@ -123,7 +123,7 @@ namespace procedural
       V const T_b2m = arch_stone.Tb2m();
       Q const Q_b2m = arch_stone.Qb2m();
 
-      V const T_m2l = V::make( x, y, VT::zero() );
+      V const T_m2l = V::make( x, y, 0 );
 			Q const Q_m2l = Q::Ru(  theta - VT::pi_half() , V::k() );
 
       V const T_l2w = position;

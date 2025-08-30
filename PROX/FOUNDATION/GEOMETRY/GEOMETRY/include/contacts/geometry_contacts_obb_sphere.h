@@ -56,42 +56,42 @@ namespace geometry
 
     V p = c;
     V n = V::zero();
-    T d = VT::zero();
+    T d = 0;
 
     if(c(0) > ext(0))
     {
       p(0) = ext(0);
-      n(0) = VT::one();
+      n(0) = 1;
       inside = false;
     }
     if(c(0) < -ext(0))
     {
       p(0) = -ext(0);
-      n(0) = -VT::one();
+      n(0) = -1;
       inside = false;
     }
     if(c(1) > ext(1))
     {
       p(1) = ext(1);
-      n(1) = VT::one();
+      n(1) = 1;
       inside = false;
     }
     if(c(1) < -ext(1))
     {
       p(1) = -ext(1);
-      n(1) = -VT::one();
+      n(1) = -1;
       inside = false;
     }
     if(c(2) > ext(2))
     {
       p(2) = ext(2);
-      n(2) = VT::one();
+      n(2) = 1;
       inside = false;
     }
     if(c(2) < -ext(2))
     {
       p(2) = -ext(2);
-      n(2) = -VT::one();
+      n(2) = -1;
       inside = false;
     }
 
@@ -115,14 +115,14 @@ namespace geometry
       if(f(0) <= f(1) && f(0) <= f(2))
       {
         d = -f(0) - radius;
-        n(0) = (c(0) > 0)? VT::one() : -VT::one();
+        n(0) = (c(0) > 0)? 1 : -1;
         ++cnt_closest_faces;
         p(0) = (c(0) > 0)?ext(0):-ext(0);
       }
       if(f(1) <= f(0) && f(1) <= f(2))
       {
         d = -f(1) - radius;
-        n(1) = (c(1) > 0) ? VT::one() : -VT::one();
+        n(1) = (c(1) > 0) ? 1 : -1;
         ++cnt_closest_faces;
         p(1) = (c(1) > 0) ? ext(1) : -ext(1);
       }

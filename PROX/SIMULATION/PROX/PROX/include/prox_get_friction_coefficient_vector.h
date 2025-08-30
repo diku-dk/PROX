@@ -32,7 +32,7 @@ namespace prox
 
       block4x1_type & b = mu( k );
 
-      b(0) = value_traits::zero();
+      b(0) = 0;
       b(1) = mu_s;
       b(2) = mu_t;
       b(3) = mu_tau;

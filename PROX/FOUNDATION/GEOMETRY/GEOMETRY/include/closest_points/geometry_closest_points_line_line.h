@@ -47,7 +47,7 @@ namespace geometry
     T const k  =   tiny::inner_prod(directionA,directionB);
     T const q1 =   tiny::inner_prod(directionA,r);
     T const q2 = - tiny::inner_prod(directionB,r);
-    T const w  =   VT::one() - k*k;
+    T const w  =   1 - k*k;
 
     assert( is_number( k )  || !"closest_points_line_line(): nan");
     assert( is_finite( k )  || !"closest_points_line_line(): inf");
@@ -58,8 +58,8 @@ namespace geometry
     assert( is_number( w )  || !"closest_points_line_line(): nan");
     assert( is_finite( w )  || !"closest_points_line_line(): inf");
 
-    s = VT::zero();
-    t = VT::zero();
+    s = 0;
+    t = 0;
 
     if(fabs(w) > epsilon)
     {

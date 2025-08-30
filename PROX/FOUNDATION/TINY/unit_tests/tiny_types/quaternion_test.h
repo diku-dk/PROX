@@ -20,9 +20,9 @@ namespace quaternion_test
     typedef typename T::real_type        real_type;
 
     real_type const tol = value_traits::numeric_cast(0.1); // 1/10 percent
-    //real_type const zero = value_traits::zero();
-    real_type const one  = value_traits::one();
-    real_type const two  = value_traits::two();
+    //real_type const zero = 0;
+    real_type const one  = 1;
+    real_type const two  = 2;
 
     vector3_type const V(one);
     Q q;

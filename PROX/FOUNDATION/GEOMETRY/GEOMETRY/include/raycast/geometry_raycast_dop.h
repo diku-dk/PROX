@@ -27,7 +27,7 @@ namespace geometry
     typedef typename V::real_type     T;
     typedef typename V::value_traits VT;
 
-    assert(threshold >= VT::zero() || !"compute_raycast_dop(): threhold must be non-negative");
+    assert(threshold >= 0 || !"compute_raycast_dop(): threhold must be non-negative");
 
     size_t              const N = K/2;
     DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
@@ -51,7 +51,7 @@ namespace geometry
       T const w1 =   dop(k).upper();
       T const f1 =   inner_prod(d1,r);
 
-      if(f0 == VT::zero())
+      if(f0 == 0)
         continue;
 
       T t_near = (w0 - inner_prod(d0,p))  / f0;
@@ -74,7 +74,7 @@ namespace geometry
       t_max = (t_far  < t_max) ? t_far  : t_max;
     }
 
-    if( t_min > VT::zero() &&  t_min <= t_max)
+    if( t_min > 0 &&  t_min <= t_max)
     {
       V const q = p + r*t_min;
 
@@ -112,7 +112,7 @@ namespace geometry
   {
     typedef typename V::value_traits VT;
 
-    return compute_raycast_dop<V,K>(ray, dop, point, length, VT::zero() );
+    return compute_raycast_dop<V,K>(ray, dop, point, length, 0 );
   }
 
 

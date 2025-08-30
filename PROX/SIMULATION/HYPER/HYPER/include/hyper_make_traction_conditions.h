@@ -44,10 +44,10 @@ namespace hyper
       V const pm = V::make( body.m_X(k), body.m_Y(k), body.m_Z(k) );
       V const pk = V::make( body.m_X(m), body.m_Y(m), body.m_Z(m) );
 
-      bool const i_inside = phi(pi) <= VT::zero();
-      bool const j_inside = phi(pj) <= VT::zero();
-      bool const k_inside = phi(pk) <= VT::zero();
-      bool const m_inside = phi(pm) <= VT::zero();
+      bool const i_inside = phi(pi) <= 0;
+      bool const j_inside = phi(pj) <= 0;
+      bool const k_inside = phi(pk) <= 0;
+      bool const m_inside = phi(pm) <= 0;
 
       if( i_inside && k_inside && j_inside )
         body.m_traction_conditions.push_back( make_traction_info<MT>( i, k, j, load ));
@@ -93,10 +93,10 @@ namespace hyper
       V const pk = V::make( body.m_X0(k), body.m_Y0(k), body.m_Z0(k) );
       V const pm = V::make( body.m_X0(m), body.m_Y0(m), body.m_Z0(m) );
 
-      bool const i_inside = phi(pi) <= VT::zero();
-      bool const j_inside = phi(pj) <= VT::zero();
-      bool const k_inside = phi(pk) <= VT::zero();
-      bool const m_inside = phi(pm) <= VT::zero();
+      bool const i_inside = phi(pi) <= 0;
+      bool const j_inside = phi(pj) <= 0;
+      bool const k_inside = phi(pk) <= 0;
+      bool const m_inside = phi(pm) <= 0;
 
       if( i_inside && k_inside && j_inside )
         body.m_traction_conditions.push_back( make_traction_info<MT>( i, k, j, load ));

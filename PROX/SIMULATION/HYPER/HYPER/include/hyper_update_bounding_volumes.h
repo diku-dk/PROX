@@ -96,7 +96,7 @@ namespace hyper
         T const   d = geometry::get_signed_distance( q, P);
 
         //--- If point outside plane then push it back
-        points[k] = (d>VT::zero()) ? q - P.n()*d : q;
+        points[k] = (d>0) ? q - P.n()*d : q;
       }
     }
 
@@ -115,7 +115,7 @@ namespace hyper
 
     V const center = sum_q / VT::numeric_cast(  points.size()  );
 
-    T radius = VT::zero();
+    T radius = 0;
     for(size_t k = 0u; k < points.size(); ++k)
     {
       V const & q = points[k];
@@ -152,7 +152,7 @@ namespace hyper
 
     V const center = sum_q / VT::numeric_cast(  body.m_X.size()  );
 
-    T radius = VT::zero();
+    T radius = 0;
     for(size_t k = 0u; k < body.m_X.size(); ++k)
     {
       V const q = V::make( body.m_X(k), body.m_Y(k), body.m_Z(k) );

@@ -40,9 +40,9 @@ namespace prox
       block4x1_type & b = e( k );
 
       b(0) = e_k;
-      b(1) = value_traits::zero();
-      b(2) = value_traits::zero();
-      b(3) = value_traits::zero();
+      b(1) = 0;
+      b(2) = 0;
+      b(3) = 0;
     }
   }
 

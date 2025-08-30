@@ -71,7 +71,7 @@ namespace hyper
     : m_bodies()
     , m_contacts()
     , m_params()
-    , m_time(VT::zero())
+    , m_time(0)
     , m_gravity(V::zero())
     , m_saint_vernant_kirchoff_model()
     , m_neohookean_model()
@@ -96,7 +96,7 @@ namespace hyper
       this->m_contacts.clear();
       this->m_params.clear();
       this->m_visual_names.clear();
-      this->m_time = VT::zero();
+      this->m_time = 0;
 
       this->m_gravity = V::zero();
 

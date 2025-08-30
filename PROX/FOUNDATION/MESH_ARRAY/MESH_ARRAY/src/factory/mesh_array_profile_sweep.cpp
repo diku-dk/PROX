@@ -44,7 +44,7 @@ namespace mesh_array
     Z.bind(mesh);
 
       //--- Make a 2D grid of vertices by sweeping profile around y-axis
-    T const dtheta = VT::two()*VT::pi() / J;  // The angle of each slice
+    T const dtheta = 2*VT::pi() / J;  // The angle of each slice
 
     for(size_t j = 0u; j < J; ++j)
     {

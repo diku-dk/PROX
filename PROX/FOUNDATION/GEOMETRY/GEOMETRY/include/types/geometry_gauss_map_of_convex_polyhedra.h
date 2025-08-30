@@ -132,11 +132,11 @@ namespace geometry
 
       V const & m  = this->m_normals[face_idx];
 
-      assert(  fabs( VT::one() - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_face(): n was not unit vector" );
-      assert(  fabs( VT::one() - tiny::norm(m) ) < tiny::working_precision<T>() || !"inside_map_of_face(): m was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_face(): n was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(m) ) < tiny::working_precision<T>() || !"inside_map_of_face(): m was not unit vector" );
 
       T const   dot      = tiny::inner_prod(n, m);
-      T const   safe_dot = max(-VT::one(), min(VT::one(), dot ) );
+      T const   safe_dot = max<T>(-1, min<T>(1, dot ) );
 
       return (safe_dot >= this->m_tolerance);
     }
@@ -159,9 +159,9 @@ namespace geometry
       V const & l   = this->m_normals[ lf ];
       V const & r   = this->m_normals[ rf ];
 
-      assert(  fabs( VT::one() - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): n was not unit vector" );
-      assert(  fabs( VT::one() - tiny::norm(l) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): l was not unit vector" );
-      assert(  fabs( VT::one() - tiny::norm(r) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): r was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): n was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(l) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): l was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(r) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): r was not unit vector" );
 
       V const d        = p1 - p0;
       V const n0       = n - (tiny::inner_prod(n,d)*d / tiny::inner_prod(d,d));
@@ -184,7 +184,7 @@ namespace geometry
       assert( is_finite(dot) || !"inside_map_of_edge(): inf ");
       assert( is_number(dot) || !"inside_map_of_edge(): nan ");
 
-      T const safe_dot = max(-VT::one(), min(VT::one(), dot ) );
+      T const safe_dot = max<T>(-1, min<T>(1, dot ) );
 
       if (safe_dot < this->m_tolerance)
         return false;
@@ -196,7 +196,7 @@ namespace geometry
       assert( is_finite(space_product) || !"inside_map_of_edge(): inf ");
       assert( is_number(space_product) || !"inside_map_of_edge(): nan ");
 
-      bool const accute = space_product > VT::zero();
+      bool const accute = space_product > 0;
 
       if(accute)
       {
@@ -208,7 +208,7 @@ namespace geometry
         assert( is_finite(space_product_r) || !"inside_map_of_edge(): inf ");
         assert( is_number(space_product_r) || !"inside_map_of_edge(): nan ");
 
-        bool const inside = space_product_r >= VT::zero() && space_product_l>= VT::zero();
+        bool const inside = space_product_r >= 0 && space_product_l>= 0;
 
         return inside;
       }
@@ -222,7 +222,7 @@ namespace geometry
         assert( is_finite(space_product_r) || !"inside_map_of_edge(): inf ");
         assert( is_number(space_product_r) || !"inside_map_of_edge(): nan ");
 
-        bool const outside = space_product_r > VT::zero() && space_product_l > VT::zero();
+        bool const outside = space_product_r > 0 && space_product_l > 0;
 
         return ! outside;
       }
@@ -263,9 +263,9 @@ namespace geometry
         V const & l   = this->m_normals[ lf ];
         V const & r   = this->m_normals[ rf ];
 
-        assert(  fabs( VT::one() - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): n was not unit vector" );
-        assert(  fabs( VT::one() - tiny::norm(l) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): l was not unit vector" );
-        assert(  fabs( VT::one() - tiny::norm(r) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): r was not unit vector" );
+        assert(  fabs( 1 - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): n was not unit vector" );
+        assert(  fabs( 1 - tiny::norm(l) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): l was not unit vector" );
+        assert(  fabs( 1 - tiny::norm(r) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): r was not unit vector" );
 
         V const d = p1 - p0;
 
@@ -274,14 +274,14 @@ namespace geometry
         assert( is_finite(space_product) || !"inside_map_of_vertex(): inf ");
         assert( is_number(space_product) || !"inside_map_of_vertex(): nan ");
 
-        bool const accute = space_product > VT::zero();
+        bool const accute = space_product > 0;
 
         if(accute)
         {
           // l and r forms an acute angle around d
           T const product = tiny::inner_prod(n, tiny::cross(  r, l ) );
 
-          bool const inside_arc = product > VT::zero();
+          bool const inside_arc = product > 0;
 
           if (!inside_arc)
             return false;
@@ -291,7 +291,7 @@ namespace geometry
           // l and r forms a reflex angle around d
           T const product =    tiny::inner_prod(n, tiny::cross(  l, r ) );
 
-          bool const inside_arc = product > VT::zero();
+          bool const inside_arc = product > 0;
 
           if (!inside_arc)
             return false;
@@ -315,7 +315,7 @@ namespace geometry
 
       assert( is_finite(angle)   || !"set_tolerance(): nan");
       assert( is_number(angle)   || !"set_tolerance(): nan");
-      assert(angle >= VT::zero() || !"set_tolerance(): Illegal tolerance");
+      assert(angle >= 0 || !"set_tolerance(): Illegal tolerance");
       assert(angle <  VT::pi()   || !"set_tolerance(): Illegal tolerance");
 
       this->m_tolerance = cos(angle);

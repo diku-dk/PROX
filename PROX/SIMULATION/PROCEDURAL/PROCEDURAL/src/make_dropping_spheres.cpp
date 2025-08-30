@@ -26,24 +26,24 @@ namespace procedural
 		size_t const mid		    = get_material_id<MT>(mat_info, "Stone");
 
     GeometryHandle<MT> sphere_handle = create_geometry_handle_sphere<MT>( engine, sphere_radius );
-    GeometryHandle<MT> plane_handle  = create_geometry_handle_box<MT>( engine, VT::two(), VT::numeric_cast(0.25f), VT::two());
+    GeometryHandle<MT> plane_handle  = create_geometry_handle_box<MT>( engine, 2, VT::numeric_cast(0.25f), 2);
 
-    T x = VT::one();
-    T y = VT::one();
-    T z = VT::one();
+    T x = 1;
+    T y = 1;
+    T z = 1;
     T const offset_x = sphere_radius*w;
     T const offset_z = sphere_radius*d;
 
     for (size_t i = 0; i < w; ++i)
     {
-      x = VT::two()*i*sphere_radius - offset_x;
+      x = 2*i*sphere_radius - offset_x;
       for (size_t j = 0; j < h; ++j)
       {
-        y = sphere_radius + VT::two()*j*sphere_radius + 4;
+        y = sphere_radius + 2*j*sphere_radius + 4;
 
         for (size_t k = 0; k < d; ++k)
         {
-          z = VT::two()*k*sphere_radius - offset_z;
+          z = 2*k*sphere_radius - offset_z;
 
           V const T_b2m = sphere_handle.Tb2m();
           Q const Q_b2m = sphere_handle.Qb2m();
@@ -82,7 +82,7 @@ namespace procedural
     V T_b2m = plane_handle.Tb2m();
     Q Q_b2m = plane_handle.Qb2m();
 
-    V T_m2l = V::make( VT::numeric_cast(-1.25), VT::numeric_cast(2.75), VT::zero() );
+    V T_m2l = V::make( VT::numeric_cast(-1.25), VT::numeric_cast(2.75), 0 );
     Q Q_m2l = Q::Rz(-VT::pi_quarter());
 
     V const T_l2w = position;
@@ -114,7 +114,7 @@ namespace procedural
     T_b2w = plane_handle.Tb2m();
     Q_b2w = plane_handle.Qb2m();
 
-    T_m2l = V::make( VT::numeric_cast(1.25), VT::numeric_cast(2.75), VT::zero() );
+    T_m2l = V::make( VT::numeric_cast(1.25), VT::numeric_cast(2.75), 0 );
     Q_m2l = Q::Rz(VT::pi_quarter());
 
     compute_body_to_world_transform<MT>(

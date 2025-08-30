@@ -55,14 +55,14 @@ namespace convex
 
     V const v = X_A.T() - X_B.T();
 
-    assert( epsilon > VT::zero() || !"growth_distance(): collision envelope must be positive");
+    assert( epsilon > 0 || !"growth_distance(): collision envelope must be positive");
     assert( max_iterations > 0u  || !"growth_distance(): maximum iterations must be positive");
 
     const auto d_min = 2 * epsilon;
     const auto d_min_sqrd = 4 * epsilon * epsilon;
     const auto v2 = v*v;
 
-    assert( v2 > VT::zero() || !"growth_distance(): internal error growth centers are bad");
+    assert( v2 > 0 || !"growth_distance(): internal error growth centers are bad");
 
     // compute the support point: \vec p = S_{\set A - \set B}(- \vec v)
     V s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
@@ -128,7 +128,7 @@ namespace convex
       if( d_squared < d_min_sqrd )
       {
         // Convert ray cast length to growth scale
-        growth_scale = - VT::one() / (tau - VT::one());
+        growth_scale = - 1 / (tau - 1);
 
         // Convert closest points into "growth-scale" set-up
         p_A = growth_scale * (p_A - X_A.T()) + X_A.T();

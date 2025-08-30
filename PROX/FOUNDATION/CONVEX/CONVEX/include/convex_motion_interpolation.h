@@ -64,8 +64,8 @@ namespace convex
     V v_B;
     V w_B;
 
-    compute_velocities<M>( X_A_from, X_A_to, VT::one(), v_A, w_A );
-    compute_velocities<M>( X_B_from, X_B_to, VT::one(), v_B, w_B );
+    compute_velocities<M>( X_A_from, X_A_to, 1, v_A, w_A );
+    compute_velocities<M>( X_B_from, X_B_to, 1, v_B, w_B );
 
     return conservative_advancement<M>(
                                        X_A_from
@@ -83,7 +83,7 @@ namespace convex
                                        , time_of_impact
                                        , iterations
                                        , epsilon
-                                       , VT::one()
+                                       , 1
                                        , max_iterations
                                        );
   }

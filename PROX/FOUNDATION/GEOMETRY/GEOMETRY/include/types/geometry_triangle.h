@@ -92,7 +92,7 @@ namespace geometry
     assert( is_number(area2) || !"get_area(): Nan encountered");
     assert( is_finite(area2) || !"get_area(): Inf encountered");
 
-    return area2 / VT::two();
+    return area2 / 2;
   }
 
 }// namespace geometry

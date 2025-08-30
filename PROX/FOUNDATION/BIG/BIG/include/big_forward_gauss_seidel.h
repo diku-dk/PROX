@@ -67,7 +67,7 @@ namespace big
       assert( is_number( diag )                 || !"forward_gauss_seidel(): diag value was not a number?");
 
       // 2007-06-10 kenny: Yikes how should we handle a diagonal zero-value?
-      assert( fabs(diag) > value_traits::zero() || !"forward_gauss_seidel(): Diagonal were zero");
+      assert( fabs(diag) > 0 || !"forward_gauss_seidel(): Diagonal were zero");
       x(row) += sum / diag;
 
       assert( is_number( x(row ) )              || !"forward_gauss_seidel(): updated value was not a number?");

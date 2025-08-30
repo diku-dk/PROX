@@ -56,19 +56,19 @@ namespace big
     if(max_iter <= 0u)
       throw std::invalid_argument("max_iterations must be larger than zero");
 
-    if(tol_abs < VT::zero() )
+    if(tol_abs < 0 )
       throw std::invalid_argument("absolute_tolerance must be non-negative");
 
-    if(tol_rel < VT::zero() )
+    if(tol_rel < 0 )
       throw std::invalid_argument("relative_tolerance must be non-negative");
 
-    if(tol_stag < VT::zero() )
+    if(tol_stag < 0 )
       throw std::invalid_argument("stagnation_tolerance must be non-negative");
 
-    if (beta >= VT::one() )
+    if (beta >= 1 )
       throw std::invalid_argument("Illegal beta value");
 
-    if (alpha <= VT::zero() )
+    if (alpha <= 0 )
       throw std::invalid_argument("Illegal alpha value");
 
     if(beta<=alpha)
@@ -188,7 +188,7 @@ namespace big
       }
 
       //--- Armijo backtracking combined with a projected line-search ---------
-      T tau           = VT::one();
+      T tau           = 1;
       T const f_0     = err;
       vector_type x_k = x;
 

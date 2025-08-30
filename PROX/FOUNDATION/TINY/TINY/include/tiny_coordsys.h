@@ -45,8 +45,8 @@ namespace tiny
     public:
 
       CoordSys()
-      : m_T( value_traits::zero() )
-      , m_Q( value_traits::one(), value_traits::zero(), value_traits::zero(), value_traits::zero())
+      : m_T( 0 )
+      , m_Q( 1, 0, 0, 0)
       {}
 
       CoordSys( CoordSys const & X)

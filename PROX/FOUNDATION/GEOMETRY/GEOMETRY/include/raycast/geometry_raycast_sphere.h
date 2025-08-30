@@ -35,13 +35,13 @@ namespace geometry
     V const & u = ray.direction();
 
     T const a = tiny::inner_prod( u,   u   );
-    T const b = tiny::inner_prod( p-o, u   )*VT::two();
+    T const b = tiny::inner_prod( p-o, u   )*2;
     T const c = tiny::inner_prod( p-o, p-o ) - r*r;
 
-    assert(a>VT::zero() || !"compute_raycast_sphere(): a-coefficent must be positive");
+    assert(a>0 || !"compute_raycast_sphere(): a-coefficent must be positive");
 
     // Test that ray origin is out-side sphere
-    if (c <= VT::zero())
+    if (c <= 0)
     {
       return false;
     }
@@ -52,8 +52,8 @@ namespace geometry
 
     T const sqrt_D = sqrt(D);
 
-    T const r1 = ( -b - sqrt_D ) / ( VT::two()*a );
-    T const r2 = ( -b + sqrt_D ) / ( VT::two()*a );
+    T const r1 = ( -b - sqrt_D ) / ( 2*a );
+    T const r2 = ( -b + sqrt_D ) / ( 2*a );
 
     assert(is_finite(r1) || !"compute_raycast_sphere(): r1 is inf");
     assert(is_number(r1) || !"compute_raycast_sphere(): r1 is nan");
@@ -62,14 +62,14 @@ namespace geometry
 
     assert(r1 <= r2 || !"compute_raycast_sphere(): r1 can not be larger than r2");
 
-    if( r1 >= VT::zero() )
+    if( r1 >= 0 )
     {
       length    = r1;
       hit_point = p + length*u;
       return true;
     }
 
-    if( r2 >= VT::zero())
+    if( r2 >= 0)
     {
       length    = r1;
       hit_point = p + length*u;

@@ -60,15 +60,15 @@ namespace prox
         block4x4_type & R_b  = R( i);
         block4x4_type & nu_b = nu( i);
 
-        assert( fabs(A_b(0,0)) > value_traits::zero() || !"local_R_strategy(): divide by zero!");
-        assert( fabs(A_b(1,1)) > value_traits::zero() || !"local_R_strategy(): divide by zero!");
-        assert( fabs(A_b(2,2)) > value_traits::zero() || !"local_R_strategy(): divide by zero!");
-        assert( fabs(A_b(3,3)) > value_traits::zero() || !"local_R_strategy(): divide by zero!");
+        assert( fabs(A_b(0,0)) > 0 || !"local_R_strategy(): divide by zero!");
+        assert( fabs(A_b(1,1)) > 0 || !"local_R_strategy(): divide by zero!");
+        assert( fabs(A_b(2,2)) > 0 || !"local_R_strategy(): divide by zero!");
+        assert( fabs(A_b(3,3)) > 0 || !"local_R_strategy(): divide by zero!");
 
-        R_b(0,0) = value_traits::one() / A_b(0,0);
-        R_b(1,1) = value_traits::one() / A_b(1,1);
-        R_b(2,2) = value_traits::one() / A_b(2,2);
-        R_b(3,3) = value_traits::one() / A_b(3,3);
+        R_b(0,0) = 1 / A_b(0,0);
+        R_b(1,1) = 1 / A_b(1,1);
+        R_b(2,2) = 1 / A_b(2,2);
+        R_b(3,3) = 1 / A_b(3,3);
 
         //assert off diagonals are indeed zero
 

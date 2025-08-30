@@ -57,17 +57,17 @@ namespace prox
 
         Aff = tiny::inverse( Aff );
 
-        assert( fabs(A_b(0,0)) > value_traits::zero() || !"block_R_strategy(): divide by zero!");
+        assert( fabs(A_b(0,0)) > 0 || !"block_R_strategy(): divide by zero!");
 
-        R_b(0,0) = value_traits::one() / A_b(0,0);
+        R_b(0,0) = 1 / A_b(0,0);
         R_b(1,1) = Aff(0,0);      R_b(1,2) = Aff(0,1);      R_b(1,3) = Aff(0,2);
         R_b(2,1) = Aff(1,0);      R_b(2,2) = Aff(1,1);      R_b(2,3) = Aff(1,2);
         R_b(3,1) = Aff(2,0);      R_b(3,2) = Aff(2,1);      R_b(3,3) = Aff(2,2);
 
-        nu_b(0,0) = value_traits::one();
-        nu_b(1,1) = value_traits::one();
-        nu_b(2,2) = value_traits::one();
-        nu_b(3,3) = value_traits::one();
+        nu_b(0,0) = 1;
+        nu_b(1,1) = 1;
+        nu_b(2,2) = 1;
+        nu_b(3,3) = 1;
       }
     }
 

@@ -103,14 +103,14 @@ namespace prox
       this->m_scripted = false;
       this->m_r.clear();
       this->m_Q     = Q::identity();
-      this->m_I_BF  = M::make_diag(VT::one());
-      this->m_mass  = VT::one();
+      this->m_I_BF  = M::make_diag(1);
+      this->m_mass  = 1;
       this->m_V.clear();
       this->m_W.clear();
       this->m_material_idx = 0u;
       this->m_idx = 0u;
       this->m_name = "";
-      this->m_radius = VT::one();
+      this->m_radius = 1;
       this->m_force_callbacks.clear();
     }
 
@@ -149,7 +149,7 @@ namespace prox
 
     void set_radius( T const & value )
     {
-      assert( value > VT::zero() || !"set_radius(): must be a positive value");
+      assert( value > 0 || !"set_radius(): must be a positive value");
       this->m_radius = value;
     }
 
@@ -158,7 +158,7 @@ namespace prox
      */
     void get_box(T & mx,T & my,T & mz,T & Mx,T & My,T & Mz) const
     {
-      assert( this->m_radius > VT::zero() || !"get_box(): radius must be positive"                   );
+      assert( this->m_radius > 0 || !"get_box(): radius must be positive"                   );
 
       mx = this->m_r(0) - this->m_radius;
       my = this->m_r(1) - this->m_radius;

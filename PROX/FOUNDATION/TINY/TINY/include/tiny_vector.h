@@ -22,24 +22,24 @@ namespace tiny
   public:
 
     Vector ()
-		: base_class_type()
-		{}
+        : base_class_type()
+        {}
 
     ~Vector () {}
 
     Vector ( Vector const & v )
-		: base_class_type(v)
-		{}
+        : base_class_type(v)
+        {}
 
-		explicit Vector ( real_type const & value )
-		: base_class_type(value)
-		{}
+        explicit Vector ( real_type const & value )
+        : base_class_type(value)
+        {}
 
     Vector & operator = (Vector const & v)
     {
       base_class_type::operator=(v);
       return *this;
-		}
+        }
 
   public:
 
@@ -65,36 +65,36 @@ namespace tiny
     static Vector<3,T> zero( )
     {
       Vector<3,T> v;
-      v(0) = value_traits::zero();
-      v(1) = value_traits::zero();
-      v(2) = value_traits::zero();
+      v(0) = 0;
+      v(1) = 0;
+      v(2) = 0;
       return v;
     }
 
     static Vector<3,T> i( )
     {
       Vector<3,T> v;
-      v(0) = value_traits::one();
-      v(1) = value_traits::zero();
-      v(2) = value_traits::zero();
+      v(0) = 1;
+      v(1) = 0;
+      v(2) = 0;
       return v;
     }
 
     static Vector<3,T> j( )
     {
       Vector<3,T> v;
-      v(0) = value_traits::zero();
-      v(1) = value_traits::one();
-      v(2) = value_traits::zero();
+      v(0) = 0;
+      v(1) = 1;
+      v(2) = 0;
       return v;
     }
 
     static Vector<3,T> k( )
     {
       Vector<3,T> v;
-      v(0) = value_traits::zero();
-      v(1) = value_traits::zero();
-      v(2) = value_traits::one();
+      v(0) = 0;
+      v(1) = 0;
+      v(2) = 1;
       return v;
     }
 
@@ -112,7 +112,7 @@ namespace tiny
       return v;
     }
 
-    static Vector random () { return random(value_traits::zero(), value_traits::one());  }
+    static Vector random () { return random(0, 1);  }
 
   };
 

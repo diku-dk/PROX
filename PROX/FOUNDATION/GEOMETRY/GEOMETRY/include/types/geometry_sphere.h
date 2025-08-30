@@ -38,7 +38,7 @@ namespace geometry
 
     Sphere()
       : m_center( V::zero() )
-      , m_radius( VT::one() )
+      , m_radius( 1 )
     {
     }
 
@@ -83,7 +83,7 @@ namespace geometry
 
       assert( is_number( this->m_radius)  || !"get_support_point(): NAN encountered");
       assert( is_finite( this->m_radius)  || !"get_support_point(): INF encountered");
-      assert( this->m_radius > VT::zero() || !"get_support_point(): radius was non-positive");
+      assert( this->m_radius > 0 || !"get_support_point(): radius was non-positive");
 
       T const vv = vx*vx + vy*vy + vz*vz;
 
@@ -91,10 +91,10 @@ namespace geometry
       assert( is_finite(vv) || !"get_support_point(): INF encountered");
 
       T px = this->m_radius;
-      T py = VT::zero();
-      T pz = VT::zero();
+      T py = 0;
+      T pz = 0;
 
-      if (vv > VT::zero() )
+      if (vv > 0 )
       {
         T const tmp =  this->m_radius / sqrt(vv);
 
@@ -120,9 +120,9 @@ namespace geometry
     {
       assert( is_number(this->m_radius)   || !"get_scale(): NAN encountered");
       assert( is_finite(this->m_radius)   || !"get_scale(): INF encountered");
-      assert( this->m_radius > VT::zero() || !"get_scale(): radius was non-positive");
+      assert( this->m_radius > 0 || !"get_scale(): radius was non-positive");
 
-      return VT::two() *  this->m_radius ;
+      return 2 *  this->m_radius ;
     }
 
   };

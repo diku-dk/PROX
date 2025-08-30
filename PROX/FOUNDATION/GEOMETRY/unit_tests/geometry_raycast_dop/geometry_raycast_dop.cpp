@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_dop(ray, dop, q, length);

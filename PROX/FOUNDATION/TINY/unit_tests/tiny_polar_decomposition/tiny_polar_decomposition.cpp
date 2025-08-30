@@ -36,13 +36,13 @@ BOOST_AUTO_TEST_SUITE(tiny_polar_decomposition);
       bool success = tiny::polar_decomposition_eigen(A,R,S);
       if(success)
       {
-        bool right_handed = tiny::det(R) > value_traits::zero();
+        bool right_handed = tiny::det(R) > 0;
         BOOST_CHECK( right_handed );
 
         D = A - R*S;
         real_type maximum_deviation =  tiny::max(  abs(D) );
 
-        //BOOST_CHECK_CLOSE( maximum_deviation, value_traits::zero(), tol);
+        //BOOST_CHECK_CLOSE( maximum_deviation, 0, tol);
         BOOST_CHECK( maximum_deviation<epsilon );
       }
     }

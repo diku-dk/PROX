@@ -27,7 +27,7 @@ namespace procedural
 		size_t const mid = get_material_id<MT>(mat_info, "Stone");
 		
 		T const stone_depth    = height/segments;
-		T const delta_theta    = VT::two()* VT::pi()/ slices;
+		T const delta_theta    = 2* VT::pi()/ slices;
 		T const center_radius  = ( r_outer + r_inner )*VT::half();
 		T const stone_density  = get_material_density<MT>(mat_info, "Stone");
 

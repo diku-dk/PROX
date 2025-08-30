@@ -41,7 +41,7 @@ namespace prox
     typedef typename M::block4x1_type    B4x1;
     typedef typename M::value_traits     VT;
 
-    assert( time_step > VT::zero()  || !"get_pre_stabilization_vector(): time_step should be positive");
+    assert( time_step > 0  || !"get_pre_stabilization_vector(): time_step should be positive");
 
     util::Log logging;
 
@@ -57,10 +57,10 @@ namespace prox
     T const & min_gap   = params.min_gap();
     T const & max_gap   = params.max_gap();
 
-    assert( reduction >= VT::zero() || !"get_pre_stabilization_vector(): gap reduction parameter should be positive");
-    assert( reduction <= VT::one()  || !"get_pre_stabilization_vector(): gap reduction parameter should be less than or equal to one");
-    assert( min_gap >= VT::zero()   || !"get_pre_stabilization_vector(): min gap correction should be non negative");
-    assert( max_gap > VT::zero()    || !"get_pre_stabilization_vector(): max gap correction should be positive");
+    assert( reduction >= 0 || !"get_pre_stabilization_vector(): gap reduction parameter should be positive");
+    assert( reduction <= 1  || !"get_pre_stabilization_vector(): gap reduction parameter should be less than or equal to one");
+    assert( min_gap >= 0   || !"get_pre_stabilization_vector(): min gap correction should be non negative");
+    assert( max_gap > 0    || !"get_pre_stabilization_vector(): max gap correction should be positive");
 
     T const k       =   reduction / time_step;
     T const limit   = - max_gap / time_step;
@@ -73,12 +73,12 @@ namespace prox
       B4x1 const & v            = w( index );
       T    const & d            = contact->get_depth();
       T    const & v_n          = v(0);
-      bool const add_correction = d <= yield && v_n <= VT::zero();
+      bool const add_correction = d <= yield && v_n <= 0;
 
-      b(0) = add_correction ? max( limit , k * d ) : VT::zero();
-      b(1) = VT::zero();
-      b(2) = VT::zero();
-      b(3) = VT::zero();
+      b(0) = add_correction ? max( limit , k * d ) : 0;
+      b(1) = 0;
+      b(2) = 0;
+      b(3) = 0;
 
       assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");
     }

@@ -65,7 +65,7 @@ namespace narrow
     , m_spheres()
     , m_hulls()
     , m_tetramesh()
-    , m_radius( VT::zero() )
+    , m_radius( 0 )
     {
     }
 
@@ -133,7 +133,7 @@ namespace narrow
       using std::sqrt;
       using std::max;
 
-      this->m_radius = VT::zero();
+      this->m_radius = 0;
 
       for (size_t i = 0; i < number_of_boxes(); ++i)
       {

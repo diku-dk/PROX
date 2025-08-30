@@ -31,7 +31,7 @@ namespace hyper
     {
       V const p = V::make( body.m_X(k), body.m_Y(k), body.m_Z(k) );
 
-      if( phi(p) <= VT::zero() )
+      if( phi(p) <= 0 )
         body.m_dirichlet_conditions.push_back( make_dirichlet_info<MT>(k, V::zero() ));
 
     }
@@ -53,7 +53,7 @@ namespace hyper
     {
       V const p = V::make( body.m_X0(k), body.m_Y0(k), body.m_Z0(k) );
 
-      if( phi(p) <= VT::zero() )
+      if( phi(p) <= 0 )
         body.m_dirichlet_conditions.push_back( make_dirichlet_info<MT>(k, V::zero() ));
 
     }

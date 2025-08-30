@@ -33,14 +33,14 @@ namespace procedural
                                                                engine
                                                                , wall_thickness
                                                                , height+wall_thickness
-                                                               , depth+VT::two()*wall_thickness
+                                                               , depth+2*wall_thickness
                                                                );
 
     GeometryHandle<MT> right  = create_geometry_handle_box<MT>(
                                                                engine
                                                                , wall_thickness
                                                                , height+wall_thickness
-                                                               , depth+VT::two()*wall_thickness
+                                                               , depth+2*wall_thickness
                                                                );
 
     GeometryHandle<MT> front  = create_geometry_handle_box<MT>(
@@ -61,7 +61,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                        , V::make( VT::zero(), -height*VT::half() - wall_thickness*VT::half()  , VT::zero())
+                        , V::make( 0, -height*VT::half() - wall_thickness*VT::half()  , 0)
                           ) + position;
 
       Q const Qw = orientation;
@@ -71,7 +71,7 @@ namespace procedural
                             , Qw
                             , bottom
                             , mid
-                            , VT::one()
+                            , 1
                             , true
                             , "Visualizer/ground"
                             );
@@ -80,7 +80,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( -width*VT::half()-wall_thickness*VT::half(), -wall_thickness*VT::half(), VT::zero())
+                          , V::make( -width*VT::half()-wall_thickness*VT::half(), -wall_thickness*VT::half(), 0)
                           ) + position;
 
       Q const Qw = orientation;
@@ -90,7 +90,7 @@ namespace procedural
                             , Qw
                             , left
                             , mid
-                            , VT::one()
+                            , 1
                             , true
                             , "Visualizer/ground"
                             );
@@ -99,7 +99,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( width*VT::half()+wall_thickness*VT::half(), -wall_thickness*VT::half(), VT::zero())
+                          , V::make( width*VT::half()+wall_thickness*VT::half(), -wall_thickness*VT::half(), 0)
                           ) + position;
 
       Q const Qw = orientation;
@@ -109,7 +109,7 @@ namespace procedural
                             , Qw
                             , right
                             , mid
-                            , VT::one()
+                            , 1
                             , true
                             , "Visualizer/ground"
                             );
@@ -118,7 +118,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( VT::zero(), -wall_thickness*VT::half(), depth*VT::half() + VT::half()*wall_thickness)
+                          , V::make( 0, -wall_thickness*VT::half(), depth*VT::half() + VT::half()*wall_thickness)
                           ) + position;
 
       Q const Qw = orientation;
@@ -128,7 +128,7 @@ namespace procedural
                             , Qw
                             , front
                             , mid
-                            , VT::one()
+                            , 1
                             , true
                             , "Visualizer/ground"
                             );
@@ -137,7 +137,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( VT::zero(), -wall_thickness*VT::half(), - depth*VT::half() - VT::half()*wall_thickness)
+                          , V::make( 0, -wall_thickness*VT::half(), - depth*VT::half() - VT::half()*wall_thickness)
                           ) + position;
 
       Q const Qw = orientation;
@@ -147,7 +147,7 @@ namespace procedural
                             , Qw
                             , back
                             , mid
-                            , VT::one()
+                            , 1
                             , true
                             , "Visualizer/ground"
                             );

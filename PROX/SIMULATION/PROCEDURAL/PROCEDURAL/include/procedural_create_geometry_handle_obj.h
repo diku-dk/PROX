@@ -22,7 +22,7 @@ namespace procedural
   inline GeometryHandle<MT> create_geometry_handle_obj(
                                                 content::API * engine
                                                 , std::string const & rel_file_name
-                                                , typename MT::real_type const & scale  = typename MT::value_traits::one()
+                                                , typename MT::real_type const & scale  = 1
                                                 , bool const & blind_copy = false
                                                 , mesh_array::TetGenSettings tetset  = mesh_array::tetgen_default_settings()
                                                 )
@@ -44,22 +44,22 @@ namespace procedural
 
     if(!blind_copy)
     {
-      T max_x = VT::zero();
-      T min_x = VT::zero();
+      T max_x = 0;
+      T min_x = 0;
 
-      T max_y = VT::zero();
-      T min_y = VT::zero();
+      T max_y = 0;
+      T min_y = 0;
 
-      T max_z = VT::zero();
-      T min_z = VT::zero();
+      T max_z = 0;
+      T min_z = 0;
 
       mesh_array::compute_extents<MT>( data.m_mesh , data.m_X , min_x , max_x );
       mesh_array::compute_extents<MT>( data.m_mesh , data.m_Y , min_y , max_y );
       mesh_array::compute_extents<MT>( data.m_mesh , data.m_Z , min_z , max_z );
 
-      T const x_scale = VT::one()/(max_x-min_x);
-      T const y_scale = VT::one()/(max_y-min_y);
-      T const z_scale = VT::one()/(max_z-min_z);
+      T const x_scale = 1/(max_x-min_x);
+      T const y_scale = 1/(max_y-min_y);
+      T const z_scale = 1/(max_z-min_z);
 
       T const uniform_scale = min( min( x_scale, y_scale ), z_scale ) * scale;
 
@@ -74,7 +74,7 @@ namespace procedural
                             );
     }
 
-    mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_mf);
 
@@ -186,7 +186,7 @@ namespace procedural
                           , data.m_Z
                           );
 
-    mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_mf);
 

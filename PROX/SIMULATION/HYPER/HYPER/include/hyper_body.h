@@ -289,7 +289,7 @@ namespace hyper
       this->m_visual_idx = 0u;
       this->m_name = "";
 
-      this->m_radius = VT::one();
+      this->m_radius = 1;
       this->m_center.clear();
       this->m_min_point.clear();
       this->m_max_point.clear();
@@ -318,7 +318,7 @@ namespace hyper
       this->m_model = 0;
       this->m_scripted_motion = 0;
 
-      this->m_adaptive_dt = VT::zero();
+      this->m_adaptive_dt = 0;
       this->m_adaptive_unchanged = 0u;
     }
 

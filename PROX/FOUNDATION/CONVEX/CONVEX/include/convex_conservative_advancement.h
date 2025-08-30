@@ -63,14 +63,14 @@ namespace convex
     typedef typename M::coordsys_type C;
     typedef typename M::real_type     T;
 
-    assert( r_max_A > VT::zero()              || !"conservative_advancement(): maximum distance of object A must be positive");
-    assert( r_max_B > VT::zero()              || !"conservative_advancement(): maximum distance of object B must be positive");
-    assert( max_tau > VT::zero()              || !"conservative_advancement(): maximum time-step must be positive");
-    assert( epsilon > VT::zero()              || !"conservative_advancement(): collision envelope must be positive");
+    assert( r_max_A > 0              || !"conservative_advancement(): maximum distance of object A must be positive");
+    assert( r_max_B > 0              || !"conservative_advancement(): maximum distance of object B must be positive");
+    assert( max_tau > 0              || !"conservative_advancement(): maximum time-step must be positive");
+    assert( epsilon > 0              || !"conservative_advancement(): collision envelope must be positive");
     assert( max_iterations > 0u               || !"conservative_advancement(): maximum iterations must be positive");
     assert(epsilon >= VT::numeric_cast(1e-2)  || !"conservative_advancement(): Too aggressive setting of epsilon, compute_closest_points uses tolerance 10e4");
 
-    T tau = VT::zero();
+    T tau = 0;
 
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
@@ -119,7 +119,7 @@ namespace convex
 
       T max_velocity = tiny::inner_prod(v_B - v_A, n) + tiny::norm(w_A)*r_max_A + tiny::norm(w_B)*r_max_B;
 
-      if (max_velocity <= VT::zero() )
+      if (max_velocity <= 0 )
         return false;
 
       // Compute conservative lower bound for when A and B could impact

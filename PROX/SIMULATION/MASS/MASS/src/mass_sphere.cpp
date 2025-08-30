@@ -18,10 +18,10 @@ namespace mass
 
     assert( is_number( density )            || !"density must be a number"       );
     assert( is_finite( density )            || !"density must be a finite number");
-    assert( density > value_traits::zero()  || !"density must be positive"       );
+    assert( density > 0  || !"density must be positive"       );
     assert( is_number( radius )             || !"radius must be a  number"       );
     assert( is_finite( radius )             || !"radius must be a finite number" );
-    assert( radius > value_traits::zero()   || !"radius must be positive"        );
+    assert( radius > 0   || !"radius must be positive"        );
 
     T const volume  = (4*value_traits::pi()*radius*radius*radius)/3;
     T const mass    = density * volume;
@@ -30,7 +30,7 @@ namespace mass
     Properties<T> value;
 
     value.m_m    = mass;
-    value.m_Ixx  = (value_traits::two()*mass*radius*radius)/five;
+    value.m_Ixx  = (2*mass*radius*radius)/five;
     value.m_Iyy  = value.m_Ixx;
     value.m_Izz  = value.m_Ixx;
 

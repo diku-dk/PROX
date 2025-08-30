@@ -26,17 +26,17 @@ namespace procedural
 
     GeometryHandle<MT> sphere_handle = create_geometry_handle_sphere<MT>( engine, sphere_radius );
 
-    T x = VT::one();
+    T x = 1;
     T y = sphere_radius;
-    T z = VT::one();
+    T z = 1;
     T const offset = sphere_radius*spheres_length*VT::half();
 
     for (size_t i = 0; i < spheres_width; ++i)
     {
-      x = VT::two()*i*sphere_radius - offset;
+      x = 2*i*sphere_radius - offset;
       for (size_t j = 0; j < spheres_length; ++j)
       {
-        z = sphere_radius + VT::two()*j*sphere_radius;
+        z = sphere_radius + 2*j*sphere_radius;
         V const Tb = sphere_handle.Tb2m();
         Q const Qb = sphere_handle.Qb2m();
 

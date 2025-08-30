@@ -47,7 +47,7 @@ namespace narrow
       typedef typename Geometry<M>::box_container::const_iterator    box_iterator;
       typedef typename Geometry<M>::sphere_container::const_iterator sphere_iterator;
 
-      assert( envelope > VT::zero() || !"box_sphere(): collision envelope must be positive");
+      assert( envelope > 0 || !"box_sphere(): collision envelope must be positive");
 
       if( A.empty() || B.empty())
         return;

@@ -217,7 +217,7 @@ namespace prox
             typename vector4_type::const_iterator iter = x.begin();
             typename vector4_type::const_iterator last = x.end();
 
-            real_type max = base_type::value_traits::zero();
+            real_type max = 0;
             real_type candidate;
             for (; iter != last; ++iter)
             {
@@ -243,8 +243,8 @@ namespace prox
         {
             // the norm inf is the largest absolute value in the residual
             //compute_residual_k(x_k_in, x_k_out, r_k);
-            real_type current_max = base_type::value_traits::zero();
-            real_type candidate = base_type::value_traits::zero();
+            real_type current_max = 0;
+            real_type candidate = 0;
             for( size_t i = 0u; i < 4u; ++i )
             {
                 candidate = fabs(x_k_in[i] - x_k_out[i]);

@@ -135,11 +135,11 @@ namespace convex
     typedef typename M::value_traits  VT;
     typedef          Simplex<V>       simplex_type;
 
-    if( absolute_tolerance < VT::zero() )
+    if( absolute_tolerance < 0 )
       throw std::invalid_argument( "absolute tolerance must be non-negative" );
-    if( relative_tolerance < VT::zero() )
+    if( relative_tolerance < 0 )
       throw std::invalid_argument( "relative tolerance must be non-negative" );
-    if( stagnation_tolerance < VT::zero() )
+    if( stagnation_tolerance < 0 )
       throw std::invalid_argument( "stagnation tolerance must be non-negative" );
     if( max_iterations <= 0u )
       throw std::invalid_argument( "max_iterations must be positive" );
@@ -157,10 +157,10 @@ namespace convex
     // Initially we use a 0-simplex corresponding to some point
     // in C. We do this by seeding the initial closest point to
     // be the zero-vector.
-    V v = V::make( VT::zero(), VT::zero(), VT::zero() );
+    V v = V::make( 0, 0, 0 );
 
     // Lower error bound on distance from origin to closest point
-    T mu = VT::zero();
+    T mu = 0;
 
     // We use a maximum iteration count to guard against infinite loops.
     for(iterations=1u; iterations<=max_iterations; ++iterations)
@@ -248,7 +248,7 @@ namespace convex
       // we clearly have an intersection.
       if( is_full_simplex( sigma) )
       {
-        distance = VT::zero(); //2010-02-11 mrtn: should penetration depth be computed? And possibly a better approximation of the contact point?
+        distance = 0; //2010-02-11 mrtn: should penetration depth be computed? And possibly a better approximation of the contact point?
         //2011-11-12 Kenny: This function computes separation distance, if we got a full simplex we have penetration and separation distance is not meaningful. We have other algorithms that is used for processing the penetration case.
         status = INTERSECTION;
         return;

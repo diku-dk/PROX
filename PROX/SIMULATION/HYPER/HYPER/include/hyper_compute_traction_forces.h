@@ -54,7 +54,7 @@ namespace hyper
       V const & x_j = MT::convert( x[j] );
       V const & x_k = MT::convert( x[k] );
 
-      V const A_vec = cross( x_j - x_i, x_k - x_i) / VT::two();
+      V const A_vec = cross( x_j - x_i, x_k - x_i) / 2;
       T const A     = norm(A_vec);
 
       //--- Solving integral of products of shape functions for isoparametric ----
@@ -86,9 +86,9 @@ namespace hyper
 
       M const    I = M::identity();
 
-      V const fi = A * ( VT::two()*I*ti +           I*tj +           I*tk )  / VT::numeric_cast(24.0);
-      V const fj = A * (           I*ti + VT::two()*I*tj +           I*tk )  / VT::numeric_cast(24.0);
-      V const fk = A * (           I*ti +           I*tj + VT::two()*I*tk )  / VT::numeric_cast(24.0);
+      V const fi = A * ( 2*I*ti +           I*tj +           I*tk )  / VT::numeric_cast(24.0);
+      V const fj = A * (           I*ti + 2*I*tj +           I*tk )  / VT::numeric_cast(24.0);
+      V const fk = A * (           I*ti +           I*tj + 2*I*tk )  / VT::numeric_cast(24.0);
 
       f[i] = MT::convert( fi + MT::convert(f[i]) );
       f[j] = MT::convert( fj + MT::convert(f[j]) );

@@ -32,18 +32,18 @@ namespace prox
       typedef tiny::ValueTraits<T> value_traits;
 
       // Special case when cold starting
-      if ( lambda_n <= value_traits::zero() )
+      if ( lambda_n <= 0 )
       {
-        lambda_s   = value_traits::zero();
-        lambda_t   = value_traits::zero();
-        lambda_tau = value_traits::zero();
+        lambda_s   = 0;
+        lambda_t   = 0;
+        lambda_tau = 0;
         return;
       }
 
       T const radius = mu*lambda_n;
 
       assert( is_number( radius ) || !"analytical_sphere(): a was not a number");
-      assert( radius > value_traits::zero()  || !"analytical_sphere(): a non-positive");
+      assert( radius > 0  || !"analytical_sphere(): a non-positive");
 
       T const s = z_s*z_s + z_t*z_t + z_tau*z_tau;
 
@@ -55,7 +55,7 @@ namespace prox
         return;
       }
 
-      assert( s > value_traits::zero() || !"analytical_sphere(): internal error");
+      assert( s > 0 || !"analytical_sphere(): internal error");
 
       T const scale = radius /sqrt(s);
 

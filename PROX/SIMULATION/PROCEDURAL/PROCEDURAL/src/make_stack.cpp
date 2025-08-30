@@ -32,7 +32,7 @@ namespace procedural
       V const T_b2m = stone_handle.Tb2m();
       Q const Q_b2m = stone_handle.Qb2m();
 
-      V const T_m2l = V::make( VT::zero(), y, VT::zero() );
+      V const T_m2l = V::make( 0, y, 0 );
       Q const Q_m2l = Q::identity();
 
       V const T_l2w = position;

@@ -53,10 +53,10 @@ BOOST_AUTO_TEST_CASE(growth_distance_spheres)
   BOOST_CHECK_CLOSE( growth_scale, 1.50, 1.0 );
   BOOST_CHECK_CLOSE(p_A(0), 2.5, 1.0);
   BOOST_CHECK_CLOSE(p_A(1), 1.0, 0.01);
-  BOOST_CHECK(p_A(2) == VT::zero());
+  BOOST_CHECK(p_A(2) == 0);
   BOOST_CHECK_CLOSE(p_B(0), 2.5,  1.0);
   BOOST_CHECK_CLOSE(p_B(1), 1.0,  0.01);
-  BOOST_CHECK(p_B(2) == VT::zero());
+  BOOST_CHECK(p_B(2) == 0);
 
   //--- touching spheres -------------------------------------------------------
   X_A.T() = V::make(1.0,1.0,0.0);
@@ -78,10 +78,10 @@ BOOST_AUTO_TEST_CASE(growth_distance_spheres)
   BOOST_CHECK_CLOSE( growth_scale, 1.00, 1.0 );
   BOOST_CHECK_CLOSE(p_A(0), 2.0, 1.0);
   BOOST_CHECK_CLOSE(p_A(1), 1.0, 0.01);
-  BOOST_CHECK(p_A(2) == VT::zero());
+  BOOST_CHECK(p_A(2) == 0);
   BOOST_CHECK_CLOSE(p_B(0), 2.0,  1.0);
   BOOST_CHECK_CLOSE(p_B(1), 1.0,  0.01);
-  BOOST_CHECK(p_B(2) == VT::zero());
+  BOOST_CHECK(p_B(2) == 0);
 
   //---- slight overlapping spheres a long x-axis ------------------------------
   X_A.T() = V::make(1.0, 1.0, 0.0);
@@ -104,10 +104,10 @@ BOOST_AUTO_TEST_CASE(growth_distance_spheres)
   BOOST_CHECK_CLOSE( growth_scale, 0.75, 1.0 );
   BOOST_CHECK_CLOSE(p_A(0), 1.75, 1.0);
   BOOST_CHECK_CLOSE(p_A(1), 1.0,  0.01);
-  BOOST_CHECK(p_A(2) == VT::zero());
+  BOOST_CHECK(p_A(2) == 0);
   BOOST_CHECK_CLOSE(p_B(0), 1.75, 1.0);
   BOOST_CHECK_CLOSE(p_B(1), 1.0,  0.01);
-  BOOST_CHECK(p_B(2) == VT::zero());
+  BOOST_CHECK(p_B(2) == 0);
 
   //---- Increase overlap along x-axis -----------------------------------------
   X_B.T() = V::make(2,1,0);
@@ -128,10 +128,10 @@ BOOST_AUTO_TEST_CASE(growth_distance_spheres)
   BOOST_CHECK_CLOSE( growth_scale, 0.5, 1.0 );
   BOOST_CHECK_CLOSE(p_A(0), 1.5, 1.0);
   BOOST_CHECK_CLOSE(p_A(1), 1.0,  0.01);
-  BOOST_CHECK(p_A(2) == VT::zero());
+  BOOST_CHECK(p_A(2) == 0);
   BOOST_CHECK_CLOSE(p_B(0), 1.5, 1.0);
   BOOST_CHECK_CLOSE(p_B(1), 1.0,  0.01);
-  BOOST_CHECK(p_B(2) == VT::zero());
+  BOOST_CHECK(p_B(2) == 0);
 
 }
 

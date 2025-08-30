@@ -42,9 +42,9 @@ namespace prox
     T const & reduction = params.gap_reduction();
     T const & max_gap   = params.max_gap();
 
-    assert( reduction  >= VT::zero() || !"get_post_stabilization_vector(): reduction must be non-negative"       );
-    assert( reduction  <= VT::one()  || !"get_post_stabilization_vector(): reduction must less than or equal one");
-    assert( max_gap    >  VT::zero() || !"get_post_stabilization_vector(): max reduction must be positive"       );
+    assert( reduction  >= 0 || !"get_post_stabilization_vector(): reduction must be non-negative"       );
+    assert( reduction  <= 1  || !"get_post_stabilization_vector(): reduction must less than or equal one");
+    assert( max_gap    >  0 || !"get_post_stabilization_vector(): max reduction must be positive"       );
 
     size_t index = 0u;
 
@@ -52,10 +52,10 @@ namespace prox
     {
       B4x1 & b = g( index );
 
-      b(0) = max( - max_gap,  min( reduction * contact->get_depth(), VT::zero() ) );
-      b(1) = VT::zero();
-      b(2) = VT::zero();
-      b(3) = VT::zero();
+        b(0) = max( - max_gap,  min<T>( reduction * contact->get_depth(), 0 ) );
+      b(1) = 0;
+      b(2) = 0;
+      b(3) = 0;
 
       assert(is_number(b(0)) || !"get_post_stabilization_vector(): b(0) is not a number");
     }

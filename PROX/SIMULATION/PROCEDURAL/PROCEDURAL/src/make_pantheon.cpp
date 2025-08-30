@@ -39,7 +39,7 @@ namespace procedural
                    , false
                    );
 
-    pw = pw + rotate(Qw , V::make( VT::zero(), VT::zero(), height ) );
+    pw = pw + rotate(Qw , V::make( 0, 0, height ) );
 
     make_dome<MT>(  engine
                   , pw

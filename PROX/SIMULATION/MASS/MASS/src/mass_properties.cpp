@@ -12,20 +12,20 @@ namespace mass
   //-------------------------------------------------------------------------
   template<typename T>
   Properties<T>::Properties()
-  : m_m( tiny::ValueTraits<T>::zero())
-  , m_Ixx( tiny::ValueTraits<T>::zero())
-  , m_Iyy( tiny::ValueTraits<T>::zero())
-  , m_Izz( tiny::ValueTraits<T>::zero())
-  , m_Ixy( tiny::ValueTraits<T>::zero())
-  , m_Ixz( tiny::ValueTraits<T>::zero())
-  , m_Iyz( tiny::ValueTraits<T>::zero())
-  , m_x( tiny::ValueTraits<T>::zero())
-  , m_y( tiny::ValueTraits<T>::zero())
-  , m_z( tiny::ValueTraits<T>::zero())
-  , m_Qs( tiny::ValueTraits<T>::one())
-  , m_Qx( tiny::ValueTraits<T>::zero())
-  , m_Qy( tiny::ValueTraits<T>::zero())
-  , m_Qz( tiny::ValueTraits<T>::zero())
+  : m_m( 0)
+  , m_Ixx( 0)
+  , m_Iyy( 0)
+  , m_Izz( 0)
+  , m_Ixy( 0)
+  , m_Ixz( 0)
+  , m_Iyz( 0)
+  , m_x( 0)
+  , m_y( 0)
+  , m_z( 0)
+  , m_Qs( 1)
+  , m_Qx( 0)
+  , m_Qy( 0)
+  , m_Qz( 0)
   {}
   //-------------------------------------------------------------------------
   template<typename T>
@@ -82,15 +82,15 @@ namespace mass
   bool Properties<T>::is_body_space() const { return !(this->is_model_space()); }
   //-------------------------------------------------------------------------
   template<typename T>
-	bool Properties<T>::is_model_space() const
+    bool Properties<T>::is_model_space() const
   {
     using namespace tiny;
     typedef ValueTraits<T> VT;
 
-    assert( this->m_m    >= VT::zero() || !"Internal error");
-    assert( this->m_Ixx  >= VT::zero() || !"Internal error");
-    assert( this->m_Iyy  >= VT::zero() || !"Internal error");
-    assert( this->m_Izz  >= VT::zero() || !"Internal error");
+    assert( this->m_m    >= 0 || !"Internal error");
+    assert( this->m_Ixx  >= 0 || !"Internal error");
+    assert( this->m_Iyy  >= 0 || !"Internal error");
+    assert( this->m_Izz  >= 0 || !"Internal error");
 
     assert( is_number( this->m_m )     || !"Internal error");
     assert( is_number( this->m_Ixx )   || !"Internal error");
@@ -122,16 +122,16 @@ namespace mass
     assert( is_finite( this->m_Qy )    || !"Internal error");
     assert( is_finite( this->m_Qz )    || !"Internal error");
 
-    if( this->m_Ixy != VT::zero() ) return true;
-    if( this->m_Ixz != VT::zero() ) return true;
-    if( this->m_Iyz != VT::zero() ) return true;
-    if( this->m_x   != VT::zero() ) return true;
-    if( this->m_y   != VT::zero() ) return true;
-    if( this->m_z   != VT::zero() ) return true;
-    if( this->m_Qs  != VT::one()  ) return true;
-    if( this->m_Qx  != VT::zero() ) return true;
-    if( this->m_Qy  != VT::zero() ) return true;
-    if( this->m_Qz  != VT::zero() ) return true;
+    if( this->m_Ixy != 0 ) return true;
+    if( this->m_Ixz != 0 ) return true;
+    if( this->m_Iyz != 0 ) return true;
+    if( this->m_x   != 0 ) return true;
+    if( this->m_y   != 0 ) return true;
+    if( this->m_z   != 0 ) return true;
+    if( this->m_Qs  != 1  ) return true;
+    if( this->m_Qx  != 0 ) return true;
+    if( this->m_Qy  != 0 ) return true;
+    if( this->m_Qz  != 0 ) return true;
 
     return false;
   }
@@ -142,20 +142,20 @@ namespace mass
     using namespace tiny;
     typedef ValueTraits<T> VT;
 
-    this->m_m   = VT::zero();
-    this->m_Ixx = VT::zero();
-    this->m_Iyy = VT::zero();
-    this->m_Izz = VT::zero();
-    this->m_Ixy = VT::zero();
-    this->m_Ixz = VT::zero();
-    this->m_Iyz = VT::zero();
-    this->m_x   = VT::zero();
-    this->m_y   = VT::zero();
-    this->m_z   = VT::zero();
-    this->m_Qs  = VT::one();
-    this->m_Qx  = VT::zero();
-    this->m_Qy  = VT::zero();
-    this->m_Qz  = VT::zero();
+    this->m_m   = 0;
+    this->m_Ixx = 0;
+    this->m_Iyy = 0;
+    this->m_Izz = 0;
+    this->m_Ixy = 0;
+    this->m_Ixz = 0;
+    this->m_Iyz = 0;
+    this->m_x   = 0;
+    this->m_y   = 0;
+    this->m_z   = 0;
+    this->m_Qs  = 1;
+    this->m_Qx  = 0;
+    this->m_Qy  = 0;
+    this->m_Qz  = 0;
   }
   //-------------------------------------------------------------------------
 

@@ -50,8 +50,8 @@ namespace convex
       S.m_v[idx_B].clear();
       S.m_a[idx_B].clear();
       S.m_b[idx_B].clear();
-      S.m_w[idx_A] = VT::one();
-      S.m_w[idx_B] = VT::zero();
+      S.m_w[idx_A] = 1;
+      S.m_w[idx_B] = 0;
       return;
     }
     if(outside_BA)
@@ -61,8 +61,8 @@ namespace convex
       S.m_v[idx_A].clear();
       S.m_a[idx_A].clear();
       S.m_b[idx_A].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_B] = VT::one();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_B] = 1;
       return;
     }
     if(!outside_AB && !outside_BA)

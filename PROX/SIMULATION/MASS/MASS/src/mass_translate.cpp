@@ -22,7 +22,7 @@ namespace mass
 
     assert( is_number( Ibody.m_m )           || !"mass must be a number"       );
     assert( is_finite( Ibody.m_m )           || !"mass must be a finite number");
-    assert( Ibody.m_m > value_traits::zero() || !"mass must be positive"       );
+    assert( Ibody.m_m > 0 || !"mass must be positive"       );
     assert( is_number( dx )                  || !"x must be a number"          );
     assert( is_finite( dx )                  || !"x must be a finite number"   );
     assert( is_number( dy )                  || !"y must be a number"          );
@@ -68,7 +68,7 @@ namespace mass
 
     assert( is_number( Imodel.m_m )           || !"mass must be a number"       );
     assert( is_finite( Imodel.m_m )           || !"mass must be a finite number");
-    assert( Imodel.m_m > value_traits::zero() || !"mass must be positive"       );
+    assert( Imodel.m_m > 0 || !"mass must be positive"       );
     assert( is_number( Imodel.m_x )              || !"x must be a number"          );
     assert( is_finite( Imodel.m_x )              || !"x must be a finite number"   );
     assert( is_number( Imodel.m_y )              || !"y must be a number"          );

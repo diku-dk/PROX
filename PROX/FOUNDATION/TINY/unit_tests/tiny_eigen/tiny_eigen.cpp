@@ -32,15 +32,15 @@ inline void eigen_value_decomposition_test(vector3_type d,matrix3x3_type R)
   tiny::eigen(A, V, d);
 
   real_type determinant = tiny::det(V);
-  BOOST_CHECK_CLOSE( fabs( determinant ), value_traits::one(), tol );
+  BOOST_CHECK_CLOSE( fabs( determinant ), 1, tol );
 
   real_type epsilon = 10e-7;
 
   matrix3x3_type Itest = tiny::trans(V)*V;
 
-  BOOST_CHECK_CLOSE( Itest(0,0), value_traits::one() , tol );
-  BOOST_CHECK_CLOSE( Itest(1,1), value_traits::one() , tol );
-  BOOST_CHECK_CLOSE( Itest(2,2), value_traits::one() , tol );
+  BOOST_CHECK_CLOSE( Itest(0,0), 1 , tol );
+  BOOST_CHECK_CLOSE( Itest(1,1), 1 , tol );
+  BOOST_CHECK_CLOSE( Itest(2,2), 1 , tol );
   //--- The check close version behaves strange when rhs is exactly zero?, so we use the check-version instead...
   BOOST_CHECK( fabs(Itest(0,1))<epsilon );
   BOOST_CHECK( fabs(Itest(0,2))<epsilon );
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(detailed_testing)
   tiny::eigen(A, R, d);
 
   double determinant = tiny::det(R);
-  BOOST_CHECK_CLOSE( determinant, -VT::one(), 0.01 );
+  BOOST_CHECK_CLOSE( determinant, -1, 0.01 );
 
 }
 

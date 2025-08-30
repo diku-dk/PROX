@@ -58,7 +58,7 @@ namespace geometry
 
     Plane()
     : m_normal( V::k() )
-    , m_offset( VT::zero() )
+    , m_offset( 0 )
     {}
 
     ~Plane(){}
@@ -67,7 +67,7 @@ namespace geometry
     : m_normal( unit(normal) )
     , m_offset(offset)
     {
-      assert(fabs(VT::one() - norm(normal)) < tiny::working_precision<T>() || !"Plane(): Must be unit normal");
+      assert(fabs(1 - norm(normal)) < tiny::working_precision<T>() || !"Plane(): Must be unit normal");
     }
 
     Plane(Plane const & plane)
@@ -94,7 +94,7 @@ namespace geometry
     typedef typename V::value_traits  VT;
     typedef typename V::real_type      T;
 
-    assert(fabs(VT::one() - norm(normal)) < tiny::working_precision<T>() || !"make_plane(): Must be unit normal");
+    assert(fabs(1 - norm(normal)) < tiny::working_precision<T>() || !"make_plane(): Must be unit normal");
 
     return Plane<V>(normal,offset);
   }

@@ -28,17 +28,17 @@ namespace procedural
 
     //10-30-14 Sarah: clean up "magic" constants
     T      const r_center        = (r_outer-r_inner)*.5 + r_inner;
-    T      const delta_theta     = VT::two()*VT::pi()/slices;
+    T      const delta_theta     = 2*VT::pi()/slices;
     T      const r_arch_outer    = r_inner*sin( delta_theta*VT::half() );
     T      const r_arch_inner    = r_arch_outer*VT::numeric_cast( 0.6f );
-    T      const pillar_height   = VT::one()*r_arch_outer;
+    T      const pillar_height   = 1*r_arch_outer;
     size_t const arch_slices     = 7u;
     size_t const pillar_segments = 5u;
     T      const depth           = r_outer - r_inner;
 
     T      const arch_height     = r_arch_outer + pillar_height;
     T      const tower_height    = VT::numeric_cast(0.2f)*arch_height;
-    T            y               = VT::zero();
+    T            y               = 0;
 
     for(size_t i = 0u; i < segments; ++i)
     {
@@ -67,7 +67,7 @@ namespace procedural
 
       y += arch_height;
 
-      V const tower_position    = rotate( orientation, (V::make(VT::zero(),y,VT::zero())))+ position;
+      V const tower_position    = rotate( orientation, (V::make(0,y,0)))+ position;
 
       Q const tower_orientation = orientation*Q::Ry( delta_theta/2.0 )*Q::Rx(-VT::pi_half());
 

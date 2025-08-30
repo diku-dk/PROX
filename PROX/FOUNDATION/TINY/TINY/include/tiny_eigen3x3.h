@@ -48,25 +48,25 @@ namespace tiny
     real_type const & fM22 = V(2,2);
 
     diag(0) = fM00;
-    sub_diag(2) = value_traits::zero();
-    if ( fM02 != value_traits::zero() )
+    sub_diag(2) = 0;
+    if ( fM02 != 0 )
     {
       real_type fLength    = sqrt(fM01*fM01+fM02*fM02);
-      real_type fInvLength = (value_traits::one())/fLength;
+      real_type fInvLength = (1)/fLength;
       fM01 *= fInvLength;
       fM02 *= fInvLength;
-      real_type fQ = (value_traits::two())*fM01*fM12+fM02*(fM22-fM11);
+      real_type fQ = (2)*fM01*fM12+fM02*(fM22-fM11);
       diag(1) = fM11+fM02*fQ;
       diag(2) = fM22-fM02*fQ;
       sub_diag(0) = fLength;
       sub_diag(1) = fM12-fM01*fQ;
-      V(0,0) = value_traits::one();
-      V(0,1) = value_traits::zero();
-      V(0,2) = value_traits::zero();
-      V(1,0) = value_traits::zero();
+      V(0,0) = 1;
+      V(0,1) = 0;
+      V(0,2) = 0;
+      V(1,0) = 0;
       V(1,1) = fM01;
       V(1,2) = fM02;
-      V(2,0) = value_traits::zero();
+      V(2,0) = 0;
       V(2,1) = fM02;
       V(2,2) = -fM01;
     }
@@ -76,15 +76,15 @@ namespace tiny
       diag(2) = fM22;
       sub_diag(0) = fM01;
       sub_diag(1) = fM12;
-      V(0,0) = value_traits::one();
-      V(0,1) = value_traits::zero();
-      V(0,2) = value_traits::zero();
-      V(1,0) = value_traits::zero();
-      V(1,1) = value_traits::one();
-      V(1,2) = value_traits::zero();
-      V(2,0) = value_traits::zero();
-      V(2,1) = value_traits::zero();
-      V(2,2) = value_traits::one();
+      V(0,0) = 1;
+      V(0,1) = 0;
+      V(0,2) = 0;
+      V(1,0) = 0;
+      V(1,1) = 1;
+      V(1,2) = 0;
+      V(2,0) = 0;
+      V(2,1) = 0;
+      V(2,2) = 1;
     }
 
     const int max_iterations = 32;
@@ -103,16 +103,16 @@ namespace tiny
         }
         if ( i2 == i0 )
           break;
-        real_type fG = (diag(i0+1) - diag(i0))/(value_traits::two()*  sub_diag(i0));
-        real_type fR = sqrt(fG*fG+value_traits::one());
-        if ( fG < value_traits::zero() )
+        real_type fG = (diag(i0+1) - diag(i0))/(2*  sub_diag(i0));
+        real_type fR = sqrt(fG*fG+1);
+        if ( fG < 0 )
           fG = diag(i2)-diag(i0)+sub_diag(i0)/(fG-fR);
         else
           fG = diag(i2)-diag(i0)+sub_diag(i0)/(fG+fR);
 
-        real_type fSin = value_traits::one();
-        real_type fCos = value_traits::one();
-        real_type fP   = value_traits::zero();
+        real_type fSin = 1;
+        real_type fCos = 1;
+        real_type fP   = 0;
 
         for (int i3 = i2-1; i3 >= i0; --i3)
         {
@@ -121,21 +121,21 @@ namespace tiny
           if ( fabs(fF) >= fabs(fG) )
           {
             fCos = fG/fF;
-            fR = sqrt(fCos*fCos+value_traits::one());
+            fR = sqrt(fCos*fCos+1);
             sub_diag(i3+1) = fF*fR;
-            fSin = value_traits::one()/fR;
+            fSin = 1/fR;
             fCos *= fSin;
           }
           else
           {
             fSin = fF/fG;
-            fR = sqrt(fSin*fSin+value_traits::one());
+            fR = sqrt(fSin*fSin+1);
             sub_diag(i3+1) = fG*fR;
-            fCos = value_traits::one()/fR;
+            fCos = 1/fR;
             fSin *= fCos;
           }
           fG = diag(i3+1)-fP;
-          fR = (diag(i3)-fG)*fSin+value_traits::two()*fB*fCos;
+          fR = (diag(i3)-fG)*fSin+2*fB*fCos;
           fP = fSin*fR;
           diag(i3+1) = fG+fP;
           fG = fCos*fR-fB;
@@ -148,7 +148,7 @@ namespace tiny
         }
         diag(i0) -= fP;
         sub_diag(i0) = fG;
-        sub_diag(i2) = value_traits::zero();
+        sub_diag(i2) = 0;
       }
       if ( i1 == max_iterations )
         break;

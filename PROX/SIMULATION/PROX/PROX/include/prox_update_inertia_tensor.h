@@ -90,15 +90,15 @@ namespace prox
         //--- In body frame inertia censor should be a "positive" diagonal
         //--- tensor, otherwise data is corrupt
 
-        if( I_body(0,0) <= VT::zero() )
+        if( I_body(0,0) <= 0 )
         {
           logging << "update_inertia_tensor(): I_body(0,0) was non-positive" << util::Log::newline();
         }
-        if( I_body(1,1) <= VT::zero() )
+        if( I_body(1,1) <= 0 )
         {
           logging << "update_inertia_tensor(): I_body(1,1) was non-positive" << util::Log::newline();
         }
-        if( I_body(2,2) <= VT::zero() )
+        if( I_body(2,2) <= 0 )
         {
           logging << "update_inertia_tensor(): I_body(2,2) was non-positive" << util::Log::newline();
         }
@@ -135,15 +135,15 @@ namespace prox
         T const I02 = R(0,0)*R(0,2) + R(1,0)*R(1,2) + R(2,0)*R(2,2);
         T const I12 = R(0,1)*R(0,2) + R(1,1)*R(1,2) + R(2,1)*R(2,2);
 
-        if( fabs(VT::one()-I00) <= tiny::working_precision<T>() )
+        if( fabs(1-I00) <= tiny::working_precision<T>() )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(VT::one()-I11) <= tiny::working_precision<T>() )
+        if( fabs(1-I11) <= tiny::working_precision<T>() )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(VT::one()-I22) <= tiny::working_precision<T>() )
+        if( fabs(1-I22) <= tiny::working_precision<T>() )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }

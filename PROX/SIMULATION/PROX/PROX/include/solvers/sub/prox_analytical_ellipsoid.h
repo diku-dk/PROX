@@ -31,11 +31,11 @@ namespace prox
     {
       typedef tiny::ValueTraits<T>   value_traits;
 
-      if(lambda_n <= value_traits::zero())
+      if(lambda_n <= 0)
       {
-        lambda_s   = value_traits::zero();
-        lambda_t   = value_traits::zero();
-        lambda_tau = value_traits::zero();
+        lambda_s   = 0;
+        lambda_t   = 0;
+        lambda_tau = 0;
         return;
       }
 
@@ -46,9 +46,9 @@ namespace prox
       assert( is_number( a ) || !"analytical_ellipsoid(): a was not a number");
       assert( is_number( b ) || !"analytical_ellipsoid(): b was not a number");
       assert( is_number( c ) || !"analytical_ellipsoid(): c was not a number");
-      assert( a > value_traits::zero()       || !"analytical_ellipsoid(): a non-positive");
-      assert( b > value_traits::zero()       || !"analytical_ellipsoid(): a non-positive");
-      assert( c > value_traits::zero()       || !"analytical_ellipsoid(): a non-positive");
+      assert( a > 0       || !"analytical_ellipsoid(): a non-positive");
+      assert( b > 0       || !"analytical_ellipsoid(): a non-positive");
+      assert( c > 0       || !"analytical_ellipsoid(): a non-positive");
 
       // let the ellipsoid surface be given by the zero-level set contour of the function, f(z) = 0
       //
@@ -57,7 +57,7 @@ namespace prox
       //
       T const e = ((z_s*z_s) / (a*a)) + ((z_t*z_t) / (b*b)) + ((z_tau*z_tau) / (c*c));
 
-      if( e <= value_traits::one() )
+      if( e <= 1 )
       {
         lambda_s   = z_s;
         lambda_t   = z_t;
@@ -113,19 +113,19 @@ namespace prox
       T const y2 = z_t*z_t;
       T const z2 = z_tau*z_tau;
 
-      T const coef4 = value_traits::one();
-      T const coef3 = value_traits::two()*(c2+a2);
+      T const coef4 = 1;
+      T const coef3 = 2*(c2+a2);
       T const coef2 = c4 + a4 + 4*a2*c2 - c2*z2 - a2*(x2 + y2);
-      T const coef1 = value_traits::two()*(a4*c2 + c4*a2 - c2*a2*(x2+y2+z2));
+      T const coef1 = 2*(a4*c2 + c4*a2 - c2*a2*(x2+y2+z2));
       T const coef0 = a4*c4 - c2*a4*z2 - a2*c4*(x2+y2);
 
       // We will have two imaginary roots, one negative and one positive
       // root. Only the positive root is of interest.
-      T t = value_traits::zero();
+      T t = 0;
       {
         unsigned int count = 0u;
 
-        T roots[4] = {value_traits::zero(), value_traits::zero(), value_traits::zero(), value_traits::zero()};
+        T roots[4] = {0, 0, 0, 0};
 
         tiny::compute_polynomial_roots(coef0,coef1,coef2,coef3,coef4,count, roots );
 
@@ -134,9 +134,9 @@ namespace prox
       }
 
       // Knowing the alpha-value we can compute the closest point using (*1)
-      lambda_s =  z_s / (value_traits::one() + t/(a*a));
-      lambda_t =  z_t / (value_traits::one() + t/(b*b));
-      lambda_tau =  z_tau / (value_traits::one() + t/(c*c));
+      lambda_s =  z_s / (1 + t/(a*a));
+      lambda_t =  z_t / (1 + t/(b*b));
+      lambda_tau =  z_tau / (1 + t/(c*c));
     }
 
 

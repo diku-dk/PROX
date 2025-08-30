@@ -39,12 +39,12 @@ namespace prox
 
       if( body->is_fixed() )
       {
-        b(0) = value_traits::zero();
-        b(1) = value_traits::zero();
-        b(2) = value_traits::zero();
-        b(3) = value_traits::zero();
-        b(4) = value_traits::zero();
-        b(5) = value_traits::zero();
+        b(0) = 0;
+        b(1) = 0;
+        b(2) = 0;
+        b(3) = 0;
+        b(4) = 0;
+        b(5) = 0;
       }
       else
       {

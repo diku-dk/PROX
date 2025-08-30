@@ -101,9 +101,9 @@ namespace mesh_array
       // no tetrathedron opposite vertex i so j,k,m are on the boundary
       if ( idx_adj_i == UNASSIGNED() )
       {
-        phi(v_j) = VT::zero();
-        phi(v_k) = VT::zero();
-        phi(v_m) = VT::zero();
+        phi(v_j) = 0;
+        phi(v_k) = 0;
+        phi(v_m) = 0;
         seen(v_j) = true;
         seen(v_k) = true;
         seen(v_m) = true;
@@ -120,9 +120,9 @@ namespace mesh_array
       // no tetrathedron opposite vertex i so j,k,m are on the boundary
       if ( idx_adj_j == UNASSIGNED() )
       {
-        phi(v_i) = VT::zero();
-        phi(v_k) = VT::zero();
-        phi(v_m) = VT::zero();
+        phi(v_i) = 0;
+        phi(v_k) = 0;
+        phi(v_m) = 0;
         seen(v_i) = true;
         seen(v_k) = true;
         seen(v_m) = true;
@@ -138,9 +138,9 @@ namespace mesh_array
       // no tetrathedron opposite vertex i so j,k,m are on the boundary
       if ( idx_adj_k == UNASSIGNED() )
       {
-        phi(v_i) = VT::zero();
-        phi(v_j) = VT::zero();
-        phi(v_m) = VT::zero();
+        phi(v_i) = 0;
+        phi(v_j) = 0;
+        phi(v_m) = 0;
         seen(v_i) = true;
         seen(v_j) = true;
         seen(v_m) = true;
@@ -156,9 +156,9 @@ namespace mesh_array
       // no tetrathedron opposite vertex i so j,k,m are on the boundary
       if ( idx_adj_m == UNASSIGNED() )
       {
-        phi(v_i) = VT::zero();
-        phi(v_j) = VT::zero();
-        phi(v_k) = VT::zero();
+        phi(v_i) = 0;
+        phi(v_j) = 0;
+        phi(v_k) = 0;
         seen(v_i) = true;
         seen(v_j) = true;
         seen(v_k) = true;

@@ -50,7 +50,7 @@ namespace procedural
                                                                      , b_box_height
                                                                      , pillar_depth);
 
-      V const local_translation = V::make( VT::zero(), y, VT::zero() );
+      V const local_translation = V::make( 0, y, 0 );
 
       V body_to_world_translation;
       Q body_to_world_orientation;
@@ -86,7 +86,7 @@ namespace procedural
                                                                                     , tetset
                                                                                     );
 
-      V const local_translation = V::make( VT::zero(), y, VT::zero() );
+      V const local_translation = V::make( 0, y, 0 );
 
       V body_to_world_translation;
       Q body_to_world_orientation;
@@ -136,7 +136,7 @@ namespace procedural
                                                                                         , tetset
                                                                                         );
 				
-        V const local_translation = V::make( VT::zero(), y, VT::zero() );
+        V const local_translation = V::make( 0, y, 0 );
 
         V body_to_world_translation;
         Q body_to_world_orientation;
@@ -178,7 +178,7 @@ namespace procedural
                                                                                     , tetset
                                                                                     );
 
-      V const local_translation = V::make( VT::zero(), y, VT::zero() );
+      V const local_translation = V::make( 0, y, 0 );
 
       V body_to_world_translation;
       Q body_to_world_orientation;
@@ -214,7 +214,7 @@ namespace procedural
                                                                      , pillar_depth
                                                                      );
 			
-      V const local_translation = V::make( VT::zero(), y, VT::zero() );
+      V const local_translation = V::make( 0, y, 0 );
 
       V body_to_world_translation;
       Q body_to_world_orientation;

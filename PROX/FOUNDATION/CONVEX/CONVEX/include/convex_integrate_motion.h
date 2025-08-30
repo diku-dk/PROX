@@ -30,7 +30,7 @@ namespace convex
     typedef typename M::vector3_type     V;
     typedef typename M::quaternion_type  Q;
 
-    assert( tau >= M::value_traits::zero() || !"integrate_motion(): Tau must be non-negative");
+    assert( tau >= 0 || !"integrate_motion(): Tau must be non-negative");
 
     T const radian           = tau * tiny::norm( omega );
     V const axis             = tiny::unit( omega );

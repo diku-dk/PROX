@@ -35,7 +35,7 @@ namespace convex
     typedef typename M::real_type         T;
     typedef typename M::vector3_type      V;
 
-    assert(  delta_tau > M::value_traits::zero() || !"compute_velocities(): time step must be positive");
+    assert(  delta_tau > 0 || !"compute_velocities(): time step must be positive");
 
     // Translation is straightforward
     v = (T_to.T() - T_from.T()) / delta_tau;

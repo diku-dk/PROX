@@ -95,6 +95,7 @@ namespace mesh_array
               , TetGenSettings const & settings
               )
   {
+      std::cerr << "\033[1;31mPLEASE LOOK AT THIS!!!\033[0m\n";
     assert(!settings.m_filename.empty() || !"tetgen(): intermediate filename is missing");
 
     write_poly( settings.m_filename + ".poly", surface, inX, inY, inZ );

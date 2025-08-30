@@ -43,13 +43,13 @@ namespace rigid_body
           return;
         }
 
-        float x  = VT::zero();
-        float y  = VT::zero();
-        float z  = VT::zero();
-        float qs = VT::zero();
-        float qx = VT::zero();
-        float qy = VT::zero();
-        float qz = VT::zero();
+        float x  = 0;
+        float y  = 0;
+        float z  = 0;
+        float qs = 0;
+        float qx = 0;
+        float qy = 0;
+        float qz = 0;
 
         std::vector<size_t> rids;
         rids.resize(engine->get_number_of_rigid_bodies());

@@ -38,7 +38,7 @@ namespace mesh_array
 			Q const R = Q::Ru( theta ,V::k() );
 			T const dh = (i < (segments/2)) ? -height/2.0f : height/2.0f;
 			
-			profile[ i ] = rotate( R, V::make(  VT::zero(), -radius, VT::zero() ) ) + V::make(VT::zero(),dh,VT::zero());
+			profile[ i ] = rotate( R, V::make(  0, -radius, 0 ) ) + V::make(0,dh,0);
 		}
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z );

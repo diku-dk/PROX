@@ -26,7 +26,7 @@ namespace big
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
 
-    Random<value_type> value(value_traits::zero(),value_traits::one());
+    Random<value_type> value(0,1);
 
     assert( m>0         || !"generate_random(): m was out of range");
     assert( n>0         || !"generate_random(): n was out of range");
@@ -62,7 +62,7 @@ namespace big
   {
     typedef big::ValueTraits<value_type> value_traits;
 
-    Random<value_type> value(value_traits::zero(),value_traits::one());
+    Random<value_type> value(0,1);
 
     assert( n>0         || !"generate_random(): n was out of range");
 

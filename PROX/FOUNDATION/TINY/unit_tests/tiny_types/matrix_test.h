@@ -18,8 +18,8 @@ namespace matrix_test
     typedef typename matrix_type::value_traits value_traits;
     typedef typename T::real_type              real_type;
 
-    real_type const zero = value_traits::zero();
-    real_type const one  = value_traits::one();
+    real_type const zero = 0;
+    real_type const one  = 1;
     real_type const tol  = value_traits::numeric_cast(0.01); // 1/100 percent
 
     matrix_type D = matrix_type::identity();
@@ -53,7 +53,7 @@ namespace matrix_test
     typedef typename matrix_type::value_traits value_traits;
     typedef typename T::real_type              real_type;
 
-    real_type const one  = value_traits::one();
+    real_type const one  = 1;
     real_type const tol  = value_traits::numeric_cast(0.01); // 1/100 percent
 
     matrix_type D = matrix_type::identity();

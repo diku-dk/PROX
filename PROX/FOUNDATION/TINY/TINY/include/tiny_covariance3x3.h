@@ -61,11 +61,11 @@ namespace tiny
   {
     typedef typename vector3_type::value_traits   value_traits;
 
-    mean = (mean1 + mean2)/value_traits::two();
+    mean = (mean1 + mean2)/2;
     matrix3x3_type KK = outer_prod(mean,mean);
     matrix3x3_type NN = outer_prod(mean1,mean1);
     matrix3x3_type MM = outer_prod(mean2,mean2);
-    C = ((C1 + NN + C2 + MM)/value_traits::two() - KK) ;
+    C = ((C1 + NN + C2 + MM)/2 - KK) ;
   }
 
 } // namespace tiny

@@ -39,7 +39,7 @@ namespace convex
 
     V m      = tiny::cross( A-C, B-C );
 
-    assert( tiny::inner_prod( m, m ) > VT::zero() || !"signed_distance_to_edge_face_voronoi_plane(): Degenerate triangle encountered");
+    assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_edge_face_voronoi_plane(): Degenerate triangle encountered");
 
     V l      = tiny::cross( B-A, m );
     V n      = tiny::unit( l );
@@ -52,7 +52,7 @@ namespace convex
     assert( is_number( sign_C ) || !"signed_distance_to_edge_face_voronoi_plane(): Not a Number encountered");
     assert( is_number( abs_p )  || !"signed_distance_to_edge_face_voronoi_plane(): Not a Number encountered");
 
-    bool in_front = ( (sign_p*sign_C) <= VT::zero() );
+    bool in_front = ( (sign_p*sign_C) <= 0 );
 
     return in_front ? abs_p : -abs_p;
   }

@@ -200,7 +200,7 @@ namespace prox
         int idx = this->safe_idx_into(i, j);
         if (idx < 0)
         {
-          return value_traits::zero();
+          return 0;
         }
         return this->m_data[idx];
       }
@@ -227,9 +227,9 @@ namespace prox
 
 		if (mb[0] == value_traits::infinity())
 		{
-			std::fill(mb.begin(), mb.end(), value_traits::zero());
+			std::fill(mb.begin(), mb.end(), 0);
 		}
-		else if (mb[0] == value_traits::zero() )   // 2009-08-04 Kenny: floating point comparison with zero?
+		else if (mb[0] == 0 )   // 2009-08-04 Kenny: floating point comparison with zero?
 		{
 			std::fill(mb.begin(), mb.end(), value_traits::infinity());
 		}
@@ -237,13 +237,13 @@ namespace prox
 		{
       // 2009-08-04 Kenny: This seems to be Cramer's rule specialized for a symmetric 3x3 matrix.
 
-			mb[0] = value_traits::one() / mb[0];
+			mb[0] = 1 / mb[0];
 			// d = determinant of 3x3 lower right matrix in mb
 			value_type d = ( mb[1] * (mb[4]  *mb[6] - (mb[5]*mb[5]))
                   + mb[3] * (2*mb[2]*mb[5] -  mb[3]*mb[4] )
                   - mb[2] *  mb[2]  *mb[6]                );
 
-      d = value_traits::one() / d;
+      d = 1 / d;
       // Cramer's rule - optimized to exploit symmetry of Mass_block
       value_type it3 =  (mb[2]*mb[5] - mb[3]*mb[4]) * d;
       value_type it4 =  (mb[1]*mb[6] - mb[3]*mb[3]) * d;

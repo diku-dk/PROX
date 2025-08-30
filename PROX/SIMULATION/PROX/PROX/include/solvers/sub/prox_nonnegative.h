@@ -1,24 +1,18 @@
 #ifndef PROX_NONNEGATIVE_H
 #define PROX_NONNEGATIVE_H
 
-#include <algorithm>   // for std::max
-#include <tiny_value_traits.h>
+#include <algorithm>
 
-namespace prox
+namespace prox::detail
 {
-  namespace detail
-  {
-    template <typename T>
-    inline static void nonnegative( T const & z_n, T & lambda_n )
-    {
-      typedef tiny::ValueTraits<T> value_traits;
 
-      using std::max;
-      lambda_n = max( value_traits::zero(), z_n );
-    }
+template <typename T>
+inline static void nonnegative(const T& z_n, T& lambda_n)
+{
+    lambda_n = std::max<T>(0, z_n);
+}
 
-  } // namespace detail
-} // namespace prox
+} // namespace prox::detail
 
 // PROX_NONNEGATIVE_H
 #endif

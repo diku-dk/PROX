@@ -81,12 +81,12 @@ namespace prox
     size_t idx = 0u;
     for(body_iterator body = bodies.begin(); body != bodies.end(); ++body,++idx)
     {
-      T min_x = VT::zero();
-      T min_y = VT::zero();
-      T min_z = VT::zero();
-      T max_x = VT::zero();
-      T max_y = VT::zero();
-      T max_z = VT::zero();
+      T min_x = 0;
+      T min_y = 0;
+      T min_z = 0;
+      T max_x = 0;
+      T max_y = 0;
+      T max_z = 0;
 
       body->get_box( min_x, min_y, min_z, max_x, max_y, max_z );
 

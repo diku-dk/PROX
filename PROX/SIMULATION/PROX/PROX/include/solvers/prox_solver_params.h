@@ -59,7 +59,7 @@ namespace prox
 
     void set_absolute_tolerance(T const & value)
     {
-      assert(value >= VT::zero() || !"set_absolute_tolerance(): value must be positive");
+      assert(value >= 0 || !"set_absolute_tolerance(): value must be positive");
       assert(is_number(value)    || !"set_absolute_tolerance(): value must be a number");
       assert(is_finite(value)    || !"set_absolute_tolerance(): value must be a finite value");
 
@@ -67,11 +67,11 @@ namespace prox
     }
 
     /**
-     * @note     Does not accepting relative convergence when set to VT::zero()
+     * @note     Does not accepting relative convergence when set to 0
      */
     void set_relative_tolerance(T const & value)
     {
-      assert(value >= VT::zero() || !"set_relative_tolerance(): value must be positive");
+      assert(value >= 0 || !"set_relative_tolerance(): value must be positive");
       assert(is_number(value)    || !"set_relative_tolerance(): value must be a number");
       assert(is_finite(value)    || !"set_relative_tolerance(): value must be a finite value");
 
@@ -111,7 +111,7 @@ namespace prox
     SolverParams()
     : m_max_iterations(500)
     , m_absolute_tolerance(VT::numeric_cast(10e-5f) )
-    , m_relative_tolerance(VT::zero() )
+    , m_relative_tolerance(0 )
     , m_use_warm_starting(false)
     , m_solver(gauss_seidel)
     , m_r_factor_strategy(local_strategy)

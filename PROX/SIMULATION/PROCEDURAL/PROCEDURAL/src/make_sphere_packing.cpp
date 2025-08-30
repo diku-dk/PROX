@@ -40,8 +40,8 @@ namespace procedural
       sphere_handle[c] = create_geometry_handle_sphere<MT>( engine, radius );
     }
 
-    unsigned int const I = std::floor( width/(max_radius*VT::two())  );
-    unsigned int const K = std::floor( depth/(max_radius*VT::two()) );
+    unsigned int const I = std::floor( width/(max_radius*2)  );
+    unsigned int const K = std::floor( depth/(max_radius*2) );
     unsigned int const J = std::ceil( 1.0f*number_of_spheres/(I*K)  );
 
     unsigned int sphere_count = 0u;
@@ -53,9 +53,9 @@ namespace procedural
           if(sphere_count > number_of_spheres)
             return;
 
-          T const x = -width*VT::half()+max_radius  + i*max_radius*VT::two();
-          T const z = -depth*VT::half()+max_radius  + k*max_radius*VT::two();
-          T const y = -height*VT::half()+max_radius + j*max_radius*VT::two();
+          T const x = -width*VT::half()+max_radius  + i*max_radius*2;
+          T const z = -depth*VT::half()+max_radius  + k*max_radius*2;
+          T const y = -height*VT::half()+max_radius + j*max_radius*2;
 
           int choice = sphere_count % 10;
 

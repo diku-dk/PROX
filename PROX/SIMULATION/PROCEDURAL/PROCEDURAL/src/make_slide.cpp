@@ -24,7 +24,7 @@ namespace procedural
     T const radians         = degree* (VT::pi()/180);
     T const radius          = VT::half();
     V const hill_extents    = V::make( VT::numeric_cast(6.0), VT::numeric_cast(0.2), 4);
-    V const box_extents     = V::make( radius, radius, radius)*VT::two();
+    V const box_extents     = V::make( radius, radius, radius)*2;
 
 
     GeometryHandle<MT> hill   = create_geometry_handle_box<MT>(  engine, hill_extents(0), hill_extents(1), hill_extents(2));
@@ -32,7 +32,7 @@ namespace procedural
     //  GeometryHandle<MT> sphere = create_geometry_handle_sphere<MT>( engine, radius);
 
     //BF or MF here?
-    V Tm = rotate(Q::Ry(radians), V::make(hill_extents(0)*VT::half(), VT::zero(), VT::zero()));  //V::make(  std::cos(radians)*hill_extents(0)*VT::half(), std::sin(radians)*hill_extents(0)*VT::half(), VT::zero());
+    V Tm = rotate(Q::Ry(radians), V::make(hill_extents(0)*VT::half(), 0, 0));  //V::make(  std::cos(radians)*hill_extents(0)*VT::half(), std::sin(radians)*hill_extents(0)*VT::half(), 0);
     Q Qm = Q::Rz(radians);
 
     // Body to Model transform
@@ -56,10 +56,10 @@ namespace procedural
                           , true
                           );
 
-    V TmB = rotate(Q::Ry(radians), V::make(hill_extents(0)-box_extents(0), (box_extents(1)+hill_extents(1)), VT::zero()));
+    V TmB = rotate(Q::Ry(radians), V::make(hill_extents(0)-box_extents(0), (box_extents(1)+hill_extents(1)), 0));
     //V TmB = V::make(  std::cos(radians)*hill_extents(0)*VT::half()-box_extents(0)*VT::half()
       //              , std::sin(radians)*hill_extents(0)*VT::half()+box_extents(1)*VT::half()
-      //              , radius*VT::two());
+      //              , radius*2);
    // TmB   = TmB + Tm;
 
     // Body to Model transform
@@ -84,7 +84,7 @@ namespace procedural
     /*
      V TmS = V::make(  std::cos(radians)*hill_extents(0)*VT::half()-radius
      , std::sin(radians)*hill_extents(0)*VT::half()+radius
-     , -radius*VT::two());
+     , -radius*2);
      TmS   = TmS + Tm;
 
      // Body to Model transform

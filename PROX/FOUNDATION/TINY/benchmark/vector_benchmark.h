@@ -14,8 +14,8 @@ namespace vector_benchmark
   {
     size_t const loops = 100000;
 
-    V A( V::value_traits::one() );
-    V B( V::value_traits::two() );
+    V A( 1 );
+    V B( 2 );
 
     //Timer<double> timer;
 

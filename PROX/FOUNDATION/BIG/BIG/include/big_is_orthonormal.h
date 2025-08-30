@@ -43,7 +43,7 @@ namespace big
     for ( size_type i = 0; i < n; ++i )
     {
       value_type tmp = inner_prod( column(A,i), column(A,i) );
-      if( fabs(tmp-value_traits::one()) > precision )
+      if( fabs(tmp-1) > precision )
         return false;
     }
     for ( size_type i = 0; i < n; ++i )

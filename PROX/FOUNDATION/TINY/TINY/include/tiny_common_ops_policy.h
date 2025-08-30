@@ -48,7 +48,7 @@ namespace tiny
             }
             // 2009-07-14 Kenny: warning C4127: conditional expression is constant
             if(remainder)// Necessary becase test will set remainder values to 1.0
-              type_traits::template set_pad_value<remainder>(M::accessor::cast(result,i,last), value_traits::zero());
+              type_traits::template set_pad_value<remainder>(M::accessor::cast(result,i,last), 0);
           }
 
           return result;
@@ -108,7 +108,7 @@ namespace tiny
             }
             // 2009-07-14 Kenny: warning C4127: conditional expression is constant
             if(remainder) // Necessary becase test will set remainder values to 1.0
-              type_traits::template set_pad_value<remainder>(M::accessor::cast(result,i,last), value_traits::zero());
+              type_traits::template set_pad_value<remainder>(M::accessor::cast(result,i,last), 0);
           }
           return result;
         }
@@ -125,7 +125,7 @@ namespace tiny
             }
             // 2009-07-14 Kenny: warning C4127: conditional expression is constant
             if(remainder) // Necessary becase test will set remainder values to 1.0
-              type_traits::template set_pad_value<remainder>(M::accessor::cast(result,i,last), value_traits::zero());
+              type_traits::template set_pad_value<remainder>(M::accessor::cast(result,i,last), 0);
           }
           return result;
         }
@@ -205,7 +205,7 @@ namespace tiny
 //            if(remainder)
 //            {
 //              op_type tmp = M::accessor::cast(rhs,i,last);
-//              type_traits::template set_pad_value<remainder>(tmp,value_traits::one());
+//              type_traits::template set_pad_value<remainder>(tmp,1);
 //              type_traits::div_assign(M::accessor::cast(lhs,i,last),tmp);
 //            }
 //          }
@@ -240,7 +240,7 @@ namespace tiny
 
         static M& div_assign (M & lhs, real_type const & rhs)
         {
-          assert(rhs != value_traits::zero() || !"Division by zero!");
+          assert(rhs != 0 || !"Division by zero!");
           const op_type op_type_rhs = type_traits::set_op_type(rhs);
 
           for(size_t i = 0 ; i < I ; ++i)
@@ -394,9 +394,9 @@ namespace tiny
 //            if (remainder)
 //            {
 //              op_type tmp = M::accessor::cast(rhs,i,last);
-//              type_traits::template set_pad_value<remainder>(tmp,value_traits::one());
+//              type_traits::template set_pad_value<remainder>(tmp,1);
 //              tmp = type_traits::rsqrt(tmp);
-//              type_traits::template set_pad_value<remainder>(tmp,value_traits::zero());
+//              type_traits::template set_pad_value<remainder>(tmp,0);
 //              M::accessor::cast(result,i,last) = tmp;
 //            }
 //          }
@@ -407,7 +407,7 @@ namespace tiny
 
         static real_type sum (M const & rhs)
         {
-          op_type result = value_traits::zero();  // 2009-07-13 Kenny: Proper initialization?
+          op_type result = 0;  // 2009-07-13 Kenny: Proper initialization?
           for(size_t i = 0 ; i<I ; ++i)
           {
             for(size_t j=0 ; j<J ; j+=stride )
@@ -416,7 +416,7 @@ namespace tiny
             }
             // 2009-07-14 Kenny: warning C4127: conditional expression is constant
             if(remainder) // Necessary otherwise pad-values may end up being the final result
-              type_traits::template set_pad_value<remainder>( result, value_traits::zero());
+              type_traits::template set_pad_value<remainder>( result, 0);
           }
           return type_traits::sum(result);
         }

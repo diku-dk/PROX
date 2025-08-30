@@ -24,20 +24,20 @@ namespace geometry
     assert( is_finite(w1) || !"barycentric_inside(): Inf encountered");
     assert( is_finite(w2) || !"barycentric_inside(): Inf encountered");
 
-    if(w1<VT::zero())
+    if(w1<0)
       return false;
-    if(w2<VT::zero())
-      return false;
-
-    if(w1>VT::one())
-      return false;
-    if(w2>VT::one())
+    if(w2<0)
       return false;
 
-    if((w1+w2)>VT::one())
+    if(w1>1)
+      return false;
+    if(w2>1)
       return false;
 
-    if((w1+w2)<VT::zero())
+    if((w1+w2)>1)
+      return false;
+
+    if((w1+w2)<0)
       return false;
 
     return true;
@@ -59,24 +59,24 @@ namespace geometry
     assert( is_finite(w3) || !"barycentric_inside(): Inf encountered");
 
 
-    if(w1<VT::zero())
+    if(w1<0)
       return false;
-    if(w2<VT::zero())
+    if(w2<0)
       return false;
-    if(w3<VT::zero())
-      return false;
-
-    if(w1>VT::one())
-      return false;
-    if(w2>VT::one())
-      return false;
-    if(w3>VT::one())
+    if(w3<0)
       return false;
 
-    if((w1+w2+w3)>VT::one())
+    if(w1>1)
+      return false;
+    if(w2>1)
+      return false;
+    if(w3>1)
       return false;
 
-    if((w1+w2+w3)<VT::zero())
+    if((w1+w2+w3)>1)
+      return false;
+
+    if((w1+w2+w3)<0)
       return false;
 
 
@@ -100,28 +100,28 @@ namespace geometry
     assert( is_finite(w3) || !"barycentric_inside(): Inf encountered");
     assert( is_finite(w4) || !"barycentric_inside(): Inf encountered");
 
-    if(w1<VT::zero())
+    if(w1<0)
       return false;
-    if(w2<VT::zero())
+    if(w2<0)
       return false;
-    if(w3<VT::zero())
+    if(w3<0)
       return false;
-    if(w4<VT::zero())
-      return false;
-
-    if(w1>VT::one())
-      return false;
-    if(w2>VT::one())
-      return false;
-    if(w3>VT::one())
-      return false;
-    if(w4>VT::one())
+    if(w4<0)
       return false;
 
-    if((w1+w2+w3+w4)>VT::one())
+    if(w1>1)
+      return false;
+    if(w2>1)
+      return false;
+    if(w3>1)
+      return false;
+    if(w4>1)
       return false;
 
-    if((w1+w2+w3+w4)<VT::zero())
+    if((w1+w2+w3+w4)>1)
+      return false;
+
+    if((w1+w2+w3+w4)<0)
       return false;
 
     return true;

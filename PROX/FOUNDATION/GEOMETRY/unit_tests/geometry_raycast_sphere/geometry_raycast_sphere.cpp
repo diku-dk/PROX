@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
 
   V const center = V::make(0.0,0.0,0.0);
-  T const radius = VT::one();
+  T const radius = 1;
 
   geometry::Sphere<V> sphere = geometry::make_sphere(center, radius);
 
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);

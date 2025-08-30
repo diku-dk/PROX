@@ -271,7 +271,7 @@ namespace prox
 
         sparse::prod(WJT, lambda, fc, true);
 
-        position_update( q, fc, VT::one(), q, tag );
+        position_update( q, fc, 1, q, tag );
 
         set_position_vector( bodies.begin(), bodies.end(), q, tag );
       }

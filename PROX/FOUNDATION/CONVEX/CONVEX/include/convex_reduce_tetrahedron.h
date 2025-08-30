@@ -42,13 +42,13 @@ namespace convex
     int const bit_C = 4;
     int const bit_D = 8;
 
-    T scale = VT::zero();
+    T scale = 0;
 
     for (size_t i = 0; i<4; i++) {
       scale = scale > tiny::norm(S.m_v[i]) ? scale : tiny::norm(S.m_v[i]);
     }
 
-    assert( scale > VT::zero() || !"reduce_tetrahedron: collapsed tetrahedron, all edges have zero lenght");
+    assert( scale > 0 || !"reduce_tetrahedron: collapsed tetrahedron, all edges have zero lenght");
 
     V const & A = S.m_v[idx_A]/scale;// scale so that A lies within [0;1] on all three axis
     V const & B = S.m_v[idx_B]/scale;// scale so that B lies within [0;1] on all three axis
@@ -99,10 +99,10 @@ namespace convex
       S.m_b[idx_B].clear();
       S.m_b[idx_C].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_A] = VT::one();
-      S.m_w[idx_B] = VT::zero();
-      S.m_w[idx_C] = VT::zero();
-      S.m_w[idx_D] = VT::zero();
+      S.m_w[idx_A] = 1;
+      S.m_w[idx_B] = 0;
+      S.m_w[idx_C] = 0;
+      S.m_w[idx_D] = 0;
       return;
     }
     if( outside_BA && outside_BC && outside_BD)
@@ -117,10 +117,10 @@ namespace convex
       S.m_b[idx_A].clear();
       S.m_b[idx_C].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_B] = VT::one();
-      S.m_w[idx_C] = VT::zero();
-      S.m_w[idx_D] = VT::zero();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_B] = 1;
+      S.m_w[idx_C] = 0;
+      S.m_w[idx_D] = 0;
       return;
     }
     if( outside_CA && outside_CB && outside_CD)
@@ -135,10 +135,10 @@ namespace convex
       S.m_b[idx_A].clear();
       S.m_b[idx_B].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_B] = VT::zero();
-      S.m_w[idx_C] = VT::one();
-      S.m_w[idx_D] = VT::zero();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_B] = 0;
+      S.m_w[idx_C] = 1;
+      S.m_w[idx_D] = 0;
       return;
     }
     if( outside_DA && outside_DB && outside_DC)
@@ -153,10 +153,10 @@ namespace convex
       S.m_b[idx_A].clear();
       S.m_b[idx_B].clear();
       S.m_b[idx_C].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_B] = VT::zero();
-      S.m_w[idx_C] = VT::zero();
-      S.m_w[idx_D] = VT::one();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_B] = 0;
+      S.m_w[idx_C] = 0;
+      S.m_w[idx_D] = 1;
       return;
     }
 
@@ -170,8 +170,8 @@ namespace convex
       S.m_a[idx_D].clear();
       S.m_b[idx_C].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_C] = VT::zero();
-      S.m_w[idx_D] = VT::zero();
+      S.m_w[idx_C] = 0;
+      S.m_w[idx_D] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric(A,B,p,S.m_w[idx_A],S.m_w[idx_B]);
@@ -186,8 +186,8 @@ namespace convex
       S.m_a[idx_D].clear();
       S.m_b[idx_B].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_B] = VT::zero();
-      S.m_w[idx_D] = VT::zero();
+      S.m_w[idx_B] = 0;
+      S.m_w[idx_D] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric(A,C,p,S.m_w[idx_A],S.m_w[idx_C]);
@@ -202,8 +202,8 @@ namespace convex
       S.m_a[idx_C].clear();
       S.m_b[idx_B].clear();
       S.m_b[idx_C].clear();
-      S.m_w[idx_B] = VT::zero();
-      S.m_w[idx_C] = VT::zero();
+      S.m_w[idx_B] = 0;
+      S.m_w[idx_C] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric(A,D,p,S.m_w[idx_A],S.m_w[idx_D]);
@@ -218,8 +218,8 @@ namespace convex
       S.m_a[idx_D].clear();
       S.m_b[idx_A].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_D] = VT::zero();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_D] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric(B,C,p,S.m_w[idx_B],S.m_w[idx_C]);
@@ -234,8 +234,8 @@ namespace convex
       S.m_a[idx_C].clear();
       S.m_b[idx_A].clear();
       S.m_b[idx_C].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_C] = VT::zero();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_C] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric(B,D,p,S.m_w[idx_B],S.m_w[idx_D]);
@@ -250,8 +250,8 @@ namespace convex
       S.m_a[idx_B].clear();
       S.m_b[idx_A].clear();
       S.m_b[idx_B].clear();
-      S.m_w[idx_A] = VT::zero();
-      S.m_w[idx_B] = VT::zero();
+      S.m_w[idx_A] = 0;
+      S.m_w[idx_B] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric(C,D,p,S.m_w[idx_C],S.m_w[idx_D]);
@@ -265,7 +265,7 @@ namespace convex
       S.m_v[idx_D].clear();
       S.m_a[idx_D].clear();
       S.m_b[idx_D].clear();
-      S.m_w[idx_D]  = VT::zero();
+      S.m_w[idx_D]  = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric( A, B, C, p, S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_C]);
@@ -277,7 +277,7 @@ namespace convex
       S.m_v[idx_C].clear();
       S.m_a[idx_C].clear();
       S.m_b[idx_C].clear();
-      S.m_w[idx_C]  = VT::zero();
+      S.m_w[idx_C]  = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric( A, B, D, p, S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_D]);
@@ -289,7 +289,7 @@ namespace convex
       S.m_v[idx_A].clear();
       S.m_a[idx_A].clear();
       S.m_b[idx_A].clear();
-      S.m_w[idx_A] = VT::zero();
+      S.m_w[idx_A] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric( B, C, D, p, S.m_w[idx_B], S.m_w[idx_C], S.m_w[idx_D]);
@@ -301,7 +301,7 @@ namespace convex
       S.m_v[idx_B].clear();
       S.m_a[idx_B].clear();
       S.m_b[idx_B].clear();
-      S.m_w[idx_B] = VT::zero();
+      S.m_w[idx_B] = 0;
 
       //barycentric coords are invariant to uniform scaling
       geometry::barycentric( C, A, D, p, S.m_w[idx_C], S.m_w[idx_A], S.m_w[idx_D]);

@@ -36,7 +36,7 @@ namespace mesh_array
 			T const theta = dtheta*i;
 			
 			Q const R = Q::Ru( theta ,V::k() );			
-			profile[ i ] = rotate( R, V::make(  VT::zero(), -radius, VT::zero() ) );
+			profile[ i ] = rotate( R, V::make(  0, -radius, 0 ) );
 		}
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z );
@@ -63,7 +63,7 @@ namespace mesh_array
 //    Y.bind(mesh);
 //    Z.bind(mesh);
 //		
-//		T const delta_theta = VT::two()*VT::pi()/slices;
+//		T const delta_theta = 2*VT::pi()/slices;
 //		T const delta_phi   =      VT::pi()/segments;
 //		
 //		size_t vertex_offset = 0u;

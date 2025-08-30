@@ -56,8 +56,8 @@ namespace geometry
     typedef typename V::value_traits VT;
     typedef typename V::real_type     T;
 
-    assert( get_signed_volume(A) > VT::zero() || !"overlap_tetrahedron_tetrahedron(): A was left oriented ");
-    assert( get_signed_volume(B) > VT::zero() || !"overlap_tetrahedron_tetrahedron(): B was left oriented ");
+    assert( get_signed_volume(A) > 0 || !"overlap_tetrahedron_tetrahedron(): A was left oriented ");
+    assert( get_signed_volume(B) > 0 || !"overlap_tetrahedron_tetrahedron(): B was left oriented ");
 
     V const & A0 = A.point(0);
     V const & A1 = A.point(1);
@@ -79,7 +79,7 @@ namespace geometry
       T const b2 = get_signed_distance(B2, plane);
       T const b3 = get_signed_distance(B3, plane);
 
-      if ( b0 > VT::zero() && b1 > VT::zero() && b2 > VT::zero() && b3 > VT::zero() )
+      if ( b0 > 0 && b1 > 0 && b2 > 0 && b3 > 0 )
         return false;
     }
 
@@ -93,7 +93,7 @@ namespace geometry
       T const a2 = get_signed_distance(A2, plane);
       T const a3 = get_signed_distance(A3, plane);
 
-      if ( a0 > VT::zero() && a1 > VT::zero() && a2 > VT::zero() && a3 > VT::zero() )
+      if ( a0 > 0 && a1 > 0 && a2 > 0 && a3 > 0 )
         return false;
     }
 

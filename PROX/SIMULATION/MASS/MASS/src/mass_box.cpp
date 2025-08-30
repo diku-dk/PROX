@@ -21,16 +21,16 @@ namespace mass
 
     assert( is_number( density )                || !"density must be a number"           );
     assert( is_finite( density )                || !"density must be a finite number"    );
-    assert( density > value_traits::zero()      || !"density must be positive"           );
+    assert( density > 0      || !"density must be positive"           );
     assert( is_number( half_width )             || !"half_width must be a  number"       );
     assert( is_finite( half_width )             || !"half_width must be a finite number" );
-    assert( half_width >= value_traits::zero()  || !"half_width must be non-negative"    );
+    assert( half_width >= 0  || !"half_width must be non-negative"    );
     assert( is_number( half_height )            || !"half_height must be a number"       );
     assert( is_finite( half_height )            || !"half_height must be a finite number");
-    assert( half_height >= value_traits::zero() || !"half_height must be non-negative"   );
+    assert( half_height >= 0 || !"half_height must be non-negative"   );
     assert( is_number( half_depth )             || !"half_depth must be a number"        );
     assert( is_finite( half_depth )             || !"half_depth must be a finite number" );
-    assert( half_depth >= value_traits::zero()  || !"half_depth must be non-negative"    );
+    assert( half_depth >= 0  || !"half_depth must be non-negative"    );
 
     const auto h0   = half_width;
     const auto h1   = half_height;

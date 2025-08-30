@@ -96,7 +96,7 @@ namespace prox
         assert( this->m_body_i              || !"operator(): body i is null" );
         assert( this->m_body_j              || !"operator(): body j is null" );
         assert( this->m_results             || !"operator(): results is null");
-        assert( tiny::norm(n) > VT::zero()  || !"operator(): normal is zero" );
+        assert( tiny::norm(n) > 0  || !"operator(): normal is zero" );
 
 
         contact_type contact;

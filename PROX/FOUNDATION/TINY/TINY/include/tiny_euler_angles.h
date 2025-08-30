@@ -79,7 +79,7 @@ namespace tiny
 
     bool gimbal_lock = false;
 
-    if ( r20 >= VT::one() )
+    if ( r20 >= 1 )
     {
       // Since r20 = -sy this must mean sy = -1 and so we must have
       // ry = -pi/2 and from this we conclude cy = 0
@@ -102,10 +102,10 @@ namespace tiny
       //
       rz =   VT::numeric_cast( atan2(- r01, -r02) );
       ry = - VT::pi_2();
-      rx =   VT::zero();
+      rx =   0;
       gimbal_lock = true;
     }
-    else if ( r20 <= -VT::one() )
+    else if ( r20 <= -1 )
     {
       // Since r20 = -sy this must mean sy = 1 and so we must have ry = pi/2 and from this we conclude cy = 0
       //
@@ -127,7 +127,7 @@ namespace tiny
       //
       rz =   VT::numeric_cast( atan2(-r01, r02) );
       ry =   VT::pi_2();
-      rx =   VT::zero();
+      rx =   0;
       gimbal_lock = true;
     }
     else
@@ -184,9 +184,9 @@ namespace tiny
     typedef typename tiny::Quaternion<TT>::value_traits    VT;
     typedef typename tiny::Quaternion<TT>::real_type       T;
 
-    phi   = VT::zero();
-    psi   = VT::zero();
-    theta = VT::zero();
+    phi   = 0;
+    psi   = 0;
+    theta = 0;
 
     // Here phi, psi and theta defines the relative rotation, Q, such that
     //
@@ -232,15 +232,15 @@ namespace tiny
     //
     // This forces psi to always be in the internval [0..pi].
     //
-    T const u_z = clamp( u(2), -VT::one(), VT::one());
+    T const u_z = clamp<T>( u(2), -1, 1);
     assert(is_number(u_z)               || !"ZYZ_euler_angles(): not an number encountered" );
-    assert(u_z <= VT::one()             || !"ZYZ_euler_angles(): u_z was too big"           );
-    assert(u_z >= -VT::one()            || !"ZYZ_euler_angles(): u_z was too small"         );
+    assert(u_z <= 1             || !"ZYZ_euler_angles(): u_z was too big"           );
+    assert(u_z >= -1            || !"ZYZ_euler_angles(): u_z was too small"         );
 
     psi = VT::numeric_cast( acos(u_z)   );
     assert(is_number(psi)               || !"ZYZ_euler_angles(): psi was not an number encountered");
     assert(psi <= VT::pi()              || !"ZYZ_euler_angles(): psi was too big"                  );
-    assert(psi >= VT::zero()            || !"ZYZ_euler_angles(): psi was too small"                );
+    assert(psi >= 0            || !"ZYZ_euler_angles(): psi was too small"                );
     //
     // We know that sin(psi) is allways going to be positive, which mean
     // that we can divide the second equation by the first equation and
@@ -357,7 +357,7 @@ namespace tiny
     //T st2 = norm( v ); //---  |sin(theta/2)|
 
     //// First try positive choice of sin(theta/2)
-    //theta = value_traits::two()* atan2(st2,ct2);
+    //theta = 2* atan2(st2,ct2);
 
     return;
   }

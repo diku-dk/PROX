@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.2, 0.2, -1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, true );
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.2, 0.2, -1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false );
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.2, 0.2,  1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, true );
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.2, 0.2,  1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false );
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.6, 0.6, -1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false );
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.5,-0.1, -1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false );
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     V                const r   = V::make( 0.4999, 0.4999,  1.0);
     geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = VT::zero();
+    T       length = 0;
     V       q      = V::zero();
 
     bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false );

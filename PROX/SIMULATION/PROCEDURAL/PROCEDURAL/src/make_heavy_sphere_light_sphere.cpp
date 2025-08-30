@@ -30,7 +30,7 @@ namespace procedural
     V const T_b2m = sphere_handle.Tb2m();
     Q const Q_b2m = sphere_handle.Qb2m();
 
-    V       T_m2l = V::make( VT::zero(), sphere_radius, VT::zero() );
+    V       T_m2l = V::make( 0, sphere_radius, 0 );
     Q const Q_m2l = Q::Ru( - VT::pi_half(), V::i() );
 
     V const T_l2w = position;
@@ -60,7 +60,7 @@ namespace procedural
 
 
     // heavy sphere on top of light sphere
-    T_m2l = V::make( VT::zero(), 3*sphere_radius, VT::zero() );
+    T_m2l = V::make( 0, 3*sphere_radius, 0 );
 
     compute_body_to_world_transform<MT>(
                                         T_b2m

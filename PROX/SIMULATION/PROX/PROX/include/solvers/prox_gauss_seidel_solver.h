@@ -84,8 +84,8 @@ namespace prox
 
     T residual_norm;
 
-    B4x1 z_k(     VT::zero() );
-    B4x1 delta_x( VT::zero() );
+    B4x1 z_k(     0 );
+    B4x1 delta_x( 0 );
 
     //--- Gauss--Seidel loops
     for(size_t iteration = 0u; iteration < params.max_iterations(); ++iteration )

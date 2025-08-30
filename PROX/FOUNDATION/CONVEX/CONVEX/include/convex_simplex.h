@@ -302,10 +302,10 @@ namespace convex
       m_b[2].clear();
       m_b[3].clear();
 
-      m_w[0] = VT::zero();
-      m_w[1] = VT::zero();
-      m_w[2] = VT::zero();
-      m_w[3] = VT::zero();
+      m_w[0] = 0;
+      m_w[1] = 0;
+      m_w[2] = 0;
+      m_w[3] = 0;
     }
 
   };
@@ -502,7 +502,7 @@ namespace convex
     S.m_a[free_idx] = p_a;
     S.m_b[free_idx] = p_b;
     S.m_v[free_idx] = p;
-    S.m_w[free_idx] = VT::zero();
+    S.m_w[free_idx] = 0;
 
     // Update bitmask to reflect that the free bit is no longer free
     S.m_bitmask |= free_bit;

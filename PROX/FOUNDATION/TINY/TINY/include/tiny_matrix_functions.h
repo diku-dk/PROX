@@ -214,7 +214,7 @@ namespace tiny
   {
     using std::fabs;
 
-      assert(threshold >= (Matrix<3,3, T>::value_traits::zero()) || !"is_symmetric(): threshold must be non-negative");
+      assert(threshold >= 0 || !"is_symmetric(): threshold must be non-negative");
 
     if(fabs(M(0,1)-M(1,0))>threshold)      return false;
     if(fabs(M(0,2)-M(2,0))>threshold)      return false;
@@ -395,9 +395,9 @@ namespace tiny
     //--- Rewrites the component of a vector3_type cross-product as a matrix.
     //--- a x b = a*b = ba*
     return Matrix<3,3,T>::make(
-                               value_traits::zero(),                   -v(2),                     v(1),
-                               v(2),     value_traits::zero(),                   -v(0),
-                               -v(1),                     v(0),    value_traits::zero()
+                               0,                   -v(2),                     v(1),
+                               v(2),     0,                   -v(0),
+                               -v(1),                     v(0),    0
                                );
   }
 
@@ -445,15 +445,15 @@ namespace tiny
     typedef typename M::value_traits  value_traits;
 
     M m;
-    m(0,0) = value_traits::one() - value_traits::two() * ( (q.imag()(1)*q.imag()(1)) + (q.imag()(2)*q.imag()(2)));
-    m(1,1) = value_traits::one() - value_traits::two() * ( (q.imag()(0)*q.imag()(0)) + (q.imag()(2)*q.imag()(2)));
-    m(2,2) = value_traits::one() - value_traits::two() * ( (q.imag()(1)*q.imag()(1)) + (q.imag()(0)*q.imag()(0)));
-    m(1,0) =                       value_traits::two() * ( (q.imag()(0)*q.imag()(1)) + (q.real()*q.imag()(2)));
-    m(0,1) =                       value_traits::two() * ( (q.imag()(0)*q.imag()(1)) - (q.real()*q.imag()(2)));
-    m(2,0) =                       value_traits::two() * (-(q.real()*q.imag()(1))    + (q.imag()(0)*q.imag()(2)));
-    m(0,2) =                       value_traits::two() * ( (q.real()*q.imag()(1))    + (q.imag()(0)*q.imag()(2)));
-    m(2,1) =                       value_traits::two() * ( (q.imag()(2)*q.imag()(1)) + (q.real()*q.imag()(0)));
-    m(1,2) =                       value_traits::two() * ( (q.imag()(2)*q.imag()(1)) - (q.real()*q.imag()(0)));
+    m(0,0) = 1 - 2 * ( (q.imag()(1)*q.imag()(1)) + (q.imag()(2)*q.imag()(2)));
+    m(1,1) = 1 - 2 * ( (q.imag()(0)*q.imag()(0)) + (q.imag()(2)*q.imag()(2)));
+    m(2,2) = 1 - 2 * ( (q.imag()(1)*q.imag()(1)) + (q.imag()(0)*q.imag()(0)));
+    m(1,0) =                       2 * ( (q.imag()(0)*q.imag()(1)) + (q.real()*q.imag()(2)));
+    m(0,1) =                       2 * ( (q.imag()(0)*q.imag()(1)) - (q.real()*q.imag()(2)));
+    m(2,0) =                       2 * (-(q.real()*q.imag()(1))    + (q.imag()(0)*q.imag()(2)));
+    m(0,2) =                       2 * ( (q.real()*q.imag()(1))    + (q.imag()(0)*q.imag()(2)));
+    m(2,1) =                       2 * ( (q.imag()(2)*q.imag()(1)) + (q.real()*q.imag()(0)));
+    m(1,2) =                       2 * ( (q.imag()(2)*q.imag()(1)) - (q.real()*q.imag()(0)));
     return m;
   }
 

@@ -45,11 +45,11 @@ namespace tiny
     real_type tr = M00 + M11 + M22;
     real_type r;
 
-    real_type const half = value_traits::one()/value_traits::two();
+    const real_type half{.5};
 
-    if(tr>=value_traits::zero())
+    if(tr>=0)
     {
-      r           = sqrt(tr + value_traits::one());
+      r           = sqrt(tr + 1);
       Q.real()    = half*r;
       r           = half/r;
       Q.imag()[0] = (M21 - M12) * r;
@@ -66,7 +66,7 @@ namespace tiny
       switch(i)
       {
         case 0:
-          r           = sqrt((M00 - (M11+M22)) + value_traits::one());
+          r           = sqrt((M00 - (M11+M22)) + 1);
           Q.imag()[0] = half*r;
           r           = half/r;
           Q.imag()[1] = (M01 + M10) * r;
@@ -74,7 +74,7 @@ namespace tiny
           Q.real()    = (M21 - M12) * r;
           break;
         case 1:
-          r           = sqrt((M11 - (M22+M00)) + value_traits::one());
+          r           = sqrt((M11 - (M22+M00)) + 1);
           Q.imag()[1] = half*r;
           r           = half/r;
           Q.imag()[2] = (M12 + M21)*r;
@@ -82,7 +82,7 @@ namespace tiny
           Q.real()    = (M02 - M20)*r;
           break;
         case 2:
-          r           = sqrt((M22 - (M00+M11)) + value_traits::one());
+          r           = sqrt((M22 - (M00+M11)) + 1);
           Q.imag()[2] = half*r;
           r           = half/r;
           Q.imag()[0] = (M20 + M02) * r;
@@ -196,12 +196,12 @@ namespace tiny
     typedef typename T::real_type                 real_type;
     typedef typename Quaternion<T>::value_traits  value_traits;
 
-    if(  q == Quaternion<T>(value_traits::one(), value_traits::zero(), value_traits::zero(),value_traits::zero())    )
-      return Quaternion<T>(value_traits::zero(),value_traits::zero(),value_traits::zero(),value_traits::zero());
+    if(  q == Quaternion<T>(1, 0, 0,0)    )
+      return Quaternion<T>(0,0,0,0);
 
     real_type const theta    = value_traits::numeric_cast( acos( q.real() ) );
     real_type const stheta   = value_traits::numeric_cast( sin(theta)    );
-    return Quaternion<T>(value_traits::zero(), q.imag()*(theta/stheta));
+    return Quaternion<T>(0, q.imag()*(theta/stheta));
   }
 
   /**
@@ -259,9 +259,9 @@ namespace tiny
   inline Quaternion<T> lerp(Quaternion<T> const & A,Quaternion<T> const & B, typename T::real_type const & w)
   {
     typedef typename Quaternion<T>::value_traits   value_traits;
-    assert(w>=value_traits::zero() || !"lerp(): w must not be less than 0");
-    assert(w<=value_traits::one()  || !"lerp(): w must not be larger than 1");	
-    typename T::real_type const mw = value_traits::one() - w;
+    assert(w>=0 || !"lerp(): w must not be less than 0");
+    assert(w<=1  || !"lerp(): w must not be larger than 1");
+    typename T::real_type const mw = 1 - w;
     return ((mw * A) + (w * B));
   }
 
@@ -283,29 +283,29 @@ namespace tiny
     using std::acos;
     using std::sin;
 
-    assert(w>=value_traits::zero() || !"slerp(): w must not be less than 0");
-    assert(w<=value_traits::one()  || !"slerp(): w must not be larger than 1");	
+    assert(w>=0 || !"slerp(): w must not be less than 0");
+    assert(w<=1  || !"slerp(): w must not be larger than 1");
 
     real_type const q_tiny = value_traits::numeric_cast( 10e-7 );
     real_type norm = inner_prod(A, B);
 
     bool flip = false;
-    if( norm < value_traits::zero() )
+    if( norm < 0 )
     {
       norm = -norm;
       flip = true;
     }
     real_type weight = w;
     real_type inv_weight;
-    if(value_traits::one() - norm < q_tiny)
+    if(1 - norm < q_tiny)
     {
-      inv_weight = value_traits::one() - weight;
+      inv_weight = 1 - weight;
     }
     else
     {
       real_type const theta = value_traits::numeric_cast( acos(norm)                                          );
-      real_type const s_val = value_traits::numeric_cast( value_traits::one() / sin(theta)                    );
-      inv_weight            = value_traits::numeric_cast( sin((value_traits::one() - weight) * theta) * s_val );
+      real_type const s_val = value_traits::numeric_cast( 1 / sin(theta)                    );
+      inv_weight            = value_traits::numeric_cast( sin((1 - weight) * theta) * s_val );
       weight                = value_traits::numeric_cast( sin(weight * theta) * s_val                         );
     }
     if(flip)
@@ -342,10 +342,10 @@ namespace tiny
     typedef typename T::real_type                  real_type;
     typedef typename Quaternion<T>::value_traits   value_traits;
 
-    assert(u>=value_traits::zero() || !"squad(): u must not be less than 0");
-    assert(u<=value_traits::one()  || !"squad(): u must not be larger than 1");	
+    assert(u>=0 || !"squad(): u must not be less than 0");
+    assert(u<=1  || !"squad(): u must not be larger than 1");
 
-    real_type const u2 = value_traits::two() *u*(value_traits::one() -u);
+    real_type const u2 = 2 *u*(1 -u);
     return slerp( slerp(q0,q3,u), slerp(q1,q2,u), u2);
   }
 
@@ -456,13 +456,13 @@ namespace tiny
     real_type const ct2   = Q.real();           //---   cos(theta/2)
     real_type const st2   = norm( Q.imag() );   //---  |sin(theta/2)|
 
-    theta = value_traits::two()* atan2(st2,ct2);
+    theta = 2* atan2(st2,ct2);
 
-    assert( st2 >= value_traits::zero()   || !"get_axis_angle(): |sin(theta/2)| must be non-negative");
-    assert( theta >= value_traits::zero() || !"get_axis_angle(): theta must be non-negative");
+    assert( st2 >= 0   || !"get_axis_angle(): |sin(theta/2)| must be non-negative");
+    assert( theta >= 0 || !"get_axis_angle(): theta must be non-negative");
     assert( is_number(theta)              || !"get_axis_angle(): NaN encountered");
 
-    axis = st2 > value_traits::zero() ? Q.imag() / st2 : V( value_traits::zero() );
+    axis = st2 > 0 ? Q.imag() / st2 : V( 0 );
   }
 
   /**
@@ -539,23 +539,23 @@ namespace tiny
     //--- being sign inverted.
     real_type const ct2 = Q_rel.real();           //---   cos(theta/2)
     real_type const st2 = norm( Q_rel.imag() );   //---  |sin(theta/2)|
-    real_type theta = value_traits::zero();
+    real_type theta = 0;
 
     //--- Remember that Q_rel : BF_B' -> BF_B, so we need the axis in body B's local frame
-    if( Q_rel.imag() * axis  >= value_traits::zero())
+    if( Q_rel.imag() * axis  >= 0)
     {
       //--- u points in direction of axis.
-      theta = value_traits::two()* atan2(st2,ct2);
+      theta = 2* atan2(st2,ct2);
     }
     else
     {
       //--- u points in opposite direction.
-      theta = value_traits::two() * atan2(st2,-ct2);
+      theta = 2 * atan2(st2,-ct2);
     }
     //--- The angle we get will be between 0..2*pi, but we want
     //--- to return angles between -pi..pi
     if (theta > value_traits::pi())
-      theta -= value_traits::two()*value_traits::pi();
+      theta -= 2*value_traits::pi();
 
     //--- The angle we've just extracted has the wrong sign (Why???).
     theta = -theta;

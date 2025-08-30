@@ -118,7 +118,7 @@ namespace rigid_body
         //--- Determine how the displacment on view plane scale to displacement in world
         T const scale =  m_hit_distance*s1;
 
-        assert(scale>VT::zero() || !"move_selection(): internal error");
+        assert(scale>0 || !"move_selection(): internal error");
 
         V const d =  (r2 - r1)*scale;
 

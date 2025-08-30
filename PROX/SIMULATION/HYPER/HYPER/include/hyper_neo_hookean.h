@@ -82,7 +82,7 @@ namespace hyper
       T const lambda =  this->m_material.lambda();
       T const mu     =  this->m_material.mu();
 
-      return (lambda * tiny::trace(e)) * M::identity() + (VT::two()*mu) * e;
+      return (lambda * tiny::trace(e)) * M::identity() + (2*mu) * e;
     }
 
     std::string name() const

@@ -41,12 +41,12 @@ namespace prox
 
       if(body->is_fixed() || body->is_scripted() )
       {
-        b(0) = VT::zero();
-        b(1) = VT::zero();
-        b(2) = VT::zero();
-        b(3) = VT::zero();
-        b(4) = VT::zero();
-        b(5) = VT::zero();
+        b(0) = 0;
+        b(1) = 0;
+        b(2) = 0;
+        b(3) = 0;
+        b(4) = 0;
+        b(5) = 0;
         continue;
       }
 

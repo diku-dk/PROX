@@ -60,7 +60,7 @@ namespace hyper
 
       T const vol6  = inner_prod( u_mi,  cross(u_ji, u_ki)   );
 
-      assert( vol6 > VT::zero() || !"compute_CFL_time_step(): initial degenerate tetrahedron");
+      assert( vol6 > 0 || !"compute_CFL_time_step(): initial degenerate tetrahedron");
 
       T dt_searh = dt;
 
@@ -73,7 +73,7 @@ namespace hyper
       T const alpha       = VT::numeric_cast(0.63);   // Step reduction parameter
       T const beta        = VT::numeric_cast(0.9);    // Sufficient decrease paramter
 
-      //--- We could use vol6_serach < VT::zero(), but to make deformation
+      //--- We could use vol6_serach < 0, but to make deformation
       //--- rate limited numericall we use a relaxed version, requiring only
       //-- a fractional allowed change of the original positive volume
       while( vol6_search < vol6*beta  ) // sufficient decrease conditions

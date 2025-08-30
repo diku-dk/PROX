@@ -23,16 +23,16 @@ namespace mass
 
     assert( is_number( density )            || !"density must be a number"       );
     assert( is_finite( density )            || !"density must be a finite number");
-    assert( density > value_traits::zero()  || !"density must be positive"       );
+    assert( density > 0  || !"density must be positive"       );
     assert( is_number( a )                  || !"a must be a  number"       );
     assert( is_finite( a )                  || !"a must be a finite number" );
-    assert( a > value_traits::zero()        || !"a must be positive"        );
+    assert( a > 0        || !"a must be positive"        );
     assert( is_number( b )                  || !"b must be a  number"       );
     assert( is_finite( b )                  || !"b must be a finite number" );
-    assert( b > value_traits::zero()        || !"b must be positive"        );
+    assert( b > 0        || !"b must be positive"        );
     assert( is_number( c )                  || !"c must be a  number"       );
     assert( is_finite( c )                  || !"c must be a finite number" );
-    assert( c > value_traits::zero()        || !"c must be positive"        );
+    assert( c > 0        || !"c must be positive"        );
 
     T const volume  = ( 4*value_traits::pi()*a*b*c ) / 3;
     T const mass            = density * volume;

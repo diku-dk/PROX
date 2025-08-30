@@ -79,14 +79,14 @@ namespace tiny
 
       size_t const K = (I<J ? I : J);
       for (size_t i = 0 ; i< K ; ++i)
-        M(i,i) = value_traits::one();
+        M(i,i) = 1;
 
       return M;
     }
 
     static Matrix<I,J,T> zero(  )
     {
-      return Matrix<I,J,T>( value_traits::zero() );
+      return Matrix<I,J,T>( 0 );
     }
 
     static Matrix<3,3, T>  make(
@@ -149,15 +149,15 @@ namespace tiny
       Matrix<3,3, T> R;
 
       //Foley p.227 (5.76)
-      R(0,0) = u(0)*u(0) + cosinus*(value_traits::one() - u(0)*u(0));
-      R(0,1) = u(0)*u(1)*(value_traits::one()-cosinus) - sinus*u(2);
-      R(0,2) = u(0)*u(2)*(value_traits::one()-cosinus) + sinus*u(1);
-      R(1,0) = u(0)*u(1)*(value_traits::one()-cosinus) + sinus*u(2);
-      R(1,1) = u(1)*u(1) + cosinus*(value_traits::one() - u(1)*u(1));
-      R(1,2) = u(1)*u(2)*(value_traits::one()-cosinus) - sinus*u(0);
-      R(2,0) = u(0)*u(2)*(value_traits::one()-cosinus) - sinus*u(1);
-      R(2,1) = u(1)*u(2)*(value_traits::one()-cosinus) + sinus*u(0);
-      R(2,2) = u(2)*u(2) + cosinus*(value_traits::one() - u(2)*u(2));
+      R(0,0) = u(0)*u(0) + cosinus*(1 - u(0)*u(0));
+      R(0,1) = u(0)*u(1)*(1-cosinus) - sinus*u(2);
+      R(0,2) = u(0)*u(2)*(1-cosinus) + sinus*u(1);
+      R(1,0) = u(0)*u(1)*(1-cosinus) + sinus*u(2);
+      R(1,1) = u(1)*u(1) + cosinus*(1 - u(1)*u(1));
+      R(1,2) = u(1)*u(2)*(1-cosinus) - sinus*u(0);
+      R(2,0) = u(0)*u(2)*(1-cosinus) - sinus*u(1);
+      R(2,1) = u(1)*u(2)*(1-cosinus) + sinus*u(0);
+      R(2,2) = u(2)*u(2) + cosinus*(1 - u(2)*u(2));
 
       return R;
     }
@@ -177,9 +177,9 @@ namespace tiny
       real_type const cosinus = value_traits::numeric_cast( cos(radians) );
       real_type const sinus   = value_traits::numeric_cast( sin(radians) );
       return Matrix<3,3,T>::make(
-                          value_traits::one(), value_traits::zero(),        value_traits::zero(),
-                          value_traits::zero(),              cosinus,                      -sinus,
-                          value_traits::zero(),                sinus,                      cosinus
+                          1, 0,        0,
+                          0,              cosinus,                      -sinus,
+                          0,                sinus,                      cosinus
                           );
     }
 
@@ -197,9 +197,9 @@ namespace tiny
       real_type const cosinus = value_traits::numeric_cast( cos(radians) );
       real_type const sinus   = value_traits::numeric_cast( sin(radians) );
       return Matrix<3,3,T>::make(
-                          cosinus,   value_traits::zero(),                   sinus,
-                          value_traits::zero(),    value_traits::one(),    value_traits::zero(),
-                          -sinus,   value_traits::zero(),                 cosinus
+                          cosinus,   0,                   sinus,
+                          0,    1,    0,
+                          -sinus,   0,                 cosinus
                           );
     }
 
@@ -216,9 +216,9 @@ namespace tiny
       real_type const cosinus = value_traits::numeric_cast( cos(radians) );
       real_type const sinus   = value_traits::numeric_cast( sin(radians) );
       return Matrix<3,3,T>::make(
-                          cosinus,                                      -sinus,       value_traits::zero(),
-                          sinus,                                       cosinus,       value_traits::zero(),
-                          value_traits::zero(),           value_traits::zero(),        value_traits::one()
+                          cosinus,                                      -sinus,       0,
+                          sinus,                                       cosinus,       0,
+                          0,           0,        1
                           );
     }
 
@@ -239,7 +239,7 @@ namespace tiny
       return m;
     }
 
-    static Matrix random () { return random(value_traits::zero(), value_traits::one());  }
+    static Matrix random () { return random(0, 1);  }
 
 
   };

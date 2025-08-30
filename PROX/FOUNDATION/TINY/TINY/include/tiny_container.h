@@ -109,7 +109,7 @@ namespace tiny
           {
             size_t const offset = i*J_padded;
             for (size_t j = J; j< J_padded ; ++j)
-              this->m_data[offset + j] = value_traits::zero();
+              this->m_data[offset + j] = 0;
           }
         }
 
@@ -123,7 +123,7 @@ namespace tiny
               this->m_data[offset + j] = value;
 
             for (size_t j = J; j<J_padded ; ++j)
-              this->m_data[offset + j] = value_traits::zero();
+              this->m_data[offset + j] = 0;
           }
         }
 
@@ -135,7 +135,7 @@ namespace tiny
             for (size_t j = 0; j<J ; ++j)
               this->m_data[offset + j] = cpy.m_data[offset+j];
             for (size_t j = J; j<J_padded ; ++j)
-              this->m_data[offset + j] = value_traits::zero();
+              this->m_data[offset + j] = 0;
           }
         }
 
@@ -157,7 +157,7 @@ namespace tiny
         {
           for (size_t i = 0; i< allocsize;++i)
           {
-            this->m_data[i] = value_traits::zero();
+            this->m_data[i] = 0;
           }
         }
 

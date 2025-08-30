@@ -28,10 +28,10 @@ namespace mesh_array
 		V const v1 = V::make(   width, -height, depth )*VT::half();
 		V const v2 = V::make(   width,  height, depth )*VT::half();
 		V const v3 = V::make( - width,  height, depth )*VT::half();
-		V const v4 =  v0 - V::make( VT::zero(), VT::zero(), depth );
-		V const v5 =  v1 - V::make( VT::zero(), VT::zero(), depth );
-		V const v6 =  v2 - V::make( VT::zero(), VT::zero(), depth );
-		V const v7 =  v3 - V::make( VT::zero(), VT::zero(), depth );
+		V const v4 =  v0 - V::make( 0, 0, depth );
+		V const v5 =  v1 - V::make( 0, 0, depth );
+		V const v6 =  v2 - V::make( 0, 0, depth );
+		V const v7 =  v3 - V::make( 0, 0, depth );
 		
 		make_cuboid<MT>( v0, v1, v2, v3, v4, v5, v6, v7, mesh, X, Y, Z );
 	}

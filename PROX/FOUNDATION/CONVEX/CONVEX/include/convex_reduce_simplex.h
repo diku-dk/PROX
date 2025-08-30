@@ -32,7 +32,7 @@ namespace convex
   {
     typedef typename V::value_traits   VT;
 
-    V const p = V::make( VT::zero(), VT::zero(), VT::zero() );
+    V const p = V::make( 0, 0, 0 );
 
     switch( dimension( S ) )
     {
@@ -46,7 +46,7 @@ namespace convex
 
         S.m_bitmask = bit_A;        // 2011-11-12 Kenny: Why do we set the bitmask? It already has this value?
 
-        S.m_w[idx_A] = VT::one();
+        S.m_w[idx_A] = 1;
 
         // 2011-11-12 Kenny: Are we certain that all other w's are zero? If not then we might get 'garbage' into the computation of the closest point? I think we should clear all w's and then set the idxA value to one!
       }

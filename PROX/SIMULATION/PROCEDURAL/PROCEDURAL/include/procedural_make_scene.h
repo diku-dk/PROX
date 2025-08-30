@@ -118,9 +118,9 @@ namespace procedural
 
       procedural::make_twisted_stack<MT>(
                                          engine
-                                         , V::make(VT::zero(), VT::zero(), VT::zero())
+                                         , V::make(0, 0, 0)
                                          , Q::identity()
-                                         , VT::one()
+                                         , 1
                                          , layers
                                          , degree
                                          , mat_info
@@ -143,9 +143,9 @@ namespace procedural
 
       procedural::make_stack<MT>(
                                  engine
-                                 , V::make(VT::zero(), VT::zero(), VT::zero())
+                                 , V::make(0, 0, 0)
                                  , Q::identity()
-                                 , VT::one()
+                                 , 1
                                  , layers
                                  , mat_info
                                  );
@@ -170,7 +170,7 @@ namespace procedural
 
       procedural::make_wall<MT>(
                                 engine
-                                , V::make(-VT::half()*width, VT::zero(), VT::zero())
+                                , V::make(-VT::half()*width, 0, 0)
                                 , Q::identity()
                                 , width
                                 , height
@@ -378,7 +378,7 @@ namespace procedural
 
       procedural::make_wall<MT>(
                                 engine
-                                , V::make(-VT::half()*width, VT::zero(), VT::zero())
+                                , V::make(-VT::half()*width, 0, 0)
                                 , Q::identity()
                                 , width      // width
                                 , layers*2.0f      // height
@@ -783,7 +783,7 @@ namespace procedural
 
       procedural::make_wall<MT>(
                                 engine
-                                , V::make(-VT::half()*width, VT::zero(), VT::zero())
+                                , V::make(-VT::half()*width, 0, 0)
                                 , Q::identity()
                                 , width      // width
                                 , layers*2.0f      // height

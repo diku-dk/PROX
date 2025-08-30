@@ -39,7 +39,7 @@ namespace prox
 
       assert(is_number(mass)   || !"get_mass_matrix(): Nan");
       assert(is_finite(mass)   || !"get_mass_matrix(): Inf");
-      assert(mass > VT::zero() || !"get_mass_matrix(): Non-positive mass");
+      assert(mass > 0 || !"get_mass_matrix(): Non-positive mass");
 
       if( body->is_fixed() || body->is_scripted() )
       {

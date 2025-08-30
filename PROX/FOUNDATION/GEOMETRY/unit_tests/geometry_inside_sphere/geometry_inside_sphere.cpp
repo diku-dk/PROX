@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(inside_sphere_test)
   typedef MT::value_traits          VT;
 
   V const center  = V::zero();
-  T const radius  = VT::one();
+  T const radius  = 1;
 
   geometry::Sphere<V> const sphere = geometry::make_sphere(center , radius );
 

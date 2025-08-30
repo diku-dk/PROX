@@ -22,16 +22,16 @@ namespace mass
 
     assert( is_number( density )                 || !"density must be a number"           );
     assert( is_finite( density )                 || !"density must be a finite number"    );
-    assert( density > value_traits::zero()       || !"density must be positive"           );
+    assert( density > 0       || !"density must be positive"           );
     assert( is_number( radius )                  || !"radius must be a  number"           );
     assert( is_finite( radius )                  || !"radius must be a finite number"     );
-    assert( radius > value_traits::zero()        || !"radius must be positive"            );
+    assert( radius > 0        || !"radius must be positive"            );
     assert( is_number( half_height )             || !"half_height must be a  number"      );
     assert( is_finite( half_height )             || !"half_height must be a finite number");
-    assert( half_height > value_traits::zero()   || !"half_height must be positive"       );
+    assert( half_height > 0   || !"half_height must be positive"       );
 
     T const & r     = radius;
-    T const & h     = value_traits::two()*half_height;
+    T const & h     = 2*half_height;
     T const volume  = value_traits::pi()*r*r*h;
     T const mass    = density*volume;
 

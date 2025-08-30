@@ -67,7 +67,7 @@ namespace rigid_body
         m_output_path              = "";
         m_working_directory        = "";
 
-        m_time                     = VT::zero();
+        m_time                     = 0;
         m_time_step                = VT::numeric_cast(0.01f);
         m_fps                      = VT::numeric_cast(25.0f);
 
@@ -132,7 +132,7 @@ namespace rigid_body
         m_profiling              = util::to_value<bool>(  m_config_file.get_value("profiling",   "false"  ) );
         m_save_contact_data      = util::to_value<bool>(  m_config_file.get_value("save_contact_data", "false"   ));
 
-        assert( m_time_step*m_fps < VT::one() || !"Application::run(): Invalid fps & timestep setting");
+        assert( m_time_step*m_fps < 1 || !"Application::run(): Invalid fps & timestep setting");
 
         m_engine.set_parameters_from_config_file( cfg_file );
 
@@ -203,7 +203,7 @@ namespace rigid_body
           T const time_to_next_frame    = min(time_left, frame_time);
           T       time_left_to_simulate = time_to_next_frame;
 
-          while(time_left_to_simulate > VT::zero())
+          while(time_left_to_simulate > 0)
           {
             T const safe_time_step = min(m_time_step, time_left_to_simulate);
 

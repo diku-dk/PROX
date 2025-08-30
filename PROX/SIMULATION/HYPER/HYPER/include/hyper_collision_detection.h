@@ -95,7 +95,7 @@ namespace hyper
     START_TIMER("broad_phase");
 
     std::vector< std::pair<body_type*,body_type*> > overlaps;
-    T efficiency = VT::zero();
+    T efficiency = 0;
 
     broad_phase( engine, overlaps, efficiency);
 

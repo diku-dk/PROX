@@ -45,7 +45,7 @@ namespace geometry
     bool status = false;
 
     std::vector<V>  n(4u, V::zero() );
-    std::vector<T>  w(4u, VT::zero() );
+    std::vector<T>  w(4u, 0 );
 
     for(unsigned int m = 0u; m < 4u; ++m)
     {
@@ -94,12 +94,12 @@ namespace geometry
       T const rn  = tiny::inner_prod(ray.direction(), n[m] );
       T const on  = tiny::inner_prod(ray.origin(),    n[m] );
 
-      if(rn >= VT::zero())  // Ray is parallel with plane or hitting form back-side
+      if(rn >= 0)  // Ray is parallel with plane or hitting form back-side
         continue;
 
       T const t = (w[m] - on) / rn;   // compute ray length for hitting the plane
 
-      if( t <  VT::zero() )  // if we hit behind the ray origin we give up
+      if( t <  0 )  // if we hit behind the ray origin we give up
         continue;
 
       V const q = ray.origin() + t* ray.direction();   // we know we are hitting the ray in front of ray origin
@@ -112,13 +112,13 @@ namespace geometry
       T const tst_j = tiny::inner_prod( n[ j ], q) - w[ j ];
       T const tst_k = tiny::inner_prod( n[ k ], q) - w[ k ];
 
-      if( tst_i > VT::zero() )  // Hit poit in front of face i
+      if( tst_i > 0 )  // Hit poit in front of face i
         continue;
 
-      if( tst_j > VT::zero() ) // Hit poit in front of face j
+      if( tst_j > 0 ) // Hit poit in front of face j
         continue;
 
-      if( tst_k > VT::zero() ) // Hit poit in front of face k
+      if( tst_k > 0 ) // Hit poit in front of face k
         continue;
 
       if(t < length)

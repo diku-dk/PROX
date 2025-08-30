@@ -99,13 +99,13 @@ namespace geometry
       T const d2 = get_signed_distance( q, planes[2] );
       T const d3 = get_signed_distance( q, planes[3] );
 
-      if (d0 > VT::zero())
+      if (d0 > 0)
         return false;
-      if (d1 > VT::zero())
+      if (d1 > 0)
         return false;
-      if (d2 > VT::zero())
+      if (d2 > 0)
         return false;
-      if (d3 > VT::zero())
+      if (d3 > 0)
         return false;
 
       return true;
@@ -149,10 +149,10 @@ namespace geometry
       T const dA = get_signed_distance( a, plane );
       T const dB = get_signed_distance( b, plane );
 
-      if( dA >= VT::zero() && dB >= VT::zero() )
+      if( dA >= 0 && dB >= 0 )
         return false;
 
-      if( dA <= VT::zero() && dB <= VT::zero() )
+      if( dA <= 0 && dB <= 0 )
         return false;
 
       return true;
@@ -285,7 +285,7 @@ namespace geometry
         }
       }
 
-      return (min_overlap <= VT::zero());
+      return (min_overlap <= 0);
     }
 
     /**
@@ -456,7 +456,7 @@ namespace geometry
         }
       }
 
-      return (min_overlap <= VT::zero());
+      return (min_overlap <= 0);
     }
 
     /**
@@ -480,7 +480,7 @@ namespace geometry
 
       bool found_normal = false;
 
-      T best_fit = VT::zero();
+      T best_fit = 0;
 
       for(unsigned int a = 0u; a < 4u; ++a)
       {
@@ -504,7 +504,7 @@ namespace geometry
 
           T const test = tiny::inner_prod(nA, nB);
 
-          if (test >= VT::zero() ) // surfaces must be opposing each other
+          if (test >= 0 ) // surfaces must be opposing each other
             continue;
 
           //--- Now we know that planes are opposing each other
@@ -516,7 +516,7 @@ namespace geometry
           T const testA =  tiny::inner_prod( planA.m_normal, pB - planA.m_point) ;
           T const testB =  tiny::inner_prod( planB.m_normal, pA - planB.m_point) ;
 
-          if (testA < VT::zero() && testB < VT::zero())
+          if (testA < 0 && testB < 0)
             continue;
 
           if( test < best_fit)
@@ -764,7 +764,7 @@ namespace geometry
           V    const & pk          = triA.p(k);
           T    const   depth       = tiny::inner_prod(plB.m_normal, pk - plB.m_point);
 
-          if (depth > VT::zero())
+          if (depth > 0)
             continue;
 
           V    const & n           = plB.m_normal;
@@ -780,7 +780,7 @@ namespace geometry
             V const m    = tiny::cross(n,e);
             T const tst  = tiny::inner_prod(m, pk - pi);
 
-            if(tst < VT::zero() )
+            if(tst < 0 )
             {
               is_inside_B = false;
               break;
@@ -801,7 +801,7 @@ namespace geometry
           V    const & pk          = triB.p(k);
           T    const   depth       = tiny::inner_prod(plA.m_normal, pk - plA.m_point);
 
-          if (depth > VT::zero())
+          if (depth > 0)
             continue;
 
           V    const & n           = plA.m_normal;
@@ -817,7 +817,7 @@ namespace geometry
             V const m    = tiny::cross(n,e);
             T const tst  = tiny::inner_prod(m, pk - pi);
 
-            if(tst < VT::zero() )
+            if(tst < 0 )
             {
               is_inside_A = false;
               break;
@@ -912,8 +912,8 @@ namespace geometry
             //
             // So next we compute the two closest points between the infinite
             // lines of the two edges we currently examine
-            T s = VT::zero();
-            T t = VT::zero();
+            T s = 0;
+            T t = 0;
 
             geometry::closest_points_line_line(pk, eA, pi, eB, s, t);
 
@@ -1025,10 +1025,10 @@ namespace geometry
       T const a2 = get_signed_distance( b, planesA[2] );
       T const a3 = get_signed_distance( b, planesA[3] );
 
-      bool b_outside_A =  ( a0 > VT::zero() )
-                       || ( a1 > VT::zero() )
-                       || ( a2 > VT::zero() )
-                       || ( a3 > VT::zero() );
+      bool b_outside_A =  ( a0 > 0 )
+                       || ( a1 > 0 )
+                       || ( a2 > 0 )
+                       || ( a3 > 0 );
 
       if( b_outside_A )
         continue;
@@ -1060,10 +1060,10 @@ namespace geometry
       T const b2 = get_signed_distance( a, planesB[2] );
       T const b3 = get_signed_distance( a, planesB[3] );
 
-      bool a_outside_B =  ( b0 > VT::zero() )
-                      || ( b1 > VT::zero() )
-                      || ( b2 > VT::zero() )
-                      || ( b3 > VT::zero() );
+      bool a_outside_B =  ( b0 > 0 )
+                      || ( b1 > 0 )
+                      || ( b2 > 0 )
+                      || ( b3 > 0 );
 
       if( a_outside_B )
         continue;

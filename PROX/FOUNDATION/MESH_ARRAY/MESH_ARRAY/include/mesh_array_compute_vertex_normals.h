@@ -52,17 +52,17 @@ namespace mesh_array
 
       V const a_i      = unit(pj - pi);
       V const b_i      = unit(pk - pi);
-      T const dot_i    = min( VT::one(), max( -VT::one(), inner_prod(a_i,b_i) ) );
+      T const dot_i    = min<T>( 1, max<T>( -1, inner_prod(a_i,b_i) ) );
       T const alpha_i  = acos( dot_i );
 
       V const a_j      = unit(pk - pj);
       V const b_j      = unit(pi - pj);
-      T const dot_j    = min( VT::one(), max( -VT::one(), inner_prod(a_j,b_j) ) );
+      T const dot_j    = min<T>( 1, max<T>( -1, inner_prod(a_j,b_j) ) );
       T const alpha_j  = acos( dot_j );
 
       V const a_k      = unit(pi - pk);
       V const b_k      = unit(pj - pk);
-      T const dot_k    = min( VT::one(), max( -VT::one(), inner_prod(a_k,b_k) ) );
+      T const dot_k    = min<T>( 1, max<T>( -1, inner_prod(a_k,b_k) ) );
       T const alpha_k  = acos( dot_k );
 
       V const a = pj - pi;

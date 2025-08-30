@@ -28,8 +28,8 @@ namespace prox
 
     Property()
     : m_mu(vector3_type::make(value_traits::half(),value_traits::half(),value_traits::half()))
-    , m_e(value_traits::zero())
-    , m_s(vector3_type::make(value_traits::one(),value_traits::zero(),value_traits::zero()))
+    , m_e(0)
+    , m_s(vector3_type::make(1,0,0))
     , m_master_material_idx(0u)
     {}
 

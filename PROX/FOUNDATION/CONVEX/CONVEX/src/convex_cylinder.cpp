@@ -23,8 +23,8 @@ namespace convex
 
   template<typename M>
   Cylinder<M>::Cylinder()
-  : m_half_height( M::value_traits::one() )
-  , m_radius( M::value_traits::one() )
+  : m_half_height( 1 )
+  , m_radius( 1 )
   {}
 
   template<typename M>
@@ -49,26 +49,26 @@ namespace convex
 
     assert( is_number(this->m_half_height)    || !"NAN encountered");
     assert( is_finite(this->m_half_height)    || !"INF encountered");
-    assert( this->m_half_height >= VT::zero() || !"Negative half height");
+    assert( this->m_half_height >= 0 || !"Negative half height");
     assert( is_number(this->m_radius)         || !"NAN encountered");
     assert( is_finite(this->m_radius)         || !"INF encountered");
-		assert( this->m_radius >= VT::zero()      || !"Negative radius");
+        assert( this->m_radius >= 0      || !"Negative radius");
 
     T const norm_sigma     = sqrt( vx*vx + vy*vy );
     assert( is_number(norm_sigma)    || !"NAN encountered");
     assert( is_finite(norm_sigma)    || !"INF encountered");
-    assert( norm_sigma >= VT::zero() || !"Norm can not be negative");
+    assert( norm_sigma >= 0 || !"Norm can not be negative");
 
-    T const h = vz > VT::zero() ? this->m_half_height : -this->m_half_height;
+    T const h = vz > 0 ? this->m_half_height : -this->m_half_height;
     assert( is_number( h ) || !"NAN encountered");
     assert( is_finite( h ) || !"INF encountered");
 
-    T px = VT::zero();
-    T py = VT::zero();
-    T pz = VT::zero();
+    T px = 0;
+    T py = 0;
+    T pz = 0;
 
     // Test if search direction has any radial component
-    if(norm_sigma > VT::zero() )
+    if(norm_sigma > 0 )
     {
       px = ((this->m_radius) * vx) /norm_sigma;
       py = ((this->m_radius) * vy) /norm_sigma;
@@ -79,8 +79,8 @@ namespace convex
       // Search direction is parallel with z-axis
       //
       // Or search direction is zero in which case we just some point as the support point.
-      px = VT::zero();
-      py = VT::zero();
+      px = 0;
+      py = 0;
       pz = h;
     }
 
@@ -104,13 +104,13 @@ namespace convex
 
     assert( is_number(this->m_half_height)    || !"NAN encountered");
     assert( is_finite(this->m_half_height)    || !"INF encountered");
-    assert( this->m_half_height >= VT::zero() || !"Negative half height");
+    assert( this->m_half_height >= 0 || !"Negative half height");
     assert( is_number(this->m_radius)         || !"NAN encountered");
     assert( is_finite(this->m_radius)         || !"INF encountered");
-		assert( this->m_radius >= VT::zero()      || !"Negative radius");
+        assert( this->m_radius >= 0      || !"Negative radius");
 
-    T const d = VT::two() * ((this->m_radius > VT::zero()) ? this->m_radius : VT::infinity());
-    T const h = VT::two() * ((this->m_half_height > VT::zero()) ? this->m_half_height : VT::infinity());
+    T const d = 2 * ((this->m_radius > 0) ? this->m_radius : VT::infinity());
+    T const h = 2 * ((this->m_half_height > 0) ? this->m_half_height : VT::infinity());
 
     return min(h, d);
   }

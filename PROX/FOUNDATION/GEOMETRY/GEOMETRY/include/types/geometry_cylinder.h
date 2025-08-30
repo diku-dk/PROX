@@ -29,21 +29,21 @@ namespace geometry
 
     void set_radius(T const & radius)
     {
-      assert(radius >= VT::zero() || !"Cylinder::set_radius(): Value was negative");
+      assert(radius >= 0 || !"Cylinder::set_radius(): Value was negative");
 
       this->m_radius = radius;
     }
 
     void set_height(T const & height )
     {
-      assert(height >= VT::zero() || !"Cylinder::set_height(): Value was negative");
+      assert(height >= 0 || !"Cylinder::set_height(): Value was negative");
 
       this->m_height = height;
     }
 
     void set_axis(V const & axis)
     {
-      assert(norm(axis) > VT::zero() || !"Cylinder::set_axis(): Axis was zero-vector");
+      assert(norm(axis) > 0 || !"Cylinder::set_axis(): Axis was zero-vector");
 
       this->m_axis = unit(axis);
     }
@@ -56,8 +56,8 @@ namespace geometry
   public:
 
     Cylinder()
-    : m_radius( VT::one() )
-    , m_height( VT::one() )
+    : m_radius( 1 )
+    , m_height( 1 )
     , m_axis( V::k() )
     , m_center( V::zero() )
     {}
@@ -68,9 +68,9 @@ namespace geometry
     , m_axis( unit(axis) )
     , m_center( center )
     {
-      assert(radius >= VT::zero()    || !"Cylinder(): radius was negative"  );
-      assert(height >= VT::zero()    || !"Cylinder(): height was negative"  );
-      assert(norm(axis) > VT::zero() || !"Cylinder(): axis was zero-vector" );
+      assert(radius >= 0    || !"Cylinder(): radius was negative"  );
+      assert(height >= 0    || !"Cylinder(): height was negative"  );
+      assert(norm(axis) > 0 || !"Cylinder(): axis was zero-vector" );
     }
 
     Cylinder( Cylinder const & cylinder)

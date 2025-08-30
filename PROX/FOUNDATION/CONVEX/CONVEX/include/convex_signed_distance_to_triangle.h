@@ -39,7 +39,7 @@ namespace convex
 
     V m = tiny::cross( A-B, C-B );
 
-    assert( tiny::inner_prod( m, m ) > VT::zero() || !"signed_distance_to_triangle(): Degenerate triangle encountered");
+    assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_triangle(): Degenerate triangle encountered");
 
     V n = tiny::unit( m );
 
@@ -47,13 +47,13 @@ namespace convex
     T sign_q = tiny::inner_prod( n, q-B );
     T abs_p  = fabs( sign_p );
 
-    assert( sign_q < VT::zero() || sign_q > VT::zero() || !"signed_distance_to_triangle(): q was in plane, can  not be used to determine sign");
+    assert( sign_q < 0 || sign_q > 0 || !"signed_distance_to_triangle(): q was in plane, can  not be used to determine sign");
 
     assert( is_number( sign_p ) || !"signed_distance_to_triangle(): Not a Number encountered");
     assert( is_number( sign_q ) || !"signed_distance_to_triangle(): Not a Number encountered");
     assert( is_number( abs_p )  || !"signed_distance_to_triangle(): Not a Number encountered");
 
-    bool in_front = ( (sign_p*sign_q) <= VT::zero() );
+    bool in_front = ( (sign_p*sign_q) <= 0 );
 
     return  in_front ? abs_p : - abs_p;
   }

@@ -17,7 +17,7 @@ namespace prox
       typedef          prox::MathPolicy<T>    M;
       typedef typename M::value_traits        VT;
 
-      lambda_n = VT::zero();
+      lambda_n = 0;
     }
 
     /**
@@ -41,9 +41,9 @@ namespace prox
       typedef          prox::MathPolicy<T>    M;
       typedef typename M::value_traits        VT;
 
-      lambda_s   = VT::zero();
-      lambda_t   = VT::zero();
-      lambda_tau = VT::zero();
+      lambda_s   = 0;
+      lambda_t   = 0;
+      lambda_tau = 0;
     }
 
   } // namespace detail

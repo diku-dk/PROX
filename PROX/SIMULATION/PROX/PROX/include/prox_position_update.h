@@ -39,7 +39,7 @@ namespace prox
       qnew.resize( N );
     }
 
-    float const dt_half = dt / value_traits::two();
+    float const dt_half = dt / 2;
 
     for(size_t i = 0; i<N; ++i)
     {

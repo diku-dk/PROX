@@ -61,13 +61,13 @@ namespace geometry
     assert(is_finite(d(2)) || !"compute_raycast_aabb() Inf");
 
     //--- Test if one of three axes of the box is a separation axe
-    if (fabs(d(0)) > e(0) && d(0)*r(0) >= VT::zero())
+    if (fabs(d(0)) > e(0) && d(0)*r(0) >= 0)
       return false;
 
-    if (fabs(d(1)) > e(1) && d(1)*r(1) >= VT::zero())
+    if (fabs(d(1)) > e(1) && d(1)*r(1) >= 0)
       return false;
 
-    if (fabs(d(2)) > e(2) && d(2)*r(2) >= VT::zero())
+    if (fabs(d(2)) > e(2) && d(2)*r(2) >= 0)
       return false;
 
     //--- Test if one of three cross producs of the axes and the ray direction is a separation axe
@@ -90,7 +90,7 @@ namespace geometry
     if (not_outside)
     {
       hit    = p;
-      length = VT::zero();
+      length = 0;
       return true;
     }
 
@@ -100,7 +100,7 @@ namespace geometry
 
     for(unsigned int i=0u; i < 3u; ++i)
     {
-      if(r(i) == VT::zero())
+      if(r(i) == 0)
         continue;
 
       T t_near = ((min_coord(i) - p(i)) / r(i));
@@ -124,7 +124,7 @@ namespace geometry
     }
 
 
-    if( t_min > VT::zero() &&  t_min <= t_max)
+    if( t_min > 0 &&  t_min <= t_max)
     {
       length = t_min;
       hit    = p + r*length;

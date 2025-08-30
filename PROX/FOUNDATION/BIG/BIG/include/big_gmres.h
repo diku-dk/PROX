@@ -117,40 +117,40 @@ namespace big
       // that is not available, x*sng(y), using the signum function, is an alternative.
       //
 
-      if ( b == value_traits::zero() )
+      if ( b == 0 )
       {
-        c = (a>0) ? value_traits::one() : -value_traits::one();
-        s = value_traits::zero();
+        c = (a>0) ? 1 : -1;
+        s = 0;
       }
-      else if ( a == value_traits::zero() )
+      else if ( a == 0 )
       {
-        c = value_traits::zero();
-        s = (b>0) ? value_traits::one() : - value_traits::one();
+        c = 0;
+        s = (b>0) ? 1 : - 1;
       }
       else if ( fabs( b ) > fabs( a ) )
       {
         value_type t = a / b;
-        value_type u = sqrt ( value_traits::one() + t*t );
-        u = (b > value_traits::zero()) ? u : -u;
-        s = value_traits::one() / u;
+        value_type u = sqrt ( 1 + t*t );
+        u = (b > 0) ? u : -u;
+        s = 1 / u;
         c = t * s;
       }
       else //if ( abs ( a ) > abs ( b ) )
       {
         value_type t = b / a;
-        value_type u = sqrt ( value_traits::one() + t*t );
-        u = (a > value_traits::zero()) ? u : -u;
-        c = value_traits::one() / u;
+        value_type u = sqrt ( 1 + t*t );
+        u = (a > 0) ? u : -u;
+        c = 1 / u;
         s = t * c;
       }
 
       assert( is_number(c) || !"get_rotation(): c was not a number");
       assert( is_number(s) || !"get_rotation(): s was not a number");
-      assert( c <=  value_traits::one() || !"get_rotation(): illegal value of c");
-      assert( c >= -value_traits::one() || !"get_rotation(): illegal value of c");
-      assert( s <=  value_traits::one() || !"get_rotation(): illegal value of s");
-      assert( s >= -value_traits::one() || !"get_rotation(): illegal value of s");
-      assert( fabs( (c*c+s*s) - value_traits::one() ) < big::working_precision<value_type>() || !"get_rotation(): Not a valid rotation");
+      assert( c <=  1 || !"get_rotation(): illegal value of c");
+      assert( c >= -1 || !"get_rotation(): illegal value of c");
+      assert( s <=  1 || !"get_rotation(): illegal value of s");
+      assert( s >= -1 || !"get_rotation(): illegal value of s");
+      assert( fabs( (c*c+s*s) - 1 ) < big::working_precision<value_type>() || !"get_rotation(): Not a valid rotation");
     }
 
     /**
@@ -177,11 +177,11 @@ namespace big
       assert( is_number(b) || !"set_rotation(): b was not a number");
       assert( is_number(c) || !"set_rotation(): c was not a number");
       assert( is_number(s) || !"set_rotation(): s was not a number");
-      assert( c <=  value_traits::one() || !"set_rotation(): illegal value of c");
-      assert( c >= -value_traits::one() || !"set_rotation(): illegal value of c");
-      assert( s <=  value_traits::one() || !"set_rotation(): illegal value of s");
-      assert( s >= -value_traits::one() || !"set_rotation(): illegal value of s");
-      assert( fabs( (c*c+s*s) - value_traits::one() ) < big::working_precision<value_type>() || !"set_rotation(): Not a valid rotation");
+      assert( c <=  1 || !"set_rotation(): illegal value of c");
+      assert( c >= -1 || !"set_rotation(): illegal value of c");
+      assert( s <=  1 || !"set_rotation(): illegal value of s");
+      assert( s >= -1 || !"set_rotation(): illegal value of s");
+      assert( fabs( (c*c+s*s) - 1 ) < big::working_precision<value_type>() || !"set_rotation(): Not a valid rotation");
       //
       // This method computes
       //
@@ -308,7 +308,7 @@ namespace big
       b = H( j+1, j );
       set_rotation ( a, b, c[j], s[j] );
 
-      assert( a > value_traits::zero()                        || !"hessenberg_matrix_transform(): invalid rotation, diagonal should be positive?");
+      assert( a > 0                        || !"hessenberg_matrix_transform(): invalid rotation, diagonal should be positive?");
       assert( fabs(b) < big::working_precision<value_type>() || !"hessenberg_matrix_transform(): invalid rotation, lower diagonal is nonzero?");
 
       //
@@ -352,7 +352,7 @@ namespace big
       for ( size_type i = 0; i < m; ++i )
       {
         value_type tmp = inner_prod( v[i], v[i] );
-        if( fabs(tmp-value_traits::one()) > precision )
+        if( fabs(tmp-1) > precision )
           return false;
       }
       for ( size_type i = 0; i < m; ++i )
@@ -522,7 +522,7 @@ namespace big
     size_type  const & N       = b.size();
     size_type  const & R       = max_restart_iterations;
     size_type  const & M       = max_iterations;
-    value_type const & eps     = tolerance> value_traits::zero() ? tolerance : boost::numeric_cast<value_type>( 1e-6 );
+    value_type const & eps     = tolerance> 0 ? tolerance : boost::numeric_cast<value_type>( 1e-6 );
     bool       const restarted = (R!=N) && (R > 0u);
     size_type        maxit     = M;
 
@@ -558,7 +558,7 @@ namespace big
       // no iterations need be performed.
       status = 0;
       x.clear();
-      relative_residual_error = value_traits::zero();
+      relative_residual_error = 0;
       return;
     }
 

@@ -68,7 +68,7 @@ namespace big
 
       assert( is_number( x(i) )                || !"jacobi(): sum value was not a number?");
       assert( is_number( Aii )                 || !"jacobi(): diag value was not a number?");
-      assert( fabs(Aii) > value_traits::zero() || !"jacobi(): Diagonal were zero");
+      assert( fabs(Aii) > 0 || !"jacobi(): Diagonal were zero");
 
       x(i) = ( b(i) - prod_row(A,x_old,i)) / Aii + x_old(i);
 

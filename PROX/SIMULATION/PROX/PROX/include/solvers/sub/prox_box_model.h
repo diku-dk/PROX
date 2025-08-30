@@ -36,17 +36,17 @@ namespace prox
 
       typedef tiny::ValueTraits<T> VT;
 
-      T const n_s   = mu_s* max( lambda_n, VT::zero() );
-      T const n_t   = mu_t* max( lambda_n, VT::zero() );
+      T const n_s   = mu_s* max<T>( lambda_n, 0 );
+      T const n_t   = mu_t* max<T>( lambda_n, 0 );
 
       assert( is_number( n_s )    || !"box_model(): a was not a number");
-      assert( n_s >= VT::zero()    || !"box_model(): a non-positive");
+      assert( n_s >= 0    || !"box_model(): a non-positive");
       assert( is_number( n_t )    || !"box_model(): a was not a number");
-      assert( n_t >= VT::zero()    || !"box_model(): a non-positive");
+      assert( n_t >= 0    || !"box_model(): a non-positive");
 
       lambda_s      =    min( n_s, max(z_s, -n_s ) );
       lambda_t      =    min( n_t, max(z_t, -n_t ) );
-      lambda_tau    =    VT::zero();
+      lambda_tau    =    0;
 
     }
 

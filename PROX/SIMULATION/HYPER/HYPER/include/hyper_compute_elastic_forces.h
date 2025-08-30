@@ -101,7 +101,7 @@ namespace hyper
       assert( is_finite(u_mi(1)) || !"compute_elastic_forces(): u_mi(1) is not finite"  );
       assert( is_finite(u_mi(2)) || !"compute_elastic_forces(): u_mi(2) is not finite"  );
 
-      assert( inner_prod( u_mi, cross(u_ji, u_ki)) > VT::zero() || !"compute_elastic_forces(): degenerate tetrahedron in spatial space");
+      assert( inner_prod( u_mi, cross(u_ji, u_ki)) > 0 || !"compute_elastic_forces(): degenerate tetrahedron in spatial space");
 
       V const u0_ji = x0j - x0i;
       V const u0_ki = x0k - x0i;
@@ -131,7 +131,7 @@ namespace hyper
       assert( is_finite(u0_mi(1)) || !"compute_elastic_forces(): u0_mi(1) is not finite"  );
       assert( is_finite(u0_mi(2)) || !"compute_elastic_forces(): u0_mi(2) is not finite"  );
 
-      assert( inner_prod( u0_mi, cross(u0_ji, u0_ki)) > VT::zero() || !"compute_elastic_forces(): degenerate tetrahedron in spatial space");
+      assert( inner_prod( u0_mi, cross(u0_ji, u0_ki)) > 0 || !"compute_elastic_forces(): degenerate tetrahedron in spatial space");
 
       M const D = M::make(
                           u_ji(0), u_ki(0), u_mi(0)

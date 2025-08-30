@@ -49,7 +49,7 @@ namespace geometry
 
     assert( is_number(n_dot_d)         || !"make_intersection(): NaN encountered");
     assert( is_finite(n_dot_d)         || !"make_intersection(): Inf encountered");
-    assert(fabs( n_dot_d) > V::value_traits::zero() || !"make_intersection(): line was parallel withe plane");
+    assert(fabs( n_dot_d) > 0 || !"make_intersection(): line was parallel withe plane");
 
 
     T const   n_dot_o = inner_prod( n, o );
@@ -78,7 +78,7 @@ namespace geometry
   {
     V const D = cross( A.normal(), B.normal() );
 
-    assert( inner_prod(D,D) > V::value_traits::zero() || !"make_intersection(): error planes are coplanar");
+    assert( inner_prod(D,D) > 0 || !"make_intersection(): error planes are coplanar");
     assert( is_number(D(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(D(0))               || !"make_intersection(): Inf encountered");
     assert( is_number(D(1))               || !"make_intersection(): NaN encountered");

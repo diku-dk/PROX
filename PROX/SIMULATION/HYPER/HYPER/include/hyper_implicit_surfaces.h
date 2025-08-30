@@ -47,7 +47,7 @@ namespace hyper
 
     BoxSurface()
     : m_position(V::zero())
-    , m_dimension(V::make( VT::one(), VT::one(), VT::one()) )
+    , m_dimension(V::make( 1, 1, 1) )
     {}
 
     BoxSurface(V const & p, V const & d)
@@ -65,16 +65,16 @@ namespace hyper
       V    const   delta     = d-s;
       //T    const   min_delta = tiny::min(delta);
       T    const   max_delta = tiny::max(delta);
-      bool const   inside    = max_delta < VT::zero();
+      bool const   inside    = max_delta < 0;
 
       if (inside)
       {
         return max_delta;
       }
 
-      T const proj_x = delta(0) > VT::zero() ? s(0) : d(0);
-      T const proj_y = delta(1) > VT::zero() ? s(1) : d(1);
-      T const proj_z = delta(2) > VT::zero() ? s(2) : d(2);
+      T const proj_x = delta(0) > 0 ? s(0) : d(0);
+      T const proj_y = delta(1) > 0 ? s(1) : d(1);
+      T const proj_z = delta(2) > 0 ? s(2) : d(2);
 
       V const proj   = V::make(proj_x,proj_y, proj_z);
 

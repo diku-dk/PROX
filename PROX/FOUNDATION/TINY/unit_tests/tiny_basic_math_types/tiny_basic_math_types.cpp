@@ -20,16 +20,16 @@ inline void compile_test_math_types()
   quaternion_type  q;
   coordsys_type    c;
 
-  real_type s1 = value_traits::zero();
-  real_type s2 = value_traits::one();
-  real_type s3 = value_traits::two();
+  real_type s1 = 0;
+  real_type s2 = 1;
+  real_type s3 = 2;
   real_type s4 = value_traits::pi();
   real_type s5 = value_traits::pi_2();
   real_type s6 = value_traits::infinity();
 
-  BOOST_CHECK( s1 == value_traits::zero() );
-  BOOST_CHECK( s2 == value_traits::one() );
-  BOOST_CHECK( s3 == value_traits::two() );
+  BOOST_CHECK( s1 == 0 );
+  BOOST_CHECK( s2 == 1 );
+  BOOST_CHECK( s3 == 2 );
   BOOST_CHECK( s4 == value_traits::pi() );
   BOOST_CHECK( s5 == value_traits::pi_2() );
   BOOST_CHECK( s6 == value_traits::infinity() );

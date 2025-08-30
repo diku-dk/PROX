@@ -48,10 +48,10 @@ namespace procedural
 		public:
 
 			GeometryHandle()
-      : m_m(VT::zero())
-      , m_Ixx(VT::zero())
-      , m_Iyy(VT::zero())
-      , m_Izz(VT::zero())
+      : m_m(0)
+      , m_Ixx(0)
+      , m_Iyy(0)
+      , m_Izz(0)
       , m_T()
       , m_Q()
 			, m_gid()

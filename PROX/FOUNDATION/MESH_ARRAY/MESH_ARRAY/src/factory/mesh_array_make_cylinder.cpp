@@ -26,10 +26,10 @@ namespace mesh_array
 		
 		profile.resize(4u);
 		
-		profile[ 0 ] = V::make( VT::zero(), -height/VT::two(), VT::zero() );
-		profile[ 1 ] = V::make(     radius, -height/VT::two(), VT::zero() );
-		profile[ 2 ] = V::make(     radius,  height/VT::two(), VT::zero() );
-		profile[ 3 ] = V::make( VT::zero(),  height/VT::two(), VT::zero() );
+		profile[ 0 ] = V::make( 0, -height/2, 0 );
+		profile[ 1 ] = V::make(     radius, -height/2, 0 );
+		profile[ 2 ] = V::make(     radius,  height/2, 0 );
+		profile[ 3 ] = V::make( 0,  height/2, 0 );
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z  );
 	}

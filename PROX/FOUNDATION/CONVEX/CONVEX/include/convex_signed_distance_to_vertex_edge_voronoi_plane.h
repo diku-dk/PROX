@@ -30,7 +30,7 @@ namespace convex
 
     V const m = (A-B);
 
-    assert( tiny::inner_prod( m, m ) > V::value_traits::zero() || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
+    assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
 
     V const n = tiny::unit( m );
 

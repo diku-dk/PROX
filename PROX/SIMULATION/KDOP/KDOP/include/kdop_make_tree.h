@@ -223,9 +223,9 @@ namespace kdop
             min(tiny::lower_power2(N_max),
                 tiny::upper_power2(mesh.tetrahedron_size() * 2)
             ) - 1;
-    size_t const L          = (N_perfect + 1)*VT::half();                     // So if we have a single tree of N nodes (assuming binary balanced tree) then how many leaves will such a tree have? The total number of nodes in a perfect binary tree is N = 2 L  - 1 where L is number of leaf nodes
+    size_t const L          = (N_perfect + 1)/2;                     // So if we have a single tree of N nodes (assuming binary balanced tree) then how many leaves will such a tree have? The total number of nodes in a perfect binary tree is N = 2 L  - 1 where L is number of leaf nodes
     size_t const M          = mesh.tetrahedron_size();                        // Total number of tetrahedra
-    size_t       C          = ceil( VT::one()*M / L);                         // Total number of chunks to divide the mesh into
+    size_t       C          = (M+L-1) / L;                         // Total number of chunks to divide the mesh into
     size_t const H          = max(ceil(log(C) / log(L)), 1.0);                // Total number of chunk levels (C could be 1)
 
 
@@ -255,7 +255,7 @@ namespace kdop
     //--- Do the same for all higher levels covering the next lower one bottom up
     for(size_t h = H - 1; h >= 1; --h)
     {
-      C = ceil(VT::one()*C / L);
+      C = (C + L - 1) / L;
 
       tree.super_chunks(h - 1).resize(C);
 

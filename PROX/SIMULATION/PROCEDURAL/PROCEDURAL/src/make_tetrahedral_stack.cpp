@@ -47,16 +47,16 @@ namespace procedural
     GeometryHandle<MT> tetra_handle4 = create_geometry_handle_tetrahedron<MT>( engine, six,  eight, seven, three );
     GeometryHandle<MT> tetra_handle5 = create_geometry_handle_tetrahedron<MT>( engine, one,  three, eight, six   );
 
-		T x = VT::one();
-    T y = VT::one();
-    T z = VT::one();
+		T x = 1;
+    T y = 1;
+    T z = 1;
 
 		for (size_t i = 0; i < sub_divisions; ++i)
     {
-      x = i*box_width - (cube_width/VT::two()) + (box_width/VT::two());
+      x = i*box_width - (cube_width/2) + (box_width/2);
       for (size_t j = 0; j < sub_divisions; ++j)
       {
-        y =  (box_height/VT::two())+j*box_height;
+        y =  (box_height/2)+j*box_height;
         for (size_t k = 0; k < sub_divisions; ++k)
         {
           z = k*box_depth;

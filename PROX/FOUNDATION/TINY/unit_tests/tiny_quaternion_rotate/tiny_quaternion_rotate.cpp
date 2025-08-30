@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     T const phi = value_traits::pi_half();
     V const m = V::make( 1.0, 0.0, 0.0 );
     q = Q::Ru( phi, m);
-    BOOST_CHECK_CLOSE( tiny::norm( q ), value_traits::one(), 0.01 );
+    BOOST_CHECK_CLOSE( tiny::norm( q ), 1, 0.01 );
     V const n = V::make( 0.0, 1.0, 0.0 );
     // Try to rotate n-vector
     V const k = tiny::rotate( q, n);
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     T const phi = value_traits::pi_half();
     V const m = V::make( 1.0, 0.0, 0.0 );
     q = Q::Ru( phi, m);
-    BOOST_CHECK_CLOSE( tiny::norm( q ), value_traits::one(), 0.01 );
+    BOOST_CHECK_CLOSE( tiny::norm( q ), 1, 0.01 );
     V const n = V::make( 0.0, 0.0, 1.0 );
     // Try to rotate n-vector
     V const k = tiny::rotate( q, n);
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     T const phi = value_traits::pi_half();
     V const m = V::make( 1.0, 0.0, 0.0 );
     q = Q::Ru( phi, m);
-    BOOST_CHECK_CLOSE( tiny::norm( q ), value_traits::one(), 0.01 );
+    BOOST_CHECK_CLOSE( tiny::norm( q ), 1, 0.01 );
     V const n = V::make( 0.0, -1.0, 0.0 );
     // Try to rotate n-vector
     V const k = tiny::rotate( q, n);
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     T const phi = value_traits::pi_half();
     V const m = V::make( 1.0, 0.0, 0.0 );
     q = Q::Ru( phi, m);
-    BOOST_CHECK_CLOSE( tiny::norm( q ), value_traits::one(), 0.01 );
+    BOOST_CHECK_CLOSE( tiny::norm( q ), 1, 0.01 );
     V const n = V::make( 0.0, 0.0, -1.0 );
     // Try to rotate n-vector
     V const k = tiny::rotate( q, n);
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     T const phi = value_traits::pi_half();
     V const m = V::make( 0.0, 1.0, 0.0 );
     q = Q::Ru( phi, m);
-    BOOST_CHECK_CLOSE( tiny::norm( q ), value_traits::one(), 0.01 );
+    BOOST_CHECK_CLOSE( tiny::norm( q ), 1, 0.01 );
     V const n = V::make( 1.0, 0.0, 0.0 );
     // Try to rotate n-vector
     V const k = tiny::rotate( q, n);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     T const phi = value_traits::pi_half();
     V const m = V::make( 0.0, 0.0, 1.0 );
     q = Q::Ru( phi, m);
-    BOOST_CHECK_CLOSE( tiny::norm( q ), value_traits::one(), 0.01 );
+    BOOST_CHECK_CLOSE( tiny::norm( q ), 1, 0.01 );
     V const n = V::make( 1.0, 0.0, 0.0 );
     // Try to rotate n-vector
     V const k = tiny::rotate( q, n);

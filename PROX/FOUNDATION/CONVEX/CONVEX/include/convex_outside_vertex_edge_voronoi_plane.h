@@ -31,12 +31,12 @@ namespace convex
     typedef typename V::real_type       T;
 
     V const n = (A-B);
-    assert( tiny::inner_prod( n, n ) > VT::zero() || !"outside_vertex_edge_voronoi_plane(): Degenerate edge encountered");
+    assert( tiny::inner_prod( n, n ) > 0 || !"outside_vertex_edge_voronoi_plane(): Degenerate edge encountered");
 
     T const sign_p = tiny::inner_prod( n, (p-A) );
     assert( is_number( sign_p ) || !"outside_vertex_edge_voronoi_plane(): Not a Number encountered");
 
-    return sign_p >= VT::zero();
+    return sign_p >= 0;
   }
 
 } // namespace convex

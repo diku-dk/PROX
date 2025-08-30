@@ -87,7 +87,7 @@ namespace tiny
     {
       using std::cos;
       using std::sin;
-      real_type const theta = rad/value_traits::two();
+      real_type const theta = rad/2;
       real_type const ctheta = value_traits::numeric_cast( cos(theta) );
       real_type const stheta = value_traits::numeric_cast( sin(theta) );
       return Quaternion ( ctheta, unit(axis) * stheta );
@@ -97,35 +97,35 @@ namespace tiny
     {
       using std::cos;
       using std::sin;
-      real_type const theta = rad/value_traits::two();
+      real_type const theta = rad/2;
       real_type const ctheta = value_traits::numeric_cast( cos(theta) );
       real_type const stheta = value_traits::numeric_cast( sin(theta) );
-      return Quaternion(ctheta, stheta, value_traits::zero(), value_traits::zero());
+      return Quaternion(ctheta, stheta, 0, 0);
     }
 
     static Quaternion Ry ( real_type const & rad)
     {
       using std::cos;
       using std::sin;
-      real_type const theta = rad/value_traits::two();
+      real_type const theta = rad/2;
       real_type const ctheta = value_traits::numeric_cast( cos(theta) );
       real_type const stheta = value_traits::numeric_cast( sin(theta) );
-      return Quaternion(ctheta, value_traits::zero(), stheta, value_traits::zero());
+      return Quaternion(ctheta, 0, stheta, 0);
     }
 
     static Quaternion Rz ( real_type const & rad)
     {
       using std::cos;
       using std::sin;
-      real_type const theta = rad/value_traits::two();
+      real_type const theta = rad/2;
       real_type const ctheta = value_traits::numeric_cast( cos(theta) );
       real_type const stheta = value_traits::numeric_cast( sin(theta) );
-      return Quaternion(ctheta, value_traits::zero(), value_traits::zero(), stheta);
+      return Quaternion(ctheta, 0, 0, stheta);
     }
 
     static Quaternion identity ( )
     {
-      return  Quaternion(value_traits::one(), value_traits::zero(), value_traits::zero(), value_traits::zero());
+      return  Quaternion(1, 0, 0, 0);
     }
 
     static Quaternion random ( real_type const & lower, real_type const & upper)
@@ -144,7 +144,7 @@ namespace tiny
       return q;
     }
 
-    static Quaternion random () { return random(value_traits::zero(), value_traits::one());  }
+    static Quaternion random () { return random(0, 1);  }
 
   };
 

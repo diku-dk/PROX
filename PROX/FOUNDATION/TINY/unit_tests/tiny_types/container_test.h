@@ -18,8 +18,8 @@ namespace container_test
     typedef typename T::real_type                  real_type;
 
     real_type const tol     = value_traits::numeric_cast(0.1); // 1/10 percent
-    real_type const zero    = value_traits::zero();
-    real_type const two     = value_traits::two();
+    real_type const zero    = 0;
+    real_type const two     = 2;
 
     // Verify instatiation and instantiation size
     C a;

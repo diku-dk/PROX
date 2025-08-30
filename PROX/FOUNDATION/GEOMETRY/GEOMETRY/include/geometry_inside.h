@@ -19,7 +19,7 @@ namespace geometry
   inline bool outside_dop( V const & p, DOP<T,K> const & dop, T const & threshold )
   {
 
-    assert(threshold >= tiny::ValueTraits<T>::zero()  || !"outside_dop(): threshold must be non-negative");
+    assert(threshold >= 0  || !"outside_dop(): threshold must be non-negative");
 
     size_t              const N = K/2;
     DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
@@ -43,7 +43,7 @@ namespace geometry
   {
     typedef tiny::ValueTraits<T> VT;
 
-    return outside_dop(p, dop, VT::zero() );
+    return outside_dop<T, K, V>(p, dop, 0 );
   }
 
   template<typename T, size_t K,typename V>
@@ -117,12 +117,12 @@ namespace geometry
     typedef typename V::real_type      T;
 
     V const p_local     =  abs( transform_to_cylinder( p, cylinder) );
-    T const half_height = cylinder.height()/VT::two();
+    T const half_height = cylinder.height()/2;
 
     if ( p_local(2) > half_height )
       return false;
 
-    T const distance = tiny::norm(V::make(p_local(0), p_local(1), VT::zero()) );
+    T const distance = tiny::norm(V::make(p_local(0), p_local(1), 0) );
 
     if (distance > cylinder.radius() )
       return false;
@@ -141,7 +141,7 @@ namespace geometry
 
     Plane<V> const plane = make_plane(triangle);
 
-    if (test_face_plane && get_distance(p, plane) > VT::zero() )
+    if (test_face_plane && get_distance(p, plane) > 0 )
       return false;
 
     for (unsigned int k=0u; k < 3u; ++k)
@@ -152,7 +152,7 @@ namespace geometry
 
       Plane<V> const wall = make_plane(p0,p1,p2);
 
-      if( get_signed_distance(p, wall) > VT::zero() )
+      if( get_signed_distance(p, wall) > 0 )
         return false;
     }
 

@@ -69,17 +69,9 @@ namespace geometry
 
 
       // A cylinders default orientation is with axis aligned with V::k() axis
-    V const axis        =  cross( V::k(), cylinder.axis());
+    V const axis = cross(V::k(), cylinder.axis());
 
-    T const angle       =  acos(
-                                min(
-                                    VT::one()
-                                    , max(
-                                          - VT::one()
-                                          , inner_prod( V::k(), cylinder.axis() )
-                                          )
-                                    )
-                                );
+    const auto angle = acos(min<T>(1, max<T>(-1, inner_prod(V::k(), cylinder.axis()))));
 
     Q const orientation = Q::Ru( angle, axis);
 
@@ -108,15 +100,7 @@ namespace geometry
       // A cylinders default orientation is with axis aligned with V::k() axis
     V const axis        =  cross( V::k(), cylinder.axis());
 
-    T const angle       =  acos(
-                                min(
-                                    VT::one()
-                                    , max(
-                                          - VT::one()
-                                          , inner_prod( V::k(), cylinder.axis() )
-                                          )
-                                    )
-                                );
+    T const angle = acos(min<T>(1, max<T>(-1, inner_prod(V::k(), cylinder.axis()))));
 
     Q const orientation = Q::Ru( angle, axis);
 
