@@ -42,11 +42,11 @@ namespace convex
   inline bool motion_interpolation(
                             typename M::coordsys_type const & X_A_from
                             , typename M::coordsys_type const & X_A_to
-                            , geometry::SupportMapping<typename M::vector3_type> const * A
+                            , geometry::SupportMapping<typename M::real_type> const * A
                             , typename M::real_type const & r_max_A
                             , typename M::coordsys_type const & X_B_from
                             , typename M::coordsys_type const & X_B_to
-                            , geometry::SupportMapping<typename M::vector3_type> const * B
+                            , geometry::SupportMapping<typename M::real_type> const * B
                             , typename M::real_type const & r_max_B
                             , typename M::vector3_type & p_A
                             , typename M::vector3_type & p_B

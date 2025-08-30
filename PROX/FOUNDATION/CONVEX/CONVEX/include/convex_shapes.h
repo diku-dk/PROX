@@ -13,11 +13,10 @@ namespace convex
    */
   template<typename M>
   class Cylinder
-  : public geometry::SupportMapping<typename M::vector3_type>
+  : public geometry::SupportMapping<typename M::real_type>
   {
   public:
       using T = typename M::real_type;
-      using V = typename M::vector3_type;
 
   protected:
 
@@ -47,11 +46,10 @@ namespace convex
    */
   template<typename M>
   class Capsule
-  : public geometry::SupportMapping<typename M::vector3_type>
+  : public geometry::SupportMapping<typename M::real_type>
   {
   public:
       using T = typename M::real_type;
-      using V = typename M::vector3_type;
 
   protected:
 
@@ -78,7 +76,7 @@ namespace convex
 
   template<typename M>
   class Ellipsoid
-  : public geometry::SupportMapping<typename M::vector3_type>
+  : public geometry::SupportMapping<typename M::real_type>
   {
   public:
       using T = typename M::real_type;
@@ -118,7 +116,7 @@ namespace convex
    */
   template<typename M>
   class Cone
-  : public geometry::SupportMapping<typename M::vector3_type>
+  : public geometry::SupportMapping<typename M::real_type>
   {
   public:
       using T = typename M::real_type;
@@ -149,7 +147,7 @@ namespace convex
 
   template<typename M>
   class ConvexHull
-  : public geometry::SupportMapping<typename M::vector3_type>
+  : public geometry::SupportMapping<typename M::real_type>
   {
   public:
       using T = typename M::real_type;

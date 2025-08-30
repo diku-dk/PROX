@@ -6,11 +6,10 @@
 namespace geometry
 {
 
-  template<typename V>
+  template<typename T>
   class SupportMapping
   {
   public:
-      using T = typename V::real_type;
     /**
      * Get Support Point of Shape.
      *

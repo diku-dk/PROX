@@ -8,7 +8,7 @@ namespace geometry
 
   template<typename V>
   class Point
-  : public geometry::SupportMapping<V>
+    : public geometry::SupportMapping<typename V::real_type>
   {
   public:
       using T = typename V::real_type;

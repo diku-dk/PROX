@@ -14,7 +14,7 @@ namespace geometry
 
   template<typename V>
   class Sphere
-  : public geometry::SupportMapping<V>
+    : public geometry::SupportMapping<typename V::real_type>
 
   {
   public:

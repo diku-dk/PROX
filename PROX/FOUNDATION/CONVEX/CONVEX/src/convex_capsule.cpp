@@ -41,7 +41,7 @@ namespace convex
       assert( is_finite(this->m_radius)         || !"INF encountered");
       assert( this->m_radius >= 0      || !"Negative radius");
 
-      geometry::Sphere<V> S;
+      geometry::Sphere<typename M::vector3_type> S;
       S.radius() = this->m_radius;
 
       // Get the support point of the sphere

@@ -42,12 +42,12 @@ namespace convex
                                 typename M::coordsys_type const & X_A
                                 , typename M::vector3_type const & v_A
                                 , typename M::vector3_type const & w_A
-                                , geometry::SupportMapping<typename M::vector3_type> const * A
+                                , geometry::SupportMapping<typename M::real_type> const * A
                                 , typename M::real_type const & r_max_A
                                 , typename M::coordsys_type const & X_B
                                 , typename M::vector3_type const & v_B
                                 , typename M::vector3_type const & w_B
-                                , geometry::SupportMapping<typename M::vector3_type> const * B
+                                , geometry::SupportMapping<typename M::real_type> const * B
                                 , typename M::real_type const & r_max_B
                                 , typename M::vector3_type & p_A
                                 , typename M::vector3_type & p_B

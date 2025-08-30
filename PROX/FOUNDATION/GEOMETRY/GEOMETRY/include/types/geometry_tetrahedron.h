@@ -16,7 +16,7 @@ namespace geometry
 
   template<typename V>
   class Tetrahedron
-  : public SupportMapping<V>
+    : public SupportMapping<typename V::real_type>
   {
   public:
       using T = typename V::real_type;

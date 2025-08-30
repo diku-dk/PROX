@@ -111,9 +111,9 @@ namespace convex
   template<typename M>
   inline void compute_closest_points(
                               typename M::coordsys_type const & X_A
-                              , geometry::SupportMapping<typename M::vector3_type> const * A
+                              , geometry::SupportMapping<typename M::real_type> const * A
                               , typename M::coordsys_type const & X_B
-                              , geometry::SupportMapping<typename M::vector3_type> const * B
+                              , geometry::SupportMapping<typename M::real_type> const * B
                               , typename M::vector3_type & p_A
                               , typename M::vector3_type & p_B
                               , typename M::real_type & distance
@@ -310,9 +310,9 @@ namespace convex
   template<typename M>
   inline void compute_closest_points(
                                      typename M::coordsys_type const & X_A
-                                     , geometry::SupportMapping<typename M::vector3_type> const * A
+                                     , geometry::SupportMapping<typename M::real_type> const * A
                                      , typename M::coordsys_type const & X_B
-                                     , geometry::SupportMapping<typename M::vector3_type> const * B
+                                     , geometry::SupportMapping<typename M::real_type> const * B
                                      , typename M::vector3_type & p_A
                                      , typename M::vector3_type & p_B
                                      )
