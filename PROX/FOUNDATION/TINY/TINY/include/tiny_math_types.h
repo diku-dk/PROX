@@ -8,6 +8,8 @@
 #include <tiny_value_traits.h>
 #include <tiny_type_traits.h>
 
+#include <eigen3/Eigen/Dense>
+
 namespace tiny
 {
 
@@ -30,7 +32,7 @@ namespace tiny
       using type_traits = float_traits;
       using real_type = type_traits::real_type;
       using vector3_type = Vector<3, type_traits>;
-      using vector4_type = Vector<4, type_traits>;
+      using vector4_type = Eigen::Matrix<float, 4, 1>;
 
       using quaternion_type = Quaternion<type_traits>;
       using matrix3x3_type = Matrix<3, 3, type_traits>;
@@ -46,7 +48,7 @@ namespace tiny
       using type_traits = double_traits;
       using real_type = type_traits::real_type;
       using vector3_type = Vector<3, type_traits>;
-      using vector4_type = Vector<4, type_traits>;
+      using vector4_type = Eigen::Matrix<double, 4, 1>;
 
       using quaternion_type = Quaternion<type_traits>;
       using matrix3x3_type = Matrix<3, 3, type_traits>;
