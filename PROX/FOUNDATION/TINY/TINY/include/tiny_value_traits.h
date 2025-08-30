@@ -10,7 +10,7 @@ namespace tiny
     {
     public:
       //static T infinity()               { return detail::infinity<T>();  }
-      static T half()                   { return detail::half<T>();      }
+      //static T half()                   { return detail::half<T>();      }
       static T pi()                     { return detail::pi<T>();        }
       static T pi_2()                   { return detail::pi_half<T>();   }
       static T pi_half()                { return detail::pi_half<T>();   }

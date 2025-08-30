@@ -214,7 +214,7 @@ namespace kdop
     //--- order to do so we much determine how big chunks we need.
 
     size_t const node_bytes = sizeof(Node<T,K> );
-    size_t const N_max      = floor( (mem_bytes / node_bytes)* VT::half() );  // Total number of nodes that fit into memory, divided by two because we want two trees simultaneously in memory.
+    size_t const N_max      = floor( (mem_bytes / node_bytes)* 0.5f );  // Total number of nodes that fit into memory, divided by two because we want two trees simultaneously in memory.
 
     // However, the maximum number of possible nodes may not be a power of 2,
     // which is needed to create a perfect balanced binary tree.

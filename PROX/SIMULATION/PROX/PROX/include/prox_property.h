@@ -27,7 +27,7 @@ namespace prox
   public:
 
     Property()
-    : m_mu(vector3_type::make(value_traits::half(),value_traits::half(),value_traits::half()))
+    : m_mu(vector3_type::make(0.5f,0.5f,0.5f))
     , m_e(0)
     , m_s(vector3_type::make(1,0,0))
     , m_master_material_idx(0u)

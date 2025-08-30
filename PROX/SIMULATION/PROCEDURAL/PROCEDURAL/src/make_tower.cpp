@@ -28,7 +28,7 @@ namespace procedural
 		
 		T const stone_depth    = height/segments;
 		T const delta_theta    = 2* VT::pi()/ slices;
-		T const center_radius  = ( r_outer + r_inner )*VT::half();
+		T const center_radius  = ( r_outer + r_inner )*0.5f;
 		T const stone_density  = get_material_density<MT>(mat_info, "Stone");
 
     std::vector<V>  vertices(8u);
@@ -67,10 +67,10 @@ namespace procedural
 		{
 			for(size_t j = 0u; j < slices; ++j)
 			{
-				T const theta = j*delta_theta + (i%2)*( delta_theta*VT::half() );
+				T const theta = j*delta_theta + (i%2)*( delta_theta*0.5f );
 				T const x     = center_radius * cos(  theta  );
 				T const y     = center_radius * sin(  theta  );
-				T const z     = (i + VT::half()) * stone_depth;
+				T const z     = (i + 0.5f) * stone_depth;
 				
 				V const T_b2m = stone_handle.Tb2m();
 				Q const Q_b2m = stone_handle.Qb2m();

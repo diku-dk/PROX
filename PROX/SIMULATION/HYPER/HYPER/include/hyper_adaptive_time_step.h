@@ -175,8 +175,8 @@ namespace hyper
       copy(body,A);
       copy(body,B);
 
-      do_time_step(body, A, (body.m_adaptive_dt*VT::half())  );
-      do_time_step(body, A, (body.m_adaptive_dt*VT::half())  );
+      do_time_step(body, A, (body.m_adaptive_dt*0.5f)  );
+      do_time_step(body, A, (body.m_adaptive_dt*0.5f)  );
       do_time_step(body, B, body.m_adaptive_dt               );
 
       // If accuracy is acceptable we accept the time-step or if it is impossible to do schrinking to get better accuracy
@@ -191,7 +191,7 @@ namespace hyper
         // While accuracy is unacceptable we keep on schrinking the step-size to get better accuracy
         do{
 
-          body.m_adaptive_dt = body.m_adaptive_dt*VT::half();
+          body.m_adaptive_dt = body.m_adaptive_dt*0.5f;
 
           body.m_adaptive_dt = max( params.adaptive_min_dt(), min( params.adaptive_max_dt(), body.m_adaptive_dt) ); // Clamp between min and max allowed time step
           body.m_adaptive_dt = min( body.m_adaptive_dt, dt_left);                                 // Make sure we do not step longer than needed
@@ -199,8 +199,8 @@ namespace hyper
           copy(body,A);
           copy(body,B);
 
-          do_time_step(body, A, body.m_adaptive_dt*VT::half()  );
-          do_time_step(body, A, body.m_adaptive_dt*VT::half()  );
+          do_time_step(body, A, body.m_adaptive_dt*0.5f  );
+          do_time_step(body, A, body.m_adaptive_dt*0.5f  );
           do_time_step(body, B, body.m_adaptive_dt             );
 
           // Impossible to schrink more, we have to give up and accept the accuracy

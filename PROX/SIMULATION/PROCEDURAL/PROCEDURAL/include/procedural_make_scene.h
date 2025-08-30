@@ -170,7 +170,7 @@ namespace procedural
 
       procedural::make_wall<MT>(
                                 engine
-                                , V::make(-VT::half()*width, 0, 0)
+                                , V::make(-0.5f*width, 0, 0)
                                 , Q::identity()
                                 , width
                                 , height
@@ -378,7 +378,7 @@ namespace procedural
 
       procedural::make_wall<MT>(
                                 engine
-                                , V::make(-VT::half()*width, 0, 0)
+                                , V::make(-0.5f*width, 0, 0)
                                 , Q::identity()
                                 , width      // width
                                 , layers*2.0f      // height
@@ -783,7 +783,7 @@ namespace procedural
 
       procedural::make_wall<MT>(
                                 engine
-                                , V::make(-VT::half()*width, 0, 0)
+                                , V::make(-0.5f*width, 0, 0)
                                 , Q::identity()
                                 , width      // width
                                 , layers*2.0f      // height

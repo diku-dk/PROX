@@ -206,17 +206,17 @@ namespace soft_body
     assert( beam_height > 0 || !"make_cantilever_tower_scene(): beam height must be positive");
 
     T const delta_theta    = 2* VT::pi()/ slices;
-    T const center_radius  = radius + beam_depth*VT::half();
-    T const beam_width     = VT::numeric_cast(1.9)*radius*sin( delta_theta*VT::half() );
+    T const center_radius  = radius + beam_depth*0.5f;
+    T const beam_width     = VT::numeric_cast(1.9)*radius*sin( delta_theta*0.5f );
 
 
     for(size_t i = 0u; i < segments; ++i)
     {
       for(size_t j = 0u; j < slices; ++j)
       {
-        T const theta = j*delta_theta + (i%2)*( delta_theta*VT::half() );
+        T const theta = j*delta_theta + (i%2)*( delta_theta*0.5f );
         T const x     = center_radius * cos(  theta  );
-        T const y     = (i + VT::half()) * beam_height;
+        T const y     = (i + 0.5f) * beam_height;
         T const z     = - center_radius * sin(  theta  );
 
         V const disp = V::make( x, y, z );
@@ -245,7 +245,7 @@ namespace soft_body
                   );
 
         T const sign           = flip_dirichlet ?  -1 : 1 ;
-        V const box_origo      = V::make( 0 , 0, sign*beam_depth*VT::half());
+        V const box_origo      = V::make( 0 , 0, sign*beam_depth*0.5f);
         V const box_dimensions = V::make(beam_width+VT::numeric_cast(0.01), beam_height+VT::numeric_cast(0.01), VT::numeric_cast(0.01) );
 
         hyper::make_dirichlet_conditions(
@@ -299,7 +299,7 @@ namespace soft_body
     for(size_t i = 0u; i < layers; ++i)
     {
       T const x     = 0;
-      T const y     = (i + VT::half()) * plate_height;
+      T const y     = (i + 0.5f) * plate_height;
       T const z     = 0;
 
       V const disp = V::make( x, y, z );
@@ -336,7 +336,7 @@ namespace soft_body
       }
       else if(i==0)
       {
-        V const box_origo      = V::make( 0 , -plate_height*VT::half(), 0 );
+        V const box_origo      = V::make( 0 , -plate_height*0.5f, 0 );
         V const box_dimensions = V::make(plate_width+VT::numeric_cast(0.01), VT::numeric_cast(0.01), plate_depth+VT::numeric_cast(0.01) );
 
         hyper::make_dirichlet_conditions(

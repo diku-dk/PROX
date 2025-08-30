@@ -119,7 +119,7 @@ namespace big
           if( compute_merit )
           {
             T const old_err = err;
-            err = ublas::inner_prod(x,x)*value_traits::half();
+            err = ublas::inner_prod(x,x)*0.5f;
 
             if(profiling)
               (*profiling)(iter) = err;

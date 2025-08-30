@@ -138,7 +138,7 @@ namespace procedural
 
     std::string const geom_name = "capsule_" + util::to_string( counter++ );
 
-    mass::Properties<T> props = mass::compute_capsule<T>(1, radius, VT::half()*height);
+    mass::Properties<T> props = mass::compute_capsule<T>(1, radius, 0.5f*height);
 
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_capsule_shape( gid );

@@ -28,8 +28,8 @@ namespace geometry
   public:
 
     AABB()
-    : m_min_coord( V::make(-VT::half(),-VT::half(),-VT::half()) )
-    , m_max_coord( V::make( VT::half(), VT::half(), VT::half()) )
+    : m_min_coord( V::make(-0.5f,-0.5f,-0.5f) )
+    , m_max_coord( V::make( 0.5f, 0.5f, 0.5f) )
     {}
 
     AABB(V const & min_coord, V const & max_coord)

@@ -60,7 +60,7 @@ namespace hyper
     T operator()(V const & p) const
     {
       V    const & c         = this->m_position;
-      V    const & s         = this->m_dimension*VT::half();;
+      V    const & s         = this->m_dimension*0.5f;;
       V    const   d         = tiny::abs( p-c );
       V    const   delta     = d-s;
       //T    const   min_delta = tiny::min(delta);

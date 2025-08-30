@@ -42,7 +42,7 @@ namespace mass
 
     Properties<T> I_half_sphere = I_sphere;
 
-    I_half_sphere.m_m = I_sphere.m_m * value_traits::half();
+    I_half_sphere.m_m = I_sphere.m_m * 0.5f;
 
     I_half_sphere = translate_to_model_frame<T>( 0, half_height, 0, I_half_sphere);
 

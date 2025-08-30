@@ -645,7 +645,7 @@ namespace geometry
       T const depth = min_val - max_val;
 
       // Project contact points onto cotact plane
-      V const mid =  n * (max_val + min_val)*VT::half();
+      V const mid =  n * (max_val + min_val)*0.5f;
 
       for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
       {
@@ -941,7 +941,7 @@ namespace geometry
             // So we have closest points on the edges, meaning that a sensible
             // predicted contact location would be he mid-point of the two
             // closest points.
-            V const p     = (pA + pB)*VT::half();
+            V const p     = (pA + pB)*0.5f;
 
             // Although we know tetrahedra overlap along the n-direction there
             // might be some other "direction" separating the objects... Hence

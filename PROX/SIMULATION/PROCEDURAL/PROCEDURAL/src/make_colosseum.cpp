@@ -29,7 +29,7 @@ namespace procedural
     //10-30-14 Sarah: clean up "magic" constants
     T      const r_center        = (r_outer-r_inner)*.5 + r_inner;
     T      const delta_theta     = 2*VT::pi()/slices;
-    T      const r_arch_outer    = r_inner*sin( delta_theta*VT::half() );
+    T      const r_arch_outer    = r_inner*sin( delta_theta*0.5f );
     T      const r_arch_inner    = r_arch_outer*VT::numeric_cast( 0.6f );
     T      const pillar_height   = 1*r_arch_outer;
     size_t const arch_slices     = 7u;

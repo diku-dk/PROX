@@ -26,7 +26,7 @@ namespace hyper
     M const C = right_cauchy_green_strain_tensor(F);
     M const I = M::identity();
 
-    return  VT::half() * ( C - I );
+    return  0.5f * ( C - I );
   }
 
   template<typename M>
@@ -37,7 +37,7 @@ namespace hyper
     M const I = M::identity();
     M const B = left_cauchy_green_strain_tensor(F);
 
-    return VT::half()*(M::identity() - inverse(B));
+    return 0.5f*(M::identity() - inverse(B));
   }
 
   template<typename M>
@@ -46,7 +46,7 @@ namespace hyper
     typedef typename M::value_traits   VT;
 
     M const I = M::identity();
-    M const varepsilon = VT::half() * (F + tiny::trans(F)) - I;
+    M const varepsilon = 0.5f * (F + tiny::trans(F)) - I;
 
     return varepsilon;
   }

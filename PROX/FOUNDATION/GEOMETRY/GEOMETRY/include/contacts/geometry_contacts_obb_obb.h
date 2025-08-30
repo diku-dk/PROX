@@ -317,7 +317,7 @@ namespace geometry
 
     T const depth = min_val - max_val;
 
-    V const mid =  n * (max_val + min_val)*VT::half();
+    V const mid =  n * (max_val + min_val)*0.5f;
 
     for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
     {

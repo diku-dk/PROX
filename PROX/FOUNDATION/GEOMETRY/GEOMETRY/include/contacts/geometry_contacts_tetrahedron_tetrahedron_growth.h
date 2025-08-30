@@ -321,7 +321,7 @@ namespace geometry
 
     T const depth = min_val - max_val;
 
-    V const mid =  normal * (max_val + min_val)*VT::half();
+    V const mid =  normal * (max_val + min_val)*0.5f;
 
     //details::project_to_plane(n, mid, intersections);
 

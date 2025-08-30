@@ -53,9 +53,9 @@ namespace procedural
           if(sphere_count > number_of_spheres)
             return;
 
-          T const x = -width*VT::half()+max_radius  + i*max_radius*2;
-          T const z = -depth*VT::half()+max_radius  + k*max_radius*2;
-          T const y = -height*VT::half()+max_radius + j*max_radius*2;
+          T const x = -width*0.5f+max_radius  + i*max_radius*2;
+          T const z = -depth*0.5f+max_radius  + k*max_radius*2;
+          T const y = -height*0.5f+max_radius + j*max_radius*2;
 
           int choice = sphere_count % 10;
 

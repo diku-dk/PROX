@@ -27,7 +27,7 @@ namespace procedural
 
 		for( size_t i = 0u; i < layers;++i )
 		{
-      T y = ( i+VT::half() )*stone_dim;
+      T y = ( i+0.5f )*stone_dim;
 
       V const T_b2m = stone_handle.Tb2m();
       Q const Q_b2m = stone_handle.Qb2m();

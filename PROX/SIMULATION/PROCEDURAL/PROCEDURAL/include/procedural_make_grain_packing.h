@@ -198,9 +198,9 @@ namespace procedural
           if(grain_count > total_number_of_grains)
             return;
 
-          T const x = (-number_of_grains_in_x*grain_size + grain_size)*VT::half()  + i*grain_size;
-          T const z = (-number_of_grains_in_z*grain_size + grain_size)*VT::half()  + k*grain_size;
-          T const y =  grain_size*VT::half() + j*grain_size;
+          T const x = (-number_of_grains_in_x*grain_size + grain_size)*0.5f  + i*grain_size;
+          T const z = (-number_of_grains_in_z*grain_size + grain_size)*0.5f  + k*grain_size;
+          T const y =  grain_size*0.5f + j*grain_size;
 
           int choice = grain_count % grains.size();
 

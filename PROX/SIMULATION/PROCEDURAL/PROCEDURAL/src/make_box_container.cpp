@@ -61,7 +61,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                        , V::make( 0, -height*VT::half() - wall_thickness*VT::half()  , 0)
+                        , V::make( 0, -height*0.5f - wall_thickness*0.5f  , 0)
                           ) + position;
 
       Q const Qw = orientation;
@@ -80,7 +80,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( -width*VT::half()-wall_thickness*VT::half(), -wall_thickness*VT::half(), 0)
+                          , V::make( -width*0.5f-wall_thickness*0.5f, -wall_thickness*0.5f, 0)
                           ) + position;
 
       Q const Qw = orientation;
@@ -99,7 +99,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( width*VT::half()+wall_thickness*VT::half(), -wall_thickness*VT::half(), 0)
+                          , V::make( width*0.5f+wall_thickness*0.5f, -wall_thickness*0.5f, 0)
                           ) + position;
 
       Q const Qw = orientation;
@@ -118,7 +118,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( 0, -wall_thickness*VT::half(), depth*VT::half() + VT::half()*wall_thickness)
+                          , V::make( 0, -wall_thickness*0.5f, depth*0.5f + 0.5f*wall_thickness)
                           ) + position;
 
       Q const Qw = orientation;
@@ -137,7 +137,7 @@ namespace procedural
     {
       V const Pw = rotate(
                           orientation
-                          , V::make( 0, -wall_thickness*VT::half(), - depth*VT::half() - VT::half()*wall_thickness)
+                          , V::make( 0, -wall_thickness*0.5f, - depth*0.5f - 0.5f*wall_thickness)
                           ) + position;
 
       Q const Qw = orientation;

@@ -116,7 +116,7 @@ namespace big
 
       T const old_err = err;
 
-      err = ublas::inner_prod(H,H)*VT::half();   // err = theta(x) = 1/2 H^T H
+      err = ublas::inner_prod(H,H)*0.5f;   // err = theta(x) = 1/2 H^T H
 
       if(profiling)
         (*profiling)(iter) = err;
@@ -199,7 +199,7 @@ namespace big
 
         big::prod_add_rhs(A, x_k, b, y);                 // y = A x + b
         big::compute_minimum_map(y, x_k, H);             // H = min(y,x)
-        T const f_k = ublas::inner_prod(H,H)*VT::half(); // theta(tau) = 1/2 H^T H
+        T const f_k = ublas::inner_prod(H,H)*0.5f; // theta(tau) = 1/2 H^T H
 
 
         T grad_f_k = alpha * ublas::inner_prod(grad,x_k - x);

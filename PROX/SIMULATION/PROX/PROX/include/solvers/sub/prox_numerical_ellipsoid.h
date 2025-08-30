@@ -241,7 +241,7 @@ namespace prox
       //
       // Perform binary search for root
       //
-      T t_k = (t0+t1)*value_traits::half();
+      T t_k = (t0+t1)*0.5f;
       for( size_t k = 0; k < max_k; ++k )
       {
         if(  fabs(t1-t0) < tol ) //stagnation test
@@ -266,7 +266,7 @@ namespace prox
           t1 = t_k;
           g1 = g_k;
         }
-        t_k = (t0+t1)*value_traits::half();
+        t_k = (t0+t1)*0.5f;
       }
 
       // Convert root to unscaled problem

@@ -54,10 +54,10 @@ namespace procedural
         for( size_t v = 0u; v < segments;  ++v, phi += delta_phi )
         {
             // When we create the stone we are looking down the negative x-axis direction and having the positive y-axis as our up-direction
-            T const cos_phi_upper   = cos(   phi - delta_phi*VT::half() );
-            T const sin_phi_upper   = sin(   phi - delta_phi*VT::half() );
-            T const cos_phi_lower   = cos(   phi + delta_phi*VT::half() );
-            T const sin_phi_lower   = sin(   phi + delta_phi*VT::half() );
+            T const cos_phi_upper   = cos(   phi - delta_phi*0.5f );
+            T const sin_phi_upper   = sin(   phi - delta_phi*0.5f );
+            T const cos_phi_lower   = cos(   phi + delta_phi*0.5f );
+            T const sin_phi_lower   = sin(   phi + delta_phi*0.5f );
             T const cos_theta_left  = cos(  -delta_theta / 2    );
             T const sin_theta_left  = sin(  -delta_theta / 2    );
             T const cos_theta_right = cos(   delta_theta / 2    );

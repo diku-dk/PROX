@@ -48,20 +48,20 @@ namespace procedural
 		T		     gable_num_brick	= 1*num_pillars_x - 2;
 		T  const gable_incline		= atan(2*gable_height/temple_width);
 		T  const gable_brick_w		= (temple_width-3*pillar_width)/gable_num_brick;
-		T  const gable_brick_h		= tan(gable_incline)*VT::half()*gable_brick_w;
+		T  const gable_brick_h		= tan(gable_incline)*0.5f*gable_brick_w;
 		T		     gable_num_layers	= (gable_height/gable_brick_h);
 		
 		size_t const mid            = get_material_id<MT>(mat_info, "Stone");
 		T      const stone_density	= get_material_density<MT>(mat_info, "Stone");
 		
 		/// y offsets
-		T const plane_1_y		    = plane_height*VT::half();
+		T const plane_1_y		    = plane_height*0.5f;
 		T const plane_2_y		    = plane_1_y + plane_height;
 		T const plane_3_y		    = plane_2_y + plane_height;
-		T const outer_pillar_y  = plane_2_y + plane_height*VT::half();
+		T const outer_pillar_y  = plane_2_y + plane_height*0.5f;
 		T const inner_pillar_y  = outer_pillar_y + plane_height;
-		T const beam_y			    = outer_pillar_y + pillar_height + VT::half()*beam_height;
-		T const gable_y			    = beam_y + VT::half()*beam_height + VT::half()*gable_brick_h;
+		T const beam_y			    = outer_pillar_y + pillar_height + 0.5f*beam_height;
+		T const gable_y			    = beam_y + 0.5f*beam_height + 0.5f*gable_brick_h;
 		
 		size_t const pillar_segments = 5u;
 		
@@ -129,13 +129,13 @@ namespace procedural
 			/// front and back pillar row
 			for (size_t i = 0u; i < num_pillars_x; ++i)
 			{
-				T const xf = (pillar_width-temple_width)*VT::half() + 2*i*pillar_width;
-				T const zf = (-pillar_width+temple_depth)*VT::half();
+				T const xf = (pillar_width-temple_width)*0.5f + 2*i*pillar_width;
+				T const zf = (-pillar_width+temple_depth)*0.5f;
 				V       P  = rotate( orientation, V::make( xf, outer_pillar_y, zf) ) + position;
 				make_greek_pillar<MT>(engine, P, orientation ,pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 				
-				T const xb = (pillar_width-temple_width)*VT::half() + 2*i*pillar_width;
-				T const zb = (pillar_width-temple_depth)*VT::half();
+				T const xb = (pillar_width-temple_width)*0.5f + 2*i*pillar_width;
+				T const zb = (pillar_width-temple_depth)*0.5f;
 				P          = rotate( orientation , V::make( xb, outer_pillar_y, zb)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 			}
@@ -144,13 +144,13 @@ namespace procedural
 			for (size_t i = 1u; i < (num_pillars_z-1); ++i)
 			{
 				
-				T const xe = (pillar_width-temple_width)*VT::half();
-				T const ze = (-pillar_width+temple_depth)*VT::half() - 2*i*pillar_width;
+				T const xe = (pillar_width-temple_width)*0.5f;
+				T const ze = (-pillar_width+temple_depth)*0.5f - 2*i*pillar_width;
 				V       P  = rotate( orientation, V::make( xe, outer_pillar_y, ze)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 				
-				T const xw = (-pillar_width+temple_width)*VT::half();
-				T const zw = (-pillar_width+temple_depth)*VT::half() - 2*i*pillar_width;
+				T const xw = (-pillar_width+temple_width)*0.5f;
+				T const zw = (-pillar_width+temple_depth)*0.5f - 2*i*pillar_width;
 				P          = rotate(orientation, V::make( xw, outer_pillar_y, zw)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 			}
@@ -177,17 +177,17 @@ namespace procedural
 				/// inner pillars
 				for (size_t i = 0u; i < floor(beam_spacing_ratio*num_pillars_z); ++i)
 				{
-					T z = VT::half()*temple_depth - 2*pillar_width - (VT::half()+i)*spacing;
+					T z = 0.5f*temple_depth - 2*pillar_width - (0.5f+i)*spacing;
 					
 					for (size_t j = 0u; j < num_pillars_x-2; ++j)
 					{
-						T x = (pillar_width-temple_width)*VT::half() + (2+2*j)*pillar_width;
+						T x = (pillar_width-temple_width)*0.5f + (2+2*j)*pillar_width;
 						V P = rotate( orientation, V::make( x, inner_pillar_y, z)) + position;
 						
 						make_greek_pillar<MT>(engine, P, orientation ,pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 					}
 
-					T const xstart	= -VT::half()*temple_width + VT::half()*pillar_width;
+					T const xstart	= -0.5f*temple_width + 0.5f*pillar_width;
 					T y				= gable_y;
 					T bricks = gable_num_brick;
 					
@@ -195,7 +195,7 @@ namespace procedural
           {
             //layer no.
 
-						T x = xstart + VT::half()*i*gable_brick_w;
+						T x = xstart + 0.5f*i*gable_brick_w;
 
 						for (size_t j = 0; j<bricks; ++j)
             {
@@ -221,7 +221,7 @@ namespace procedural
 					for (size_t i = 0; i<gable_num_layers-1; ++i)
           {
 						//place end bricks
-						Tm = V::make( -VT::half()*temple_width + (VT::numeric_cast(0.4f)+i)*pillar_width, gable_y+(-VT::half()+i)*gable_brick_h, z+VT::half()*pillar_width);
+						Tm = V::make( -0.5f*temple_width + (VT::numeric_cast(0.4f)+i)*pillar_width, gable_y+(-0.5f+i)*gable_brick_h, z+0.5f*pillar_width);
 						Qm = Q::identity();
 						
 						Tb = gable_end_brick.Tb2m();
@@ -241,7 +241,7 @@ namespace procedural
                                   , stone_density
                                   );
 						
-						Tm = V::make( VT::half()*temple_width - (VT::numeric_cast(0.4f)+i)*pillar_width, gable_y+(-VT::half()+i)*gable_brick_h, z-VT::half()*pillar_width);
+						Tm = V::make( 0.5f*temple_width - (VT::numeric_cast(0.4f)+i)*pillar_width, gable_y+(-0.5f+i)*gable_brick_h, z-0.5f*pillar_width);
 						Qm = Q::Ru( VT::pi() ,V::j());
 						
 						Tb = gable_end_brick.Tb2m();
@@ -279,8 +279,8 @@ namespace procedural
 			for (size_t i = 0; i<num_pillars_x-3; ++i)
       {
 				
-				T x = -VT::half()*temple_width+VT::numeric_cast(3.5f)*pillar_width + i*beam_length_f;
-				Tm = rotate(orientation, V::make( x, beam_y, VT::half()*(temple_depth-pillar_width))) + position;
+				T x = -0.5f*temple_width+VT::numeric_cast(3.5f)*pillar_width + i*beam_length_f;
+				Tm = rotate(orientation, V::make( x, beam_y, 0.5f*(temple_depth-pillar_width))) + position;
 				
 				create_rigid_body<MT>(  engine
                               , Tm
@@ -290,7 +290,7 @@ namespace procedural
                               , stone_density
                               );
 				
-				Tm = rotate(orientation, V::make( x, beam_y, VT::half()*(-temple_depth+pillar_width))) + position;
+				Tm = rotate(orientation, V::make( x, beam_y, 0.5f*(-temple_depth+pillar_width))) + position;
 				
 				create_rigid_body<MT>(  engine
                               , Tm
@@ -309,9 +309,9 @@ namespace procedural
 			for (size_t i = 0; i<num_pillars_z-3; ++i)
       {
 				
-				T z = VT::half()*temple_depth-VT::numeric_cast(3.5f)*pillar_width - i*beam_length_s;
+				T z = 0.5f*temple_depth-VT::numeric_cast(3.5f)*pillar_width - i*beam_length_s;
 				
-				Tm = rotate(orientation, V::make( VT::half()*(-temple_width+pillar_width), beam_y, z)) + position;
+				Tm = rotate(orientation, V::make( 0.5f*(-temple_width+pillar_width), beam_y, z)) + position;
 				
 				create_rigid_body<MT>(  engine
                               , Tm
@@ -321,7 +321,7 @@ namespace procedural
                               , stone_density
                               );
 				
-				Tm = rotate(orientation, V::make( VT::half()*(temple_width-pillar_width), beam_y, z)) + position;
+				Tm = rotate(orientation, V::make( 0.5f*(temple_width-pillar_width), beam_y, z)) + position;
 				
 				create_rigid_body<MT>(  engine
                               , Tm
@@ -343,9 +343,9 @@ namespace procedural
 			
 			GeometryHandle<MT> beam_c = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			
-			T const corner_y =  beam_y - VT::half()*beam_height;
+			T const corner_y =  beam_y - 0.5f*beam_height;
 			
-			Tm = V::make( -VT::half()*temple_width, corner_y, -VT::half()*temple_depth);
+			Tm = V::make( -0.5f*temple_width, corner_y, -0.5f*temple_depth);
 			Qm = Q::identity();//Q::Ru( VT::pi(), V::i() );
 			
 			Tb = beam_c.Tb2m();
@@ -365,7 +365,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( VT::half()*temple_width, corner_y, -VT::half()*temple_depth);
+			Tm = V::make( 0.5f*temple_width, corner_y, -0.5f*temple_depth);
 			Qm = Q::Ru( -VT::pi_half(), V::j())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -385,7 +385,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( VT::half()*temple_width, corner_y, VT::half()*temple_depth);
+			Tm = V::make( 0.5f*temple_width, corner_y, 0.5f*temple_depth);
 			Qm = Q::Ru( -VT::pi_half(), V::j())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -405,7 +405,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( -VT::half()*temple_width, corner_y, VT::half()*temple_depth);
+			Tm = V::make( -0.5f*temple_width, corner_y, 0.5f*temple_depth);
 			Qm = Q::Ru( -VT::pi_half(), V::j())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -425,7 +425,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( -VT::half()*temple_width, corner_y+beam_height, -VT::half()*temple_depth);
+			Tm = V::make( -0.5f*temple_width, corner_y+beam_height, -0.5f*temple_depth);
 			Qm = Q::Ru( VT::pi(), V::i())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -445,7 +445,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( VT::half()*temple_width, corner_y+beam_height, -VT::half()*temple_depth);
+			Tm = V::make( 0.5f*temple_width, corner_y+beam_height, -0.5f*temple_depth);
 			Qm = Q::Ru( -VT::pi_half(), V::j())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -465,7 +465,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( VT::half()*temple_width, corner_y+beam_height, VT::half()*temple_depth);
+			Tm = V::make( 0.5f*temple_width, corner_y+beam_height, 0.5f*temple_depth);
 			Qm = Q::Ru( -VT::pi_half(), V::j())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -485,7 +485,7 @@ namespace procedural
                             , stone_density
                             );
 			
-			Tm = V::make( -VT::half()*temple_width, corner_y+beam_height, VT::half()*temple_depth);
+			Tm = V::make( -0.5f*temple_width, corner_y+beam_height, 0.5f*temple_depth);
 			Qm = Q::Ru( -VT::pi_half(), V::j())*Qm;
 			
 			Tb = beam_c.Tb2m();
@@ -528,11 +528,11 @@ namespace procedural
 				
 				for (size_t j = 0; j < 2; ++j)
 				{
-					T z = VT::half()*temple_depth - VT::numeric_cast(0.15f)*pillar_width - j*(-pillar_width + temple_depth);
+					T z = 0.5f*temple_depth - VT::numeric_cast(0.15f)*pillar_width - j*(-pillar_width + temple_depth);
 					//place end bricks
 					Tm = V::make(
-                       -VT::half()*temple_width + (VT::numeric_cast(0.4f)+i)*pillar_width
-                       , gable_y+(-VT::half()+i)*gable_brick_h
+                       -0.5f*temple_width + (VT::numeric_cast(0.4f)+i)*pillar_width
+                       , gable_y+(-0.5f+i)*gable_brick_h
                        , z
                        );
 					Qm = Q::identity();
@@ -555,8 +555,8 @@ namespace procedural
                                 );
 					
 					Tm = V::make(
-                       VT::half()*temple_width - (VT::numeric_cast(0.4f)+i)*pillar_width
-                       , gable_y+(-VT::half()+i)*gable_brick_h
+                       0.5f*temple_width - (VT::numeric_cast(0.4f)+i)*pillar_width
+                       , gable_y+(-0.5f+i)*gable_brick_h
                        , z-VT::numeric_cast(0.7f)*pillar_width
                        );
 					Qm = Q::Ru( VT::pi(), V::j());
@@ -582,15 +582,15 @@ namespace procedural
 			}
 			for (size_t k = 0; k < 2; ++k)
 			{
-				T const xstart	= -VT::half()*temple_width + VT::half()*pillar_width;
+				T const xstart	= -0.5f*temple_width + 0.5f*pillar_width;
 				T y				= gable_y;
-				T z				= VT::half()*(temple_depth-pillar_width) - k*(-pillar_width + temple_depth);
+				T z				= 0.5f*(temple_depth-pillar_width) - k*(-pillar_width + temple_depth);
 				T x				= 0;
 				T bricks = gable_num_brick;
 				
 				for (size_t i = 0; i<gable_num_layers; ++i) {//layer no.
 					
-					x = xstart + VT::half()*i*gable_brick_w;
+					x = xstart + 0.5f*i*gable_brick_w;
 					for (size_t j = 0; j<bricks; ++j) {//brick placement
 						
 						x += gable_brick_w;
@@ -623,10 +623,10 @@ namespace procedural
 			vertices[2] = V::make(VT::numeric_cast(1.4f)*pillar_width	, gable_brick_h	, 0);
 			vertices[3] = V::make(pillar_width		                    , gable_brick_h	, 0);
 
-			vertices[4] = vertices[0] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
-			vertices[5] = vertices[1] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
-			vertices[6] = vertices[2] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
-			vertices[7] = vertices[3] - V::make(0, 0, VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[4] = vertices[0] - V::make(0, 0, 0.5f*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[5] = vertices[1] - V::make(0, 0, 0.5f*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[6] = vertices[2] - V::make(0, 0, 0.5f*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+			vertices[7] = vertices[3] - V::make(0, 0, 0.5f*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
 			
 			GeometryHandle<MT> roof_end_tile = create_geometry_handle_cuboid<MT>(  engine, vertices );
 			
@@ -644,12 +644,12 @@ namespace procedural
 			/// regular roof tiles
 			for (size_t i = 0u; i < floor(beam_spacing_ratio*num_pillars_z)-1; ++i)
 			{
-				T z = VT::half()*temple_depth - 2*pillar_width - (VT::half()+i)*spacing;
+				T z = 0.5f*temple_depth - 2*pillar_width - (0.5f+i)*spacing;
 				
 				for (size_t i = 0; i < gable_num_layers-1; ++i)
         {
-					T x				= -VT::half()*temple_width + i*pillar_width;
-					T y				= beam_y+VT::half()*beam_height + i*gable_brick_h;
+					T x				= -0.5f*temple_width + i*pillar_width;
+					T y				= beam_y+0.5f*beam_height + i*gable_brick_h;
 					
 					Tm = V::make( x, y, z );
 					Qm = Q::identity();
@@ -693,11 +693,11 @@ namespace procedural
 			/// end roof tiles
 			for (size_t i = 0; i < gable_num_layers-1; ++i)
       {
-				T x				= -VT::half()*temple_width + i*pillar_width;
-				T y				= beam_y+VT::half()*beam_height + i*gable_brick_h;
-				T z				= VT::half()*temple_depth;
+				T x				= -0.5f*temple_width + i*pillar_width;
+				T y				= beam_y+0.5f*beam_height + i*gable_brick_h;
+				T z				= 0.5f*temple_depth;
 				
-				Tm = V::make( x, y, -z + VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+				Tm = V::make( x, y, -z + 0.5f*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
 				Qm = Q::identity();
 				
 				Tb = roof_end_tile.Tb2m();
@@ -749,7 +749,7 @@ namespace procedural
                               , stone_density
                               );
 				
-				Tm = V::make( -x, y, z - VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
+				Tm = V::make( -x, y, z - 0.5f*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-1)*spacing));
 				
 				Tw = rotate(Qm,Tb) + Tm;
 				Qw = Qm*Qb;
@@ -772,8 +772,8 @@ namespace procedural
 			/// top triangle brick
 			vertices[0] = V::make(0					                 , 0              , 0 );
 			vertices[1] = V::make(pillar_width		                     , 0              , 0 );
-			vertices[2] = V::make(VT::numeric_cast(0.51f)*pillar_width , VT::half()*gable_brick_h, 0 );
-			vertices[3] = V::make(VT::numeric_cast(0.49f)*pillar_width , VT::half()*gable_brick_h, 0 );
+			vertices[2] = V::make(VT::numeric_cast(0.51f)*pillar_width , 0.5f*gable_brick_h, 0 );
+			vertices[3] = V::make(VT::numeric_cast(0.49f)*pillar_width , 0.5f*gable_brick_h, 0 );
 
 			vertices[4] = vertices[0] - V::make(0, 0, pillar_width);
 			vertices[5] = vertices[1] - V::make(0, 0, pillar_width);
@@ -785,7 +785,7 @@ namespace procedural
 			for (size_t i = 0; i < 2*num_pillars_z-1; ++i)
 			{
 				
-				Tm = V::make( -VT::half()*pillar_width, temple_height-VT::half()*gable_brick_h, VT::half()*temple_depth - i*pillar_width);
+				Tm = V::make( -0.5f*pillar_width, temple_height-0.5f*gable_brick_h, 0.5f*temple_depth - i*pillar_width);
 				Qm = Q::identity();
 				
 				Tb = gable_top_brick.Tb2m();

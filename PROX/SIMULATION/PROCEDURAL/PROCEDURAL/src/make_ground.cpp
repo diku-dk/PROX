@@ -25,7 +25,7 @@ namespace procedural
 
     V const Pw = rotate(
                         orientation
-                        , V::make( 0, -height*VT::half(), 0)
+                        , V::make( 0, -height*0.5f, 0)
                         ) + position;
     Q const Qw = orientation;
 

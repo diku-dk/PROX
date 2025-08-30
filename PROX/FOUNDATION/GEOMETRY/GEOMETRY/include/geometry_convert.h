@@ -61,8 +61,8 @@ namespace geometry
 
     T const radius = cylinder.radius();
 
-    V const point0 = cylinder.center() - cylinder.axis()*cylinder.height()*VT::half();
-    V const point1 = cylinder.center() + cylinder.axis()*cylinder.height()*VT::half();
+    V const point0 = cylinder.center() - cylinder.axis()*cylinder.height()*0.5f;
+    V const point1 = cylinder.center() + cylinder.axis()*cylinder.height()*0.5f;
 
     return make_capsule(radius, point0, point1);
   }

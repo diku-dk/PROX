@@ -29,7 +29,7 @@ namespace procedural
     T x = 1;
     T y = sphere_radius;
     T z = 1;
-    T const offset = sphere_radius*spheres_length*VT::half();
+    T const offset = sphere_radius*spheres_length*0.5f;
 
     for (size_t i = 0; i < spheres_width; ++i)
     {

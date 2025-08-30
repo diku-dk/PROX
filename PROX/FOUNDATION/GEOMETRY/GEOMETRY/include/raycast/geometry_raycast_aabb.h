@@ -43,7 +43,7 @@ namespace geometry
     length = std::numeric_limits<T>::max();
     hit    = V::zero();
 
-    V const e =  (max_coord - min_coord)*VT::half();  //--- Compute half extents of box
+    V const e =  (max_coord - min_coord)*0.5f;  //--- Compute half extents of box
     V const d =  p - (e + min_coord);                 //--- Compute vector from center of box to origin of ray
 
     assert(is_number(e(0)) || !"compute_raycast_aabb() NaN");

@@ -32,7 +32,7 @@ namespace procedural
 		T      const delta_theta         = VT::pi()/arch_slices;
 		T      const pillar_stone_width  = pillar_height / pillar_segments;
 		T      const pillar_stone_height = r_outer - r_inner;
-		T      const center_radius       = ( r_outer + r_inner )*VT::half();
+		T      const center_radius       = ( r_outer + r_inner )*0.5f;
 		T      const stone_density       = get_material_density<MT>(mat_info, "Stone");
 		size_t const mid                 = get_material_id<MT>(mat_info, "Stone");
 		
@@ -51,7 +51,7 @@ namespace procedural
 		
 		for( size_t i = 0; i<pillar_segments; ++i )
 		{
-			T const y = ( VT::half() + i )*pillar_stone_width;
+			T const y = ( 0.5f + i )*pillar_stone_width;
 
       V const T_b2m       = pillar_stone.Tb2m();
       Q const Q_b2m       = pillar_stone.Qb2m();
@@ -116,7 +116,7 @@ namespace procedural
 
 		for(size_t i = 0;i<arch_slices;++i)
 		{
-			T const theta = delta_theta*( i+VT::half() );
+			T const theta = delta_theta*( i+0.5f );
 			T const x     = center_radius * cos( theta );
 			T const y     = center_radius * sin( theta ) + pillar_height;
 			

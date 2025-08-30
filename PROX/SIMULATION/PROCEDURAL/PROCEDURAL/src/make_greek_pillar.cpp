@@ -43,7 +43,7 @@ namespace procedural
 		T const t_conical_height	= pillar_height*t_conical_ratio;
 		T const t_box_height		  = pillar_height*t_box_ratio;
 
-    T y = b_box_height*VT::half();
+    T y = b_box_height*0.5f;
 		{
 			GeometryHandle<MT> bottom_box = create_geometry_handle_box<MT>(engine
                                                                      , pillar_width
@@ -75,7 +75,7 @@ namespace procedural
                             );
 		}
 		
-		y += VT::half()*b_box_height;
+		y += 0.5f*b_box_height;
     {
 			
 			GeometryHandle<MT> pillar_segment = create_geometry_handle_pillar_segment<MT>(  engine
@@ -117,8 +117,8 @@ namespace procedural
 		{
 			
 			T const pillar_segment_height = c_pillar_height / pillar_segments;
-			T const s_bottom_radius       = VT::numeric_cast(0.8f)*(pillar_width*VT::half());
-			T       top_radius			      = VT::numeric_cast(0.6f)*(pillar_width*VT::half());
+			T const s_bottom_radius       = VT::numeric_cast(0.8f)*(pillar_width*0.5f);
+			T       top_radius			      = VT::numeric_cast(0.6f)*(pillar_width*0.5f);
 			T       bottom_radius         = s_bottom_radius;
 			T const alpha                 = (top_radius-bottom_radius)/c_pillar_height;
 			
@@ -205,7 +205,7 @@ namespace procedural
 
 		}
 
-    y += VT::half()*t_box_height;
+    y += 0.5f*t_box_height;
 		{
 			GeometryHandle<MT> top_box = create_geometry_handle_box<MT>(
                                                                      engine

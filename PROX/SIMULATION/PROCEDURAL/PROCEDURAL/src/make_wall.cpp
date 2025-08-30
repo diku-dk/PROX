@@ -34,8 +34,8 @@ namespace procedural
 		{
 			for( size_t j = 0u; j < span;++j )
 			{
-				T const x = j*(stone_width) + ( ( i%2 )*VT::half()*stone_width );
-				T const y = ( i+VT::half() )*(stone_height);
+				T const x = j*(stone_width) + ( ( i%2 )*0.5f*stone_width );
+				T const y = ( i+0.5f )*(stone_height);
 				T const z = 0;
 				
 				V const T_b2m = stone_handle.Tb2m();

@@ -22,7 +22,7 @@ namespace procedural
     size_t const stone_density = get_material_density<MT>(mat_info, "Stone");
 
     T const radians         = degree* (VT::pi()/180);
-    T const radius          = VT::half();
+    T const radius          = 0.5f;
     V const hill_extents    = V::make( VT::numeric_cast(6.0), VT::numeric_cast(0.2), 4);
     V const box_extents     = V::make( radius, radius, radius)*2;
 
@@ -32,7 +32,7 @@ namespace procedural
     //  GeometryHandle<MT> sphere = create_geometry_handle_sphere<MT>( engine, radius);
 
     //BF or MF here?
-    V Tm = rotate(Q::Ry(radians), V::make(hill_extents(0)*VT::half(), 0, 0));  //V::make(  std::cos(radians)*hill_extents(0)*VT::half(), std::sin(radians)*hill_extents(0)*VT::half(), 0);
+    V Tm = rotate(Q::Ry(radians), V::make(hill_extents(0)*0.5f, 0, 0));  //V::make(  std::cos(radians)*hill_extents(0)*0.5f, std::sin(radians)*hill_extents(0)*0.5f, 0);
     Q Qm = Q::Rz(radians);
 
     // Body to Model transform
@@ -57,8 +57,8 @@ namespace procedural
                           );
 
     V TmB = rotate(Q::Ry(radians), V::make(hill_extents(0)-box_extents(0), (box_extents(1)+hill_extents(1)), 0));
-    //V TmB = V::make(  std::cos(radians)*hill_extents(0)*VT::half()-box_extents(0)*VT::half()
-      //              , std::sin(radians)*hill_extents(0)*VT::half()+box_extents(1)*VT::half()
+    //V TmB = V::make(  std::cos(radians)*hill_extents(0)*0.5f-box_extents(0)*0.5f
+      //              , std::sin(radians)*hill_extents(0)*0.5f+box_extents(1)*0.5f
       //              , radius*2);
    // TmB   = TmB + Tm;
 
@@ -82,8 +82,8 @@ namespace procedural
                           , stone_density
                           );
     /*
-     V TmS = V::make(  std::cos(radians)*hill_extents(0)*VT::half()-radius
-     , std::sin(radians)*hill_extents(0)*VT::half()+radius
+     V TmS = V::make(  std::cos(radians)*hill_extents(0)*0.5f-radius
+     , std::sin(radians)*hill_extents(0)*0.5f+radius
      , -radius*2);
      TmS   = TmS + Tm;
 

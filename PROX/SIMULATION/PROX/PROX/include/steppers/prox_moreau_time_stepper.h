@@ -93,7 +93,7 @@ namespace prox
     V4        b;      // right hand side vector.
     V4        w;      // Current contact velocities
 
-    T const half_dt = dt*VT::half();
+    T const half_dt = dt*0.5f;
 
     detail::update_body_indices(
                                 bodies.begin()

@@ -23,8 +23,8 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
     // is data initialised to float(0)
     BOOST_CHECK_EQUAL(std::find_if(b.begin(), b.end(),bind2nd(std::not_equal_to<real_type>(), 0)) , b.end());
 
-    b(0,0) = value_traits::half(); // should make m = b[0] == 0.5
-    BOOST_CHECK_EQUAL(b[0] , value_traits::half());
+    b(0,0) = 0.5f; // should make m = b[0] == 0.5
+    BOOST_CHECK_EQUAL(b[0] , 0.5f);
 
     b(1,1) = value_traits::numeric_cast(1.5); // should make m = b[0] == 1.5
     BOOST_CHECK_EQUAL(b[0] , value_traits::numeric_cast(1.5));

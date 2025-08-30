@@ -23,7 +23,7 @@ namespace geometry
 
     T const & radius()      const { return this->m_radius;            }
     T const & height()      const { return this->m_height;            }
-    T         half_height() const { return this->m_height*VT::half(); }
+    T         half_height() const { return this->m_height*0.5f; }
     V const & axis()        const { return this->m_axis;              }
     V const & center()      const { return this->m_center;            }
 

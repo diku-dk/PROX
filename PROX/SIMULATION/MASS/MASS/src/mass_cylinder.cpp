@@ -40,7 +40,7 @@ namespace mass
     value.m_m   = mass;
     value.m_Ixx = (((r*r)/4) + ((h*h)/12)) * mass;
     value.m_Izz = value.m_Ixx;
-    value.m_Iyy = mass*r*r*value_traits::half();
+    value.m_Iyy = mass*r*r*0.5f;
 
     return value;
   }

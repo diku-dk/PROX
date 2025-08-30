@@ -54,9 +54,9 @@ namespace procedural
     T const height = number_of_objects_in_y*object_size + (number_of_objects_in_y-1u)*spacing;
     T const depth  = number_of_objects_in_z*object_size + (number_of_objects_in_z-1u)*spacing;
 
-    T const min_x = (-width  + object_size)*VT::half();
-    T const min_y = (-height + object_size)*VT::half();
-    T const min_z = (-depth  + object_size)*VT::half();
+    T const min_x = (-width  + object_size)*0.5f;
+    T const min_y = (-height + object_size)*0.5f;
+    T const min_z = (-depth  + object_size)*0.5f;
 
     unsigned int const I = number_of_objects_in_x;
     unsigned int const J = number_of_objects_in_y;

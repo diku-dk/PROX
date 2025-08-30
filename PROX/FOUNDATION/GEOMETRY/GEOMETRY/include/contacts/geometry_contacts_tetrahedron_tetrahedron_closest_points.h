@@ -156,7 +156,7 @@ namespace geometry
             continue;
 
           V const n = - tiny::unit(n_b); // (p_b - p_a) / distance;
-          V const p = (p_a + p_b)*VT::half();
+          V const p = (p_a + p_b)*0.5f;
           T const depth = too_far_away - distance;
 
           callback( p, n, depth);
@@ -215,7 +215,7 @@ namespace geometry
             continue;
 
           V const n = tiny::unit(n_a);  // (p_b - p_a) / distance;
-          V const p = (p_a + p_b)*VT::half();
+          V const p = (p_a + p_b)*0.5f;
           T const depth = too_far_away - distance;
 
           callback( p, n, depth);
@@ -304,7 +304,7 @@ namespace geometry
           ndir = -ndir;
 
         V const n = ndir; // (p_b - p_a) / distance;
-        V const p = (p_a + p_b)*VT::half();
+        V const p = (p_a + p_b)*0.5f;
         T const depth = too_far_away - distance;
 
         callback( p, n, depth);

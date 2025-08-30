@@ -24,10 +24,10 @@ namespace mesh_array
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
 
-		V const v0 = V::make( - width, -height, depth )*VT::half();
-		V const v1 = V::make(   width, -height, depth )*VT::half();
-		V const v2 = V::make(   width,  height, depth )*VT::half();
-		V const v3 = V::make( - width,  height, depth )*VT::half();
+		V const v0 = V::make( - width, -height, depth )*0.5f;
+		V const v1 = V::make(   width, -height, depth )*0.5f;
+		V const v2 = V::make(   width,  height, depth )*0.5f;
+		V const v3 = V::make( - width,  height, depth )*0.5f;
 		V const v4 =  v0 - V::make( 0, 0, depth );
 		V const v5 =  v1 - V::make( 0, 0, depth );
 		V const v6 =  v2 - V::make( 0, 0, depth );

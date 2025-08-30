@@ -169,8 +169,8 @@ namespace hyper
     V const bend_axis   = unit(axis);
     V const bend_center = object_center - bend_radius * cross(n, bend_axis);
 
-    T const a_start =  -angle*VT::half();
-    T const a_end   =  angle*VT::half();
+    T const a_start =  -angle*0.5f;
+    T const a_end   =  angle*0.5f;
 
     for(size_t k = 0u; k < N; ++k)
     {
