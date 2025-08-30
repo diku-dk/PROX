@@ -140,8 +140,8 @@ namespace big
   {
   public:
 
-    static T zero()      { return detail::zero<T>();      }
-    static T one()       { return detail::one<T>();       }
+    static T zero()      { return 0;      }
+    static T one()       { return 1;       }
     static T two()       { return detail::two<T>();       }
     static T three()     { return detail::three<T>();     }
     static T four()      { return detail::four<T>();      }

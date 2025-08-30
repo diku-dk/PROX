@@ -47,8 +47,8 @@ namespace tiny
     public:
 
       Random()
-      : m_lower( tiny::detail::zero<T>() )
-      , m_upper( tiny::detail::one<T>()  )
+      : m_lower( 0 )
+      , m_upper( 1 )
       {
         this->seed();
       }

@@ -47,7 +47,7 @@ namespace big
   public:
 
     Random()
-    : m_distribution(big::detail::zero<T>(), big::detail::one<T>())
+    : m_distribution(0, 1)
     , m_random(generator(), m_distribution)
     {}
 
@@ -94,8 +94,8 @@ namespace big
   public:
 
     Random()
-    : m_lower(big::detail::zero<T>())
-    , m_upper(big::detail::one<T>())
+    : m_lower(0)
+    , m_upper(1)
     {
       using std::time;
       if(!is_initialized())

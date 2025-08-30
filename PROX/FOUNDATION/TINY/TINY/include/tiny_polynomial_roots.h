@@ -63,8 +63,8 @@ namespace tiny
 
     static real_type const epsilon = tiny::working_precision<real_type>();
     static real_type const four    = tiny::detail::numeric_cast<real_type>(4.0);
-    static real_type const two     = tiny::detail::two<real_type>();
-    static real_type const zero    = tiny::detail::zero<real_type>();
+    static real_type const two     = 2;
+    static real_type const zero    = 0;
 
     if ( fabs(c2) <= epsilon )
       return compute_polynomial_roots(c0,c1,count,roots);
@@ -123,8 +123,8 @@ namespace tiny
     static real_type const THIRD         = tiny::detail::numeric_cast<real_type>( 1.0/3.0   );
     static real_type const TWENTYSEVENTH = tiny::detail::numeric_cast<real_type>( 1.0/27.0  );
     static real_type const NINE          = tiny::detail::numeric_cast<real_type>( 9.0       );
-    static real_type const TWO           = tiny::detail::two<real_type>();
-    static real_type const ZERO          = tiny::detail::zero<real_type>();
+    static real_type const TWO           = 2;
+    static real_type const ZERO          = 0;
     static real_type const SQRT3         = tiny::detail::numeric_cast<real_type>( sqrt(3.0) );
     static real_type const epsilon       = tiny::working_precision<real_type>();
 
@@ -225,9 +225,9 @@ namespace tiny
     static real_type const THREEQUATERS  = tiny::detail::numeric_cast<real_type>( 0.75 );
     static real_type const FOUR          = tiny::detail::numeric_cast<real_type>( 4.0 );
     static real_type const EIGHT         = tiny::detail::numeric_cast<real_type>( 8.0 );
-    static real_type const ZERO          = tiny::detail::zero<real_type>();
-    static real_type const TWO           = tiny::detail::two<real_type>();
-    static real_type const ONE           = tiny::detail::one<real_type>();
+    static real_type const ZERO          = 0;
+    static real_type const TWO           = 2;
+    static real_type const ONE           = 1;
 
     static real_type const epsilon = tiny::working_precision<real_type>();
 

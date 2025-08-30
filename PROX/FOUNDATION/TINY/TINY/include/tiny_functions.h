@@ -12,7 +12,7 @@
  * - fac (faculty)
  * - sgn (sign function)
  * - sinc
- */	
+ */
 namespace tiny
 {
     /**
@@ -43,7 +43,7 @@ namespace tiny
     template<typename T>
     inline T clamp_min(T const & value, T const & min_value)
     {
-    	using std::max;
+        using std::max;
       return clamp(value, min_value, max(value, min_value));
     }
 
@@ -57,7 +57,7 @@ namespace tiny
     template<typename T>
     inline T clamp_max(T const & value, T const & max_value)
     {
-    	using std::min;
+        using std::min;
       return clamp(value, min(value, max_value), max_value);
     }
 
@@ -71,7 +71,7 @@ namespace tiny
     template<typename T>
     inline T clamp_zero_one(T const & value)
     {
-      return clamp(value, detail::zero<T>(), detail::one<T>());
+        return clamp<T>(value, 0, 1);
     }
 
     template<typename T>
@@ -86,7 +86,7 @@ namespace tiny
     template<typename T>
     inline T sgn(T const & val)
     {
-      return val > detail::zero<T>() ? detail::one<T>() : val < detail::zero<T>() ? - detail::one<T>() : detail::zero<T>();
+      return val > 0 ? 1 : val < 0 ? - 1 : 0;
     }
 
     /**
@@ -112,7 +112,7 @@ namespace tiny
       //--- if |x| < 1e-4 then use a taylor series expansion. this two term expansion
       //--- is actually accurate to one LS bit within this range if double precision
       //--- is being used - so don't worry!
-      return (fabs(x) < tiny) ? (detail::one<T>() - x*x*factor) : (sin(x)/x);
+      return (fabs(x) < tiny) ? (1 - x*x*factor) : (sin(x)/x);
     }
 
 }  // namespace tiny
