@@ -99,7 +99,7 @@ namespace big
       (*profiling).clear();
     }
 
-    err             = VT::infinity();
+    err             = std::numeric_limits<T>::max();
     iter            = 0u;
     status          = ITERATING;
     big::project( x, x);                          // x = max(0, x ), make sure x is feasible before we start

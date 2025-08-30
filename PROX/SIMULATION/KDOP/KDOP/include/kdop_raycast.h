@@ -38,7 +38,7 @@ namespace kdop
       Node<T,K> const & node = branch.m_nodes[node_idx];
 
       V p = V::zero();
-      T t = VT::infinity();
+      T t = std::numeric_limits<T>::max();
 
       if(! geometry::compute_raycast_dop( ray, node.m_volume, p, t, dop_threshold))
         return;
@@ -65,7 +65,7 @@ namespace kdop
         surf[3] = surface_map(mT).m_m;
 
         V p = V::zero();
-        T s = VT::infinity();
+        T s = std::numeric_limits<T>::max();
 
         geometry::Tetrahedron<V> const gT = geometry::make_tetrahedron(p0,p1,p2,p3);
 
@@ -122,10 +122,10 @@ namespace kdop
     T const dop_threshold = VT::numeric_cast(0.01);
 
     hit_point    = V::zero();
-    length       = VT::infinity();
+    length       = std::numeric_limits<T>::max();
 
     V p = V::zero();
-    T t = VT::infinity();
+    T t = std::numeric_limits<T>::max();
 
     if(!geometry::compute_raycast_dop( ray, tree.m_root, p, t, dop_threshold))
       return false;
@@ -150,7 +150,7 @@ namespace kdop
                             );
     }
 
-    return length < VT::infinity();
+    return length < std::numeric_limits<T>::max();
   }
 
 }// namespace kdop

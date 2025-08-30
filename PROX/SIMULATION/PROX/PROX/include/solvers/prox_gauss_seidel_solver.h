@@ -72,7 +72,7 @@ namespace prox
     V4 residual;
     residual.resize( K );
 
-    T last_residual_norm = VT::infinity();    // Used to detect divergence.
+    T last_residual_norm = std::numeric_limits<T>::max();    // Used to detect divergence.
 
     D4x4 R;
     D4x4 nu;

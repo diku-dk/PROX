@@ -238,8 +238,8 @@ namespace convex
     assert( is_finite(this->m_base_radius)    || !"INF encountered");
     assert( this->m_base_radius >= 0 || !"Negative base radius");
 
-    T const d = 2 * ((this->m_base_radius > 0) ? this->m_base_radius : VT::infinity());
-    T const h = 2 * ((this->m_half_height > 0) ? this->m_half_height : VT::infinity());
+    T const d = 2 * ((this->m_base_radius > 0) ? this->m_base_radius : std::numeric_limits<T>::max());
+    T const h = 2 * ((this->m_half_height > 0) ? this->m_half_height : std::numeric_limits<T>::max());
 
     return min(h, d);
   }

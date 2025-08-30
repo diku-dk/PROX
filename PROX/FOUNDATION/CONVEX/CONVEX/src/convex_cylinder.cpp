@@ -109,8 +109,8 @@ namespace convex
     assert( is_finite(this->m_radius)         || !"INF encountered");
         assert( this->m_radius >= 0      || !"Negative radius");
 
-    T const d = 2 * ((this->m_radius > 0) ? this->m_radius : VT::infinity());
-    T const h = 2 * ((this->m_half_height > 0) ? this->m_half_height : VT::infinity());
+    T const d = 2 * ((this->m_radius > 0) ? this->m_radius : std::numeric_limits<T>::max());
+    T const h = 2 * ((this->m_half_height > 0) ? this->m_half_height : std::numeric_limits<T>::max());
 
     return min(h, d);
   }

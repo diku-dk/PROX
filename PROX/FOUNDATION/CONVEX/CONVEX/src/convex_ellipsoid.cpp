@@ -144,9 +144,9 @@ namespace convex
     assert( sy >= 0 || !"Negative scale encountered");
     assert( sz >= 0 || !"Negative scale encountered");
 
-    T const w = 2 * ((sx > 0) ? sx : VT::infinity());
-    T const h = 2 * ((sy > 0) ? sy : VT::infinity());
-    T const d = 2 * ((sz > 0) ? sz : VT::infinity());
+    T const w = 2 * ((sx > 0) ? sx : std::numeric_limits<T>::max());
+    T const h = 2 * ((sy > 0) ? sy : std::numeric_limits<T>::max());
+    T const d = 2 * ((sz > 0) ? sz : std::numeric_limits<T>::max());
 
     return min(w, min(h, d));
   }

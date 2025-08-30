@@ -48,7 +48,7 @@ namespace geometry
       planesB[v]    = details::make_unscaled_plane(trianglesB[v]);
     }
 
-    min_distance = VT::infinity();
+    min_distance = std::numeric_limits<T>::max();
 
     //--- Search for V-V cases -------------------------------------------------
 

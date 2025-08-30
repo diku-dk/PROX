@@ -545,7 +545,7 @@ namespace big
 
     used_inner_iterations   = 0u;
     used_outer_iterations   = 0u;
-    relative_residual_error = value_traits::infinity();
+    relative_residual_error = std::numeric_limits<value_type>::max();
 
     value_type norm_b = ublas::norm_2( b );
 

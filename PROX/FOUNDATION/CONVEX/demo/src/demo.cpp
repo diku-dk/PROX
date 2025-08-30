@@ -44,7 +44,7 @@ void gjk_demo()
   V p_B;
   size_t iterations  = 0u;
   size_t status      = 0u;
-  T      distance    = VT::infinity();
+  T      distance    = std::numeric_limits<T>::max();
 
   // Ask GJK for closest points between the two geometries
   convex::compute_closest_points<M>(

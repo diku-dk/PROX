@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
     V p_B;
     size_t iterations  = 0u;
     size_t status      = 0u;
-    T      distance    = VT::infinity();
+    T      distance    = std::numeric_limits<T>::max();
 
 
     X_A = C::identity();
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
     V p_B;
     size_t iterations  = 0u;
     size_t status      = 0u;
-    T      distance    = VT::infinity();
+    T      distance    = std::numeric_limits<T>::max();
 
     X_A = C::identity();
     X_B = C::identity();
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
     V p_B;
     size_t iterations  = 0u;
     size_t status      = 0u;
-    T      distance    = VT::infinity();
+    T      distance    = std::numeric_limits<T>::max();
 
     X_A.T().clear();
     X_A.T()(0) = -2.0;
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
     V p_B;
     size_t iterations  = 0u;
     size_t status      = 0u;
-    T      distance    = VT::infinity();
+    T      distance    = std::numeric_limits<T>::max();
 
     X_A.T().clear();
     X_A.T()(0) = -2.5;
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(random_test)
     V p_B;
     size_t iterations  = 0u;
     size_t status      = 0u;
-    T      distance    = VT::infinity();
+    T      distance    = std::numeric_limits<T>::max();
 
     X_A.T() = V::random( -2.0, 2.0 );
     X_A.Q() = tiny::unit( Q::random() );

@@ -58,7 +58,7 @@ namespace big
         if(profiling == &b)
           throw std::logic_error("profiling must not point to b-vector");
 
-        err      = value_traits::infinity();
+        err      = std::numeric_limits<T>::max();
         iter     = 0u;
         status   = OK;
 

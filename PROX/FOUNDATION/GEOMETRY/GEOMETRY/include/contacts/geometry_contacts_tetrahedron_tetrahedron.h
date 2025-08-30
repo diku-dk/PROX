@@ -1033,10 +1033,10 @@ namespace geometry
       if( b_outside_A )
         continue;
 
-      T const depth0 = surface_A[0] ? a0 / norm(planesA[0].m_normal) : VT::infinity() ;
-      T const depth1 = surface_A[1] ? a1 / norm(planesA[1].m_normal) : VT::infinity() ;
-      T const depth2 = surface_A[2] ? a2 / norm(planesA[2].m_normal) : VT::infinity() ;
-      T const depth3 = surface_A[3] ? a3 / norm(planesA[3].m_normal) : VT::infinity() ;
+      T const depth0 = surface_A[0] ? a0 / norm(planesA[0].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth1 = surface_A[1] ? a1 / norm(planesA[1].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth2 = surface_A[2] ? a2 / norm(planesA[2].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth3 = surface_A[3] ? a3 / norm(planesA[3].m_normal) : std::numeric_limits<T>::max() ;
 
       if ( depth0 <= depth1 && depth0 <= depth2 && depth0 <= depth3 )
         callback( b, unit(planesA[0].m_normal), depth0 );
@@ -1068,10 +1068,10 @@ namespace geometry
       if( a_outside_B )
         continue;
 
-      T const depth0 = surface_B[0] ? b0 / norm(planesB[0].m_normal) : VT::infinity() ;
-      T const depth1 = surface_B[1] ? b1 / norm(planesB[1].m_normal) : VT::infinity() ;
-      T const depth2 = surface_B[2] ? b2 / norm(planesB[2].m_normal) : VT::infinity() ;
-      T const depth3 = surface_B[3] ? b3 / norm(planesB[3].m_normal) : VT::infinity() ;
+      T const depth0 = surface_B[0] ? b0 / norm(planesB[0].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth1 = surface_B[1] ? b1 / norm(planesB[1].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth2 = surface_B[2] ? b2 / norm(planesB[2].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth3 = surface_B[3] ? b3 / norm(planesB[3].m_normal) : std::numeric_limits<T>::max() ;
 
       if ( depth0 <= depth1 && depth0 <= depth2 && depth0 <= depth3 )
         callback( a, -unit(planesB[0].m_normal), depth0 );
@@ -1156,7 +1156,7 @@ namespace geometry
         // closest to b(i) if one exist
 
         unsigned int best_plane = 4u;
-        T            t          = VT::infinity();
+        T            t          = std::numeric_limits<T>::max();
 
         for (unsigned int m =0u; m < 4u; ++m)
         {
@@ -1206,7 +1206,7 @@ namespace geometry
         // closest to a(i) if one exist
 
         unsigned int best_plane = 4u;
-        T            t          = VT::infinity();
+        T            t          = std::numeric_limits<T>::max();
 
         for (unsigned int m =0u; m < 4u; ++m)
         {

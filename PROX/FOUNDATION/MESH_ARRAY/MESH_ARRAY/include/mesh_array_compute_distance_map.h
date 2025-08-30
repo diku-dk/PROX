@@ -74,7 +74,7 @@ namespace mesh_array
 
     for (size_t i = 0u; i < mesh.vertex_size(); ++i)
     {
-      phi(     mesh.vertex(i)) = VT::infinity();
+      phi(     mesh.vertex(i)) = std::numeric_limits<T>::max();
       seen(    mesh.vertex(i)) = false;
       on_heap( mesh.vertex(i)) = false;
     }

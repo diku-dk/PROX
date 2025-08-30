@@ -88,7 +88,7 @@ namespace prox
             vector3_type pb;
             size_t iterations     = 0u;
             size_t status         = 0u;
-            real_type distance    = value_traits::infinity();
+            real_type distance    = std::numeric_limits<T>::max();
 
             convex::compute_closest_points<typename math_policy::base_type>(
                                                                             transformA

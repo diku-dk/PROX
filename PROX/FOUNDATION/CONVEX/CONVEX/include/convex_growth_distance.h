@@ -105,7 +105,7 @@ namespace convex
         T      const stagnation_tolerance = VT::numeric_cast(10e-4);
         size_t       iterations           = 0u;
         size_t       status               = 0u;
-        T            distance             = VT::infinity();
+        T            distance             = std::numeric_limits<T>::max();
 
         compute_closest_points<M>(
                                   X_A, A, T_B, B, p_A, p_B

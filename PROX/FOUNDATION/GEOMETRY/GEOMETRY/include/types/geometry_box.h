@@ -111,9 +111,9 @@ namespace geometry
       assert( is_finite(hz)    || !"INF encountered");
       assert( hz >= 0 || !"Negative half extent encountered");
 
-      T const w = 2 * ((hx > 0) ? hx : VT::infinity());
-      T const h = 2 * ((hy > 0) ? hy : VT::infinity());
-      T const d = 2 * ((hz > 0) ? hz : VT::infinity());
+      T const w = 2 * ((hx > 0) ? hx : std::numeric_limits<T>::max());
+      T const h = 2 * ((hy > 0) ? hy : std::numeric_limits<T>::max());
+      T const d = 2 * ((hz > 0) ? hz : std::numeric_limits<T>::max());
 
       return min( w, min(h, d) );
     }

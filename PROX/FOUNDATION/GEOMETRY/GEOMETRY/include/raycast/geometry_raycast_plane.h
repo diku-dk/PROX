@@ -27,7 +27,7 @@ namespace geometry
     typedef typename V::value_traits VT;
     typedef typename V::real_type     T;
 
-    length = VT::infinity();
+    length = std::numeric_limits<T>::max();
     hit    = V::zero();
 
     V const p = ray.origin();

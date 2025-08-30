@@ -40,7 +40,7 @@ namespace geometry
 
     using std::fabs;
 
-    length = VT::infinity();
+    length = std::numeric_limits<T>::max();
     hit    = V::zero();
 
     V const e =  (max_coord - min_coord)*VT::half();  //--- Compute half extents of box

@@ -26,7 +26,7 @@ namespace geometry
 
     using std::sqrt;
 
-    length       = VT::infinity();
+    length       = std::numeric_limits<T>::max();
     hit_point    = V::zero();
 
     V const & o = sphere.center();

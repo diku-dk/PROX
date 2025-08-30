@@ -24,13 +24,13 @@ namespace geometry
     typedef typename V::value_traits VT;
     typedef typename V::real_type     T;
 
-    length = VT::infinity();
+    length = std::numeric_limits<T>::max();
     hit    = V::zero();
 
     Plane<V> const & plane = make_plane( triangle );
 
     V p     = V::zero();
-    T t     = VT::infinity();
+    T t     = std::numeric_limits<T>::max();
 
     bool const hit_plane = compute_raycast_plane(ray, plane, p, t, only_front_face );
 

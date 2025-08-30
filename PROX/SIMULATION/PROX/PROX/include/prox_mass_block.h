@@ -225,13 +225,13 @@ namespace prox
     typedef typename MassBlock<T>::value_type     value_type;
     typedef typename MassBlock<T>::value_traits   value_traits;
 
-		if (mb[0] == value_traits::infinity())
+		if (mb[0] == std::numeric_limits<T>::max())
 		{
 			std::fill(mb.begin(), mb.end(), 0);
 		}
 		else if (mb[0] == 0 )   // 2009-08-04 Kenny: floating point comparison with zero?
 		{
-			std::fill(mb.begin(), mb.end(), value_traits::infinity());
+			std::fill(mb.begin(), mb.end(), std::numeric_limits<T>::max());
 		}
 		else
 		{

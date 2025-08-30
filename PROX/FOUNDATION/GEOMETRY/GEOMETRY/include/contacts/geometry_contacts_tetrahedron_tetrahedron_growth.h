@@ -253,7 +253,7 @@ namespace geometry
 
     closest_points_tetrahedron_tetrahedron(scaled_A, scaled_B, sA, sB, distance );
 
-    if( distance == VT::infinity() )
+    if( distance == std::numeric_limits<T>::max() )
       return false;
 
     T const max_distance = 2*min( distance, VT::numeric_cast(0.01)* (min(A.get_scale(), B.get_scale() )) );

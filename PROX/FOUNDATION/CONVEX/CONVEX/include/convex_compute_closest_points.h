@@ -144,12 +144,12 @@ namespace convex
     if( max_iterations <= 0u )
       throw std::invalid_argument( "max_iterations must be positive" );
 
-    distance   = VT::infinity();
+    distance   = std::numeric_limits<T>::max();
     status     = ITERATING;
     iterations = 0u;
 
     T    const squared_absolute_tolerance = absolute_tolerance*absolute_tolerance;
-    T          squared_distance           = VT::infinity();
+    T          squared_distance           = std::numeric_limits<T>::max();
 
     // Simplex approximation to convex set C
     simplex_type sigma;
@@ -324,7 +324,7 @@ namespace convex
     T      const stagnation_tolerance = value_traits::numeric_cast(10e-4);
     size_t       iterations           = 0u;
     size_t       status               = 0u;
-    T            distance             = value_traits::infinity();
+    T            distance             = std::numeric_limits<T>::max();
 
     compute_closest_points<M>(
                               X_A

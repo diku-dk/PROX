@@ -69,7 +69,7 @@ namespace rigid_body
 
         m_ray_origin      = p;
         m_ray_direction   = r;
-        m_hit_distance    = VT::infinity();
+        m_hit_distance    = std::numeric_limits<T>::max();
         m_hit_point       = V::zero();
 
         if(!engine)

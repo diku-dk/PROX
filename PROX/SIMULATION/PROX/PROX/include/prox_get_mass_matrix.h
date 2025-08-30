@@ -43,7 +43,7 @@ namespace prox
 
       if( body->is_fixed() || body->is_scripted() )
       {
-        mass = VT::infinity();
+        mass = std::numeric_limits<T>::max();
       }
 
       B6x6 & b = M( k );

@@ -32,7 +32,7 @@ namespace geometry
     size_t              const N = K/2;
     DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
 
-    length   = VT::infinity();
+    length   = std::numeric_limits<T>::max();
     point    = V::zero();
 
     V const & p = ray.origin();

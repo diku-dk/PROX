@@ -33,7 +33,7 @@ namespace prox
 
     //--- Initialization -------------------------------------------------------
     point        = V::zero();
-    distance     = VT::infinity();
+    distance     = std::numeric_limits<T>::max();
     bool did_hit = false;
 
     //--- Preprocessing geometries so they reflect current state ---------------
@@ -94,12 +94,12 @@ namespace prox
       V                 const max_coord = V::make( max_x, max_y, max_z );
       geometry::AABB<V> const aabb      = geometry::make_aabb( min_coord, max_coord );
 
-      T       aabb_distance  = VT::infinity();
+      T       aabb_distance  = std::numeric_limits<T>::max();
       V       aabb_point     = V::zero();
 
       if ( geometry::compute_raycast_aabb( ray, aabb, aabb_point, aabb_distance) )
       {
-        T       body_distance  = VT::infinity();
+        T       body_distance  = std::numeric_limits<T>::max();
         V       body_point     = V::zero();
 
         geometry_type const & geometry = narrow_system.get_geometry( body->get_geometry_idx() );

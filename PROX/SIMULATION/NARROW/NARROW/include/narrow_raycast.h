@@ -34,7 +34,7 @@ namespace narrow
     typedef typename Geometry<M>::convex_container::const_iterator   hull_iterator;
 
     point    = V::zero();
-    distance = VT::infinity();
+    distance = std::numeric_limits<T>::max();
 
     if ( geoA.m_tetramesh.has_data() )
     {
@@ -64,7 +64,7 @@ namespace narrow
 
           geometry::OBB<M> const obb  = geometry::make_obb<M>( shapeAtoWCS.T(), shapeAtoWCS.Q(), a->half_extent());
 
-          T local_distance = VT::infinity();
+          T local_distance = std::numeric_limits<T>::max();
           V local_point    = V::zero();
 
           bool const did_hit = geometry::compute_raycast_obb(ray, obb, local_point, local_distance);
@@ -82,7 +82,7 @@ namespace narrow
 
           geometry::Sphere<V> const sphere = geometry::make_sphere( shapeAtoWCS.T(), a->radius());
 
-          T local_distance = VT::infinity();
+          T local_distance = std::numeric_limits<T>::max();
           V local_point    = V::zero();
 
           bool const did_hit = geometry::compute_raycast_sphere(ray, sphere, local_point, local_distance);
@@ -101,7 +101,7 @@ namespace narrow
           assert(false || !"not implemented yet");
           //          geometry::ConvexHull<V> const hull = geometry::make_convex_hull( shapeAtoWCS.T(), a->radius());
 
-          T local_distance = VT::infinity();
+          T local_distance = std::numeric_limits<T>::max();
           V local_point    = V::zero();
 
           bool const did_hit = false; //geometry::compute_raycast_convex(ray, hull, local_point, local_distance);
@@ -114,7 +114,7 @@ namespace narrow
 
     }
 
-    return distance < VT::infinity();
+    return distance < std::numeric_limits<T>::max();
 
   }
 

@@ -25,21 +25,21 @@ inline void compile_test_math_types()
   real_type s3 = 2;
   real_type s4 = value_traits::pi();
   real_type s5 = value_traits::pi_2();
-  real_type s6 = value_traits::infinity();
+  real_type s6 = std::numeric_limits<real_type>::max();
 
   BOOST_CHECK( s1 == 0 );
   BOOST_CHECK( s2 == 1 );
   BOOST_CHECK( s3 == 2 );
   BOOST_CHECK( s4 == value_traits::pi() );
   BOOST_CHECK( s5 == value_traits::pi_2() );
-  BOOST_CHECK( s6 == value_traits::infinity() );
+  BOOST_CHECK( s6 == std::numeric_limits<real_type>::max() );
 }
 
 
 BOOST_AUTO_TEST_SUITE(tiny_math_types);
 
-		BOOST_AUTO_TEST_CASE(type_and_member_compile_test)
-		{
+        BOOST_AUTO_TEST_CASE(type_and_member_compile_test)
+        {
       //--- Compile testing that we can instantiate most common types and access members
       typedef tiny::MathTypes<float > type1;
       typedef tiny::MathTypes<double > type2;

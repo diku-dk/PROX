@@ -26,7 +26,7 @@ namespace geometry
     typedef typename M::real_type    T;
 
     q      = V::zero();
-    length = VT::infinity();
+    length = std::numeric_limits<T>::max();
 
 
     V const p_obb  = transform_to_obb( ray.origin(), obb, TRANSFORM_POINT()     );

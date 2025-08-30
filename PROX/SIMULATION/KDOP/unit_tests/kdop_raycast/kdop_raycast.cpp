@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     BOOST_CHECK( !hit );
 
-    BOOST_CHECK_CLOSE( length, VT::infinity(), 0.01);
+    BOOST_CHECK_CLOSE( length, std::numeric_limits<T>::max(), 0.01);
     BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
     BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
     BOOST_CHECK_CLOSE( q(2),  0.0, 0.01);
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
     BOOST_CHECK( !hit );
 
-    BOOST_CHECK_CLOSE( length, VT::infinity(), 0.01);
+    BOOST_CHECK_CLOSE( length, std::numeric_limits<T>::max(), 0.01);
     BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
     BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
     BOOST_CHECK_CLOSE( q(2),  0.0, 0.01);
