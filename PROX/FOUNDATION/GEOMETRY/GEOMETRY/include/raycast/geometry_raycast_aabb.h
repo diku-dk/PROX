@@ -96,7 +96,7 @@ namespace geometry
 
     //--- Ray origin must be outside of AABB -----------------------------------
     T t_min = VT::lowest();
-    T t_max = VT::highest();
+    T t_max = std::numeric_limits<T>::max();
 
     for(unsigned int i=0u; i < 3u; ++i)
     {

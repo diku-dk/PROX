@@ -233,8 +233,8 @@ namespace geometry
 
       unsigned int const N = axes.size();
 
-      std::vector<T> a_min( N, VT::highest() );
-      std::vector<T> b_min( N, VT::highest() );
+      std::vector<T> a_min( N, std::numeric_limits<T>::max() );
+      std::vector<T> b_min( N, std::numeric_limits<T>::max() );
       std::vector<T> a_max( N, VT::lowest()  );
       std::vector<T> b_max( N, VT::lowest()  );
 
@@ -404,8 +404,8 @@ namespace geometry
 
       unsigned int const N = axes.size();
 
-      std::vector<T> a_min( N, VT::highest() );
-      std::vector<T> b_min( N, VT::highest() );
+      std::vector<T> a_min( N, std::numeric_limits<T>::max() );
+      std::vector<T> b_min( N, std::numeric_limits<T>::max() );
       std::vector<T> a_max( N, VT::lowest()  );
       std::vector<T> b_max( N, VT::lowest()  );
 
@@ -629,7 +629,7 @@ namespace geometry
       // Now we know we have found a bunch of contacts, we will now try to find
       // the best "contact plane" and project all contact points onto that
       // plane and compute penetration measures with respect to that plane too.
-      T min_val = VT::highest();
+      T min_val = std::numeric_limits<T>::max();
       T max_val = VT::lowest();
 
       {

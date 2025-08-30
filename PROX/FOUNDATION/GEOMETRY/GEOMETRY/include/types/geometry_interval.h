@@ -28,7 +28,7 @@ namespace geometry
   public:
 
     Interval()
-    : m_lower( VT::highest() )
+    : m_lower( std::numeric_limits<T>::max() )
     , m_upper( VT::lowest() )
     {}
 

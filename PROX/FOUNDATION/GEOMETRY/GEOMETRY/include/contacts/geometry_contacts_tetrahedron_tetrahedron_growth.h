@@ -126,7 +126,7 @@ namespace geometry
       iterator p   = intersections.begin();
       iterator end = intersections.end();
 
-      min_val = VT::highest();
+      min_val = std::numeric_limits<T>::max();
       max_val = VT::lowest();
 
       for( ;  p!=end; ++p)

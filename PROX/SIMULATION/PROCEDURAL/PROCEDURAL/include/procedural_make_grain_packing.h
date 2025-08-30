@@ -77,7 +77,7 @@ namespace procedural
       unsigned int i = 0u;  // counter for how many grains have been read so far
 
       V max_coord = V::make( VT::lowest(),VT::lowest(),VT::lowest()    );
-      V min_coord = V::make( VT::highest(),VT::highest(),VT::highest() );
+      V min_coord = V::make( std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max() );
 
       while (!file.eof() && i < max_number_of_grains)
       {

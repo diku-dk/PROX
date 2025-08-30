@@ -157,8 +157,8 @@ namespace geometry
     a[6] = transform_from_obb( get_local_corner(6, obb), obb );
     a[7] = transform_from_obb( get_local_corner(7, obb), obb );
 
-    std::vector<T> a_min( 7u, VT::highest() );
-    std::vector<T> b_min( 7u, VT::highest() );
+    std::vector<T> a_min( 7u, std::numeric_limits<T>::max() );
+    std::vector<T> b_min( 7u, std::numeric_limits<T>::max() );
     std::vector<T> a_max( 7u, VT::lowest()  );
     std::vector<T> b_max( 7u, VT::lowest()  );
 

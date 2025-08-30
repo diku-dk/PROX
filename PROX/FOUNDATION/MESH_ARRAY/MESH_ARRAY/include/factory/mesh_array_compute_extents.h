@@ -5,6 +5,8 @@
 #include <mesh_array_t4mesh.h>
 #include <mesh_array_vertex_attribute.h>
 
+#include <limits>
+
 namespace mesh_array
 {
 
@@ -20,7 +22,7 @@ namespace mesh_array
     typedef typename MT::value_traits    VT;
 
     T h = VT::lowest();
-    T l = VT::highest();
+    T l = std::numeric_limits<T>::max();
 
     for(size_t i=0u; i < mesh.vertex_size(); ++i)
     {
@@ -45,7 +47,7 @@ namespace mesh_array
     typedef typename MT::value_traits    VT;
 
     T h = VT::lowest();
-    T l = VT::highest();
+    T l = std::numeric_limits<T>::max();
 
     for(size_t i=0u; i < mesh.vertex_size(); ++i)
     {

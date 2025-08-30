@@ -39,7 +39,7 @@ namespace geometry
     V const & r = ray.direction();
 
     T t_min = VT::lowest();
-    T t_max = VT::highest();
+    T t_max = std::numeric_limits<T>::max();
 
     for(unsigned int k =  0u; k < N; ++k)
     {

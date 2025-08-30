@@ -296,7 +296,7 @@ namespace geometry
     // Now we know we have found a bunch of contacts, we will now try to find
     // the best "contact plane" and project all contact points onto that
     // plane and compute penetration measures with respect to that plane too.
-    T min_val = VT::highest();
+    T min_val = std::numeric_limits<T>::max();
     T max_val = VT::lowest();
 
     {

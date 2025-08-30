@@ -191,7 +191,7 @@ namespace narrow
           size_t const N = m_mesh.vertex_size();
 
 
-          V min_coord = V(VT::highest());
+          V min_coord = V(std::numeric_limits<T>::max());
           V max_coord = V(VT::lowest());
 
           for(size_t n = 0u; n < N;++n)

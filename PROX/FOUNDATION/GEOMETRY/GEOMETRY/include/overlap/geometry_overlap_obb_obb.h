@@ -263,8 +263,8 @@ namespace geometry
     std::vector<V> axes;
     detail::compute_obb_obb_sat_axes( A,B, axes);
 
-    std::vector<T> a_min( 15u, VT::highest() );
-    std::vector<T> b_min( 15u, VT::highest() );
+    std::vector<T> a_min( 15u, std::numeric_limits<T>::max() );
+    std::vector<T> b_min( 15u, std::numeric_limits<T>::max() );
     std::vector<T> a_max( 15u, VT::lowest()  );
     std::vector<T> b_max( 15u, VT::lowest()  );
 
@@ -353,8 +353,8 @@ namespace geometry
     std::vector<V> axes;
     detail::compute_obb_obb_sat_axes( A,B, axes);
 
-    std::vector<T> a_min( 15u, VT::highest() );
-    std::vector<T> b_min( 15u, VT::highest() );
+    std::vector<T> a_min( 15u, std::numeric_limits<T>::max() );
+    std::vector<T> b_min( 15u, std::numeric_limits<T>::max() );
     std::vector<T> a_max( 15u, VT::lowest()  );
     std::vector<T> b_max( 15u, VT::lowest()  );
 
