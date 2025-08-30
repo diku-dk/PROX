@@ -192,7 +192,7 @@ namespace narrow
 
 
           V min_coord = V(std::numeric_limits<T>::max());
-          V max_coord = V(VT::lowest());
+          V max_coord = V(std::numeric_limits<T>::lowest());
 
           for(size_t n = 0u; n < N;++n)
           {

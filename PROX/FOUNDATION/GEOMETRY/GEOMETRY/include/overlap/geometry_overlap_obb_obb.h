@@ -265,10 +265,10 @@ namespace geometry
 
     std::vector<T> a_min( 15u, std::numeric_limits<T>::max() );
     std::vector<T> b_min( 15u, std::numeric_limits<T>::max() );
-    std::vector<T> a_max( 15u, VT::lowest()  );
-    std::vector<T> b_max( 15u, VT::lowest()  );
+    std::vector<T> a_max( 15u, std::numeric_limits<T>::lowest()  );
+    std::vector<T> b_max( 15u, std::numeric_limits<T>::lowest()  );
 
-    T min_overlap = VT::lowest();
+    T min_overlap = std::numeric_limits<T>::lowest();
 
     for(size_t i=0u;i < 15u; ++i)
     {
@@ -355,8 +355,8 @@ namespace geometry
 
     std::vector<T> a_min( 15u, std::numeric_limits<T>::max() );
     std::vector<T> b_min( 15u, std::numeric_limits<T>::max() );
-    std::vector<T> a_max( 15u, VT::lowest()  );
-    std::vector<T> b_max( 15u, VT::lowest()  );
+    std::vector<T> a_max( 15u, std::numeric_limits<T>::lowest()  );
+    std::vector<T> b_max( 15u, std::numeric_limits<T>::lowest()  );
 
     M const R_a = tiny::make(A.orientation());
     M const R_b = tiny::make(B.orientation());

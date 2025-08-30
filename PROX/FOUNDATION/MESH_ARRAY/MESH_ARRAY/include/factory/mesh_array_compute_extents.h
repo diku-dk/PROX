@@ -21,7 +21,7 @@ namespace mesh_array
     typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
 
-    T h = VT::lowest();
+    T h = std::numeric_limits<T>::lowest();
     T l = std::numeric_limits<T>::max();
 
     for(size_t i=0u; i < mesh.vertex_size(); ++i)
@@ -46,7 +46,7 @@ namespace mesh_array
     typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
 
-    T h = VT::lowest();
+    T h = std::numeric_limits<T>::lowest();
     T l = std::numeric_limits<T>::max();
 
     for(size_t i=0u; i < mesh.vertex_size(); ++i)

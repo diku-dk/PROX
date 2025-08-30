@@ -448,7 +448,7 @@ namespace tiny
             }
             // 2009-07-14 Kenny: warning C4127: conditional expression is constant
             if(remainder) // Necessary otherwise pad-values may end up being the final result
-              type_traits::template set_pad_value<remainder>(result, value_traits::lowest());
+              type_traits::template set_pad_value<remainder>(result, std::numeric_limits<real_type>::lowest());
           }
           return type_traits::max(result);
         }

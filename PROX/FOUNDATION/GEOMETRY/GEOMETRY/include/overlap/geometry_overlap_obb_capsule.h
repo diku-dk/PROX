@@ -159,10 +159,10 @@ namespace geometry
 
     std::vector<T> a_min( 7u, std::numeric_limits<T>::max() );
     std::vector<T> b_min( 7u, std::numeric_limits<T>::max() );
-    std::vector<T> a_max( 7u, VT::lowest()  );
-    std::vector<T> b_max( 7u, VT::lowest()  );
+    std::vector<T> a_max( 7u, std::numeric_limits<T>::lowest()  );
+    std::vector<T> b_max( 7u, std::numeric_limits<T>::lowest()  );
 
-    T min_overlap = VT::lowest();
+    T min_overlap = std::numeric_limits<T>::lowest();
 
     for(size_t i=0u;i < 7u; ++i)
     {

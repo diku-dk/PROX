@@ -297,7 +297,7 @@ namespace geometry
     // the best "contact plane" and project all contact points onto that
     // plane and compute penetration measures with respect to that plane too.
     T min_val = std::numeric_limits<T>::max();
-    T max_val = VT::lowest();
+    T max_val = std::numeric_limits<T>::lowest();
 
     {
       // 2015-11-12 Kenny code review: We assume we have points from both A

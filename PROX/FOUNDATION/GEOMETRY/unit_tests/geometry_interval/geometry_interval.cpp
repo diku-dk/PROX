@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(interval)
     geometry::Interval<T> I;
 
     BOOST_CHECK_EQUAL( I.lower(), std::numeric_limits<T>::max() );
-    BOOST_CHECK_EQUAL( I.upper(), VT::lowest() );
+    BOOST_CHECK_EQUAL( I.upper(), std::numeric_limits<T>::lowest() );
     BOOST_CHECK( geometry::is_valid(I) == false );
   }
 

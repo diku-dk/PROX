@@ -17,7 +17,7 @@ namespace tiny
       static T pi_quarter()             { return detail::pi_quarter<T>();}
       static T pi_4()                   { return detail::pi_quarter<T>();}
       //static T highest()                { return detail::highest<T>();   }
-      static T lowest()                 { return detail::lowest<T>();    }
+      //static T lowest()                 { return detail::lowest<T>();    }
 
       template<typename A>
       static T numeric_cast(A const & value) { return detail::numeric_cast<T>(value);    }

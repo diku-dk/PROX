@@ -235,10 +235,10 @@ namespace geometry
 
       std::vector<T> a_min( N, std::numeric_limits<T>::max() );
       std::vector<T> b_min( N, std::numeric_limits<T>::max() );
-      std::vector<T> a_max( N, VT::lowest()  );
-      std::vector<T> b_max( N, VT::lowest()  );
+      std::vector<T> a_max( N, std::numeric_limits<T>::lowest()  );
+      std::vector<T> b_max( N, std::numeric_limits<T>::lowest()  );
 
-      T min_overlap = VT::lowest();
+      T min_overlap = std::numeric_limits<T>::lowest();
 
       for(size_t i=0u;i < N; ++i)
       {
@@ -406,10 +406,10 @@ namespace geometry
 
       std::vector<T> a_min( N, std::numeric_limits<T>::max() );
       std::vector<T> b_min( N, std::numeric_limits<T>::max() );
-      std::vector<T> a_max( N, VT::lowest()  );
-      std::vector<T> b_max( N, VT::lowest()  );
+      std::vector<T> a_max( N, std::numeric_limits<T>::lowest()  );
+      std::vector<T> b_max( N, std::numeric_limits<T>::lowest()  );
 
-      T min_overlap = VT::lowest();
+      T min_overlap = std::numeric_limits<T>::lowest();
 
       for(size_t i=0u;i < N; ++i)
       {
@@ -630,7 +630,7 @@ namespace geometry
       // the best "contact plane" and project all contact points onto that
       // plane and compute penetration measures with respect to that plane too.
       T min_val = std::numeric_limits<T>::max();
-      T max_val = VT::lowest();
+      T max_val = std::numeric_limits<T>::lowest();
 
       {
         for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)

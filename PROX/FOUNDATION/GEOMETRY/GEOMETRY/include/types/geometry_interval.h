@@ -29,7 +29,7 @@ namespace geometry
 
     Interval()
     : m_lower( std::numeric_limits<T>::max() )
-    , m_upper( VT::lowest() )
+    , m_upper( std::numeric_limits<T>::lowest() )
     {}
 
   };

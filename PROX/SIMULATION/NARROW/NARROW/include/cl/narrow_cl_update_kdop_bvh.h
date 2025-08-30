@@ -298,7 +298,7 @@ namespace narrow
               for(size_t k = 0; k < K / 2; ++k)
               {
                 nodes[node_offset].slabs[k].lower = std::numeric_limits<T>::max();
-                nodes[node_offset].slabs[k].upper = VT::lowest();
+                nodes[node_offset].slabs[k].upper = std::numeric_limits<T>::lowest();
               }
 
               ++total_nodes;
