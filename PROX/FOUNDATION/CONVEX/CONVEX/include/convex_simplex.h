@@ -258,7 +258,7 @@ namespace convex
    * have found two closest points between \f$A\f$ and \f$B\f$.
    *
    */
-  template<typename V>
+/*  template<typename V>
   class Simplex
   {
   public:
@@ -306,6 +306,41 @@ namespace convex
       m_w[3] = 0;
     }
 
+  };*/
+
+  template<typename T>
+  class Simplex
+  {
+
+  public:
+      int m_bitmask;    ///< Bit mask that identifies currently used
+          ///< entries. If (0x0001 & m_bitmask)==1 then
+          ///< it means that the first entry is used. If
+          ///< (0x0002 & m_bitmask)==1 the second is used
+          ///< and if (0x0004 & m_bitmask)==1 then the
+          ///< third one is used and if (0x0008 & m_bitmask)==1 the
+          ///< fourth entry is used.  In general if \f$(2^i & m_bitmask) == 1\f$
+          ///< then the i'th array entry is used.
+      EigenVector3<T> m_v[4];         ///< The simplex vertices.
+      T m_w[4];         ///< Barycentric coordinates for the closest point on
+          ///< the simplex wrt. the simplex vertices.
+      EigenVector3<T> m_a[4];         ///< The support points from object A corresponding to the simplex vertices.
+      EigenVector3<T> m_b[4];         ///< The support points from object B corresponding to the simplex vertices.
+
+  public:
+
+      Simplex()
+          : m_bitmask(0)
+      {
+          for (size_t i = 0; i < 4; ++i)
+          {
+              m_v[i] = {0,0,0};
+              m_a[i] = {0,0,0};
+              m_b[i] = {0,0,0};
+              m_w[i] = 0;
+          }
+      }
+
   };
 
   /**
@@ -323,8 +358,8 @@ namespace convex
    *                  the return value is true otherwise it
    *                  is false.
    */
-  template<typename V>
-  inline bool is_point_in_simplex( V const & p, Simplex<V> const & S)
+  template<typename T>
+  inline bool is_point_in_simplex(const EigenVector3<T>& p, Simplex<T> const & S)
   {
     // Note that p would be a support point of a convex set.
     //
@@ -380,6 +415,8 @@ namespace convex
     return false;
   }
 
+
+
   /**
    * Test if adding point p will result in degenerate Simplex.
    *
@@ -395,13 +432,13 @@ namespace convex
    *                  the return value is true otherwise it
    *                  is false.
    */
-  template<typename V>
-  inline bool is_degenerate_point( V const & p, Simplex<V> const & S)
+  template<typename T>
+  inline bool is_degenerate_point(const EigenVector3<T>& p, const Simplex<T>& S)
   {
-    typedef typename V::real_type T;
-
     T const precision = tiny::machine_precision<T>();
     int used_bit = 1;
+
+    auto newP = p;
 
     for(size_t i = 0u; i < 4u; ++i)
     {
@@ -409,14 +446,14 @@ namespace convex
       // 2011-11-12 Kenny: Just an idea, but points should be at least collision envelope apart otherwise this will just result in sliver and thin tetrahedra lying inside the collision envelope?
 
       //check point versus point
-      if( (S.m_bitmask & used_bit) && (tiny::inner_prod(p-S.m_v[i],p-S.m_v[i]) < precision) )
+      if( (S.m_bitmask & used_bit) && ((newP-S.m_v[i]).dot(newP-S.m_v[i]) < precision) )
         return true;
       used_bit <<= 1;
     }
 
     T dist;
-    V normal;
-    V p1,p2,p3,pp1,pp2,p2p1,p3p1;
+    EigenVector3<T> normal;
+    EigenVector3<T> p1,p2,p3,pp1,pp2,p2p1,p3p1;
 
     int bit_A = 0;
     int bit_B = 0;
@@ -436,7 +473,7 @@ namespace convex
 
         pp1  = p - p1;
         pp2  = p - p2;
-        dist = tiny::norm(tiny::cross(pp1,pp2))/tiny::norm(p2p1); // according to http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+        dist = (pp1.cross(pp2)).norm()/(p2p1).norm(); // according to http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
 
         if (dist < precision) // 2011-11-16 Sarah: maybe make collision envelope the threshold instead
           return true;
@@ -453,8 +490,8 @@ namespace convex
         p2p1   = p2 - p1;
         p3p1   = p3 - p1;
         pp1    = p  - p1;
-        normal = tiny::cross(p2p1, p3p1);// 2011-11-15 Sarah: double check that this is the right order...
-        dist   = fabs(tiny::inner_prod(tiny::unit(normal), pp1));
+        normal = p2p1.cross(p3p1);// 2011-11-15 Sarah: double check that this is the right order...
+        dist   = fabs(dot((normal).normalized(), pp1));
 
         if (dist < precision) // 2011-11-16 Sarah: maybe make collision envelope the threshold instead
           return true;
@@ -479,10 +516,9 @@ namespace convex
    * @param S        The simplex where the point should be added.
    *
    */
-  template<typename V>
-  inline void add_point_to_simplex( V const & p, V const & p_a, V const & p_b , Simplex<V> & S)
+  template<typename T>
+  inline void add_point_to_simplex( const EigenVector3<T>& p, const EigenVector3<T>& p_a, const EigenVector3<T>& p_b , Simplex<T> & S)
   {
-    typedef typename V::value_traits   VT;
 
     size_t free_idx  = 0u;
     int free_bit = 1;
@@ -514,8 +550,8 @@ namespace convex
    * @return    The dimension of the simplex, this is defined
    *            as the cardinality of the simplex vertex set.
    */
-  template<typename V>
-  inline size_t dimension(Simplex<V> const & S)
+  template<typename T>
+  inline size_t dimension(const Simplex<T>& S)
   {
     size_t size = 0u;
 
@@ -540,8 +576,8 @@ namespace convex
    * @return    If the simplex got four vertices then the return
    *            value is true otherwise it is false.
    */
-  template<typename V>
-  inline bool is_full_simplex(Simplex<V> const & S)
+  template<typename T>
+  inline bool is_full_simplex(const Simplex<T>& S)
   {
     return (S.m_bitmask == 15u);
   }

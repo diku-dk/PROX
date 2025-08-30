@@ -132,8 +132,6 @@ namespace convex
 
     typedef typename M::vector3_type  V;
     typedef typename M::real_type     T;
-    typedef typename M::value_traits  VT;
-    typedef          Simplex<V>       simplex_type;
 
     if( absolute_tolerance < 0 )
       throw std::invalid_argument( "absolute tolerance must be non-negative" );
@@ -152,7 +150,7 @@ namespace convex
     T          squared_distance           = std::numeric_limits<T>::max();
 
     // Simplex approximation to convex set C
-    simplex_type sigma;
+    Simplex<T> sigma;
 
     // Initially we use a 0-simplex corresponding to some point
     // in C. We do this by seeding the initial closest point to
@@ -172,11 +170,11 @@ namespace convex
       //   S_{ T_A(A) - T_B(B) }(s) = S_{ T_A(A) } (-v) - S_{ T_B(B) }(v)
       //                            = T_A( S_A(- R_A^T v) ) - T_B( S_B(R_B^T v)
       //
-      V s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
-      V s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
+      auto s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
+      auto s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
 
-      V w_a = fromEigen(A->get_support_point( toEigen(s_a) ));
-      V w_b = fromEigen(B->get_support_point( toEigen(s_b) ));
+      auto w_a = fromEigen(A->get_support_point( toEigen(s_a) ));
+      auto w_b = fromEigen(B->get_support_point( toEigen(s_b) ));
 
       w_a = tiny::rotate( X_A.Q(), w_a ) + X_A.T();
       w_b = tiny::rotate( X_B.Q(), w_b ) + X_B.T();
@@ -189,14 +187,14 @@ namespace convex
       assert( is_number( w_b(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w_b(2) ) || !"compute_closest_points(): NaN encountered");
 
-      V w    = w_a - w_b;
+      auto w    = w_a - w_b;
 
       assert( is_number( w(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w(2) ) || !"compute_closest_points(): NaN encountered");
 
       // Test if the new point is already part of the current simplex
-      if ( is_point_in_simplex ( w, sigma ) )
+      if ( is_point_in_simplex<T>(toEigen(w), sigma ) )
       {
         assert( iterations > 1u || !"compute_closest_points(): simplex should be empty in first iteration?");
         // if so it means we can not find any points in C that is
@@ -216,20 +214,24 @@ namespace convex
         return;
       }
 
-      if (is_degenerate_point(w, sigma))
+      if (is_degenerate_point<T>(toEigen(w), sigma))
       {
         status = DEGENERATE_SIMPLEX_ADDITION;
         return;
       }
 
       // Extend the simplex with a new vertex
-      add_point_to_simplex(w, w_a, w_b, sigma);
+      add_point_to_simplex<T>(toEigen(w), toEigen(w_a), toEigen(w_b), sigma);
 
       // Compute the point, v, on the simplex that is closest to the origin and
       // Reduce simplex to lowest dimensional face on the boundary
       // containing the closest point.
       // 2010-02-13 mrtn: p_a and p_b may be on the inside of A-B in case of penetrations
-      v = reduce_simplex( sigma, p_A, p_B );
+      EigenVector3<T> pAeigen = toEigen(p_A);
+      EigenVector3<T> pBeigen = toEigen(p_B);
+      v = fromEigen(reduce_simplex( sigma, pAeigen, pBeigen));
+      p_A = fromEigen(pAeigen);
+      p_B = fromEigen(pBeigen);
 
       assert( is_number( v(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( v(1) ) || !"compute_closest_points(): NaN encountered");
@@ -246,7 +248,7 @@ namespace convex
       // Test if simplex is a full tetrahedron. In this case the closest
       // point must be inside the tetrahedron and equal to the origin. Thus
       // we clearly have an intersection.
-      if( is_full_simplex( sigma) )
+      if( is_full_simplex<T>( sigma) )
       {
         distance = 0; //2010-02-11 mrtn: should penetration depth be computed? And possibly a better approximation of the contact point?
         //2011-11-12 Kenny: This function computes separation distance, if we got a full simplex we have penetration and separation distance is not meaningful. We have other algorithms that is used for processing the penetration case.

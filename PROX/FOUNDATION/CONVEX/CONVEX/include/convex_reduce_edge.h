@@ -5,6 +5,7 @@
 
 #include <barycentric/geometry_barycentric.h>
 #include <tiny_vector_functions.h>
+#include <convex_simplex.h>
 
 
 namespace convex
@@ -22,23 +23,20 @@ namespace convex
    * @param simplex   Initially this argument holds the edge simplex. Upon
    *                  return the argument holds the reduced simplex.
    */
-  template< typename V >
-  inline void reduce_edge( V const & p_in, Simplex<V> & S)
+  template< typename T >
+  inline void reduce_edge(const EigenVector3<T>& p_in, Simplex<T> & S)
   {
-    typedef typename V::real_type     T;
-    typedef typename V::value_traits  VT;
-
     int bit_A = 0;
     int bit_B = 0;
     size_t idx_A = 0u;
     size_t idx_B = 0u;
     get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B );
 
-    T const scale = tiny::norm(S.m_v[idx_A]) > tiny::norm(S.m_v[idx_B]) ? tiny::norm(S.m_v[idx_A]) : tiny::norm(S.m_v[idx_B]);
+    T const scale = (S.m_v[idx_A]).norm() > (S.m_v[idx_B]).norm() ? (S.m_v[idx_A]).norm() : (S.m_v[idx_B]).norm();
 
-    V const & A = S.m_v[idx_A]/scale;// scale so that A lies within [0;1] on all three axis
-    V const & B = S.m_v[idx_B]/scale;// scale so that B lies within [0;1] on all three axis
-    V const & p = p_in/scale;
+    const EigenVector3<T>& A = S.m_v[idx_A]/scale;// scale so that A lies within [0;1] on all three axis
+    const EigenVector3<T>& B = S.m_v[idx_B]/scale;// scale so that B lies within [0;1] on all three axis
+    const EigenVector3<T>& p = p_in/scale;
 
     bool const outside_AB = outside_vertex_edge_voronoi_plane( p, A, B );
     bool const outside_BA = outside_vertex_edge_voronoi_plane( p, B, A );
@@ -47,9 +45,9 @@ namespace convex
     {
       // Simplex is A
       S.m_bitmask = bit_A;
-      S.m_v[idx_B].clear();
-      S.m_a[idx_B].clear();
-      S.m_b[idx_B].clear();
+      S.m_v[idx_B] = {0,0,0};
+      S.m_a[idx_B] = {0,0,0};
+      S.m_b[idx_B] = {0,0,0};
       S.m_w[idx_A] = 1;
       S.m_w[idx_B] = 0;
       return;
@@ -58,9 +56,9 @@ namespace convex
     {
       // Simplex is B
       S.m_bitmask = bit_B;
-      S.m_v[idx_A].clear();
-      S.m_a[idx_A].clear();
-      S.m_b[idx_A].clear();
+      S.m_v[idx_A]= {0,0,0};
+      S.m_a[idx_A]= {0,0,0};
+      S.m_b[idx_A]= {0,0,0};
       S.m_w[idx_A] = 0;
       S.m_w[idx_B] = 1;
       return;
@@ -68,7 +66,7 @@ namespace convex
     if(!outside_AB && !outside_BA)
     {
       // because barycentric coords are invariant to uniform scaling, we don't need to rescale A and B
-      geometry::barycentric(A,B,p,S.m_w[idx_A],S.m_w[idx_B]);
+        geometry::barycentric(fromEigen(A),fromEigen(B),fromEigen(p),S.m_w[idx_A],S.m_w[idx_B]);
       return;
     }
 

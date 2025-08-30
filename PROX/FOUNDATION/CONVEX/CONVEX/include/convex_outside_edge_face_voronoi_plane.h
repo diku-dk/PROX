@@ -4,7 +4,7 @@
 #include <tiny_vector_functions.h>
 
 #include <cassert>
-
+#include <tiny_math_types.h>
 namespace convex
 {
 
@@ -22,23 +22,22 @@ namespace convex
    *
    * @return     If point is outside or on the plane then the return value is true otherwise it is false.
    */
-  template< typename V >
+  template< typename T >
   inline bool outside_edge_face_voronoi_plane(
-                                       V const & p
-                                       , V const & A
-                                       , V const & B
-                                       , V const & C
+                                       const EigenVector3<T>& p
+                                       , const EigenVector3<T>& A
+                                       , const EigenVector3<T>& B
+                                       , const EigenVector3<T>& C
                                        )
   {
-    typedef typename V::value_traits    value_traits;
-    typedef typename V::real_type      T;
 
-    V const m = tiny::cross( A-C, B-C );
-    assert( tiny::inner_prod( m, m ) > 0 || !"outside_edge_face_voronoi_plane(): Degenerate triangle encountered");
 
-    V const n      = tiny::cross( B-A, m );
-    T const sign_p = tiny::inner_prod( n, p-B );
-    T const sign_C = tiny::inner_prod( n, C-B );
+      const EigenVector3<T> m = ( A-C).cross(B-C );
+    assert( dot( m, m ) > 0 || !"outside_edge_face_voronoi_plane(): Degenerate triangle encountered");
+
+      const EigenVector3<T> n      = ( B-A).cross( m );
+    T const sign_p = n.dot( p-B );
+      T const sign_C = n.dot( C-B );
 
     assert( is_number( sign_p ) || !"outside_edge_face_voronoi_plane(): Not a Number encountered");
     assert( is_number( sign_C ) || !"outside_edge_face_voronoi_plane(): Not a Number encountered");

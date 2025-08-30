@@ -4,6 +4,7 @@
 #include <tiny_vector_functions.h>
 
 #include <cassert>
+#include <tiny_math_types.h>
 
 namespace convex
 {
@@ -20,24 +21,21 @@ namespace convex
    *
    *@return       If p is outside or on the face plane then the return value is true otherwise it is false.
    */
-  template< typename V >
+  template< typename T>
   inline bool outside_triangle(
-                        V const & p
-                        , V const & A
-                        , V const & B
-                        , V const & C
-                        , V const & q
+                        const EigenVector3<T>& p
+                        , const EigenVector3<T>& A
+                        , const EigenVector3<T>& B
+                        , const EigenVector3<T>& C
+                        , const EigenVector3<T>& q
                         )
   {
-    typedef typename V::value_traits    value_traits;
-    typedef typename V::real_type       T;
+      const EigenVector3<T> n = ( A-B).cross( C-B );
 
-    V const n = tiny::cross( A-B, C-B );
+    assert( dot( n, n ) > 0 || !"outside_triangle(): Degenerate triangle encountered");
 
-    assert( tiny::inner_prod( n, n ) > 0 || !"outside_triangle(): Degenerate triangle encountered");
-
-    T const sign_p = tiny::inner_prod( n, p-B );
-    T const sign_q = tiny::inner_prod( n, q-B );
+      T const sign_p = ( n).dot( p-B );
+    T const sign_q = ( n).dot( q-B );
 
     assert( is_number( sign_p ) || !"outside_triangle(): Not a Number encountered");
     assert( is_number( sign_q ) || !"outside_triangle(): Not a Number encountered");

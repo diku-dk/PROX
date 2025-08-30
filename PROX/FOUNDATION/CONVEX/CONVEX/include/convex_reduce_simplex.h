@@ -27,12 +27,11 @@ namespace convex
    *
    * @return          The closest point, v, on the simplex to the origin.
    */
-  template<typename V>
-  inline V reduce_simplex( Simplex<V> & S, V & a, V & b )
+  template<typename T>
+inline EigenVector3<T> reduce_simplex( Simplex<T> & S, EigenVector3<T>& a, EigenVector3<T>& b )
   {
-    typedef typename V::value_traits   VT;
 
-    V const p = V::make( 0, 0, 0 );
+      const EigenVector3<T> p = {0, 0, 0};
 
     switch( dimension( S ) )
     {
@@ -66,8 +65,8 @@ namespace convex
     };
 
     // Now compute the actual closest points based on the bary-centric coordinates.
-    a.clear();
-    b.clear();
+    a = {0,0,0};
+    b = {0,0,0};
     int used_bit = 1;
     for(size_t i=0u; i<4u; ++i)
     {

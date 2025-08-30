@@ -61,6 +61,9 @@ namespace tiny
 template <typename Number>
 using EigenVector3 = Eigen::Vector<Number, 3>;
 
+template <typename Number>
+using EigenMatrix3 = Eigen::Matrix<Number, 3, 3>;
+
 inline EigenVector3<float> toEigen(typename tiny::MathTypes<float>::vector3_type input)
 {
     return {input(0), input(1), input(2)};
