@@ -93,6 +93,16 @@ namespace geometry
       return V::make( px, py, pz);
     }
 
+    EigenVector3<T> get_support_point(EigenVector3<T> v) const override
+    {
+        EigenVector3<T> result;
+        for (size_t i = 0; i < 3; ++i)
+        {
+            result[i] = v[i] > 0 ? m_half_extent(i) : -m_half_extent(i);
+        }
+        return result;
+    }
+
     T get_scale() const
     {
       using std::min;

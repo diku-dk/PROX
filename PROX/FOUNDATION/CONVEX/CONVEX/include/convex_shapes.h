@@ -38,6 +38,7 @@ namespace convex
   public:
 
     V get_support_point( V const & v ) const;
+    EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
 
@@ -73,6 +74,7 @@ namespace convex
   public:
 
     V get_support_point( V const & v ) const;
+      EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
 
@@ -102,6 +104,7 @@ namespace convex
   public:
 
     V get_support_point( V const & v ) const;
+    EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
 
@@ -146,6 +149,7 @@ namespace convex
   public:
 
     V get_support_point( V const & v ) const;
+      EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
 
@@ -180,6 +184,7 @@ namespace convex
   public:
 
     V get_support_point( V const & v ) const;
+      EigenVector3<T> get_support_point(EigenVector3<T> dir) const override;
 
     T get_scale() const;
 

@@ -58,5 +58,24 @@ namespace tiny
 
 } // namespace tiny
 
+template <typename Number>
+using EigenVector3 = Eigen::Vector<Number, 3>;
+
+inline EigenVector3<float> toEigen(typename tiny::MathTypes<float>::vector3_type input)
+{
+    return {input(0), input(1), input(2)};
+}
+
+inline EigenVector3<double> toEigen(typename tiny::MathTypes<double>::vector3_type input)
+{
+    return {input(0), input(1), input(2)};
+}
+
+template <typename Vector>
+inline auto dot(Vector a, Vector b)
+{
+    return a.dot(b);
+}
+
 //TINY_MATH_TYPES_H
 #endif

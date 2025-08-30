@@ -95,6 +95,24 @@ namespace convex
   }
 
   template<typename M>
+
+  auto Cylinder<M>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
+  {
+      auto height = dir.z() > 0 ? m_half_height : -m_half_height;
+      auto sigmaNorm = std::sqrt(dir.x()*dir.x() + dir.y()*dir.y());
+      if (sigmaNorm > 0)
+      {
+          return
+          {
+              m_radius * dir.x() / sigmaNorm,
+              m_radius * dir.y() / sigmaNorm,
+              height
+          };
+      }
+      return {0, 0, height};
+  }
+
+  template<typename M>
   typename M::real_type Cylinder<M>::get_scale() const
   {
     using std::min;

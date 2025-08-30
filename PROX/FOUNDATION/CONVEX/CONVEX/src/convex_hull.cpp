@@ -95,6 +95,59 @@ namespace convex
 
     return p;
   }
+  template<typename M>
+  auto ConvexHull<M>::get_support_point(EigenVector3<T> v) const -> EigenVector3<T>
+  {
+
+      assert( is_number(v(0)) || !"NAN encountered");
+      assert( is_number(v(1)) || !"NAN encountered");
+      assert( is_number(v(2)) || !"NAN encountered");
+      assert( is_finite(v(0)) || !"INF encountered");
+      assert( is_finite(v(1)) || !"INF encountered");
+      assert( is_finite(v(2)) || !"INF encountered");
+
+      size_t const N = this->m_points.size();
+      assert( N > 0u       || !"empty hull");
+
+      EigenVector3<T> p = toEigen(this->m_points[0]);
+
+      assert( is_number(p(0)) || !"NAN encountered");
+      assert( is_number(p(1)) || !"NAN encountered");
+      assert( is_number(p(2)) || !"NAN encountered");
+      assert( is_finite(p(0)) || !"INF encountered");
+      assert( is_finite(p(1)) || !"INF encountered");
+      assert( is_finite(p(2)) || !"INF encountered");
+
+      T max_val = p.dot(v);
+
+      for(size_t i =1u; i < N;)
+      {
+          EigenVector3<T> q = toEigen(this->m_points[i++]);
+
+          assert( is_number(q(0)) || !"NAN encountered");
+          assert( is_number(q(1)) || !"NAN encountered");
+          assert( is_number(q(2)) || !"NAN encountered");
+          assert( is_finite(q(0)) || !"INF encountered");
+          assert( is_finite(q(1)) || !"INF encountered");
+          assert( is_finite(q(2)) || !"INF encountered");
+
+          T const val = q.dot(v);
+
+          if(val > max_val)
+          {
+              max_val = val;
+              p = q;
+          }
+      }
+      assert( is_number(p(0)) || !"NAN encountered");
+      assert( is_number(p(1)) || !"NAN encountered");
+      assert( is_number(p(2)) || !"NAN encountered");
+      assert( is_finite(p(0)) || !"INF encountered");
+      assert( is_finite(p(1)) || !"INF encountered");
+      assert( is_finite(p(2)) || !"INF encountered");
+
+      return p;
+  }
 
   template<typename M>
   typename M::real_type ConvexHull<M>::get_scale() const

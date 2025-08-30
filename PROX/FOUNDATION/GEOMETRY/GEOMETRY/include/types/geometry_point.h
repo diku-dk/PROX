@@ -52,6 +52,11 @@ namespace geometry
     {
       return this->m_coordinates;
     }
+    EigenVector3<T> get_support_point(EigenVector3<T> dir) const override
+    {
+        return toEigen(m_coordinates);
+    }
+
 
     T get_scale() const
     {

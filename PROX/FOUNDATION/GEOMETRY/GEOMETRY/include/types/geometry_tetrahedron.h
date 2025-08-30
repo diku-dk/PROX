@@ -123,6 +123,23 @@ namespace geometry
       return p;
     }
 
+    EigenVector3<T> get_support_point(EigenVector3<T> dir) const override
+    {
+        auto bestPoint = toEigen(m_point[0]);
+        auto maxVal = dot(dir, bestPoint);
+        for (size_t i = 1; i < 4; ++i)
+        {
+            auto currPoint = toEigen(m_point[i]);
+            auto currVal = dot(currPoint, dir);
+            if (currVal > maxVal)
+            {
+                maxVal = currVal;
+                bestPoint = currPoint;
+            }
+        }
+        return bestPoint;
+    }
+
 
     V get_center() const
     {

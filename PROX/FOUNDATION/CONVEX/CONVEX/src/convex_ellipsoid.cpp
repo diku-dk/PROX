@@ -123,6 +123,108 @@ namespace convex
   }
 
   template<typename M>
+  auto Ellipsoid<M>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
+  {
+      using std::sqrt;
+
+      typedef typename M::real_type    T;
+      typedef typename M::vector3_type V;
+      typedef typename M::value_traits VT;
+
+      T const & vx = dir(0);
+      T const & vy = dir(1);
+      T const & vz = dir(2);
+
+      assert( is_number(vx) || !"NAN encountered");
+      assert( is_number(vy) || !"NAN encountered");
+      assert( is_number(vz) || !"NAN encountered");
+      assert( is_finite(vx) || !"INF encountered");
+      assert( is_finite(vy) || !"INF encountered");
+      assert( is_finite(vz) || !"INF encountered");
+
+      T const & sx = this->m_scale(0);
+      T const & sy = this->m_scale(1);
+      T const & sz = this->m_scale(2);
+
+      assert( sx  || !"NAN encountered");
+      assert( sx  || !"INF encountered");
+      assert( sy  || !"NAN encountered");
+      assert( sy  || !"INF encountered");
+      assert( sz  || !"NAN encountered");
+      assert( sz  || !"INF encountered");
+      assert( sx >= 0 || !"Negative scale encountered");
+      assert( sy >= 0 || !"Negative scale encountered");
+      assert( sz >= 0 || !"Negative scale encountered");
+
+      /*
+    // An ellipsoid, E, is simply a scaled unit ball, B, and a scale is a linear
+    // transformation, T. We can write it in a general way as
+    //
+    //  E = T(B)
+    //
+    // That means we can create a support function, S, of an ellipsoid from
+    // that of a unit sphere ball by
+    //
+    //  S_E(v) = S_{T(B)}(v)
+    //
+    // Further we know that for any affine transformation, T(v) = R v + t, we have
+    //
+    //   S_{T(B)}(v)  =   T(  S_B( R^T v )  )
+    //
+    // In our particular case R = R^T = D, where D = diag(s_0,s_1,s_3) and t=0. Here
+    // the s_i's are the axes scales repsectively. Putting it all together we have
+    //
+    //   S_{E}(v)  =   D(  S_B( D v )  )
+    //
+    // This is the formula implemented by this functor.
+    */
+
+      T const vv = vx*vx + vy*vy + vz*vz;
+
+      assert( is_number(vv) || !"NAN encountered");
+      assert( is_finite(vv) || !"INF encountered");
+
+      T px = 0;
+      T py = 0;
+      T pz = 0;
+
+      if (vv > 0 )
+      {
+          T const wx = vx * sz;
+          T const wy = vy * sy;
+          T const wz = vz * sz;
+          T const ww  = wx*wx + wy*wy + wz*wz;
+
+          assert( is_number(ww) || !"NAN encountered");
+          assert( is_finite(ww) || !"INF encountered");
+
+          T const tmp = 1 / sqrt(ww);
+
+          assert( is_number(tmp) || !"NAN encountered");
+          assert( is_finite(tmp) || !"INF encountered");
+
+          px = wx * tmp * sx;
+          py = wy * tmp * sy;
+          pz = wz * tmp * sz;
+      }
+      else
+      {
+          px = sx;
+          py = 0;
+          pz = 0;
+      }
+
+      assert( is_number(px) || !"NAN encountered");
+      assert( is_number(py) || !"NAN encountered");
+      assert( is_number(pz) || !"NAN encountered");
+      assert( is_finite(px) || !"INF encountered");
+      assert( is_finite(py) || !"INF encountered");
+      assert( is_finite(pz) || !"INF encountered");
+
+      return {px,py,pz};
+  }
+
+  template<typename M>
   typename M::real_type Ellipsoid<M>::get_scale() const
   {
     using std::min;
