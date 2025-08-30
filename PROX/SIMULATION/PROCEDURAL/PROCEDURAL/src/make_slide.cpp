@@ -23,7 +23,7 @@ namespace procedural
     
     T const radians         = degree* (VT::pi()/180);
     T const radius          = VT::half();
-    V const hill_extents    = V::make( VT::numeric_cast(6.0), VT::numeric_cast(0.2), VT::four());
+    V const hill_extents    = V::make( VT::numeric_cast(6.0), VT::numeric_cast(0.2), 4);
     V const box_extents     = V::make( radius, radius, radius)*VT::two();
     
     

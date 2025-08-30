@@ -23,7 +23,7 @@ namespace mass
     assert( is_finite( radius )             || !"radius must be a finite number" );
     assert( radius > value_traits::zero()   || !"radius must be positive"        );
     
-    T const volume  = (value_traits::four()*value_traits::pi()*radius*radius*radius)/value_traits::three();
+    T const volume  = (4*value_traits::pi()*radius*radius*radius)/3;
     T const mass    = density * volume;
     T const five    = value_traits::numeric_cast( 5.0 ); 
     

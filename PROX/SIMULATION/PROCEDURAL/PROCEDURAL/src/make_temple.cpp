@@ -36,18 +36,18 @@ namespace procedural
 		T const temple_depth	= (VT::two()*num_pillars_z-VT::one())*pillar_width;
     
 		T const beam_spacing_ratio = VT::numeric_cast( 0.7f );
-		T const spacing            = (temple_depth - VT::four()*pillar_width) / floor(beam_spacing_ratio*num_pillars_z);
+		T const spacing            = (temple_depth - 4*pillar_width) / floor(beam_spacing_ratio*num_pillars_z);
 		T const pillar_height	     = temple_height*pillar_ratio;
 		T const plane_height	     = temple_height*bottom_ratio;
 		
 		T const beam_height		= temple_height*beam_ratio;
-		T const beam_length_f	= (temple_width - VT::numeric_cast(5.0f)*pillar_width) / (num_pillars_x-VT::three());
-		T const beam_length_s	= (temple_depth - VT::numeric_cast(5.0f)*pillar_width) / (num_pillars_z-VT::three());
+		T const beam_length_f	= (temple_width - VT::numeric_cast(5.0f)*pillar_width) / (num_pillars_x-3);
+		T const beam_length_s	= (temple_depth - VT::numeric_cast(5.0f)*pillar_width) / (num_pillars_z-3);
 		
 		T const  gable_height		  = temple_height*gable_ratio;
 		T		     gable_num_brick	= VT::one()*num_pillars_x - VT::two();
 		T  const gable_incline		= atan(VT::two()*gable_height/temple_width);
-		T  const gable_brick_w		= (temple_width-VT::three()*pillar_width)/gable_num_brick;
+		T  const gable_brick_w		= (temple_width-3*pillar_width)/gable_num_brick;
 		T  const gable_brick_h		= tan(gable_incline)*VT::half()*gable_brick_w;
 		T		     gable_num_layers	= (gable_height/gable_brick_h);
 		
@@ -107,9 +107,9 @@ namespace procedural
       {
 				/// foundation for inner pillars
 				GeometryHandle<MT> plane_2 = create_geometry_handle_box<MT>(  engine
-                                                                   , temple_width - VT::four()*pillar_width
+                                                                   , temple_width - 4*pillar_width
                                                                    , bottom_ratio*temple_height
-                                                                   , temple_depth - VT::four()*pillar_width);
+                                                                   , temple_depth - 4*pillar_width);
 				
 				P = rotate( orientation, V::make( VT::zero(), plane_3_y, VT::zero())) + position;
 				

@@ -44,7 +44,7 @@ namespace hyper
       //                       0        0       I_3x3   0;
       //                       0        0       0       I_3x3;]
       //
-      NN = make_diag_identity<M>() / VT::four();
+      NN = make_diag_identity<M>() / 4;
     }
     else
     {

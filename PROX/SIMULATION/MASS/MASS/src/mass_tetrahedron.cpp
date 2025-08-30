@@ -120,9 +120,9 @@ namespace mass
                      y4*z1     + y4*z2     + y4*z3     + two*y4*z4
                      ) / value_traits::numeric_cast( 120.0 );
     
-    value.m_x = (x1+x2+x3+x4) / value_traits::four();
-    value.m_y = (y1+y2+y3+y4) / value_traits::four();
-    value.m_z = (z1+z2+z3+z4) / value_traits::four();
+    value.m_x = (x1+x2+x3+x4) / 4;
+    value.m_y = (y1+y2+y3+y4) / 4;
+    value.m_z = (z1+z2+z3+z4) / 4;
     
     return value;
   }

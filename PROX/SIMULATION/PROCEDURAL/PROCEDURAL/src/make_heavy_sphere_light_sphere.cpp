@@ -60,7 +60,7 @@ namespace procedural
     
 
     // heavy sphere on top of light sphere
-    T_m2l = V::make( VT::zero(), VT::three()*sphere_radius, VT::zero() );
+    T_m2l = V::make( VT::zero(), 3*sphere_radius, VT::zero() );
 
     compute_body_to_world_transform<MT>(
                                         T_b2m

@@ -9,13 +9,13 @@ namespace tiny
   class ValueTraits
     {
     public:
-      
+
       static T zero()                   { return detail::zero<T>();      }
       static T one()                    { return detail::one<T>();       }
       static T two()                    { return detail::two<T>();       }
-      static T three()                  { return detail::three<T>();     }
-      static T four()                   { return detail::four<T>();      }
-      static T eight()                  { return detail::eight<T>();     }
+      //static T three()                  { return detail::three<T>();     }
+      //static T four()                   { return detail::four<T>();      }
+      //static T eight()                  { return detail::eight<T>();     }
       static T infinity()               { return detail::infinity<T>();  }
       static T half()                   { return detail::half<T>();      }
       static T pi()                     { return detail::pi<T>();        }
@@ -25,7 +25,7 @@ namespace tiny
       static T pi_4()                   { return detail::pi_quarter<T>();}
       static T highest()                { return detail::highest<T>();   }
       static T lowest()                 { return detail::lowest<T>();    }
-      
+
       template<typename A>
       static T numeric_cast(A const & value) { return detail::numeric_cast<T>(value);    }
 
@@ -40,7 +40,7 @@ namespace tiny
       }
 
     };
-  
+
 }  // namespace tiny
 
 //TINY_VALUE_TRAITS_H

@@ -39,7 +39,7 @@ namespace procedural
       x = VT::two()*i*sphere_radius - offset_x;
       for (size_t j = 0; j < h; ++j)
       {
-        y = sphere_radius + VT::two()*j*sphere_radius + VT::four();
+        y = sphere_radius + VT::two()*j*sphere_radius + 4;
         
         for (size_t k = 0; k < d; ++k)
         {

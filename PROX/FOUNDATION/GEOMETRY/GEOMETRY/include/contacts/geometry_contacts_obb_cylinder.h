@@ -231,7 +231,7 @@ namespace geometry
       assert(      a > VT::zero() || !"intersect_line_circle(): internal error");
       assert(fabs(b) > VT::zero() || !"intersect_line_circle(): internal error");
 
-      T const d = b*b - VT::four()*a*c;
+      const auto d = b*b - 4*a*c;
 
       assert(is_finite(d) || !"intersect_line_circle(): inf number");
       assert(is_number(d) || !"intersect_line_circle(): nan number");
@@ -293,7 +293,7 @@ namespace geometry
           return false;
 
       }
-      
+
       return true;
     }
 
@@ -437,7 +437,7 @@ namespace geometry
 
         unsigned int const max_samples = 12u;  // Magic number....
 
-        T const half_height = (feature[0](2) + feature[1](2) + feature[2](2) + feature[3](2)) / VT::four();
+        T const half_height = (feature[0](2) + feature[1](2) + feature[2](2) + feature[3](2)) / 4;
         T const dtheta = VT::two()*VT::pi() / max_samples;
         T       theta = VT::zero();
 
@@ -455,7 +455,7 @@ namespace geometry
     }
 
   }// end of namespace detail
-  
+
   /**
    * OBB versus Cylinder Contact Point Generation
    *

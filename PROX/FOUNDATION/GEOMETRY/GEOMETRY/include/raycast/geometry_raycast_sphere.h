@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_COMPUTE_RAYCAST_SPHERE_H
 #define GEOMETRY_COMPUTE_RAYCAST_SPHERE_H
 
+#include "tiny_vector_functions.h"
 #include <types/geometry_sphere.h>
 #include <types/geometry_ray.h>
 
@@ -9,7 +10,7 @@
 
 #include <cmath> // needed for std::sqrt
 
-namespace geometry 
+namespace geometry
 {
 
   template<typename V>
@@ -45,10 +46,9 @@ namespace geometry
       return false;
     }
 
-    T const D = b*b - VT::four()*a*c;
+    const auto D = b*b - 4*a*c;
 
-    if( D < VT::zero() )
-      return false;
+    if (D < 0) return false;
 
     T const sqrt_D = sqrt(D);
 
@@ -82,4 +82,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_COMPUTE_RAYCAST_SPHERE_H
-#endif 
+#endif

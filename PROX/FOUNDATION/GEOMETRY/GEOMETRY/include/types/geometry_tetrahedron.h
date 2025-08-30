@@ -133,7 +133,7 @@ namespace geometry
       V const & p2 = this->m_point[2];
       V const & p3 = this->m_point[3];
 
-      return (p0 + p1 + p2 + p3)/ VT::four();
+      return (p0 + p1 + p2 + p3)/ 4;
     }
 
     T get_scale() const

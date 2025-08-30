@@ -114,9 +114,9 @@ namespace soft_body
 
           V const l = c->traction();
 
-          T const x = (body->m_X[i] + body->m_X[j] + body->m_X[k]) / VT::three();
-          T const y = (body->m_Y[i] + body->m_Y[j] + body->m_Y[k]) / VT::three();
-          T const z = (body->m_Z[i] + body->m_Z[j] + body->m_Z[k]) / VT::three();
+          T const x = (body->m_X[i] + body->m_X[j] + body->m_X[k]) / 3;
+          T const y = (body->m_Y[i] + body->m_Y[j] + body->m_Y[k]) / 3;
+          T const z = (body->m_Z[i] + body->m_Z[j] + body->m_Z[k]) / 3;
 
           glm::vec3 const p = glm::vec3( x, y, z );
           glm::vec3 const n = glm::vec3( l(0), l(1), l(2) );

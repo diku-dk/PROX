@@ -62,7 +62,7 @@ namespace geometry
 
         unsigned int const & s = min(i,j);
         unsigned int const & t = max(i,j);
-        
+
         return  m_data[s].at(t);
       }
     };
@@ -77,7 +77,7 @@ namespace geometry
 
     typedef typename V::real_type       T;
     typedef typename V::value_traits    VT;
-    
+
   protected:
 
     class MapOfFace
@@ -101,9 +101,9 @@ namespace geometry
     class MapOfVertex
     {
     public:
-      
+
       std::vector<unsigned int> m_edge_indices;
-      
+
     };
 
   protected:
@@ -290,16 +290,16 @@ namespace geometry
         {
           // l and r forms a reflex angle around d
           T const product =    tiny::inner_prod(n, tiny::cross(  l, r ) );
-          
+
           bool const inside_arc = product > VT::zero();
-          
+
           if (!inside_arc)
             return false;
         }
       }
       return true;
     }
-    
+
   public:
 
     /**
@@ -524,7 +524,7 @@ namespace geometry
 
     GaussMapOfConvexPolyhedra()
     {
-      this->set_tolerance_in_degrees( VT::four() );
+      this->set_tolerance_in_degrees(4);
     }
 
   };

@@ -12,7 +12,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Growth Distance Algorithm.
    * This function tries to find the growth scale that will make the initially
@@ -45,53 +45,53 @@ namespace convex
                        , size_t const & max_iterations
                        )
   {
-    
+
     using std::sqrt;
-    
+
     typedef typename M::value_traits    VT;
     typedef typename M::vector3_type    V;
     typedef typename M::coordsys_type   C;
     typedef typename M::real_type       T;
-    
+
     V const v = X_A.T() - X_B.T();
-    
+
     assert( epsilon > VT::zero() || !"growth_distance(): collision envelope must be positive");
     assert( max_iterations > 0u  || !"growth_distance(): maximum iterations must be positive");
-    
-    T const d_min       = VT::two()*epsilon;
-    T const d_min_sqrd  = VT::four()*epsilon*epsilon;
-    T const v2          = v*v;
-    
+
+    const auto d_min = 2 * epsilon;
+    const auto d_min_sqrd = 4 * epsilon * epsilon;
+    const auto v2 = v*v;
+
     assert( v2 > VT::zero() || !"growth_distance(): internal error growth centers are bad");
-    
+
     // compute the support point: \vec p = S_{\set A - \set B}(- \vec v)
     V s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
     V s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
-    
+
     V w_a = A->get_support_point( s_a );
     V w_b = B->get_support_point( s_b );
-    
+
     w_a = tiny::rotate( X_A.Q(), w_a ) + X_A.T();
     w_b = tiny::rotate( X_B.Q(), w_b ) + X_B.T();
-    
+
     assert( is_number( w_a(0) ) || !"growth_distance(): NaN encountered");
     assert( is_number( w_a(1) ) || !"growth_distance(): NaN encountered");
     assert( is_number( w_a(2) ) || !"growth_distance(): NaN encountered");
-    
+
     assert( is_number( w_b(0) ) || !"growth_distance(): NaN encountered");
     assert( is_number( w_b(1) ) || !"growth_distance(): NaN encountered");
     assert( is_number( w_b(2) ) || !"growth_distance(): NaN encountered");
-    
+
     V const p = w_a - w_b;
-    
+
     T tau = p*v/v2 - d_min/sqrt(v2);
-    
+
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
       // Compute the coordinate transformations corresponding to the current tau value
       V dv = v*tau;
       C T_B = C( dv + X_B.T(), X_B.Q() );
-      
+
       // Compute the closest points at the time tau
       {
         // 2015-12-11 Kenny code review: These controls are hard-wired... for
@@ -122,7 +122,7 @@ namespace convex
 
       // Compute separation vector
       V s = p_A - p_B;
-      
+
       // Test to see if separation is small enough
       T const d_squared = tiny::inner_prod(s,s);
       if( d_squared < d_min_sqrd )
@@ -136,12 +136,12 @@ namespace convex
 
         return true;
       }
-      
+
       // Separation were too big so we will step closer
       tau = tau + 0.9f*(s*v)/v2;//dampening the tau update value
-      
+
     }
-    
+
     // not enough iterations to determine what goes on! We give up
     return false;
   }

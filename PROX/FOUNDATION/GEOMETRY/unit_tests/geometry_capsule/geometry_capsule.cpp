@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(capsule_test)
 {
   {
     geometry::Capsule<V> const A;
-    
+
     BOOST_CHECK( geometry::is_valid(A) == true );
 
     BOOST_CHECK_CLOSE(A.point0()(0), 0.0, 0.01);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(capsule_test)
     V const & center = V::zero();
     V const & axis   = V::k();
     T const & height = VT::two();
-    T const & radius = VT::three();
+    const T radius = 3;
 
     geometry::Cylinder<V> const & C = geometry::make_cylinder(radius, height, axis, center);
     geometry::Capsule<V>  const & A = geometry::convert( C );

@@ -20,8 +20,8 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
   BOOST_CHECK_EQUAL( A(0,0)[0] , value_traits::zero()  );
   BOOST_CHECK_EQUAL( A(0,0)[1] , value_traits::one()   );
   BOOST_CHECK_EQUAL( A(0,0)[2] , value_traits::two()   );
-  BOOST_CHECK_EQUAL( A(0,0)[3] , value_traits::three() );
-  BOOST_CHECK_EQUAL( A(0,0)[4] , value_traits::four()  );
+  BOOST_CHECK_EQUAL( A(0,0)[3] , 3 );
+  BOOST_CHECK_EQUAL( A(0,0)[4] , 4  );
   BOOST_CHECK_EQUAL( A(0,0)[5] , value_traits::numeric_cast(5) );
   BOOST_CHECK_EQUAL( A(0,0)[6] , value_traits::numeric_cast(6) );
 
@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
   BOOST_CHECK_EQUAL( B(0,0)[0] , value_traits::numeric_cast(2.5));
   BOOST_CHECK_EQUAL( B(0,0)[1] , value_traits::one()            );
   BOOST_CHECK_EQUAL( B(0,0)[2] , value_traits::two()            );
-  BOOST_CHECK_EQUAL( B(0,0)[3] , value_traits::three()          );
-  BOOST_CHECK_EQUAL( B(0,0)[4] , value_traits::four()           );
+  BOOST_CHECK_EQUAL( B(0,0)[3] , 3          );
+  BOOST_CHECK_EQUAL( B(0,0)[4] , 4           );
   BOOST_CHECK_EQUAL( B(0,0)[5] , value_traits::numeric_cast(5) );
   BOOST_CHECK_EQUAL( B(0,0)[6] , value_traits::numeric_cast(6) );
   
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
   BOOST_CHECK_EQUAL( A(0,0)[1] , value_traits::one()   );
   BOOST_CHECK_EQUAL( A(0,0)[2] , value_traits::numeric_cast(-3)   );
   BOOST_CHECK_EQUAL( A(0,0)[3] , value_traits::two() );
-  BOOST_CHECK_EQUAL( A(0,0)[4] , value_traits::three()  );
+  BOOST_CHECK_EQUAL( A(0,0)[4] , 3  );
   BOOST_CHECK_EQUAL( A(0,0)[5] , value_traits::numeric_cast(-1) );
   BOOST_CHECK_EQUAL( A(0,0)[6] , value_traits::zero() );
 }

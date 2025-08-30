@@ -115,7 +115,7 @@ namespace prox
 
       T const coef4 = value_traits::one(); 
       T const coef3 = value_traits::two()*(c2+a2);
-      T const coef2 = c4 + a4 + value_traits::four()*a2*c2 - c2*z2 - a2*(x2 + y2);
+      T const coef2 = c4 + a4 + 4*a2*c2 - c2*z2 - a2*(x2 + y2);
       T const coef1 = value_traits::two()*(a4*c2 + c4*a2 - c2*a2*(x2+y2+z2));
       T const coef0 = a4*c4 - c2*a4*z2 - a2*c4*(x2+y2);
 
