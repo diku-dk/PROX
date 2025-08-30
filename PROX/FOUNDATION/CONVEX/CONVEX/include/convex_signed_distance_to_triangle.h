@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <tiny_math_types.h>
 
 namespace convex
 {
@@ -23,28 +24,24 @@ namespace convex
    *@return       The signed distance of p to the triangle given by vertices A, B, and C. The
    *              point q is used to specify the back side half-plane of the triange.
    */
-  template< typename V >
-  inline typename V::real_type signed_distance_to_triangle(
-                                                    V const & p
-                                                    , V const & A
-                                                    , V const & B
-                                                    , V const & C
-                                                    , V const & q
+  template< typename T>
+  inline T signed_distance_to_triangle(const EigenVector3<T> & p
+                                                    , const EigenVector3<T> & A
+                                                    , const EigenVector3<T> & B
+                                                    , const EigenVector3<T> & C
+                                                    , const EigenVector3<T> & q
                                                     )
   {
     using std::fabs;
 
-    typedef typename V::value_traits    VT;
-    typedef typename V::real_type       T;
+      EigenVector3<T> m = ( A-B).times (C-B );
 
-    V m = tiny::cross( A-B, C-B );
+    assert( dot( m, m ) > 0 || !"signed_distance_to_triangle(): Degenerate triangle encountered");
 
-    assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_triangle(): Degenerate triangle encountered");
+    EigenVector3<T>  n = ( m ).norm();
 
-    V n = tiny::unit( m );
-
-    T sign_p = tiny::inner_prod( n, p-B );
-    T sign_q = tiny::inner_prod( n, q-B );
+    T sign_p = ( n).dot( p-B );
+    T sign_q = ( n).dot( q-B );
     T abs_p  = fabs( sign_p );
 
     assert( sign_q < 0 || sign_q > 0 || !"signed_distance_to_triangle(): q was in plane, can  not be used to determine sign");
