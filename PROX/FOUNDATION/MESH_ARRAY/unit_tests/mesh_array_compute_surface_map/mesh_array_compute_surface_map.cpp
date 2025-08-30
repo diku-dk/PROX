@@ -2,9 +2,9 @@
 #include <tiny.h>
 
 #define BOOST_AUTO_TEST_MAIN
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_suite.hpp>
-#include <boost/test/floating_point_comparison.hpp>
+#include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
 #include <iostream>   // needed for debugging... This unit-test is not yet perfect (2015-12-11 Kenny)

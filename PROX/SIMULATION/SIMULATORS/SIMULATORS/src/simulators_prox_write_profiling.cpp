@@ -13,9 +13,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-#include <filesystem>
 #include <fstream>
-
 
 #include <string>
 #include <vector>
@@ -40,7 +38,7 @@ namespace simulators
 
             return false;
         }
-
+        return true;
     }
 
   bool ProxEngine::write_profiling(std::string const & filename)

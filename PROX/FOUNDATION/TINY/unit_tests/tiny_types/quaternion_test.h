@@ -6,7 +6,7 @@
 #include <tiny_quaternion_functions.h>
 
 #include <boost/test/test_tools.hpp>                 // for BOOST_CHECK
-#include <boost/test/floating_point_comparison.hpp>  // for BOOST_CHECK_CLOSE
+#include <boost/test/tools/floating_point_comparison.hpp>  // for BOOST_CHECK_CLOSE
 
 namespace quaternion_test
 {

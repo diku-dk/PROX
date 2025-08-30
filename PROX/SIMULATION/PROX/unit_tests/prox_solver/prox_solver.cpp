@@ -5,7 +5,7 @@
 #include <solvers/prox_gauss_seidel_solver.h>
 
 #define BOOST_AUTO_TEST_MAIN
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_suite.hpp>
 #include <boost/test/test_tools.hpp>
 

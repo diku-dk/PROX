@@ -166,10 +166,10 @@ namespace sparse
     };
 
   template <bool is_const, typename M>
-  __attribute__((always_inline)) size_t row(RowIterator<is_const, M> const& iter) { return iter.m_row; }
+  __attribute__((always_inline)) inline size_t row(RowIterator<is_const, M> const& iter) { return iter.m_row; }
 
   template <bool is_const, typename M>
-  __attribute__((always_inline)) size_t col(RowIterator<is_const, M> const& iter) { return col(iter.m_idx, *iter.m_src); }
+  __attribute__((always_inline)) inline size_t col(RowIterator<is_const, M> const& iter) { return col(iter.m_idx, *iter.m_src); }
 
 } // namespace sparse
 

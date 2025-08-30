@@ -5,6 +5,8 @@
 #include <iterator>             // Needed for STL iterator_traits
 #include <cassert>
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 namespace tiny
 {
   namespace detail
