@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-INCLUDE_DIRECTORIES( 
+INCLUDE_DIRECTORIES(
   ${OPENGL_INCLUDE_DIR}
   ${GLEW_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/GLM/glm_0_9_5_4/

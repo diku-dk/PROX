@@ -10,4 +10,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_TAGS_H
-#endif 
+#endif

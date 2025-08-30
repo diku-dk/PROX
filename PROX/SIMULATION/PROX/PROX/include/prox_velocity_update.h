@@ -5,15 +5,15 @@ namespace prox
 {
 
   template<typename math_policy>
-  inline void velocity_update( 
+  inline void velocity_update(
     typename math_policy::vector6_type const& u,
     typename math_policy::vector6_type const& Wdth,
     typename math_policy::vector6_type const& fc,
     typename math_policy::vector6_type & unew,
-    math_policy const & /*math_policy_tag*/ 
-    ) 
+    math_policy const & /*math_policy_tag*/
+    )
   {
-    if( &u != &unew ) 
+    if( &u != &unew )
     {
       unew.resize( u.size() );
     }
@@ -22,21 +22,21 @@ namespace prox
   }
 
   template<typename math_policy>
-  inline void velocity_update( 
+  inline void velocity_update(
     typename math_policy::vector6_type const& u,
     typename math_policy::vector6_type const& Wdth,
     typename math_policy::vector6_type & unew,
-    math_policy const & /*math_policy_tag*/ 
-    ) 
+    math_policy const & /*math_policy_tag*/
+    )
   {
-    if( &u != &unew ) 
+    if( &u != &unew )
     {
       unew.resize( u.size( ) );
     }
 
     math_policy::compute_sum( u, Wdth, unew );
   }
-  
+
 } // namespace prox
 
 // PROX_VELOCITY_UPDATE_H

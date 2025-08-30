@@ -23,7 +23,7 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
 		T      const stone_density	= get_material_density<MT>(mat_info, "Stone");
 		size_t const mid		      	= get_material_id<MT>(mat_info, "Stone");
 		
@@ -35,26 +35,26 @@ namespace procedural
 		T const c_pillar_ratio	= VT::numeric_cast( 0.80f );
 		T const t_conical_ratio	= VT::numeric_cast( 0.05f );
 		T const t_box_ratio		  = VT::numeric_cast( 0.03f );
-    
+
     // element heigths
 		T const b_box_height		  = pillar_height*b_box_ratio;
 		T const b_conical_height	= pillar_height*b_conical_ratio;
 		T const c_pillar_height   = pillar_height*c_pillar_ratio;
 		T const t_conical_height	= pillar_height*t_conical_ratio;
 		T const t_box_height		  = pillar_height*t_box_ratio;
-    
+
     T y = b_box_height*VT::half();
 		{
 			GeometryHandle<MT> bottom_box = create_geometry_handle_box<MT>(engine
                                                                      , pillar_width
                                                                      , b_box_height
                                                                      , pillar_depth);
-      
+
       V const local_translation = V::make( VT::zero(), y, VT::zero() );
-      
+
       V body_to_world_translation;
       Q body_to_world_orientation;
-      
+
       compute_body_to_world_transform<MT>(
                                             bottom_box.Tb2m()    // body to model
                                           , bottom_box.Qb2m()    // body to model
@@ -65,7 +65,7 @@ namespace procedural
                                           , body_to_world_translation
                                           , body_to_world_orientation
                                           );
-      
+
       create_rigid_body<MT>(  engine
                             , body_to_world_translation
                             , body_to_world_orientation
@@ -85,12 +85,12 @@ namespace procedural
                                                                                     , pillar_slices
                                                                                     , tetset
                                                                                     );
-      
+
       V const local_translation = V::make( VT::zero(), y, VT::zero() );
-      
+
       V body_to_world_translation;
       Q body_to_world_orientation;
-     
+
       compute_body_to_world_transform<MT>(
                                             pillar_segment.Tb2m()       // body 2 model
                                           , pillar_segment.Qb2m()       // body 2 model
@@ -101,7 +101,7 @@ namespace procedural
                                           , body_to_world_translation
                                           , body_to_world_orientation
                                           );
-      
+
       create_rigid_body<MT>(  engine
                             , body_to_world_translation
                             , body_to_world_orientation
@@ -109,11 +109,11 @@ namespace procedural
                             , mid
                             , stone_density
                             );
-      
+
 		}
-    
+
     y += b_conical_height;
-    
+
 		{
 			
 			T const pillar_segment_height = c_pillar_height / pillar_segments;
@@ -137,10 +137,10 @@ namespace procedural
                                                                                         );
 				
         V const local_translation = V::make( VT::zero(), y, VT::zero() );
-        
+
         V body_to_world_translation;
         Q body_to_world_orientation;
-        
+
         compute_body_to_world_transform<MT>(
                                               c_pillar_segment.Tb2m()  // body to model
                                             , c_pillar_segment.Qb2m()  // body to model
@@ -151,8 +151,8 @@ namespace procedural
                                             , body_to_world_translation
                                             , body_to_world_orientation
                                             );
-        
-        
+
+
 				create_rigid_body<MT>(  engine
                               , body_to_world_translation
                               , body_to_world_orientation
@@ -165,7 +165,7 @@ namespace procedural
         y += pillar_segment_height;
 			}
 		}
-    
+
 		y += t_conical_height;
     {
 			
@@ -177,12 +177,12 @@ namespace procedural
                                                                                     , pillar_slices
                                                                                     , tetset
                                                                                     );
-      
+
       V const local_translation = V::make( VT::zero(), y, VT::zero() );
-      
+
       V body_to_world_translation;
       Q body_to_world_orientation;
-      
+
       compute_body_to_world_transform<MT>(
                                             pillar_segment.Tb2m()      // body to model
                                           , pillar_segment.Qb2m()      // body to model
@@ -193,7 +193,7 @@ namespace procedural
                                           , body_to_world_translation
                                           , body_to_world_orientation
                                           );
-      
+
       create_rigid_body<MT>(  engine
                             , body_to_world_translation
                             , body_to_world_orientation
@@ -201,10 +201,10 @@ namespace procedural
                             , mid
                             , stone_density
                             );
-      
+
 
 		}
-    
+
     y += VT::half()*t_box_height;
 		{
 			GeometryHandle<MT> top_box = create_geometry_handle_box<MT>(
@@ -215,10 +215,10 @@ namespace procedural
                                                                      );
 			
       V const local_translation = V::make( VT::zero(), y, VT::zero() );
-      
+
       V body_to_world_translation;
       Q body_to_world_orientation;
-      
+
       compute_body_to_world_transform<MT>(
                                             top_box.Tb2m()              // body to model
                                           , top_box.Qb2m()              // body to model
@@ -229,7 +229,7 @@ namespace procedural
                                           , body_to_world_translation
                                           , body_to_world_orientation
                                           );
-      
+
       create_rigid_body<MT>(  engine
                             , body_to_world_translation
                             , body_to_world_orientation
@@ -237,13 +237,13 @@ namespace procedural
                             , mid
                             , stone_density
                             );
-      
+
 
 		}
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_greek_pillar<MTf>(
                               content::API *  engine

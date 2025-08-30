@@ -48,7 +48,7 @@ namespace mesh_array
   {
     VertexRing<T4Mesh>    ring(mesh);
     AdjacencyInfo<T4Mesh> adjacency_info(ring);
-    
+
     surface_map.bind(mesh);
 
     for ( size_t idx = 0u; idx < mesh.tetrahedron_size(); ++idx)
@@ -57,7 +57,7 @@ namespace mesh_array
       size_t const opposite_j  = adjacency_info.j(  idx ) ;
       size_t const opposite_k  = adjacency_info.k(  idx ) ;
       size_t const opposite_m  = adjacency_info.m(  idx ) ;
-      
+
       Tetrahedron const tetrahedron = mesh.tetrahedron( idx );
 
       if ( opposite_i == UNASSIGNED() )
@@ -76,6 +76,6 @@ namespace mesh_array
   }
 
 }// namespace mesh_array
-  
+
 // MESH_ARRAY_COMPUTE_SURFACE_MAP_H
 #endif

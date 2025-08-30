@@ -29,24 +29,24 @@ namespace convex
   {
     typedef typename V::real_type               T;
     typedef typename V::value_traits            VT;
-    
+
     int bit_A = 0;
     int bit_B = 0;
     int bit_C = 0;
     size_t idx_A = 0u;
     size_t idx_B = 0u;
     size_t idx_C = 0u;
-    
+
     get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B, idx_C, bit_C );
-    
+
     T scale = tiny::norm(S.m_v[idx_A]) > tiny::norm(S.m_v[idx_B]) ? tiny::norm(S.m_v[idx_A]) : tiny::norm(S.m_v[idx_B]);
     scale = scale > tiny::norm(S.m_v[idx_C]) ? scale : tiny::norm(S.m_v[idx_C]);
-    
+
     V const & A = S.m_v[idx_A]/scale;
     V const & B = S.m_v[idx_B]/scale;
     V const & C = S.m_v[idx_C]/scale;
     V const & p = p_in/scale;
-    
+
     bool const outside_AB  = outside_vertex_edge_voronoi_plane(p, A, B);
     bool const outside_AC  = outside_vertex_edge_voronoi_plane(p, A, C);
     bool const outside_BC  = outside_vertex_edge_voronoi_plane(p, B, C);
@@ -56,7 +56,7 @@ namespace convex
     bool const outside_ABC = outside_edge_face_voronoi_plane( p, A, B, C);
     bool const outside_BCA = outside_edge_face_voronoi_plane( p, B, C, A);
     bool const outside_CAB = outside_edge_face_voronoi_plane( p, C, A, B);
-    
+
     // Test if we are in a vertex voronoi region
     if( outside_AB && outside_AC )
     {
@@ -137,7 +137,7 @@ namespace convex
       geometry::barycentric( A, B, C, p, S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_C]);
       return;
     }
-    
+
   }
 
 } // namespace convex

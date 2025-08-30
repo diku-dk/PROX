@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(get_velocity_vector_test)
   BOOST_CHECK_EQUAL(u(0)(0), 5);
   BOOST_CHECK_EQUAL(u(0)(1), 7);
   BOOST_CHECK_EQUAL(u(0)(2), 0);
-  
+
   BOOST_CHECK_EQUAL(u(1)(0), 0);
   BOOST_CHECK_EQUAL(u(1)(1), 1);
   BOOST_CHECK_EQUAL(u(1)(2), 0);
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(get_velocity_vector_test)
   BOOST_CHECK_EQUAL(u(3)(1), 5);
   BOOST_CHECK_EQUAL(u(3)(2), 0);
 
-  
+
   bodies[2].set_velocity( vector3_type::make( 8.0,3.0,0.5) );
 
   prox::get_velocity_vector(bodies.begin(),bodies.end(),u, math_policy());
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(get_velocity_vector_test)
   BOOST_CHECK_EQUAL(u(0)(0), 5);
   BOOST_CHECK_EQUAL(u(0)(1), 7);
   BOOST_CHECK_EQUAL(u(0)(2), 0);
-  
+
   BOOST_CHECK_EQUAL(u(1)(0), 0);
   BOOST_CHECK_EQUAL(u(1)(1), 1);
   BOOST_CHECK_EQUAL(u(1)(2), 0);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(set_velocity_vector_test)
   BOOST_CHECK_EQUAL(bodies[0].get_velocity()(0), 0);
   BOOST_CHECK_EQUAL(bodies[0].get_velocity()(1), 1);
   BOOST_CHECK_EQUAL(bodies[0].get_velocity()(2), 2);
-  
+
   BOOST_CHECK_EQUAL(bodies[1].get_velocity()(0), 0);
   BOOST_CHECK_EQUAL(bodies[1].get_velocity()(1), 1);
   BOOST_CHECK_EQUAL(bodies[1].get_velocity()(2), 2);
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(set_velocity_vector_test)
   BOOST_CHECK_EQUAL(bodies[0].get_velocity()(0), 0);
   BOOST_CHECK_EQUAL(bodies[0].get_velocity()(1), 1);
   BOOST_CHECK_EQUAL(bodies[0].get_velocity()(2), 2);
-  
+
   BOOST_CHECK_EQUAL(bodies[1].get_velocity()(0), 0);
   BOOST_CHECK_EQUAL(bodies[1].get_velocity()(1), 1);
   BOOST_CHECK_EQUAL(bodies[1].get_velocity()(2), 2);

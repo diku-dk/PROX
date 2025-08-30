@@ -324,9 +324,9 @@ namespace hyper
 
       f[i] = MT::convert(sum );
     }
-    
+
   }
-  
+
 }// namespace hyper
 
 // HYPER_COMPUTE_ELASTIC_FORCES_H

@@ -204,4 +204,4 @@ namespace prox
 } // namespace prox
 
 // PROX_UPDATE_INERTIA_TENSOR_H
-#endif 
+#endif

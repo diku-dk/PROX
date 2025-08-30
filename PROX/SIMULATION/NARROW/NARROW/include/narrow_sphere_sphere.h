@@ -7,7 +7,7 @@
 
 namespace narrow
 {
-  
+
   namespace detail
   {
 
@@ -26,7 +26,7 @@ namespace narrow
      * @param results  Upon return any new proximity information will have been added to this container.
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
-    
+
     template<typename M>
     inline void sphere_sphere(
                               typename Geometry<M>::sphere_container const & A
@@ -40,21 +40,21 @@ namespace narrow
                               )
     {
       using std::min;
-      
+
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
       typedef typename M::vector3_type    V;
 
       typedef typename Geometry<M>::sphere_container::const_iterator sphere_iterator;
-      
+
       assert( envelope > VT::zero() || !"sphere_sphere(): collision envelope must be positive");
-      
+
       if( A.empty() || B.empty())
         return;
-      
+
       C bodyAtoWCS = C(tA, qA);
       C bodyBtoWCS = C(tB, qB);
-      
+
       for( sphere_iterator a = A.begin(); a!=A.end(); ++a )
       {
         for( sphere_iterator b = B.begin(); b!=B.end(); ++b )
@@ -63,10 +63,10 @@ namespace narrow
           C shapeBtobodyB = C(b->transform().T(), b->transform().Q());
           C shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
           C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
-          
+
           geometry::Sphere<V> const A = geometry::make_sphere( shapeAtoWCS.T(), a->radius());
           geometry::Sphere<V> const B = geometry::make_sphere( shapeBtoWCS.T(), b->radius());
-          
+
           geometry::contacts_sphere_sphere(
                                            A
                                            , B
@@ -76,7 +76,7 @@ namespace narrow
         }
       }
     }
-    
+
 
   } // namespace detail
 

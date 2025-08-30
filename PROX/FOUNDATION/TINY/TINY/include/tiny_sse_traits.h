@@ -436,4 +436,4 @@ namespace tiny
 } // namespace tiny
 
 // TINY_SSE_TRAITS_H
-#endif 
+#endif

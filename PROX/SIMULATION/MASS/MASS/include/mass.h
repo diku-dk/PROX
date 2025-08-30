@@ -6,7 +6,7 @@
 
 namespace mass
 {
-  
+
   /**
    * A Wrapper class for values of mass properties.
    * This is a convenience class that makes it easier to pass parameters to
@@ -22,24 +22,24 @@ namespace mass
   class Properties
   {
   public:
-    
-    T m_m;     ///< Total mass 
+
+    T m_m;     ///< Total mass
     T m_Ixx;   ///< The xx moment of inertia
     T m_Iyy;   ///< The yy moment of inertia
     T m_Izz;   ///< The zz moment of inertia
     T m_Ixy;   ///< The xy product of inertia
     T m_Ixz;   ///< The xz product of inertia
     T m_Iyz;   ///< The yz product of inertia
-    T m_x;     ///< The x coordinate of the center of mass position 
+    T m_x;     ///< The x coordinate of the center of mass position
     T m_y;     ///< The y coordinate of the center of mass position
     T m_z;     ///< The z coordinate of the center of mass position
     T m_Qs;    ///< The scalar part of the unit quaternion corresponding to rotation from body frame to model frame.
     T m_Qx;    ///< The i imaginary part of the unit quaternion corresponding to rotation from body frame to model frame.
     T m_Qy;    ///< The j imaginary part of the unit quaternion corresponding to rotation from body frame to model frame.
     T m_Qz;    ///< The k imaginary part of the unit quaternion corresponding to rotation from body frame to model frame.
-    
+
   public:
-    
+
     Properties();
     virtual ~Properties();
 
@@ -49,7 +49,7 @@ namespace mass
     bool operator==( Properties const & lhs ) const ;
 
   public:
-    
+
     /**
      * This method tests if the properties represent mass properties in a body
      * space. This implies a diagonal intertia tensor and that the center of mass
@@ -60,11 +60,11 @@ namespace mass
      */
     bool is_body_space() const;
     bool is_model_space() const;
-    
+
     void clear();
-        
+
   };
-  
+
   /**
    * Output stream operator.
    */
@@ -72,7 +72,7 @@ namespace mass
   std::ostream & operator<< (std::ostream & o, Properties<T> const & P);
 
   /**
-   * Various known materials. 
+   * Various known materials.
    */
   typedef enum
     {
@@ -105,21 +105,21 @@ namespace mass
       , WATER
       , SEAWATER
     } material_type;
-  
+
   /**
-   * Get SI units for the material densities known by this library.  
+   * Get SI units for the material densities known by this library.
    */
   inline std::string get_SI_units() {return "kg/m^3";}
-  
+
   /**
    * Retrive the density value of a specified known material.
    *
-   * @param material      A material constant specifying the material. 
+   * @param material      A material constant specifying the material.
    * @return              The density value.
    */
   template<typename T>
   inline T get_density( material_type const & material );
-  
+
   template<>
   inline double get_density<double>( material_type const & material )
   {
@@ -156,7 +156,7 @@ namespace mass
     };
     return   0.0;
   }
-  
+
   /**
    * Compute body frame of box shape.
    *
@@ -172,7 +172,7 @@ namespace mass
                    , T const & half_height
                    , T const & half_depth
                    );
-  
+
   /**
    * Compute body frame of capsule shape.
    *
@@ -186,7 +186,7 @@ namespace mass
                        , T const & radius
                        , T const & half_height
                        );
-    
+
   /**
    * Compute model frame of cone.
    *
@@ -200,7 +200,7 @@ namespace mass
                     , T const & base_radius
                     , T const & height
                     );
-  
+
   /**
    * Compute body frame of cylinder shape.
    * The cylinder is assumed to have its center of mass at
@@ -216,7 +216,7 @@ namespace mass
                         , T const & radius
                         , T const & half_height
                         );
-  
+
  /**
    * Compute model frame of conical solid.
    * The conical is assumed to have its center at the base. The conical axis is along the y-axis.
@@ -234,12 +234,12 @@ namespace mass
                         , T const & top_radius
                         , T const & height
                         );
-  
+
   /**
    * Compute body frame of ellipsoid.
    * The ellipsoid is defined as
    *
-   *   1 = x^2/a^2 + y^2/b^2  + z^2/c^2  
+   *   1 = x^2/a^2 + y^2/b^2  + z^2/c^2
    *
    * where a,b,c are the lengths of the semiaxes of the ellipsoid. Put differently if
    * the ellipsoid is obtained by scaling a unit-sphere then the scaling along
@@ -248,7 +248,7 @@ namespace mass
    * @param density       The density value for the shape.
    * @param a             The scaling/length of the first major axis (x-axis) of  the ellipsoid.
    * @param b             The scaling/length of the second major axis (y-axis) of  the ellipsoid.
-   * @param c             The scaling/length of the third major axis (z-axis) of  the ellipsoid.   
+   * @param c             The scaling/length of the third major axis (z-axis) of  the ellipsoid.
    */
   template<typename T>
   Properties<T> compute_ellipsoid(
@@ -257,7 +257,7 @@ namespace mass
                          , T const & b
                          , T const & c
                          );
-    
+
   /**
    * Face Callback Interace.
    * This callback Interface used to retrieve vertex coordinate information about a specified face.
@@ -270,18 +270,18 @@ namespace mass
   class FaceCallbackInterface
     {
     public:
-      
+
       virtual ~FaceCallbackInterface(){}
-      
+
     public:
-      
+
       /**
        * Retrieves the total number of vertices of the specified face.
        *
        * @return The number of vertices of the face.
        */
       virtual size_t get_number_of_vertices(size_t const & face_no) const = 0;
-      
+
       /**
        * Retrieves a pointer to the x-coordinates of the face. The pointer is expected
        * to point to an array (callee is responsible for this storage) holding at
@@ -291,14 +291,14 @@ namespace mass
        *
        * @param face_no    The face number.
        * @param coords     A pointer to an array of coordinates holding the requested
-       *                   information. 
+       *                   information.
        */
       virtual void get_x_coords(size_t const & face_no, T * coords) const = 0;
       virtual void get_y_coords(size_t const & face_no, T * coords) const = 0;
       virtual void get_z_coords(size_t const & face_no, T * coords) const = 0;
-      
+
     };
-  
+
   /**
    * Compute the model frame of arbitary closed mesh.
    *
@@ -314,7 +314,7 @@ namespace mass
                      , size_t const K
                      , FaceCallbackInterface<T> const * callback
                      );
-    
+
   /**
    * Rotate Inertia Tensor.
    * This overloaded function also rotates the inertia tensor, but rather than
@@ -326,9 +326,9 @@ namespace mass
                       , T const & qx
                       , T const & qy
                       , T const & qz
-                      , Properties<T> const & I         
+                      , Properties<T> const & I
                       );
-  
+
   /**
    * Find orientation of body frame.
    * Finds the orientation of body frame such that I = Q J Q^T where J is
@@ -338,8 +338,8 @@ namespace mass
    */
   template<typename T>
   Properties<T> rotate_to_body_frame( Properties<T> const & Imodel );
-  
-  
+
+
   /**
    * Compute body frame of sphere.
    *
@@ -348,7 +348,7 @@ namespace mass
    */
   template<typename T>
   Properties<T> compute_sphere(T const & density, T const & radius);
-  
+
   /**
    * Compute model frame inertia tensor of a tetrahedron.
    *
@@ -374,7 +374,7 @@ namespace mass
                            , T const & x3, T const & y3, T const & z3
                            , T const & x4, T const & y4, T const & z4
                            );
-    
+
   /**
    * Translate inertia tensor from body frame.
    *
@@ -389,13 +389,13 @@ namespace mass
                          , T const & dz
                          , Properties<T> const & Ibody
                          );
-  
+
   /**
    * Translate inertia tensor to body frame center.
    */
   template<typename T>
   Properties<T>  translate_to_body_frame( Properties<T> const & Imodel );
-    
+
 } // namespace mass
 
 //MASS_H

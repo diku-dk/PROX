@@ -14,12 +14,12 @@ namespace big
     typedef boost::numeric::ublas::vector<T> vector_type;
     typedef typename vector_type::size_type  size_type;
     typedef typename vector_type::value_type real_type;
-    
+
     assert(A.size1()>0            || !"prod_add(): A was empty"            );
     assert(A.size2()>0            || !"prod_add(): A was empty"            );
     assert(A.size2() ==  x.size() || !"prod_add(): incompatible dimensions");
     assert(A.size1() ==  y.size() || !"prod_add(): incompatible dimensions");
-    
+
     size_type const row_end = A.filled1 () - 1;
     for (size_type i = 0u; i < row_end; ++ i)
     {
@@ -31,22 +31,22 @@ namespace big
       y(i) += t;
     }
   }
-  
+
   template
   void prod_add<float>(
                        boost::numeric::ublas::compressed_matrix<float> const & A
                        , boost::numeric::ublas::vector<float> const & x
                        , boost::numeric::ublas::vector<float>       & y
                        );
-  
+
   template
   void prod_add<double>(
                         boost::numeric::ublas::compressed_matrix<double> const & A
                         , boost::numeric::ublas::vector<double> const & x
                         , boost::numeric::ublas::vector<double>       & y
                         );
-  
-  
+
+
   template<typename T>
   void prod_add(
                 boost::numeric::ublas::compressed_matrix<T> const & A
@@ -58,12 +58,12 @@ namespace big
     typedef boost::numeric::ublas::vector<T> vector_type;
     typedef typename vector_type::size_type  size_type;
     typedef typename vector_type::value_type real_type;
-    
+
     assert(A.size1()>0            || !"prod_add(): A was empty"            );
     assert(A.size2()>0            || !"prod_add(): A was empty"            );
     assert(A.size2() ==  x.size() || !"prod_add(): incompatible dimensions");
     assert(A.size1() ==  y.size() || !"prod_add(): incompatible dimensions");
-    
+
     size_type const row_end = A.filled1 () - 1;
     for (size_type i = 0u; i < row_end; ++ i)
     {
@@ -75,7 +75,7 @@ namespace big
       y(i) += t*s;
     }
   }
-  
+
   template
   void prod_add<float>(
                        boost::numeric::ublas::compressed_matrix<float> const & A
@@ -83,7 +83,7 @@ namespace big
                        , float const & s
                        , boost::numeric::ublas::vector<float>       & y
                        );
-  
+
   template
   void prod_add<double>(
                         boost::numeric::ublas::compressed_matrix<double> const & A
@@ -91,5 +91,5 @@ namespace big
                         , double const & s
                         , boost::numeric::ublas::vector<double> & y
                         );
-  
+
 } // end namespace big

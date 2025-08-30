@@ -194,4 +194,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_MODIFIERS_H
-#endif 
+#endif

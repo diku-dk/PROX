@@ -7,7 +7,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   inline void compute_extents(
                        T3Mesh const & mesh
@@ -61,4 +61,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_COMPUTE_CENTER_H
-#endif 
+#endif

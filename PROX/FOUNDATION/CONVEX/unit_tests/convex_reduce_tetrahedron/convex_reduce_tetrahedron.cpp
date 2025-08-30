@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[0] == a);
     BOOST_CHECK(S.m_a[0] == a);
     BOOST_CHECK(S.m_b[0] == a);
-    
+
     BOOST_CHECK(S.m_v[1] == b);
     BOOST_CHECK(S.m_a[1] == b);
     BOOST_CHECK(S.m_b[1] == b);
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
 
     int bit_B    = 0;
     size_t idx_B = 0;
-    
+
     int bit_C    = 0;
     size_t idx_C = 0;
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B , idx_C, bit_C );
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -423,7 +423,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == c);
     BOOST_CHECK(S.m_a[idx_A] == c);
     BOOST_CHECK(S.m_b[idx_A] == c);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -509,7 +509,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == c);
     BOOST_CHECK(S.m_a[idx_A] == c);
     BOOST_CHECK(S.m_b[idx_A] == c);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -536,7 +536,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
     BOOST_CHECK(S.m_v[idx_A] == d);
     BOOST_CHECK(S.m_a[idx_A] == d);
     BOOST_CHECK(S.m_b[idx_A] == d);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -576,7 +576,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[0] == a);
     BOOST_CHECK(S.m_a[0] == a);
     BOOST_CHECK(S.m_b[0] == a);
-    
+
     BOOST_CHECK(S.m_v[1] == b);
     BOOST_CHECK(S.m_a[1] == b);
     BOOST_CHECK(S.m_b[1] == b);
@@ -622,7 +622,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -706,7 +706,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
 
     int bit_B    = 0;
     size_t idx_B = 0;
-    
+
     int bit_C    = 0;
     size_t idx_C = 0;
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B , idx_C, bit_C );
@@ -715,7 +715,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -757,7 +757,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -796,7 +796,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -830,7 +830,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -864,7 +864,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -898,7 +898,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -932,7 +932,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -966,7 +966,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == c);
     BOOST_CHECK(S.m_a[idx_A] == c);
     BOOST_CHECK(S.m_b[idx_A] == c);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -998,7 +998,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -1025,7 +1025,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -1052,7 +1052,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == c);
     BOOST_CHECK(S.m_a[idx_A] == c);
     BOOST_CHECK(S.m_b[idx_A] == c);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -1079,7 +1079,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
     BOOST_CHECK(S.m_v[idx_A] == d);
     BOOST_CHECK(S.m_a[idx_A] == d);
     BOOST_CHECK(S.m_b[idx_A] == d);
-    
+
     BOOST_CHECK_CLOSE(S.m_w[idx_A], 1.0, 0.01);
   }
 
@@ -1118,7 +1118,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[0] == a);
     BOOST_CHECK(S.m_a[0] == a);
     BOOST_CHECK(S.m_b[0] == a);
-    
+
     BOOST_CHECK(S.m_v[1] == b);
     BOOST_CHECK(S.m_a[1] == b);
     BOOST_CHECK(S.m_b[1] == b);
@@ -1164,7 +1164,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -1205,7 +1205,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -1239,7 +1239,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
 
     int bit_B    = 0;
     size_t idx_B = 0;
-    
+
     int bit_C    = 0;
     size_t idx_C = 0;
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B , idx_C, bit_C );
@@ -1248,7 +1248,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -1289,7 +1289,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -1328,7 +1328,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == b);
     BOOST_CHECK(S.m_a[idx_B] == b);
     BOOST_CHECK(S.m_b[idx_B] == b);
@@ -1362,7 +1362,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -1396,7 +1396,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -1430,7 +1430,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == c);
     BOOST_CHECK(S.m_a[idx_B] == c);
     BOOST_CHECK(S.m_b[idx_B] == c);
@@ -1464,7 +1464,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == b);
     BOOST_CHECK(S.m_a[idx_A] == b);
     BOOST_CHECK(S.m_b[idx_A] == b);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);
@@ -1498,7 +1498,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
     BOOST_CHECK(S.m_v[idx_A] == c);
     BOOST_CHECK(S.m_a[idx_A] == c);
     BOOST_CHECK(S.m_b[idx_A] == c);
-    
+
     BOOST_CHECK(S.m_v[idx_B] == d);
     BOOST_CHECK(S.m_a[idx_B] == d);
     BOOST_CHECK(S.m_b[idx_B] == d);

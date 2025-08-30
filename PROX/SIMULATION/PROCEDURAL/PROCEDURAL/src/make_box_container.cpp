@@ -65,7 +65,7 @@ namespace procedural
                           ) + position;
 
       Q const Qw = orientation;
-    
+
       create_rigid_body<MT>(  engine
                             , Pw
                             , Qw
@@ -153,9 +153,9 @@ namespace procedural
                             );
     }
 	}
-  
+
 	typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_box_container<MTf>(  content::API *  engine
                         , MTf::vector3_type const & position
@@ -166,5 +166,5 @@ namespace procedural
                         , MTf::real_type const & wall_thickness
                         , MaterialInfo<MTf::real_type> mat_info
                         );
-  
+
 } //namespace procedural

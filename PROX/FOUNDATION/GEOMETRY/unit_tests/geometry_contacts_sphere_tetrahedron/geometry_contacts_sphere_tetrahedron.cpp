@@ -524,7 +524,7 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal(2), -0.707106769, 0.01);
 
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.292893231, 0.01);
-    
+
   }
   {
     V const center = V::make(-0.5, 0.5, -0.5);
@@ -738,11 +738,11 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
 
     geometry::Sphere<V>      const sphere      = geometry::make_sphere(center, radius);
     geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2 ,p3);
-    
+
     MyCallback callback;
-    
+
     bool const test = geometry::contacts_sphere_tetrahedron(sphere, tetrahedron, callback, false);
-    
+
     BOOST_CHECK(test);
 
     BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);

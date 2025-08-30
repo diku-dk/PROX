@@ -21,7 +21,7 @@ namespace simulators
     assert( m_data || !"ProxEngine::get_contact_position(): Internal error, data null pointer");
 
     assert( contact_number < m_data->m_contacts.size() || !"ProxEngine::get_contact_position(): internal error: contact index out of bounds");
-    
+
     x = m_data->m_contacts[contact_number].get_position()(0);
     y = m_data->m_contacts[contact_number].get_position()(1);
     z = m_data->m_contacts[contact_number].get_position()(2);
@@ -40,7 +40,7 @@ namespace simulators
     y = m_data->m_contacts[contact_number].get_normal()(1);
     z = m_data->m_contacts[contact_number].get_normal()(2);
   }
-  
+
   void ProxEngine::get_contact_depth( size_t const & contact_number
                                      , float & depth
                                      )

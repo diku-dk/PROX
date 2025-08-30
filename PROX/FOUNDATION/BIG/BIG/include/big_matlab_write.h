@@ -8,7 +8,7 @@
 
 namespace big
 {
-  
+
   /**
    * Vector Stream Output Operator.
    *
@@ -23,10 +23,10 @@ namespace big
                                                  , ublas::vector_expression<VE> const & v)
   {
     typedef typename VE::size_type size_type;
-    
+
     size_type size = v ().size ();
     std::basic_ostringstream<E, T, std::allocator<E> > s;
-    
+
     s.flags (os.flags ());
     s.imbue (os.getloc ());
     s.precision (os.precision ());
@@ -38,7 +38,7 @@ namespace big
     s << ']';
     return os << s.str ().c_str ();
   }
-    
+
     /**
      * Compressed Matrix Stream Output Operator.
      *
@@ -63,12 +63,12 @@ namespace big
         for(unsigned int j=0;j<A.size2();++j)
           if(A(i,j))
             ++nzeros;
-      
+
       //--- allocate space...
       ublas::vector<unsigned int> idx1(nzeros);
       ublas::vector<unsigned int> idx2(nzeros);
       ublas::vector<T> value(nzeros);
-      
+
       for(unsigned int i=0;i<A.size1();++i)
         for(unsigned int j=0;j<A.size2();++j)
           if(A(i,j))
@@ -82,7 +82,7 @@ namespace big
       os << "sparse(" << idx1 << "," << idx2 << "," << value << "," << m << "," << n << ")";
       return os;
     }
-    
+
     /**
      * General Matrix Stream Output Operator.
      *
@@ -124,11 +124,11 @@ namespace big
       s << ']';
       return os << s.str ().c_str ();
     }
-    
+
 } // end of namespace big
-    
+
 // BIG_MATLAB_WRITE_H
 #endif
-    
-    
-    
+
+
+

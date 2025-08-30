@@ -142,7 +142,7 @@ namespace geometry
 
     return true;
   }
-  
+
 }// namespace geometry
 
 // GEOMETRY_OVERLAP_TRIANGLE_TRIANGLE_H

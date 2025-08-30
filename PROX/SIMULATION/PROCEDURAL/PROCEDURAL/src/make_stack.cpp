@@ -19,28 +19,28 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;
     typedef typename MT::value_traits    VT;
-    
+
 		T const stone_density = get_material_density<MT>(mat_info, "Stone");
 		size_t const mid      = get_material_id<MT>(mat_info, "Stone");
-    
+
 		GeometryHandle<MT> stone_handle = create_geometry_handle_box<MT>( engine, stone_dim, stone_dim, stone_dim );
-    
+
 		for( size_t i = 0u; i < layers;++i )
 		{
       T y = ( i+VT::half() )*stone_dim;
-      
+
       V const T_b2m = stone_handle.Tb2m();
       Q const Q_b2m = stone_handle.Qb2m();
-      
+
       V const T_m2l = V::make( VT::zero(), y, VT::zero() );
       Q const Q_m2l = Q::identity();
-      
+
       V const T_l2w = position;
       Q const Q_l2w = orientation;
 
       V T_b2w;
       Q Q_b2w;
-      
+
       compute_body_to_world_transform<MT>(
                                           T_b2m
                                           , Q_b2m
@@ -59,13 +59,13 @@ namespace procedural
                             , mid
                             , stone_density
                             );
-      
+
     }
 		
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_stack<MTf>(
                        content::API * engine
@@ -75,6 +75,6 @@ namespace procedural
                        , size_t const & layers
                        , MaterialInfo<MTf::real_type> mat_info
                        );
-  
+
 	
 } //namespace procedural

@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(random_test)
     {
       BOOST_CHECK( 0.0 <= distance );
       BOOST_CHECK( distance <= absolute_tolerance );
-      
+
       BOOST_CHECK( status != convex::STAGNATION );                     // Can only occur in case of positive distance
       BOOST_CHECK( status != convex::LOWER_ERROR_BOUND_CONVERGENCE );  // Can only occur in case of positive distance
       BOOST_CHECK( status != convex::RELATIVE_CONVERGENCE );           // Can only occur in case of positive distance
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(random_test)
       //BOOST_CHECK( status != convex::ABSOLUTE_CONVERGENCE );         // Indicates penetration
       //BOOST_CHECK( status != convex::INTERSECTION );                 // Indicates penetration
     }
-    
+
   }
 }
 

@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_SUITE(SPARSE);
 
 BOOST_AUTO_TEST_CASE(block_test)
 {
-  
+
   typedef sparse::Block<4,6,float> block_type;
   typedef sparse::Block<4,1,float> block_vector_type;
   typedef sparse::Block<3,1,float> block_vector3_type;
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( std::distance(b.begin(), b.end()) == block_type::size());
   // is data initialised to float(0)
   BOOST_CHECK(std::find_if(b.begin(), b.end(), is_not_zero) == b.end());
-  
+
   b(0,0) = 0.5f;
   b(1,0) = 1.5f;
   block_type b_copy(b);
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( b_copy(1,1) == 3.5f);
   BOOST_CHECK( b_copy(3,5) == 4.5f);
   BOOST_CHECK( b != b_copy);
-  
+
   b = b_copy;
 	
   BOOST_CHECK(b == b_copy);
@@ -203,13 +203,13 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( crossres(0) == 1.0f);
   BOOST_CHECK( crossres(1) == 0.0f);
   BOOST_CHECK( crossres(2) == 0.0f);
-  
+
   //length
   BOOST_CHECK( length(v3) == 1.0f);
   BOOST_CHECK( length(v4) == 1.0f);
   v3 = block_vector3_type(1.0f);
   BOOST_CHECK( length(v3) == std::sqrt(3.0f));
-  v3[0] = 3; v3[1] = 4; v3[2] = 0; 
+  v3[0] = 3; v3[1] = 4; v3[2] = 0;
   BOOST_CHECK( length(v3) == 5.0f);
 
   //unit
@@ -218,12 +218,12 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( length(v3) == 1.0f);
   BOOST_CHECK( length(v4) == 1.0f);
 
-  v3[0] = 3.5; v3[1] = 4.2; v3[2] = 2.4; 
+  v3[0] = 3.5; v3[1] = 4.2; v3[2] = 2.4;
   unit(v3);
   BOOST_CHECK( length(v3) == 1.0f);
   BOOST_CHECK( length(v4) == 1.0f);
 
-  v3[0] = 10; v3[1] = 0; v3[2] = 0; 
+  v3[0] = 10; v3[1] = 0; v3[2] = 0;
   unit(v3,v4);
   unit(v3);
   BOOST_CHECK( v3(0) == 1.0f);
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( v4(1) == 0.0f);
   BOOST_CHECK( v4(2) == 0.0f);
 
-  v3[0] = 5; v3[1] = 5; v3[2] = 5; 
+  v3[0] = 5; v3[1] = 5; v3[2] = 5;
   unit(v3,v4);
   unit(v3);
   BOOST_CHECK( v3(0) == std::sqrt(3.0f)/3.0f);
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( v4(1) == std::sqrt(3.0f)/3.0f);
   BOOST_CHECK( v4(2) == std::sqrt(3.0f)/3.0f);
 
-  v3[0] = 9; v3[1] = 9; v3[2] = 0; 
+  v3[0] = 9; v3[1] = 9; v3[2] = 0;
   unit(v3,v4);
   unit(v3);
   BOOST_CHECK( v3(0) == std::sqrt(2.0f)/2.0f);
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( v4(2) == 0.0f);
 
 
-  //transpose 
+  //transpose
   block_matrix3x3_type B;
   A (0,0) = 0;    A (0,1) = 1;    A (0,2) = 2;
   A (1,0) = 10;   A (1,1) = 11;   A (1,2) = 12;
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(block_test)
   BOOST_CHECK( B(0,0) == 0.5f); BOOST_CHECK( B(0,1) == 1.0f); BOOST_CHECK( B(0,2) == 1.5f);
   BOOST_CHECK( B(1,0) == 2.0f); BOOST_CHECK( B(1,1) == 2.5f); BOOST_CHECK( B(1,2) == 3.0f);
   BOOST_CHECK( B(2,0) == 3.5f); BOOST_CHECK( B(2,1) == 4.0f); BOOST_CHECK( B(2,2) == 4.5f);
-  
+
   //inverse for 3x3 blocks and prod(A,B)
   A = I;
   B = A;
@@ -303,13 +303,13 @@ BOOST_AUTO_TEST_CASE(block_test)
   B = A;
   inverse(A);
   prod(A,B);
-  BOOST_CHECK_SMALL( B(0,0) - I(0,0), tol); 
-  BOOST_CHECK_SMALL( B(0,1) - I(0,1), tol); 
+  BOOST_CHECK_SMALL( B(0,0) - I(0,0), tol);
+  BOOST_CHECK_SMALL( B(0,1) - I(0,1), tol);
   BOOST_CHECK_SMALL( B(0,2) - I(0,2), tol);
-  BOOST_CHECK_SMALL( B(1,0) - I(1,0), tol); 
-  BOOST_CHECK_SMALL( B(1,1) - I(1,1), tol); 
+  BOOST_CHECK_SMALL( B(1,0) - I(1,0), tol);
+  BOOST_CHECK_SMALL( B(1,1) - I(1,1), tol);
   BOOST_CHECK_SMALL( B(1,2) - I(1,2), tol);
-  BOOST_CHECK_SMALL( B(2,0) - I(2,0), tol); 
+  BOOST_CHECK_SMALL( B(2,0) - I(2,0), tol);
   BOOST_CHECK_SMALL( B(2,1) - I(2,1), tol);
   BOOST_CHECK_SMALL( B(2,2) - I(2,2), tol);
 
@@ -320,26 +320,26 @@ BOOST_AUTO_TEST_CASE(block_test)
   B = A;
   inverse(A);
   prod(A,B);
-  BOOST_CHECK_SMALL( B(0,0) - I(0,0), tol); 
-  BOOST_CHECK_SMALL( B(0,1) - I(0,1), tol); 
+  BOOST_CHECK_SMALL( B(0,0) - I(0,0), tol);
+  BOOST_CHECK_SMALL( B(0,1) - I(0,1), tol);
   BOOST_CHECK_SMALL( B(0,2) - I(0,2), tol);
-  BOOST_CHECK_SMALL( B(1,0) - I(1,0), tol); 
-  BOOST_CHECK_SMALL( B(1,1) - I(1,1), tol); 
+  BOOST_CHECK_SMALL( B(1,0) - I(1,0), tol);
+  BOOST_CHECK_SMALL( B(1,1) - I(1,1), tol);
   BOOST_CHECK_SMALL( B(1,2) - I(1,2), tol);
-  BOOST_CHECK_SMALL( B(2,0) - I(2,0), tol); 
+  BOOST_CHECK_SMALL( B(2,0) - I(2,0), tol);
   BOOST_CHECK_SMALL( B(2,1) - I(2,1), tol);
   BOOST_CHECK_SMALL( B(2,2) - I(2,2), tol);
 
-  
+
   v1.clear_data();
   block_vector_type zero_vector(0);
   BOOST_CHECK( v1 == zero_vector );
 }
 
 BOOST_AUTO_TEST_CASE(scalar_block_test)
-{  
+{
   typedef sparse::Block<1,1,float> block_type;
-  
+
   block_type b(0); // zero-init
   BOOST_CHECK(   block_type::nrows() == 1);
   BOOST_CHECK( block_type::ncols() == 1);
@@ -349,30 +349,30 @@ BOOST_AUTO_TEST_CASE(scalar_block_test)
   // is data initialised to float(0)
   BOOST_CHECK(b[0] == float(0));
   b(0,0) = 0.5f;
-  
+
   BOOST_CHECK(b(0,0) == 0.5f);
-  
+
   block_type b_copy(b);
-  
+
   BOOST_CHECK(b == b_copy);
-  
+
   b_copy(0,0) = 2.5f;
-  
+
   BOOST_CHECK(b_copy(0,0) == 2.5f);
   BOOST_CHECK(b != b_copy);
-  
+
   // can be used as scalar
   float f = b; // rhs
   BOOST_CHECK( f == b(0,0));
   BOOST_CHECK( f == b[0]);
   BOOST_CHECK( f == b);
-  
+
   b = 42.0f; // lhs
   BOOST_CHECK(b == 42.0f);
-  
+
   f = b * 2;
   BOOST_CHECK(f == 84.0f);
-  
+
   f = b / 2.0f;
   BOOST_CHECK(f == 21.0f);
 
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(scalar_block_test)
   BOOST_CHECK( b == 84.0f );
   sub(b_copy, b);
   BOOST_CHECK( b == 81.5f );
-  
+
   b.clear_data();
   BOOST_CHECK( b == 0.0f );
 }

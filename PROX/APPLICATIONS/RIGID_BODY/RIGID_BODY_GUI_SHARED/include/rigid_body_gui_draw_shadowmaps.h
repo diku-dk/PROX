@@ -127,7 +127,7 @@ namespace rigid_body
       fbo.clear();
 
       glViewport(viewport_params[0], viewport_params[1], viewport_params[2], viewport_params[3]);
-      
+
       if( cull_enabled_param)
       {
         glEnable(GL_CULL_FACE);
@@ -139,7 +139,7 @@ namespace rigid_body
       }
       gl3::check_errors("draw_shadowmaps() exit");
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

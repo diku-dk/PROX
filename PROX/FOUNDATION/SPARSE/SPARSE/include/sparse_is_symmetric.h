@@ -22,7 +22,7 @@ namespace sparse
       for(size_t j = 0; j< A.nrows(); ++j)
       {
         transpose(A(i,j), tmp);
-        
+
         if(tmp != A(j,i))
         {
           return false;

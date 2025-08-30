@@ -46,7 +46,7 @@ namespace soft_body
 
       gl3::check_errors("make_shaders(): leaving");
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

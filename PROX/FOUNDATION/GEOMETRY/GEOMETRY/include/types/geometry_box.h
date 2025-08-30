@@ -5,7 +5,7 @@
 
 #include <cassert>
 
-namespace geometry 
+namespace geometry
 {
 
   template<typename V>
@@ -114,7 +114,7 @@ namespace geometry
       T const w = VT::two() * ((hx > VT::zero()) ? hx : VT::infinity());
       T const h = VT::two() * ((hy > VT::zero()) ? hy : VT::infinity());
       T const d = VT::two() * ((hz > VT::zero()) ? hz : VT::infinity());
-      
+
       return min( w, min(h, d) );
     }
 

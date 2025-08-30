@@ -3,10 +3,10 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class SupportMapping
-  {    
+  {
   public:
 
     /**
@@ -21,7 +21,7 @@ namespace geometry
     virtual V get_support_point( V const & v ) const = 0;
 
   };
-    
+
 } // namespace geometry
 
 // GEOMETRY_SUPPORT_MAPPING

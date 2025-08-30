@@ -124,17 +124,17 @@ namespace convex
                               , typename M::real_type const & stagnation_tolerance
                               , size_t const & max_iterations
                               )
-  
+
   {
     using std::sqrt;
     using std::fabs;
     using std::max;
-    
+
     typedef typename M::vector3_type  V;
     typedef typename M::real_type     T;
     typedef typename M::value_traits  VT;
     typedef          Simplex<V>       simplex_type;
-    
+
     if( absolute_tolerance < VT::zero() )
       throw std::invalid_argument( "absolute tolerance must be non-negative" );
     if( relative_tolerance < VT::zero() )
@@ -143,25 +143,25 @@ namespace convex
       throw std::invalid_argument( "stagnation tolerance must be non-negative" );
     if( max_iterations <= 0u )
       throw std::invalid_argument( "max_iterations must be positive" );
-    
+
     distance   = VT::infinity();
     status     = ITERATING;
     iterations = 0u;
-    
+
     T    const squared_absolute_tolerance = absolute_tolerance*absolute_tolerance;
     T          squared_distance           = VT::infinity();
-    
+
     // Simplex approximation to convex set C
     simplex_type sigma;
-    
+
     // Initially we use a 0-simplex corresponding to some point
     // in C. We do this by seeding the initial closest point to
     // be the zero-vector.
     V v = V::make( VT::zero(), VT::zero(), VT::zero() );
-    
+
     // Lower error bound on distance from origin to closest point
     T mu = VT::zero();
-    
+
     // We use a maximum iteration count to guard against infinite loops.
     for(iterations=1u; iterations<=max_iterations; ++iterations)
     {
@@ -174,27 +174,27 @@ namespace convex
       //
       V s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
       V s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
-      
+
       V w_a = A->get_support_point( s_a );
       V w_b = B->get_support_point( s_b );
-      
+
       w_a = tiny::rotate( X_A.Q(), w_a ) + X_A.T();
       w_b = tiny::rotate( X_B.Q(), w_b ) + X_B.T();
-      
+
       assert( is_number( w_a(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w_a(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w_a(2) ) || !"compute_closest_points(): NaN encountered");
-      
+
       assert( is_number( w_b(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w_b(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w_b(2) ) || !"compute_closest_points(): NaN encountered");
-      
+
       V w    = w_a - w_b;
-      
+
       assert( is_number( w(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w(2) ) || !"compute_closest_points(): NaN encountered");
-      
+
       // Test if the new point is already part of the current simplex
       if ( is_point_in_simplex ( w, sigma ) )
       {
@@ -205,7 +205,7 @@ namespace convex
         status = SIMPLEX_EXPANSION_FAILED;
         return;
       }
-      
+
       // Update lower error bound
       distance = sqrt(squared_distance);
       mu = max( mu, ( tiny::inner_prod(v,w) / distance) ); // check the minus sign with theory
@@ -215,34 +215,34 @@ namespace convex
         status = LOWER_ERROR_BOUND_CONVERGENCE;
         return;
       }
-      
+
       if (is_degenerate_point(w, sigma))
       {
         status = DEGENERATE_SIMPLEX_ADDITION;
         return;
       }
-      
+
       // Extend the simplex with a new vertex
       add_point_to_simplex(w, w_a, w_b, sigma);
-      
+
       // Compute the point, v, on the simplex that is closest to the origin and
       // Reduce simplex to lowest dimensional face on the boundary
       // containing the closest point.
       // 2010-02-13 mrtn: p_a and p_b may be on the inside of A-B in case of penetrations
       v = reduce_simplex( sigma, p_A, p_B );
-      
+
       assert( is_number( v(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( v(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( v(2) ) || !"compute_closest_points(): NaN encountered");
-      
+
       assert( is_number( p_A(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( p_A(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( p_A(2) ) || !"compute_closest_points(): NaN encountered");
-      
+
       assert( is_number( p_B(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( p_B(1) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( p_B(2) ) || !"compute_closest_points(): NaN encountered");
-      
+
       // Test if simplex is a full tetrahedron. In this case the closest
       // point must be inside the tetrahedron and equal to the origin. Thus
       // we clearly have an intersection.
@@ -253,12 +253,12 @@ namespace convex
         status = INTERSECTION;
         return;
       }
-      
+
       T const old_squared_distance = squared_distance;
       squared_distance = tiny::inner_prod( v, v);
-      
+
       assert( is_number( squared_distance ) || !"compute_closest_points(): NaN encountered");
-      
+
       // Test that closest distance are non-increasing
       if(squared_distance > old_squared_distance)
       {
@@ -267,7 +267,7 @@ namespace convex
         status = NON_DESCEND_DIRECTION;
         return;
       }
-      
+
       // Test absolute stopping criteria
       if( squared_distance <= squared_absolute_tolerance )
       {
@@ -277,7 +277,7 @@ namespace convex
         status = ABSOLUTE_CONVERGENCE;
         return;
       }
-      
+
       // Test relative stopping criteria, so see if we do not make enough
       // progress toward the ``solution''
       if( (old_squared_distance - squared_distance) <= (relative_tolerance*old_squared_distance) )
@@ -288,7 +288,7 @@ namespace convex
         status = RELATIVE_CONVERGENCE;
         return;
       }
-      
+
       // Test for stagnation of the solution
       if(fabs( old_squared_distance - squared_distance ) <= stagnation_tolerance )
       {
@@ -296,9 +296,9 @@ namespace convex
         status = STAGNATION;
         return;
       }
-      
+
     }
-    
+
     // If this point of the code is reached it means that we did
     // not converge with the maximum number of iterations.
     distance = sqrt( squared_distance );

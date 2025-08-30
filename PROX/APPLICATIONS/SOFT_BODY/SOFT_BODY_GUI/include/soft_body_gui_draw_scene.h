@@ -68,13 +68,13 @@ namespace soft_body
         vao.bind();
         object->m_vbo.draw();
         vao.unbind();
-        
+
         texture.unbind();
       }
-      
+
       program.stop();
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

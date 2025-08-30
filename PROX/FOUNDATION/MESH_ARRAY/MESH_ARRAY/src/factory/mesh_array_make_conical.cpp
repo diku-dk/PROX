@@ -7,7 +7,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_conical(
                  typename MT::real_type const & bottom_radius
@@ -22,7 +22,7 @@ namespace mesh_array
   {
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
-    
+
 		std::vector<V> profile;
 		
 		profile.resize(4u);
@@ -34,7 +34,7 @@ namespace mesh_array
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z  );
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
   typedef tiny::MathTypes<double> MTd;
 
@@ -61,5 +61,5 @@ namespace mesh_array
                     , VertexAttribute<MTd::real_type,T3Mesh> & Y
                     , VertexAttribute<MTd::real_type,T3Mesh> & Z
                     );
-  
+
 } //namespace mesh_array

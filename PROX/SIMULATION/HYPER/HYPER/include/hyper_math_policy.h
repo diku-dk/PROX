@@ -99,7 +99,7 @@ namespace hyper
 
       typename std::vector<vector3_type>::const_iterator v   = data.begin();
       typename std::vector<vector3_type>::const_iterator end = data.end();
-      
+
       for(unsigned int i = 0u;v!=end;++v,++i)
         V(i) = convert(*v);
     }
@@ -152,4 +152,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_MATH_POLICY_H
-#endif 
+#endif

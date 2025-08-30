@@ -15,17 +15,17 @@ BOOST_AUTO_TEST_CASE(iterator_test)
 {	
 	typedef tiny::ScalarTraits<float>                 float_traits;
   typedef tiny::detail::Container<4,4,float_traits> container4x4;
-  
+
   typedef  container4x4::iterator  iterator;
-  
-  container4x4 C;  
+
+  container4x4 C;
   C(0,0) = 1.0f; C(0,1) = 2.0f; C(0,2) = 3.0f; C(0,3) = 4.0f;
   C(1,0) = 5.0f; C(1,1) = 6.0f; C(1,2) = 7.0f; C(1,3) = 8.0f;
   C(2,0) = 9.0f; C(2,1) = 0.0f; C(2,2) = 0.1f; C(2,3) = 1.1f;
   C(3,0) = 1.2f; C(3,1) = 1.3f; C(3,2) = 1.4f; C(3,3) = 1.5f;
-  
+
   iterator c = C.begin();
-  
+
   BOOST_CHECK_CLOSE( *c, 1.0f, 0.01f );
   BOOST_CHECK( c != C.end()  );
   ++c;
@@ -71,11 +71,11 @@ BOOST_AUTO_TEST_CASE(iterator_test)
   BOOST_CHECK_CLOSE( *c, 1.4f, 0.01f );
   BOOST_CHECK( c != C.end()  );
   ++c;
-  BOOST_CHECK_CLOSE( *c, 1.5f, 0.01f );  
+  BOOST_CHECK_CLOSE( *c, 1.5f, 0.01f );
   BOOST_CHECK( c != C.end()  );
   ++c;
   BOOST_CHECK( c == C.end()  );
-  
+
 }
 
 
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(float4x4_test)
   BOOST_CHECK( accessor4x4::padding()   == 0 );
   BOOST_CHECK( accessor4x4::J_padded()  == 4 );
   BOOST_CHECK( accessor4x4::allocsize() == 16 );
-  container4x4 C;  
+  container4x4 C;
   C(0,0) = 1.0f; C(0,1) = 2.0f; C(0,2) = 3.0f; C(0,3) = 4.0f;
   C(1,0) = 5.0f; C(1,1) = 6.0f; C(1,2) = 7.0f; C(1,3) = 8.0f;
   C(2,0) = 9.0f; C(2,1) = 0.0f; C(2,2) = 0.1f; C(2,3) = 1.1f;
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(float4x4_test)
   BOOST_CHECK_CLOSE( C(3,0), 1.2f, 0.01f );
   BOOST_CHECK_CLOSE( C(3,1), 1.3f, 0.01f );
   BOOST_CHECK_CLOSE( C(3,2), 1.4f, 0.01f );
-  BOOST_CHECK_CLOSE( C(3,3), 1.5f, 0.01f );  
+  BOOST_CHECK_CLOSE( C(3,3), 1.5f, 0.01f );
 }
 
 BOOST_AUTO_TEST_CASE(float1x1_test)
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(float1x1_test)
   BOOST_CHECK( accessor1x1::allocsize() == 1 );
   container1x1 C;
   C(0,0) = 1.0f;
-  BOOST_CHECK_CLOSE( C(0,0), 1.0f, 0.01f );  
+  BOOST_CHECK_CLOSE( C(0,0), 1.0f, 0.01f );
 }
 
 BOOST_AUTO_TEST_CASE(float2x2_test)
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(float2x2_test)
   BOOST_CHECK( accessor2x2::stride()    == 1 );
   BOOST_CHECK( accessor2x2::padding()   == 0 );
   BOOST_CHECK( accessor2x2::J_padded()  == 2 );
-  BOOST_CHECK( accessor2x2::allocsize() == 4 );  
+  BOOST_CHECK( accessor2x2::allocsize() == 4 );
   container2x2  C;
   C(0,0) = 1.0f;
   C(0,1) = 2.0f;
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(float2x2_test)
   BOOST_CHECK_CLOSE( C(0,0), 1.0f, 0.01f );
   BOOST_CHECK_CLOSE( C(0,1), 2.0f, 0.01f );
   BOOST_CHECK_CLOSE( C(1,0), 3.0f, 0.01f );
-  BOOST_CHECK_CLOSE( C(1,1), 4.0f, 0.01f );  
+  BOOST_CHECK_CLOSE( C(1,1), 4.0f, 0.01f );
 }
 
 BOOST_AUTO_TEST_CASE(float3x3_test)

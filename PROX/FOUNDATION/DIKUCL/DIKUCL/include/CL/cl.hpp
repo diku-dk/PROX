@@ -23,11 +23,11 @@
 
 /*! \file
  *
- *   \brief C++ bindings for OpenCL 1.0 (rev 48) and OpenCL 1.1 (rev 33)    
+ *   \brief C++ bindings for OpenCL 1.0 (rev 48) and OpenCL 1.1 (rev 33)
  *   \author Benedict R. Gaster and Laurent Morichetti
- *   
+ *
  *   Additions and fixes from Brian Cole, March 3rd 2010.
- *   
+ *
  *   \version 1.1
  *   \date June 2010
  *
@@ -67,7 +67,7 @@
  *
  * \code
  * #define __CL_ENABLE_EXCEPTIONS
- * 
+ *
  * #if defined(__APPLE__) || defined(__MACOSX)
  * #include <OpenCL/cl.hpp>
  * #else
@@ -76,13 +76,13 @@
  * #include <cstdio>
  * #include <cstdlib>
  * #include <iostream>
- * 
+ *
  *  const char * helloStr  = "__kernel void "
  *                           "hello(void) "
  *                           "{ "
  *                           "  "
  *                           "} ";
- * 
+ *
  *  int
  *  main(void)
  *  {
@@ -96,33 +96,33 @@
  *           return -1;
  *       }
  *
- *       cl_context_properties properties[] = 
+ *       cl_context_properties properties[] =
  *          { CL_CONTEXT_PLATFORM, (cl_context_properties)(platforms[0])(), 0};
- *       cl::Context context(CL_DEVICE_TYPE_CPU, properties); 
- * 
+ *       cl::Context context(CL_DEVICE_TYPE_CPU, properties);
+ *
  *       std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
- * 
+ *
  *       cl::Program::Sources source(1,
  *           std::make_pair(helloStr,strlen(helloStr)));
  *       cl::Program program_ = cl::Program(context, source);
  *       program_.build(devices);
- * 
+ *
  *       cl::Kernel kernel(program_, "hello", &err);
- * 
+ *
  *       cl::Event event;
  *       cl::CommandQueue queue(context, devices[0], 0, &err);
  *       queue.enqueueNDRangeKernel(
- *           kernel, 
- *           cl::NullRange, 
+ *           kernel,
+ *           cl::NullRange,
  *           cl::NDRange(4,4),
  *           cl::NullRange,
  *           NULL,
- *           &event); 
- * 
+ *           &event);
+ *
  *       event.wait();
  *     }
  *     catch (cl::Error err) {
- *        std::cerr 
+ *        std::cerr
  *           << "ERROR: "
  *           << err.what()
  *           << "("
@@ -130,10 +130,10 @@
  *           << ")"
  *           << std::endl;
  *     }
- * 
+ *
  *    return EXIT_SUCCESS;
  *  }
- * 
+ *
  * \endcode
  *
  */
@@ -148,7 +148,7 @@
 #endif
 #endif // _WIN32
 
-// 
+//
 #if defined(USE_CL_DEVICE_FISSION)
 #include <CL/cl_ext.h>
 #endif
@@ -173,7 +173,7 @@
 
 #if !defined(__NO_STD_STRING)
 #include <string>
-#endif 
+#endif
 
 #if defined(linux) || defined(__APPLE__) || defined(__MACOSX)
 # include <alloca.h>
@@ -374,7 +374,7 @@ public:
         if (rhs.size_ == 0 || rhs.str_ == NULL) {
             size_ = 0;
             str_  = NULL;
-        } 
+        }
         else {
             size_ = rhs.size_;
             str_ = new char[size_ + 1];
@@ -410,15 +410,15 @@ public:
 #if !defined(__USE_DEV_STRING) && !defined(__NO_STD_STRING)
 #include <string>
 typedef std::string STRING_CLASS;
-#elif !defined(__USE_DEV_STRING) 
+#elif !defined(__USE_DEV_STRING)
 typedef cl::string STRING_CLASS;
 #endif
 
 #if !defined(__USE_DEV_VECTOR) && !defined(__NO_STD_VECTOR)
 #include <vector>
 #define VECTOR_CLASS std::vector
-#elif !defined(__USE_DEV_VECTOR) 
-#define VECTOR_CLASS cl::vector 
+#elif !defined(__USE_DEV_VECTOR)
+#define VECTOR_CLASS cl::vector
 #endif
 
 #if !defined(__MAX_DEFAULT_VECTOR_SIZE)
@@ -426,7 +426,7 @@ typedef cl::string STRING_CLASS;
 #endif
 
 /*! \class vector
- * \brief Fixed sized vector implementation that mirroring 
+ * \brief Fixed sized vector implementation that mirroring
  * std::vector functionality.
  */
 template <typename T, unsigned int N = __MAX_DEFAULT_VECTOR_SIZE>
@@ -437,7 +437,7 @@ private:
     unsigned int size_;
     bool empty_;
 public:
-    vector() : 
+    vector() :
         size_(-1),
         empty_(true)
     {}
@@ -456,9 +456,9 @@ public:
     }
 
     void push_back (const T& x)
-    { 
+    {
         if (size() < N) {
-            size_++;  
+            size_++;
             data_[size_] = x;
             empty_ = false;
         }
@@ -474,15 +474,15 @@ public:
             }
         }
     }
-  
-    vector(const vector<T, N>& vec) : 
+
+    vector(const vector<T, N>& vec) :
         size_(vec.size_),
         empty_(vec.empty_)
     {
         if (!empty_) {
             memcpy(&data_[0], &vec.data_[0], size() * sizeof(T));
         }
-    } 
+    }
 
     vector(unsigned int size, const T& val = T()) :
         size_(-1),
@@ -505,7 +505,7 @@ public:
         if (!empty_) {	
             memcpy(&data_[0], &rhs.data_[0], size() * sizeof(T));
         }
-    
+
         return *this;
     }
 
@@ -521,15 +521,15 @@ public:
 
         return memcmp(&data_[0], &vec.data_[0], size() * sizeof(T)) == 0 ? true : false;
     }
-  
+
     operator T* ()             { return data_; }
     operator const T* () const { return data_; }
-   
+
     bool empty (void) const
     {
         return empty_;
     }
-  
+
     unsigned int max_size (void) const
     {
         return N;
@@ -544,16 +544,16 @@ public:
     {
         return data_[index];
     }
-  
+
     T operator[](int index) const
     {
         return data_[index];
     }
-  
+
     template<class I>
     void assign(I start, I end)
     {
-        clear();   
+        clear();
         while(start < end) {
             push_back(*start);
             start++;
@@ -570,7 +570,7 @@ public:
         int index_;
         bool initialized_;
     public:
-        iterator(void) : 
+        iterator(void) :
             index_(-1),
             initialized_(false)
         {
@@ -604,11 +604,11 @@ public:
             i.initialized_ = true;
             return i;
         }
-    
+
         bool operator==(iterator i)
         {
-            return ((vec_ == i.vec_) && 
-                    (index_ == i.index_) && 
+            return ((vec_ == i.vec_) &&
+                    (index_ == i.index_) &&
                     (initialized_ == i.initialized_));
         }
 
@@ -672,8 +672,8 @@ public:
     {
         return data_[size_];
     }
-};  
-    
+};
+
 /*!
  * \brief size_t class used to interface between C++ and
  * OpenCL C calls that require arrays of size_t values, who's
@@ -729,7 +729,7 @@ struct GetInfoHelper<Func, VECTOR_CLASS<char *> >
       if (err != CL_SUCCESS) {
         return err;
       }
-      
+
       return CL_SUCCESS;
     }
 };
@@ -772,7 +772,7 @@ struct GetInfoHelper<Func, CPP_TYPE> \
       return ReferenceHandler<CPP_TYPE::cl_type>::retain((*param)()); \
     } \
 }; \
-} 
+}
 
 
 #define __PARAM_NAME_INFO_1_0(F) \
@@ -1227,7 +1227,7 @@ public:
 		const cl_device_partition_property_ext * properties,
 		VECTOR_CLASS<Device>* devices)
 	{
-		typedef CL_API_ENTRY cl_int 
+		typedef CL_API_ENTRY cl_int
 			( CL_API_CALL * PFN_clCreateSubDevicesEXT)(
 				cl_device_id /*in_device*/,
                 const cl_device_partition_property_ext * /* properties */,
@@ -1349,8 +1349,8 @@ public:
         VECTOR_CLASS<Device>* devices) const
     {
         typedef CL_API_ENTRY cl_int (CL_API_CALL *PFN_clGetDeviceIDsFromD3D10KHR)(
-            cl_platform_id platform, 
-            cl_d3d10_device_source_khr d3d_device_source, 
+            cl_platform_id platform,
+            cl_d3d10_device_source_khr d3d_device_source,
             void * d3d_object,
             cl_d3d10_device_set_khr d3d_device_set,
             cl_uint num_entries,
@@ -1362,12 +1362,12 @@ public:
 
         cl_uint n = 0;
         cl_int err = pfn_clGetDeviceIDsFromD3D10KHR(
-            object_, 
-            d3d_device_source, 
+            object_,
+            d3d_device_source,
             d3d_object,
-            d3d_device_set, 
-            0, 
-            NULL, 
+            d3d_device_set,
+            0,
+            NULL,
             &n);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_DEVICE_IDS_ERR);
@@ -1375,12 +1375,12 @@ public:
 
         cl_device_id* ids = (cl_device_id*) alloca(n * sizeof(cl_device_id));
         err = pfn_clGetDeviceIDsFromD3D10KHR(
-            object_, 
-            d3d_device_source, 
+            object_,
+            d3d_device_source,
             d3d_object,
             d3d_device_set,
-            n, 
-            ids, 
+            n,
+            ids,
             NULL);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_DEVICE_IDS_ERR);
@@ -1505,11 +1505,11 @@ public:
     {
         cl_uint numEntries;
         cl_int err = ::clGetSupportedImageFormats(
-           object_, 
+           object_,
            flags,
-           type, 
-           0, 
-           NULL, 
+           type,
+           0,
+           NULL,
            &numEntries);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_SUPPORTED_IMAGE_FORMATS_ERR);
@@ -1518,11 +1518,11 @@ public:
         ImageFormat* value = (ImageFormat*)
             alloca(numEntries * sizeof(ImageFormat));
         err = ::clGetSupportedImageFormats(
-            object_, 
-            flags, 
-            type, 
+            object_,
+            flags,
+            type,
             numEntries,
-            (cl_image_format*) value, 
+            (cl_image_format*) value,
             NULL);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_SUPPORTED_IMAGE_FORMATS_ERR);
@@ -1613,7 +1613,7 @@ public:
                 object_,
                 type,
                 pfn_notify,
-                user_data), 
+                user_data),
             __SET_EVENT_CALLBACK_ERR);
     }
 #endif
@@ -1667,7 +1667,7 @@ public:
     cl_int setStatus(cl_int status)
     {
         return detail::errHandler(
-            ::clSetUserEventStatus(object_,status), 
+            ::clSetUserEventStatus(object_,status),
             __SET_USER_EVENT_STATUS_ERR);
     }
 };
@@ -1730,7 +1730,7 @@ public:
             ::clSetMemObjectDestructorCallback(
                 object_,
                 pfn_notify,
-                user_data), 
+                user_data),
             __SET_MEM_OBJECT_DESTRUCTOR_CALLBACK_ERR);
     }
 #endif
@@ -1783,10 +1783,10 @@ public:
         Buffer result;
         cl_int error;
         result.object_ = ::clCreateSubBuffer(
-            object_, 
-            flags, 
-            buffer_create_type, 
-            buffer_create_info, 
+            object_,
+            flags,
+            buffer_create_type,
+            buffer_create_info,
             &error);
 
         detail::errHandler(error, __CREATE_SUBBUFFER_ERR);
@@ -2159,7 +2159,7 @@ public:
     {
         cl_int error;
         object_ = ::clCreateSampler(
-            context(), 
+            context(),
             normalized_coords,
             addressing_mode,
             filter_mode,
@@ -2275,7 +2275,7 @@ struct KernelArgumentHandler<LocalSpaceArg>
     static void* ptr(LocalSpaceArg&) { return NULL; }
 };
 
-} 
+}
 //! \endcond
 
 inline LocalSpaceArg
@@ -2686,9 +2686,9 @@ public:
     {
         return detail::errHandler(
             ::clEnqueueReadBufferRect(
-                object_, 
-                buffer(), 
-                blocking, 
+                object_,
+                buffer(),
+                blocking,
                 (const ::size_t *)buffer_offset,
                 (const ::size_t *)host_offset,
                 (const ::size_t *)region,
@@ -2720,9 +2720,9 @@ public:
     {
         return detail::errHandler(
             ::clEnqueueWriteBufferRect(
-                object_, 
-                buffer(), 
-                blocking, 
+                object_,
+                buffer(),
+                blocking,
                 (const ::size_t *)buffer_offset,
                 (const ::size_t *)host_offset,
                 (const ::size_t *)region,
@@ -2752,11 +2752,11 @@ public:
     {
         return detail::errHandler(
             ::clEnqueueCopyBufferRect(
-                object_, 
-                src(), 
-                dst(), 
-                (const ::size_t *)src_origin, 
-                (const ::size_t *)dst_origin, 
+                object_,
+                src(),
+                dst(),
+                (const ::size_t *)src_origin,
+                (const ::size_t *)dst_origin,
                 (const ::size_t *)region,
                 src_row_pitch,
                 src_slice_pitch,
@@ -2979,7 +2979,7 @@ public:
         const VECTOR_CLASS<Event>* events = NULL,
         Event* event = NULL) const
     {
-        cl_mem * mems = (mem_objects != NULL && mem_objects->size() > 0) 
+        cl_mem * mems = (mem_objects != NULL && mem_objects->size() > 0)
             ? (cl_mem*) alloca(mem_objects->size() * sizeof(cl_mem))
             : NULL;
 
@@ -3163,195 +3163,195 @@ public:
 
     template<typename A1>
     inline Event operator()(
-        const A1& a1, 
+        const A1& a1,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
+        const A1& a1,
+        const A2& a2,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
+        const A1& a1,
+        const A2& a2,
         const A3& a3,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3, class A4>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
         const A4& a4,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3, class A4, class A5>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
         const A5& a5,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3, class A4, class A5, class A6>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3, class A4,
              class A5, class A6, class A7>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
-        const A6& a6, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
+        const A6& a6,
         const A7& a7,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
-        const A6& a6, 
-        const A7& a7, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
+        const A6& a6,
+        const A7& a7,
         const A8& a8,
         const VECTOR_CLASS<Event>* events = NULL);
 
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
-        const A6& a6, 
-        const A7& a7, 
-        const A8& a8, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
+        const A6& a6,
+        const A7& a7,
+        const A8& a8,
         const A9& a9,
         const VECTOR_CLASS<Event>* events = NULL);
-    
+
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9, class A10>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
-        const A7& a7, 
-        const A8& a8, 
-        const A9& a9, 
+        const A7& a7,
+        const A8& a8,
+        const A9& a9,
         const A10& a10,
         const VECTOR_CLASS<Event>* events = NULL);
-    
+
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9, class A10,
              class A11>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
-        const A7& a7, 
-        const A8& a8, 
-        const A9& a9, 
-        const A10& a10, 
+        const A7& a7,
+        const A8& a8,
+        const A9& a9,
+        const A10& a10,
         const A11& a11,
         const VECTOR_CLASS<Event>* events = NULL);
-    
+
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9, class A10,
              class A11, class A12>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
-        const A7& a7, 
-        const A8& a8, 
-        const A9& a9, 
-        const A10& a10, 
-        const A11& a11, 
+        const A7& a7,
+        const A8& a8,
+        const A9& a9,
+        const A10& a10,
+        const A11& a11,
         const A12& a12,
         const VECTOR_CLASS<Event>* events = NULL);
-    
+
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9, class A10,
              class A11, class A12, class A13>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
-        const A7& a7, 
-        const A8& a8, 
-        const A9& a9, 
-        const A10& a10, 
-        const A11& a11, 
-        const A12& a12, 
+        const A7& a7,
+        const A8& a8,
+        const A9& a9,
+        const A10& a10,
+        const A11& a11,
+        const A12& a12,
         const A13& a13,
         const VECTOR_CLASS<Event>* events = NULL);
-    
+
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9, class A10,
              class A11, class A12, class A13, class A14>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
-        const A7& a7, 
-        const A8& a8, 
-        const A9& a9, 
-        const A10& a10, 
+        const A7& a7,
+        const A8& a8,
+        const A9& a9,
+        const A10& a10,
         const A11& a11,
-        const A12& a12, 
-        const A13& a13, 
+        const A12& a12,
+        const A13& a13,
         const A14& a14,
         const VECTOR_CLASS<Event>* events = NULL);
-    
+
     template<class A1, class A2, class A3, class A4, class A5,
              class A6, class A7, class A8, class A9, class A10,
              class A11, class A12, class A13, class A14, class A15>
     inline Event operator()(
-        const A1& a1, 
-        const A2& a2, 
-        const A3& a3, 
-        const A4& a4, 
-        const A5& a5, 
+        const A1& a1,
+        const A2& a2,
+        const A3& a3,
+        const A4& a4,
+        const A5& a5,
         const A6& a6,
-        const A7& a7, 
-        const A8& a8, 
-        const A9& a9, 
-        const A10& a10, 
+        const A7& a7,
+        const A8& a8,
+        const A9& a9,
+        const A10& a10,
         const A11& a11,
-        const A12& a12, 
-        const A13& a13, 
-        const A14& a14, 
+        const A12& a12,
+        const A13& a13,
+        const A14& a14,
         const A15& a15,
         const VECTOR_CLASS<Event>* events = NULL);
 };
@@ -3378,13 +3378,13 @@ inline KernelFunctor& KernelFunctor::operator=(const KernelFunctor& rhs)
     if (this == &rhs) {
         return *this;
     }
-    
+
     kernel_ = rhs.kernel_;
     queue_  = rhs.queue_;
     offset_ = rhs.offset_;
     global_ = rhs.global_;
     local_  = rhs.local_;
-    
+
     return *this;
 }
 
@@ -3414,7 +3414,7 @@ Event KernelFunctor::operator()(const VECTOR_CLASS<Event>* events)
 
 template<typename A1>
 Event KernelFunctor::operator()(
-    const A1& a1, 
+    const A1& a1,
     const VECTOR_CLASS<Event>* events)
 {
     Event event;
@@ -3434,7 +3434,7 @@ Event KernelFunctor::operator()(
 
 template<typename A1, typename A2>
 Event KernelFunctor::operator()(
-    const A1& a1, 
+    const A1& a1,
     const A2& a2,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3456,8 +3456,8 @@ Event KernelFunctor::operator()(
 
 template<typename A1, typename A2, typename A3>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
+    const A1& a1,
+    const A2& a2,
     const A3& a3,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3480,9 +3480,9 @@ Event KernelFunctor::operator()(
 
 template<typename A1, typename A2, typename A3, typename A4>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
     const A4& a4,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3506,10 +3506,10 @@ Event KernelFunctor::operator()(
 
 template<typename A1, typename A2, typename A3, typename A4, typename A5>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
     const A5& a5,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3535,11 +3535,11 @@ Event KernelFunctor::operator()(
 template<typename A1, typename A2, typename A3, typename A4, typename A5,
          typename A6>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
     const A6& a6,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3566,12 +3566,12 @@ Event KernelFunctor::operator()(
 template<typename A1, typename A2, typename A3, typename A4,
          typename A5, typename A6, typename A7>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
-    const A6& a6, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
+    const A6& a6,
     const A7& a7,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3599,13 +3599,13 @@ Event KernelFunctor::operator()(
 template<typename A1, typename A2, typename A3, typename A4, typename A5,
          typename A6, typename A7, typename A8>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
-    const A6& a6, 
-    const A7& a7, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
+    const A6& a6,
+    const A7& a7,
     const A8& a8,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3634,14 +3634,14 @@ Event KernelFunctor::operator()(
 template<typename A1, typename A2, typename A3, typename A4, typename A5,
          typename A6, typename A7, typename A8, typename A9>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
     const A5& a5,
-    const A6& a6, 
-    const A7& a7, 
-    const A8& a8, 
+    const A6& a6,
+    const A7& a7,
+    const A8& a8,
     const A9& a9,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3671,15 +3671,15 @@ Event KernelFunctor::operator()(
 template<typename A1, typename A2, typename A3, typename A4, typename A5,
          typename A6, typename A7, typename A8, typename A9, typename A10>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
     const A6& a6,
-    const A7& a7, 
-    const A8& a8, 
-    const A9& a9, 
+    const A7& a7,
+    const A8& a8,
+    const A9& a9,
     const A10& a10,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3711,16 +3711,16 @@ template<class A1, class A2, class A3, class A4, class A5,
          class A6, class A7, class A8, class A9, class A10,
          class A11>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
     const A6& a6,
-    const A7& a7, 
-    const A8& a8, 
-    const A9& a9, 
-    const A10& a10, 
+    const A7& a7,
+    const A8& a8,
+    const A9& a9,
+    const A10& a10,
     const A11& a11,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3753,17 +3753,17 @@ template<class A1, class A2, class A3, class A4, class A5,
          class A6, class A7, class A8, class A9, class A10,
          class A11, class A12>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
     const A6& a6,
-    const A7& a7, 
-    const A8& a8, 
-    const A9& a9, 
-    const A10& a10, 
-    const A11& a11, 
+    const A7& a7,
+    const A8& a8,
+    const A9& a9,
+    const A10& a10,
+    const A11& a11,
     const A12& a12,
     const VECTOR_CLASS<Event>* events)
 {
@@ -3797,23 +3797,23 @@ template<class A1, class A2, class A3, class A4, class A5,
          class A6, class A7, class A8, class A9, class A10,
          class A11, class A12, class A13>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
     const A6& a6,
-    const A7& a7, 
-    const A8& a8, 
-    const A9& a9, 
-    const A10& a10, 
-    const A11& a11, 
-    const A12& a12, 
+    const A7& a7,
+    const A8& a8,
+    const A9& a9,
+    const A10& a10,
+    const A11& a11,
+    const A12& a12,
     const A13& a13,
     const VECTOR_CLASS<Event>* events)
 {
     Event event;
-    
+
     kernel_.setArg(0,a1);
     kernel_.setArg(1,a2);
     kernel_.setArg(2,a3);
@@ -3843,24 +3843,24 @@ template<class A1, class A2, class A3, class A4, class A5,
          class A6, class A7, class A8, class A9, class A10,
          class A11, class A12, class A13, class A14>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
-    const A5& a5, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
+    const A5& a5,
     const A6& a6,
-    const A7& a7, 
-    const A8& a8, 
-    const A9& a9, 
-    const A10& a10, 
+    const A7& a7,
+    const A8& a8,
+    const A9& a9,
+    const A10& a10,
     const A11& a11,
-    const A12& a12, 
-    const A13& a13, 
+    const A12& a12,
+    const A13& a13,
     const A14& a14,
     const VECTOR_CLASS<Event>* events)
 {
     Event event;
-    
+
     kernel_.setArg(0,a1);
     kernel_.setArg(1,a2);
     kernel_.setArg(2,a3);
@@ -3891,25 +3891,25 @@ template<class A1, class A2, class A3, class A4, class A5,
          class A6, class A7, class A8, class A9, class A10,
          class A11, class A12, class A13, class A14, class A15>
 Event KernelFunctor::operator()(
-    const A1& a1, 
-    const A2& a2, 
-    const A3& a3, 
-    const A4& a4, 
+    const A1& a1,
+    const A2& a2,
+    const A3& a3,
+    const A4& a4,
     const A5& a5,
-    const A6& a6, 
-    const A7& a7, 
-    const A8& a8, 
-    const A9& a9, 
-    const A10& a10, 
+    const A6& a6,
+    const A7& a7,
+    const A8& a8,
+    const A9& a9,
+    const A10& a10,
     const A11& a11,
-    const A12& a12, 
-    const A13& a13, 
-    const A14& a14, 
+    const A12& a12,
+    const A13& a13,
+    const A14& a14,
     const A15& a15,
     const VECTOR_CLASS<Event>* events)
 {
     Event event;
-    
+
     kernel_.setArg(0,a1);
     kernel_.setArg(1,a2);
     kernel_.setArg(2,a3);

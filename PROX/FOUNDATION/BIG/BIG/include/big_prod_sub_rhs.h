@@ -21,7 +21,7 @@ namespace big
                     , boost::numeric::ublas::vector<T> const & b
                     , boost::numeric::ublas::vector<T>       & y
                     );
-  
+
 } // end of namespace big
 
 // BIG_PROD_SUB_RHS_H

@@ -10,7 +10,7 @@
 #include <cmath>
 #include <vector>
 
-namespace geometry 
+namespace geometry
 {
 
   /**
@@ -167,4 +167,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_COMPUTE_RAYCAST_AABB_H
-#endif 
+#endif

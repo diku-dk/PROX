@@ -6,29 +6,29 @@
 
 namespace util
 {
-  
+
   template<typename T>
   T to_value(std::string const & txt)
   {
     assert( txt.size() > 0u || !"to_value(): empty string");
-    
+
     std::istringstream str_stream( txt );
-    
+
     T value;
     str_stream >> value;
-    
+
     return value;
   }
-  
+
   template<typename T>
   std::string to_string(T const & value)
   {
     std::ostringstream str_stream;
-    
+
     str_stream.precision(30);
-    
+
     str_stream << value;
-    
+
     return str_stream.str();
   }
 
@@ -58,10 +58,10 @@ namespace util
 
   template
   float to_value<float>(std::string const & txt);
-  
+
   template
   double to_value<double>(std::string const & txt);
-  
+
   template
   size_t to_value<size_t>(std::string const & txt);
 
@@ -79,10 +79,10 @@ namespace util
 
   template
   std::string to_string<float>(float const & value);
-  
+
   template
   std::string to_string<double>(double const & value);
-  
+
   template
   std::string to_string<size_t>(size_t const & value);
 

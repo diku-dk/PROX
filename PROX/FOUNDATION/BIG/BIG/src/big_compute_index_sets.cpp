@@ -6,7 +6,7 @@
 
 namespace big
 {
-  
+
   template < typename T>
   void compute_index_sets(
                           ublas::vector<T> const & y
@@ -17,12 +17,12 @@ namespace big
                           )
   {
     size_t const n = x.size();
-    
+
     bitmask.resize(n);
-    
+
     cnt_active   = 0u;
     cnt_inactive = 0u;
-    
+
     for (size_t i = 0u; i < n; ++i)
     {
       if( y(i) >= x(i) )
@@ -38,7 +38,7 @@ namespace big
     }
     assert( (cnt_active + cnt_inactive) == n        || !"compute_index_sets(): index sets were inconsistent");
   }
-  
+
   template
   void compute_index_sets<float>(
                                  ublas::vector<float> const & y
@@ -47,7 +47,7 @@ namespace big
                                  , size_t  & cnt_active
                                  , size_t  & cnt_inactive
                                  );
-  
+
   template
   void compute_index_sets<double>(
                                   ublas::vector<double> const & y
@@ -56,6 +56,6 @@ namespace big
                                   , size_t  & cnt_active
                                   , size_t  & cnt_inactive
                                   );
-  
-  
+
+
 } // namespace big

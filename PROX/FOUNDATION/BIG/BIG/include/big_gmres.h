@@ -18,7 +18,7 @@ namespace big
 {
   namespace detail
   {
-    
+
     /**
      *  This method determines the rotation around the z-axis, which
      *  rotates the vector [a,b]^T into a vector with only a
@@ -39,12 +39,12 @@ namespace big
     {
       using std::sqrt;
       using std::fabs;
-      
+
       typedef big::ValueTraits<value_type>  value_traits;
-      
+
       assert( is_number(a) || !"get_rotation(): a was not a number");
       assert( is_number(b) || !"get_rotation(): b was not a number");
-      
+
       //
       // Find the rotation theta that rotates [a b]^T into [ r 0]^T, that is find cos(theta) = c and sin(theta) such that
       //
@@ -116,7 +116,7 @@ namespace big
       // which provides a safe and cheap way to copy the sign of y to x. If
       // that is not available, x*sng(y), using the signum function, is an alternative.
       //
-      
+
       if ( b == value_traits::zero() )
       {
         c = (a>0) ? value_traits::one() : -value_traits::one();
@@ -143,7 +143,7 @@ namespace big
         c = value_traits::one() / u;
         s = t * c;
       }
-      
+
       assert( is_number(c) || !"get_rotation(): c was not a number");
       assert( is_number(s) || !"get_rotation(): s was not a number");
       assert( c <=  value_traits::one() || !"get_rotation(): illegal value of c");
@@ -152,7 +152,7 @@ namespace big
       assert( s >= -value_traits::one() || !"get_rotation(): illegal value of s");
       assert( fabs( (c*c+s*s) - value_traits::one() ) < big::working_precision<value_type>() || !"get_rotation(): Not a valid rotation");
     }
-    
+
     /**
      *  This method applies a rotation, theta, around the z-axis, to the vector [a,b]^T.
      *
@@ -170,9 +170,9 @@ namespace big
                               )
     {
       using std::fabs;
-      
+
       typedef big::ValueTraits<value_type>  value_traits;
-      
+
       assert( is_number(a) || !"set_rotation(): a was not a number");
       assert( is_number(b) || !"set_rotation(): b was not a number");
       assert( is_number(c) || !"set_rotation(): c was not a number");
@@ -194,7 +194,7 @@ namespace big
       b = c * b - s * a;
       a = temp;
     }
-    
+
     /**
      * Transform Hessenberg Matrix.
      *
@@ -273,10 +273,10 @@ namespace big
                                             )
     {
       using std::fabs;
-      
+
       typedef typename vector_type::value_type                    value_type;
       typedef          big::ValueTraits<value_type>  value_traits;
-      
+
       // After the j'th iteration of the Arnoldi method
       // H is grown by one row and one column. All entries
       // in the new column are non-zero, the remaining entries
@@ -295,35 +295,35 @@ namespace big
         H(   k, j ) = a;
         H( k+1, j ) = b;
       }
-      
+
       // Next we need to find the rotation that wil transform
       // the H_{j+1,j} element into zero.
       value_type a = H(j,j);
       value_type b = H(j+1,j);
       get_rotation ( a, b, c[j], s[j] );
-      
+
       // Hereafter we apply the new rotation, because of the structure of
       // H and the rotation we only need to apply this rotation to the new row and column of H.
       a = H(   j, j );
       b = H( j+1, j );
       set_rotation ( a, b, c[j], s[j] );
-      
+
       assert( a > value_traits::zero()                        || !"hessenberg_matrix_transform(): invalid rotation, diagonal should be positive?");
       assert( fabs(b) < big::working_precision<value_type>() || !"hessenberg_matrix_transform(): invalid rotation, lower diagonal is nonzero?");
-      
+
       //
       // See Proporsition 6.9 part 1 in the book of Saad (page 169 in second edition)
       //
       if( fabs(a) < big::working_precision<value_type>())
         throw std::logic_error("A matrix is singular");
-      
+
       H( j  ,j ) = a;
       H( j+1,j ) = b;
-      
+
       // Finally we can update the right hand side vector with the same rotation.
       set_rotation ( g[ j ], g[ j+1 ], c[ j ], s[ j ] );
     }
-    
+
     /**
      *  Test if basis is orthonormal.
      *  This method is only used for internal testing purpose.
@@ -340,15 +340,15 @@ namespace big
                                 )
     {
       using std::fabs;
-      
+
       typedef typename vector_type::value_type                    value_type;
       typedef          big::ValueTraits<value_type>  value_traits;
-      
+
       assert( m>0         || !"is_orthonormal(): m was out of range");
       assert( m<=v.size() || !"is_orthonormal(): m was out of range");
-      
+
       value_type const precision = ::boost::numeric_cast<value_type>(10e-6);
-      
+
       for ( size_type i = 0; i < m; ++i )
       {
         value_type tmp = inner_prod( v[i], v[i] );
@@ -361,11 +361,11 @@ namespace big
           value_type tmp = inner_prod( v[i], v[j] );
           if( fabs(tmp) >  precision )
             return false;
-          
+
         }
       return true;
     }
-    
+
     /**
      *  Test if matrix is upper triangular.
      *  This method is only used for internal testing purpose.
@@ -382,11 +382,11 @@ namespace big
                                      )
     {
       typedef typename matrix_type::value_type                    value_type;
-      
+
       assert( m>0              || !"is_upper_triangular(): m was out of range");
       assert( H.size1() >= m   || !"is_upper_triangular(): size of H was incompatible");
       assert( H.size2() >= m-1 || !"is_upper_triangular(): size of H was incompatible");
-      
+
       for ( size_type i = 0; i < m; ++i )
         for ( size_type j = i+1; j < m; ++j )
         {
@@ -396,7 +396,7 @@ namespace big
         }
       return true;
     }
-    
+
     /**
      *  Update the current iterate.
      *  This method computes
@@ -435,16 +435,16 @@ namespace big
       assert( m<=g.size()                 || !"update(): m was out of range");
       assert( is_orthonormal( m, v )      || !"update(): basis where not orthonormal?");
       assert( is_upper_triangular( m, H ) || !"update(): H where not upper triangular?");
-      
+
       vector_type y;
       big::backsolve( m, H, y, g);
-      
+
       for ( size_type j = 0; j < m; ++j )
         x += y[j]*v[j];
     }
-    
+
   }// namespace detail
-  
+
   /**
    *  GMRES  Generalized Minimum Residual Method.
    * GeneralizedMinimalResidualSolver solves the non-symmetric linear
@@ -512,26 +512,26 @@ namespace big
     using std::fabs;
     using std::min;
     using std::ceil;
-    
+
     typedef typename matrix_type::value_type                     value_type;
     typedef typename vector_type::size_type                      size_type;
     typedef typename big::ValueTraits<value_type>                value_traits;
-    
+
     static size_type const ten = ::boost::numeric_cast<size_type>(10);
-    
+
     size_type  const & N       = b.size();
     size_type  const & R       = max_restart_iterations;
     size_type  const & M       = max_iterations;
     value_type const & eps     = tolerance> value_traits::zero() ? tolerance : boost::numeric_cast<value_type>( 1e-6 );
     bool       const restarted = (R!=N) && (R > 0u);
     size_type        maxit     = M;
-    
+
     if(maxit==0u)
     {
       if (restarted)
       {
         size_type  const fraction  = ::boost::numeric_cast<size_type>( ceil( 1.0*N / R ) );
-        
+
         maxit = min( fraction, ten);
       }
       else
@@ -539,16 +539,16 @@ namespace big
         maxit = min( N, ten);
       }
     }
-    
+
     size_type  const outer     = restarted ? maxit : 1u;
     size_type  const inner     = restarted ? R     : maxit;
-    
+
     used_inner_iterations   = 0u;
     used_outer_iterations   = 0u;
     relative_residual_error = value_traits::infinity();
-    
+
     value_type norm_b = ublas::norm_2( b );
-    
+
     // Check for all zero right hand size vector => all zero solution
     if(norm_b < eps )
     {
@@ -561,15 +561,15 @@ namespace big
       relative_residual_error = value_traits::zero();
       return;
     }
-    
+
     vector_type r( N );                // Allocate space for the residual vector.
-    
+
     value_type  const rel_eps  = eps*norm_b; // Relative tolerance
-    
+
     // Compute the residual vector
     residual(A, x, b, r);
     value_type norm_r = ublas::norm_2 ( r );
-    
+
     // Check if we have a good approximation already
     if ( norm_r <= rel_eps )
     {
@@ -577,18 +577,18 @@ namespace big
       relative_residual_error = norm_r / norm_b;
       return;
     }
-    
+
     value_type  norm_r_min = norm_r;     // The value of the minimum residual norm.
     vector_type x_min      = x;          // Iterate which has minimal residual so far.
     size_type   k_min      = 0u;         // "Outer" iteration at which xmin was computed.
     size_type   j_min      = 0u;         // "Inner" iteration at which xmin was computed.
-    
+
     status     = 1u;
-    
+
     // create data container for keeping vectors for the basis of the preconditioned Krylov subspace K_M
     std::vector<vector_type> v;
     v.resize(inner + 1u);
-    
+
     // Allocate space for all other temporary data
     vector_type tmp( N );                // Allocate space for temporary vector.
     matrix_type H( inner+1u, inner );    // Get space for Hessenberg matrix
@@ -596,7 +596,7 @@ namespace big
     vector_type c( inner+1u );           // Allocate space for storing the values of cos(theta) of the Givens rotations.
     vector_type s( inner+1u );           // Allocate space for storing the values of sin(theta) of the Givens rotations.
     vector_type w( N );                  // Allocate space for vector used to hold vectors generated Arnoldi method.
-    
+
     // To save storage and computations we use a restart technique.
     for(size_type k=1u; k<=outer; ++k )
     {
@@ -604,30 +604,30 @@ namespace big
       tmp.clear();
       P( A, tmp, r );
       r = tmp;
-      
+
       // TODO: At this point we should see if the pre-conditioner was ill-conditioned => m_status = 2
-      
+
       // Perform the Arnoldi Method to find a basis for the preconditioned Krylov subspace.
       value_type beta = ublas::norm_2 ( r );
       v[0].resize ( N );
       v[0] = r / beta;
-      
+
       g.clear();
       g[0] = beta;
-      
+
       size_type used_inner = 0u;  // Auxiliary variable used to keep track of how many loops we did = #number of vectors in Krylov subspace
-      
+
       for (size_type j = 0u; j < inner; ++j )
       {
         ++used_inner;
-        
+
         // compute the next vector, w_j = M^{-1} A v_j, of the preconditioned Krylov subspace
         prod( A, v[j], tmp);
         w.clear();
         P( A, w, tmp);
-        
+
         // TODO: At this point we should see if the pre-conditioner was ill-conditioned, => m_status = 2
-        
+
         // Perform the orthonomalization of the Arnoldi Method. This
         // is a modified Gram-Schmidt ortonormalization.
         for (size_type  i = 0u; i <= j; ++i )
@@ -662,20 +662,20 @@ namespace big
         // However, making the explicit test for H(j+1,j) is zero would allow
         // us to skip the Hessenberg matrix transformation by Givens Rotations
         // in this particular case. This is not implemented!
-        
-        
+
+
         // Apply Givens rotations
         // see http://en.wikipedia.org/wiki/GMRES
         detail::hessenberg_matrix_transform( j, H, g, c, s);
-        
+
         // TODO: Hm, roughly about here we should test for stagnation? => status = 3
-        
-        
+
+
         // From theory we know that the last entry of the right hand side vector
         // of the upper triangular sub-problem is equal to the norm of the
         // residual. Thus g[i+1] = \norm{b - A x}
         norm_r = fabs( g[j+1] );
-        
+
         if(norm_r < norm_r_min)
         {
           norm_r_min = norm_r;
@@ -691,7 +691,7 @@ namespace big
           break;
         }
       }
-      
+
       // Update iterate x
       //
       // At this point we have generated the vectors
@@ -703,11 +703,11 @@ namespace big
       // in the basis for the Krylov subspace.
       //
       detail::update ( x, used_inner, H, g, v );
-      
+
       // Check for convergence
       residual(A, x, b, r);
       norm_r = ublas::norm_2 ( r );
-      
+
       if(norm_r < norm_r_min)
       {
         norm_r_min = norm_r;
@@ -737,7 +737,7 @@ namespace big
       relative_residual_error = norm_r_min / norm_b;
     }
   }
-  
+
   template<typename matrix_type, typename vector_type>
   inline void gmres(
                     matrix_type const & A
@@ -765,7 +765,7 @@ namespace big
           , &big::identity<typename vector_type::value_type>
           );
   }
-  
+
   template<typename matrix_type, typename vector_type>
   inline void gmres(
                     matrix_type const & A
@@ -780,7 +780,7 @@ namespace big
     typename vector_type::size_type used_inner_iterations;
     typename vector_type::size_type used_outer_iterations;
     typename vector_type::size_type status;
-    
+
     gmres(  A
           , x
           , b
@@ -794,8 +794,8 @@ namespace big
           , &big::identity<typename vector_type::value_type>
           );
   }
-  
-  
+
+
   template<typename matrix_type, typename vector_type>
   inline void gmres(
                     matrix_type const & A
@@ -810,7 +810,7 @@ namespace big
     typename vector_type::size_type  used_inner_iterations   = 0;
     typename vector_type::size_type  used_outer_iterations   = 0;
     typename vector_type::size_type  status                  = 0;
-        
+
     gmres( A
           , x
           , b
@@ -824,7 +824,7 @@ namespace big
           , &big::identity<typename vector_type::value_type>
           );
   }
-  
+
 } // end of namespace big
 
 // BIG_GMRES_H

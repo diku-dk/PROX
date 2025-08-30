@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute Reordering of Constraints
    *

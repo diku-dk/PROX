@@ -129,9 +129,9 @@ namespace geometry
         hit    = q;
         status = true;
       }
-      
+
     }
-    
+
     return status;
   }
 

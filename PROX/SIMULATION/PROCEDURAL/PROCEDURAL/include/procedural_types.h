@@ -46,7 +46,7 @@ namespace procedural
 			size_t  m_gid;  ///< unique identifier of the geometry in the physics engine
 
 		public:
-      
+
 			GeometryHandle()
       : m_m(VT::zero())
       , m_Ixx(VT::zero())
@@ -74,7 +74,7 @@ namespace procedural
       , m_Q(q)
 			, m_gid(g)
 			{}
-      
+
     public:
 
       /**
@@ -97,7 +97,7 @@ namespace procedural
 		class MaterialInfo
     {
 		public:
-      
+
 			size_t m_stone_mid;
 			size_t m_ground_mid;
 			size_t m_cannonball_mid;
@@ -105,7 +105,7 @@ namespace procedural
 			T m_stone_density;
 			T m_cannonball_density;
 			T m_ground_density;
-      
+
 		};
 			
 } // end of namespace procedural

@@ -16,7 +16,7 @@ namespace sparse
         *rhs += *lhs;
       }
     }
-    
+
     template <typename I1, typename I2, typename IR>
     inline void add(I1 lhs, I1 lhs_last, I2 rhs, IR dest)
     {
@@ -25,7 +25,7 @@ namespace sparse
         *dest = *lhs + *rhs;
       }
     }
-    
+
     template <typename I1, typename I2, typename I3, typename IR>
     inline void add(I1 lhs, I1 lhs_last, I2 rhs1, I3 rhs2, IR dest)
     {
@@ -34,7 +34,7 @@ namespace sparse
         *dest = *lhs + *rhs1 + *rhs2;
       }
     }
-    
+
     template <typename I1, typename I2>
     inline void sub(I1 lhs, I1 lhs_last, I2 rhs)
     {
@@ -52,9 +52,9 @@ namespace sparse
         *dest = *lhs - *rhs;
       }
     }
-    
+
   } // namespace detail
-  
+
 
   /**
    * rhs += lhs
@@ -62,8 +62,8 @@ namespace sparse
   template <typename B>
   inline void add(Vector<B> const& lhs, Vector<B>& rhs)
   {
-    assert(lhs.size() == rhs.size() || !"Vectors must be of same size");   
-    
+    assert(lhs.size() == rhs.size() || !"Vectors must be of same size");
+
     detail::add(lhs.begin()->begin(), (lhs.end()-1)->begin()+B::size(), rhs.begin()->begin());
   }
 
@@ -74,8 +74,8 @@ namespace sparse
   template <typename B,typename VC>
   inline void add(CompressedVector<B,VC> const& lhs, Vector<B>& rhs)
   {
-    assert(lhs.nrows() == rhs.size() || !"Vectors must be of same size");   
-    
+    assert(lhs.nrows() == rhs.size() || !"Vectors must be of same size");
+
     typename CompressedVector<B,VC>::const_iterator iter = lhs.begin();
     typename CompressedVector<B,VC>::const_iterator end = lhs.end();
     for( ; iter != end; ++iter )
@@ -92,8 +92,8 @@ namespace sparse
   template <typename B,typename VC>
   inline void add(Vector<B> const& lhs, CompressedVector<B,VC>& rhs)
   {
-    assert(lhs.nrows() == rhs.size() || !"Vectors must be of same size");   
-    
+    assert(lhs.nrows() == rhs.size() || !"Vectors must be of same size");
+
     typename CompressedVector<B,VC>::iterator iter = rhs.begin();
     typename CompressedVector<B,VC>::iterator end = rhs.end();
     for( ; iter != end; ++iter )
@@ -104,14 +104,14 @@ namespace sparse
   }
 
   /**
-   * rhs += lhs, iterates over both compressed vectors, ie. linear with the longest, 
+   * rhs += lhs, iterates over both compressed vectors, ie. linear with the longest,
    * but still faster than noncompressed, does not expand either vector
    */
   template <typename B,typename VC1,typename VC2>
   inline void add(CompressedVector<B,VC1> const& lhs, CompressedVector<B,VC2>& rhs)
   {
-    assert(lhs.nrows() == rhs.nrows() || !"Vectors must be of same size");   
-    
+    assert(lhs.nrows() == rhs.nrows() || !"Vectors must be of same size");
+
     typename CompressedVector<B,VC1>::const_iterator lhs_iter = lhs.begin();
     typename CompressedVector<B,VC1>::const_iterator lhs_end = lhs.end();
     for( ; lhs_iter != lhs_end; ++lhs_iter )
@@ -121,7 +121,7 @@ namespace sparse
       sparse::add(*lhs_iter, rhs(row_idx));
     }
   }
-  
+
   /**
    * rhs += lhs assuming that lhs and rhs has identical distribution of nonzero elements
    */
@@ -131,7 +131,7 @@ namespace sparse
   {
     assert(lhs.nrows() == rhs.nrows() || !"Vectors must be of same size");
     assert(lhs.size() == rhs.size() || !"Vectors must be of same size");
-    
+
     // 2010-04-01 Kenny: Should there be some error testing for incompatible fill-patterns? some asserts or something?
     for(size_t i = 0u ; i < lhs.size() ; ++i )
     {
@@ -161,7 +161,7 @@ namespace sparse
   {
     assert(lhs.nrows() == rhs.size() || !"Vectors must be of same size");
     assert(lhs.nrows() == res.size() || !"Vectors must be of same size");
-    
+
     typename CompressedVector<B,VC>::const_iterator iter = lhs.begin();
     typename CompressedVector<B,VC>::const_iterator end = lhs.end();
     for( ; iter != end; ++iter )
@@ -213,4 +213,4 @@ namespace sparse
 } // namespace sparse
 
 // SPARSE_SUM_H
-#endif 
+#endif

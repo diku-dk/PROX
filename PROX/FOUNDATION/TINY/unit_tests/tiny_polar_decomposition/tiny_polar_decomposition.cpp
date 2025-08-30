@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_SUITE(tiny_polar_decomposition);
 
     for(size_t i=0;i<10;++i)
     {
-      S = matrix3x3_type::random();      
+      S = matrix3x3_type::random();
       S = tiny::trans(S)*S;
       A = matrix3x3_type::random();
       R = tiny::ortonormalize( A );
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_SUITE(tiny_polar_decomposition);
       {
         bool right_handed = tiny::det(R) > value_traits::zero();
         BOOST_CHECK( right_handed );
-        
+
         D = A - R*S;
         real_type maximum_deviation =  tiny::max(  abs(D) );
 

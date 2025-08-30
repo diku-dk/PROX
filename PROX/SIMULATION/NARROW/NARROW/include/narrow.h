@@ -10,4 +10,4 @@
 #include <narrow_update_kdop_bvh.h>
 
 // NARROW_H
-#endif 
+#endif

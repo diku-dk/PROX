@@ -5,19 +5,19 @@
 
 namespace content
 {
-  
+
   class Input
   {
   public:
-    
+
     Input(){}
     virtual ~Input(){}
   public:
-    
+
     // Creators
-    
+
   public:
-    
+
     /**
      * Create a new Rigid body.
      *
@@ -33,7 +33,7 @@ namespace content
      * @param geometry_idx    The unique index value representing the collision geometry.
      */
     virtual void connect_collision_geometry(size_t body_idx, size_t geometry_idx ) = 0;
-        
+
     /**
      * Create a new material.
      *
@@ -41,23 +41,23 @@ namespace content
      * @return        An unique index value identifying the newly created material.
      */
     virtual size_t create_material( std::string const & name ) = 0;
-    
+
     /**
      * Create material properties between a pair of materials.
      *
      * @param first_idx    The index value of the first material
      * @param second_idx   The index value of the second material
-     */      
+     */
     virtual void create_material_property( size_t const & first_idx, size_t const & second_idx) = 0;
-    
+
     /**
      * Create Collision Geometry.
-     * 
+     *
      * @param name   A human readable name for the new geometry.
      * @return       An unique index value representing the newly created collision geometry.
      */
     virtual size_t create_collision_geometry( std::string const & name ) = 0;
-    
+
     /**
      * Add box shape to existing collision geometry.
      *
@@ -65,7 +65,7 @@ namespace content
      * @return                A unique number identifying the new box within this geometry.
      */
     virtual size_t create_box_shape( size_t const & geometry_idx ) = 0;
-    
+
     /**
      * Add capsule shape to existing collision geometry.
      *
@@ -73,7 +73,7 @@ namespace content
      * @return                A unique number identifying the new capsule within this geometry.
      */
     virtual size_t create_capsule_shape( size_t const & geometry_idx ) = 0;
-    
+
     /**
      * Add cone shape to existing collision geometry.
      *
@@ -81,7 +81,7 @@ namespace content
      * @return                A unique number identifying the new cone within this geometry.
      */
     virtual size_t create_cone_shape( size_t const & geometry_idx ) = 0;
-    
+
     /**
      * Add convex shape to existing collision geometry.
      *
@@ -89,7 +89,7 @@ namespace content
      * @return                A unique number identifying the new convex within this geometry.
      */
     virtual size_t create_convex_shape( size_t const & geometry_idx ) = 0;
-    
+
     /**
      * Add cylinder shape to existing collision geometry.
      *
@@ -97,7 +97,7 @@ namespace content
      * @return                A unique number identifying the new cylinder within this geometry.
      */
     virtual size_t create_cylinder_shape( size_t const & geometry_idx ) = 0;
-    
+
     /**
      * Add ellipsoid shape to existing collision geometry.
      *
@@ -105,43 +105,43 @@ namespace content
      * @return                A unique number identifying the new ellipsoid within this geometry.
      */
     virtual size_t create_ellipsoid_shape( size_t const & geometry_idx ) = 0;
-    
+
     /**
      * Add sphere shape to existing collision geometry.
      *
-     * @param geometry_idx    The unique index value representing the collision 
+     * @param geometry_idx    The unique index value representing the collision
      *                        geometry that the sphere shape should be added to.
-     * @return                A unique number identifying the new sphere within 
+     * @return                A unique number identifying the new sphere within
      *                        this geometry.
      */
     virtual size_t create_sphere_shape( size_t const & geometry_idx ) = 0;
 
     /**
      * Add tetramesh shape to existing collision geometry.
-     * A tetramesh is by nature a compound shape (it is a collection of 
+     * A tetramesh is by nature a compound shape (it is a collection of
      * tetrahedra) so there can only be a single tetramesh per geometry object.
      *
      * @param geometry_idx    The unique index value representing the collision
      *                        geometry the tetramesh shape should be added to.
-     * @return                A unique number identifying the new sphere within 
+     * @return                A unique number identifying the new sphere within
      *                        this geometry.
      */
     virtual size_t create_tetramesh_shape( size_t const & geometry_idx ) = 0;
 
-    
+
   public:
-    
+
     // Destroyers
-    
+
     /**
      * Clear all information whatsoever.
      */
     virtual void clear() = 0;
-    
+
   public:
 
     // Setters
-    
+
     /**
      * Set Parameter Value.
      *
@@ -164,9 +164,9 @@ namespace content
     virtual void set_rigid_body_position( size_t const & body_idx
                                          , float const & x
                                          , float const & y
-                                         , float const & z 
+                                         , float const & z
                                          ) = 0;
-    
+
     /**
      * Set Rigid Body Orientation.
      *
@@ -175,14 +175,14 @@ namespace content
      * @param qx            The x-component of the imaginary part of a quaternion representation of the orientation.
      * @param qy            The y-component of the imaginary part of a quaternion representation of the orientation.
      * @param qz            The z-component of the imaginary part of a quaternion representation of the orientation.
-     */      
+     */
     virtual void set_rigid_body_orientation( size_t const & body_idx
                                             , float const & qs
                                             , float const & qx
                                             , float const & qy
                                             , float const & qz
                                             ) = 0;
-    
+
     /**
      * Set Rigid Body Velocity.
      *
@@ -196,7 +196,7 @@ namespace content
                                          , float const & vy
                                          , float const & vz
                                          ) = 0;
-    
+
     /**
      * Set Rigid Body Spin.
      *
@@ -210,7 +210,7 @@ namespace content
                                      , float const & wy
                                      , float const & wz
                                      ) = 0;
-    
+
     /**
      * Set Total Mass of Rigid Body.
      *
@@ -218,7 +218,7 @@ namespace content
      * @param mass          The total mass of the rigid body.
      */
     virtual void set_rigid_body_mass( size_t const & body_idx, float const & mass) = 0;
-    
+
     /**
      * Set Rigid Body Inertia (in body-frame space).
      *
@@ -228,7 +228,7 @@ namespace content
      * @param Izz           The principal moment of the inertia tensor given in the body-frame of the rigid body,
      */
     virtual void set_rigid_body_inertia( size_t const & body_idx, float const & Ixx, float const & Iyy, float const & Izz) = 0;
-    
+
     /**
      * Set Active Flag of Rigid Body.
      * This is usefull for preallocating rigid bodies that are supposed to be added to the configuration during simulation.
@@ -237,7 +237,7 @@ namespace content
      * @param active        A boolean flag indicating if the rigid body should be active.
      */
     virtual void set_rigid_body_active( size_t const & body_idx, bool const & active ) = 0;
-    
+
     /**
      * Set Fixed Rigid Body,
      * A fixed rigid body is immovable, like the ground.
@@ -246,7 +246,7 @@ namespace content
      * @param fixed         A boolean flag indicating if the rigid body should be fixed.
      */
     virtual void set_rigid_body_fixed( size_t const & body_idx, bool const & fixed ) = 0;
-    
+
     /**
      * Set Material of Rigid Body.
      *
@@ -254,7 +254,7 @@ namespace content
      * @param material_idx  An unique index for the material of the rigid body.
      */
     virtual void set_rigid_body_material( size_t const & body_idx, size_t const & material_idx) = 0;
-    
+
     /**
      * Set gravity up direction parameters.
      */
@@ -282,7 +282,7 @@ namespace content
      * @param master_idx   The master material index. The rigid body with this material dictates the orientation of the friction cone.
      */
     virtual void set_master(size_t const & first_idx, size_t const & second_idx, size_t master_idx) = 0;
-    
+
     /**
      * Set Friction Coefficients.
      *
@@ -313,7 +313,7 @@ namespace content
                                       , float const & dir_y
                                       , float const & dir_z
                                       ) = 0;
-    
+
     /**
      * Set Restitution Coefficient.
      *
@@ -325,8 +325,8 @@ namespace content
                                  , size_t const & second_idx
                                  , float const & e
                                  ) = 0;
-    
-    
+
+
     /**
      * Set box Shape Parameters.
      *
@@ -342,7 +342,7 @@ namespace content
                                , float const & height
                                , float const & depth
                                ) = 0;
-    
+
     /**
      * Set box Position.
      *
@@ -358,7 +358,7 @@ namespace content
                                   , float const & y
                                   , float const & z
                                   ) = 0;
-    
+
     /**
      * Set box Orientation.
      *
@@ -368,7 +368,7 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_box_orientation( size_t const & geometry_idx
                                      , size_t const & box_number
                                      , float const & Qs
@@ -376,7 +376,7 @@ namespace content
                                      , float const & Qy
                                      , float const & Qz
                                      ) = 0;
-    
+
     /**
      * Set capsule Shape Parameters.
      *
@@ -390,7 +390,7 @@ namespace content
                                    , float const & radius
                                    , float const & height
                                    ) = 0;
-    
+
     /**
      * Set capsule Position.
      *
@@ -406,7 +406,7 @@ namespace content
                                       , float const & y
                                       , float const & z
                                       ) = 0;
-    
+
     /**
      * Set capsule Orientation.
      *
@@ -416,15 +416,15 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_capsule_orientation( size_t const & geometry_idx
                                          , size_t const & capsule_number
                                          , float const & Qs
                                          , float const & Qx
                                          , float const & Qy
                                          , float const & Qz
-                                         ) = 0; 
-    
+                                         ) = 0;
+
     /**
      * Set cone Shape Parameters.
      *
@@ -433,12 +433,12 @@ namespace content
      * @param height          The height of the cone.
      * @pram  radius          The radius of the base of the cone.
      */
-    virtual void set_cone_shape(  size_t const & geometry_idx                                
+    virtual void set_cone_shape(  size_t const & geometry_idx
                                 , size_t const & cone_number
                                 , float const & radius
                                 , float const & height
                                 ) = 0;
-    
+
     /**
      * Set cone Position.
      *
@@ -454,7 +454,7 @@ namespace content
                                    , float const & y
                                    , float const & z
                                    ) = 0;
-    
+
     /**
      * Set cone Orientation.
      *
@@ -464,21 +464,21 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_cone_orientation( size_t const & geometry_idx
                                       , size_t const & cone_number
                                       , float const & Qs
                                       , float const & Qx
                                       , float const & Qy
                                       , float const & Qz
-                                      ) = 0; 
-    
+                                      ) = 0;
+
     /**
      * Set convex Shape Parameters.
      *
      * @param geometry_idx       The index representing the geometry.
      * @param convex_number      The convex number within the specified geometry.
-     * @param N               The number of corner points in the convex shape. 
+     * @param N               The number of corner points in the convex shape.
      * @param coordinates     Array of coordinates in order x1 y1 z1... xN yN zN.
      */
     virtual void set_convex_shape(  size_t const & geometry_idx
@@ -486,7 +486,7 @@ namespace content
                                   , size_t const & N
                                   , float const * coordinates
                                   ) = 0;
-    
+
     /**
      * Set convex Position.
      *
@@ -502,7 +502,7 @@ namespace content
                                      , float const & y
                                      , float const & z
                                      ) = 0;
-    
+
     /**
      * Set convex Orientation.
      *
@@ -512,15 +512,15 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_convex_orientation( size_t const & geometry_idx
                                         , size_t const & convex_number
                                         , float const & Qs
                                         , float const & Qx
                                         , float const & Qy
                                         , float const & Qz
-                                        ) = 0;                    
-    
+                                        ) = 0;
+
     /**
      * Set cylinder Shape Parameters.
      *
@@ -531,10 +531,10 @@ namespace content
      */
     virtual void set_cylinder_shape(  size_t const & geometry_idx
                                     , size_t const & cylinder_number
-                                    , float const & radius                                      
+                                    , float const & radius
                                     , float const & height
                                     ) = 0;
-    
+
     /**
      * Set cylinder Position.
      *
@@ -550,7 +550,7 @@ namespace content
                                        , float const & y
                                        , float const & z
                                        ) = 0;
-    
+
     /**
      * Set cylinder Orientation.
      *
@@ -560,14 +560,14 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_cylinder_orientation( size_t const & geometry_idx
                                           , size_t const & cylinder_number
                                           , float const & Qs
                                           , float const & Qx
                                           , float const & Qy
                                           , float const & Qz
-                                          ) = 0;               
+                                          ) = 0;
     /**
      * Set Ellipsoid Shape Parameters.
      *
@@ -581,9 +581,9 @@ namespace content
                                      , size_t const & ellipsoid_number
                                      , float const & sx
                                      , float const & sy
-                                     , float const & sz 
+                                     , float const & sz
                                      ) = 0;
-    
+
     /**
      * Set Ellipsoid Position.
      *
@@ -599,7 +599,7 @@ namespace content
                                         , float const & y
                                         , float const & z
                                         ) = 0;
-    
+
     /**
      * Set Ellipsoid Orientation.
      *
@@ -609,15 +609,15 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_ellipsoid_orientation( size_t const & geometry_idx
                                            , size_t const & ellipsoid_number
                                            , float const & Qs
                                            , float const & Qx
                                            , float const & Qy
                                            , float const & Qz
-                                           ) = 0; 
-    
+                                           ) = 0;
+
     /**
      * Set Sphere Shape Parameters.
      *
@@ -627,9 +627,9 @@ namespace content
      */
     virtual void set_sphere_shape(  size_t const & geometry_idx
                                   , size_t const & sphere_number
-                                  , float const & radius 
+                                  , float const & radius
                                   ) = 0;
-    
+
     /**
      * Set Sphere Position.
      *
@@ -645,7 +645,7 @@ namespace content
                                      , float const & y
                                      , float const & z
                                      ) = 0;
-    
+
     /**
      * Set Sphere Orientation.
      *
@@ -655,14 +655,14 @@ namespace content
      * @param Qx                  The first imaginary part of the rotation quaternion.
      * @param Qy                  The second imaginary part of the rotation quaternion.
      * @param Qz                  The third imaginary part of the rotation quaternion.
-     */      
+     */
     virtual void set_sphere_orientation( size_t const & geometry_idx
                                         , size_t const & sphere_number
                                         , float const & Qs
                                         , float const & Qx
                                         , float const & Qy
                                         , float const & Qz
-                                        ) = 0;          
+                                        ) = 0;
 
 
     /**
@@ -811,7 +811,7 @@ namespace content
                                                    ) = 0;
 
   };
-  
+
 }// namespace content
 
 // CONTENT_API_INPUT_H

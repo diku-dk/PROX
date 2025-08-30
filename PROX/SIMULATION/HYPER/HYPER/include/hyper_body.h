@@ -21,7 +21,7 @@ namespace hyper
   class Body
   {
   public:
-    
+
     typedef typename MT::real_type             T;
     typedef typename MT::vector3_type          V;
     typedef typename MT::matrix3x3_type        M;
@@ -31,7 +31,7 @@ namespace hyper
 
 
   protected:
-    
+
     size_t       m_idx;           ///< A body index.
     size_t       m_visual_idx;    ///< Auxiliary index that can be used by an application to associate visualization data with this body.
     std::string  m_name;          ///< A name.
@@ -126,9 +126,9 @@ namespace hyper
       this->m_adaptive_unchanged   = body.m_adaptive_unchanged;
       this->m_scripted_motion      = body.m_scripted_motion;
     }
-    
+
   public:
-    
+
     Body()
     : m_idx()
     , m_visual_idx()
@@ -161,12 +161,12 @@ namespace hyper
     {
       this->clear();
     }
-    
+
     virtual ~Body()
     {
       this->clear();
     }
-    
+
     Body (Body const & body)
     : m_idx()
     , m_visual_idx()
@@ -199,13 +199,13 @@ namespace hyper
     {
       this->copy(body);
     }
-    
+
     Body & operator= (Body const & body)
     {
       this->copy(body);
       return *this;
     }
-    
+
   public:
 
     void init(
@@ -321,7 +321,7 @@ namespace hyper
       this->m_adaptive_dt = VT::zero();
       this->m_adaptive_unchanged = 0u;
     }
-    
+
     void set_idx( size_t const & idx )
     {
       this->m_idx = idx;
@@ -357,4 +357,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_BODY_H
-#endif 
+#endif

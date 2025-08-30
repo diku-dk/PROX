@@ -86,11 +86,11 @@ namespace soft_body
         }
 
         MaterialInfo const material = make_material_from_config_file(name, params);
-        
+
         materials.push_back(material);
-      }    
+      }
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

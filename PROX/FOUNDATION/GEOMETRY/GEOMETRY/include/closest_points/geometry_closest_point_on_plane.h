@@ -15,10 +15,10 @@ namespace geometry
   inline V closest_point_on_plane(V const & p, Plane<V> const & P)
   {
     typedef typename V::real_type T;
-    
+
     V const & n = P.n();
     T const & w = P.w();
-    
+
     V const   q = p - n * inner_prod( n, (p - n*w) );
 
     assert( is_number(q(0)) || !"closest_point_on_line(): NaN encountered");
@@ -30,7 +30,7 @@ namespace geometry
 
     return q;
   }
-  
+
 }// namespace geometry
 
 // GEOMETRY_CLOSEST_POINT_ON_PLANE_H

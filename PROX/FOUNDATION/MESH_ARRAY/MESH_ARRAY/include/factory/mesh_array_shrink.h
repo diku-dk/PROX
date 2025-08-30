@@ -51,8 +51,8 @@ namespace mesh_array
     translate<MT>(d,mesh,X,Y,Z);
   }
 
-    
+
 } //namespace mesh_array
 
 // MESH_ARRAY_SHRINK_H
-#endif 
+#endif

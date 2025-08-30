@@ -7,7 +7,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_cylinder(
                     typename MT::real_type const & radius
@@ -33,10 +33,10 @@ namespace mesh_array
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z  );
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
   typedef tiny::MathTypes<double> MTd;
-  
+
   template
   void make_cylinder<MTf>(
                      MTf::real_type const & radius

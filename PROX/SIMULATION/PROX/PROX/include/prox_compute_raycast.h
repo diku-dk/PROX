@@ -128,7 +128,7 @@ namespace prox
       }
 
     }
-    
+
     return did_hit;
   }
 

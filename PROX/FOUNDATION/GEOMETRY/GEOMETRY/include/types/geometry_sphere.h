@@ -11,31 +11,31 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Sphere
   : public geometry::SupportMapping<V>
 
   {
   public:
-    
+
     typedef typename V::real_type       T;
     typedef typename V::value_traits    VT;
-    
+
   protected:
-    
+
     V m_center;
     T m_radius;
-    
+
   public:
-    
+
     V const & center() const { return this->m_center; }
     T const & radius() const { return this->m_radius; }
     V       & center()       { return this->m_center; }
     T       & radius()       { return this->m_radius; }
 
   public:
-    
+
     Sphere()
       : m_center( V::zero() )
       , m_radius( VT::one() )
@@ -121,12 +121,12 @@ namespace geometry
       assert( is_number(this->m_radius)   || !"get_scale(): NAN encountered");
       assert( is_finite(this->m_radius)   || !"get_scale(): INF encountered");
       assert( this->m_radius > VT::zero() || !"get_scale(): radius was non-positive");
-      
+
       return VT::two() *  this->m_radius ;
     }
 
   };
-  
+
   template<typename V>
   inline Sphere<V> make_sphere(V const & center, typename V::real_type const &  radius)
   {

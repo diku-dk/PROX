@@ -49,7 +49,7 @@ namespace rigid_body
         object->m_aabb_depth  = max_z - min_z;
       }
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

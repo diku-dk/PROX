@@ -125,7 +125,7 @@ namespace hyper
       A(idx,idx) = MT::convert( M::identity() );
     }
   }
-  
+
 }// namespace hyper
 
 // HYPER_APPLY_DIRICHLET_CONDITIONS_H

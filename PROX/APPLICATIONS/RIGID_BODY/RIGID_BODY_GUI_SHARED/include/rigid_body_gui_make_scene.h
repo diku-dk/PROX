@@ -131,15 +131,15 @@ namespace rigid_body
         }
 
         object.m_texture_matrix = glm::scale(texture_scale_params[mid] );
-        
+
         object.m_model_matrix  = glm::mat4(1.0f);  // init to identity
-        
+
         scene_manager.add( object );
       }
-      
+
       update_scene( scene_manager, engine );
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

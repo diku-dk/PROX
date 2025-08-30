@@ -15,15 +15,15 @@ namespace big
     typedef boost::numeric::ublas::vector<T> vector_type;
     typedef typename vector_type::size_type  size_type;
     typedef typename vector_type::value_type real_type;
-    
+
     assert(A.size1()>0            || !"prod_add_rhs(): A was empty"            );
     assert(A.size2()>0            || !"prod_add_rhs(): A was empty"            );
     assert(A.size2() ==  x.size() || !"prod_add_rhs(): incompatible dimensions");
     assert(A.size1() ==  b.size() || !"prod_add_rhs(): incompatible dimensions");
-    
+
     if(y.size() != b.size())
       y.resize(b.size(), false );
-    
+
     //
     //  Example of compressed matrix format:
     //
@@ -57,7 +57,7 @@ namespace big
       y(i) = t;
     }
   }
-  
+
   template
   void prod_add_rhs<float>(
                            boost::numeric::ublas::compressed_matrix<float> const & A
@@ -65,7 +65,7 @@ namespace big
                            , boost::numeric::ublas::vector<float> const & b
                            , boost::numeric::ublas::vector<float>       & y
                            );
-  
+
   template
   void prod_add_rhs<double>(
                             boost::numeric::ublas::compressed_matrix<double> const & A
@@ -73,5 +73,5 @@ namespace big
                             , boost::numeric::ublas::vector<double> const & b
                             , boost::numeric::ublas::vector<double>       & y
                             );
-  
+
 } // end of namespace big

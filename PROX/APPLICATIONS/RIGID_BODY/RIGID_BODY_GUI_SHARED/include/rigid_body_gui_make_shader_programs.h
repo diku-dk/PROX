@@ -77,10 +77,10 @@ namespace rigid_body
 
         program_manager.load(vertex_shader_file, fragment_shader_file);
       }
-      
+
       gl3::check_errors("make_shader_programs(): leaving");
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

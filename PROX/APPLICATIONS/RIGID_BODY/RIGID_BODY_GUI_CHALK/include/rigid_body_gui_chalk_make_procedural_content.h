@@ -128,13 +128,13 @@ namespace rigid_body
                                                       , ref_y
                                                       , ref_z
                                                       );
-            
+
             engine->connect_scripted_motion(rid, oscillation_motion_idx);
           }
         }
-        
+
       }
-      
+
     }//namespace chalk
   }//namespace gui
 }//namespace rigid_body

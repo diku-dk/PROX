@@ -3,11 +3,11 @@
 
 namespace content
 {
-  
+
   class Profiling
   {
   public:
-    
+
     Profiling(){}
     virtual ~Profiling(){}
 
@@ -20,7 +20,7 @@ namespace content
      * @return  The number of contacts.
      */
     virtual size_t get_number_of_contacts() = 0;
-    
+
     /**
      * The position of the contact point.
      *
@@ -30,7 +30,7 @@ namespace content
      * @param z                      The z-coordinate of the poisition.
      */
     virtual void get_contact_position( size_t const & contact_number, float & x, float & y, float & z) = 0;
-    
+
     /**
      * The normal of the contact point.
      *
@@ -51,7 +51,7 @@ namespace content
 
 
   };
-  
+
 }// namespace content
 
 // CONTENT_API_PROFILING_H

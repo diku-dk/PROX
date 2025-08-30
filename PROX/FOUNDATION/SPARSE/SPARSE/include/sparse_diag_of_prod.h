@@ -1,14 +1,14 @@
 #ifndef SPARSE_DIAG_OF_PROD_H
 #define SPARSE_DIAG_OF_PROD_H
 
-#include <sparsefwd.h>    
+#include <sparsefwd.h>
 #include <sparse_traits.h> // for zero_block
 
 #include <cassert>
 
 namespace sparse
 {
-    
+
     /**
      * Diagonal of Matrix Product.
      * This function computes the  blocked diagonal of a matrix product between a two column matrix and a compressed row matrix.
@@ -37,7 +37,7 @@ namespace sparse
         assert(J.ncols() == JT.nrows() || !"Number of rows of JT was different then number of columns of J");
         assert(J.nrows() == JT.ncols() || !"Number of rows of J was different then number of columns of JT");
         assert( J.size() == JT.size()  || !"J and JT sizes are not the same"                               );
-        
+
         if (init)
         {
             std::fill(D.begin(), D.end(), zero_block<BR>());
@@ -46,22 +46,22 @@ namespace sparse
         {
             D.resize(J.nrows());
         }
-        
+
         typedef typename CompressedRowMatrix<B2>::accessor C_A;
-        
+
         size_t const JT_size = JT.size();
-        
+
         // 2009-06-30 Kenny: Native new/delete may be problematic
         int * JT_idxs = new int[JT_size];
         std::fill(JT_idxs, JT_idxs+JT_size, -1);
-        
+
         typename C_A::cols_container_type const & JT_cols = C_A::cols(JT);
         int * tmp_idx;
-        
-        
+
+
         // Transpose JT and dot every row of J with every row of JT
         //
-        // Observation A: 
+        // Observation A:
         //                  There are two elements in every col of JT
         //
         // Observation B:
@@ -82,7 +82,7 @@ namespace sparse
             tmp_idx = JT_idxs + JT_cols[i]*2;
             *tmp_idx == -1 ? *tmp_idx = i : *(tmp_idx+1) = i;
         }
-        
+
         //
         // JT_idxs now holds indexes to {JT[0]..JT[JT_size-1]}
         // structurally equivalent to J
@@ -98,7 +98,7 @@ namespace sparse
         }
         delete[] JT_idxs;
     }
-    
+
     /**
      * Diagonal of Matrix Product.
      * This function computes the  blocked diagonal of a matrix product between two compressed row matrices.
@@ -127,7 +127,7 @@ namespace sparse
         assert( J.ncols() == JT.nrows() || !"Number of rows of JT was different then number of columns of J");
         assert( J.nrows() == JT.ncols() || !"Number of rows of J was different then number of columns of JT");
         assert( J.size() == JT.size()   || !"J and JT sizes are not the same"                               );
-        
+
         if (init)
         {
             std::fill(D.begin(), D.end(), zero_block<BR>());
@@ -136,22 +136,22 @@ namespace sparse
         {
             D.resize(J.nrows());
         }
-        
+
         typedef typename CompressedRowMatrix<B2>::accessor C_A;
-        
+
         size_t const JT_size = JT.size();
-        
+
         // 2009-06-30 Kenny: Native new/delete may be problematic
         int * JT_idxs = new int[JT_size];
         std::fill(JT_idxs, JT_idxs+JT_size, -1);
-        
+
         typename C_A::cols_container_type const & JT_cols = C_A::cols(JT);
         int * tmp_idx;
-        
-        
+
+
         // Transpose JT and dot every row of J with every row of JT
         //
-        // Observation A: 
+        // Observation A:
         //                  There are two elements in every col of JT
         //
         // Observation B:
@@ -172,7 +172,7 @@ namespace sparse
             tmp_idx = JT_idxs + JT_cols[i]*2;
             *tmp_idx == -1 ? *tmp_idx = i : *(tmp_idx+1) = i;
         }
-        
+
         //
         // JT_idxs now holds indexes to {JT[0]..JT[JT_size-1]}
         // structurally equivalent to J
@@ -188,10 +188,10 @@ namespace sparse
         }
         delete[] JT_idxs;
     }
-    
+
     // 2009-06-30 Kenny: Why is there no support for products of compressed row matrices?
-    
+
 } // namespace sparse
 
 // SPARSE_DIAG_OF_PROD_H
-#endif 
+#endif

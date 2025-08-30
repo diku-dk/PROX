@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Stagnation Test Function.
    *

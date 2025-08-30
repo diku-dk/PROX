@@ -204,7 +204,7 @@ namespace hyper
       }
     }
   }
-  
+
 }// namespace hyper
 
 // HYPER_ASSEMBLE_MATRIX_H

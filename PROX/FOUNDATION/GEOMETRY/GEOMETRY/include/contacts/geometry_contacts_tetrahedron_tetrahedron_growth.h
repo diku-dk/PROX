@@ -305,13 +305,13 @@ namespace geometry
 
     update_gauss_map(G,B);
     G.search_for_feature(-s, pointsB, nB);
-    
+
     // Determine contact normal from highest dimensional feature
     V const normal = pointsA.size() >=  pointsB.size() ? nA : -nB;
 
     std::vector<V> intersections;
     details::compute_intersection_points(A, B, intersections);
-    
+
     if(intersections.empty())
       return false;
 
@@ -322,7 +322,7 @@ namespace geometry
     T const depth = min_val - max_val;
 
     V const mid =  normal * (max_val + min_val)*VT::half();
-    
+
     //details::project_to_plane(n, mid, intersections);
 
     std::vector<V> reduced;
@@ -332,7 +332,7 @@ namespace geometry
 
     return reduced.size() > 0u;
   }
-  
+
 }// end namespace geometry
 
 // GEOMETRY_CONTACTS_TETRAHEDRON_TETRAHEDRON_GROWTH_H

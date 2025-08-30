@@ -138,11 +138,11 @@ BOOST_AUTO_TEST_CASE(overlap_tet_tet_test)
 
         BOOST_CHECK(!test1);
         BOOST_CHECK(!test2);
-        
+
       }
     }
-    
-    
+
+
   }
 
   // Separated by face cases
@@ -176,9 +176,9 @@ BOOST_AUTO_TEST_CASE(overlap_tet_tet_test)
 
       BOOST_CHECK(!test1);
       BOOST_CHECK(!test2);
-      
+
     }
-    
+
   }
 }
 

@@ -3,28 +3,28 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Triangle
   {
   public:
-    
+
     typedef typename V::real_type       T;
     typedef typename V::value_traits    VT;
-    
+
   protected:
-    
+
     V m_point[3];
 
   public:
-    
+
     V const & point(unsigned int const & idx ) const { return m_point[idx]; }
     V       & point(unsigned int const & idx )       { return m_point[idx]; }
     V const & p(unsigned int const & idx )     const { return m_point[idx]; }
     V       & p(unsigned int const & idx )           { return m_point[idx]; }
 
   public:
-    
+
     Triangle()
     {
       m_point[0] = V::zero();

@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(overlap_obb_capsule_test)
     geometry::Capsule<V> const & cap = geometry::make_capsule(radius, point0, point1);
 
     bool const test = geometry::overlap_obb_capsule(obb, cap);
-    
+
     BOOST_CHECK(test);
   }
   // Separated on plus y-axis of OBB
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(overlap_obb_capsule_test)
     geometry::Capsule<V> const & cap = geometry::make_capsule(radius, point0, point1);
 
     bool const test = geometry::overlap_obb_capsule(obb, cap);
-    
+
     BOOST_CHECK(test);
   }
   // Separated on plus z-axis of OBB
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(overlap_obb_capsule_test)
     geometry::Capsule<V> const & cap = geometry::make_capsule(radius, point0, point1);
 
     bool const test = geometry::overlap_obb_capsule(obb, cap);
-    
+
     BOOST_CHECK(test);
   }
   // Separated by z-OBB X capsule axis

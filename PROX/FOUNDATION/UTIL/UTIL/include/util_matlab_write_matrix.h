@@ -60,7 +60,7 @@ namespace util
 
     return output.str();
   }
-  
+
 }
 
 // UTIL_MATLAB_WRITE_MATRIX_H

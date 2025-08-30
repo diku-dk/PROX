@@ -7,7 +7,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   inline void transform(
                  typename MT::vector3_type const & d
@@ -61,4 +61,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_TRANSFORM_H
-#endif 
+#endif

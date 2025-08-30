@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(compile_testing)
   prox::FrictionSubSolverBinder<T> friction_solver5 = prox::bind_friction_solver<T>( prox::box_model );
   prox::FrictionSubSolverBinder<T> friction_solver6 = prox::bind_friction_solver<T>( prox::friction_origin );
   prox::FrictionSubSolverBinder<T> friction_solver7 = prox::bind_friction_solver<T>( prox::friction_infinity );
-  
+
   prox::SolverBinder<M>            prox_solver1     = prox::bind_solver<M>( prox::jacobi );
   prox::SolverBinder<M>            prox_solver2     = prox::bind_solver<M>( prox::gauss_seidel );
 

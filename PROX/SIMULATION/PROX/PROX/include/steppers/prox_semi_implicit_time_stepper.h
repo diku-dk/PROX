@@ -1,27 +1,27 @@
 #ifndef PROX_SEMI_IMPLICIT_TIME_STEPPER_H
 #define PROX_SEMI_IMPLICIT_TIME_STEPPER_H
 
-#include <prox_rigid_body.h> 
-#include <prox_contact_point.h> 
+#include <prox_rigid_body.h>
+#include <prox_contact_point.h>
 
-#include <prox_get_mass_matrix.h> 
-#include <prox_get_inverse_mass_matrix.h> 
-#include <prox_get_jacobian_matrix.h> 
+#include <prox_get_mass_matrix.h>
+#include <prox_get_inverse_mass_matrix.h>
+#include <prox_get_jacobian_matrix.h>
 #include <prox_get_external_forces_vector.h>
-#include <prox_get_position_vector.h> 
-#include <prox_get_velocity_vector.h> 
-#include <prox_get_pre_stabilization_vector.h> 
+#include <prox_get_position_vector.h>
+#include <prox_get_velocity_vector.h>
+#include <prox_get_pre_stabilization_vector.h>
 #include <prox_get_post_stabilization_vector.h>
 #include <prox_get_restitution_vector.h>
-#include <prox_get_friction_coefficient_vector.h> 
+#include <prox_get_friction_coefficient_vector.h>
 
-#include <prox_set_position_vector.h> 
-#include <prox_set_velocity_vector.h> 
+#include <prox_set_position_vector.h>
+#include <prox_set_velocity_vector.h>
 
-#include <prox_position_update.h> 
-#include <prox_velocity_update.h> 
-#include <prox_collision_detection.h> 
-#include <prox_update_body_indices.h> 
+#include <prox_position_update.h>
+#include <prox_velocity_update.h>
+#include <prox_collision_detection.h>
+#include <prox_update_body_indices.h>
 
 #include <prox_params.h>
 #include <prox_math_policy.h>
@@ -39,12 +39,12 @@
 
 namespace prox
 {
-  
+
   /**
    *
    */
-  template< typename M  > 
-  inline void semi_implicit_time_stepper( 
+  template< typename M  >
+  inline void semi_implicit_time_stepper(
                                           typename M::real_type const & dt
                                          , std::vector< RigidBody< M > > & bodies
                                          , std::vector< std::vector< Property< M > > > const &  properties
@@ -56,22 +56,22 @@ namespace prox
                                          , std::vector< ContactPoint<M> > & contacts
                                          , M const & tag
                                          )
-  {     
+  {
     typedef typename M::vector4_type               V4;
     typedef typename M::vector6_type               V6;
     typedef typename M::vector7_type               V7;
-    typedef typename M::diagonal6x6_type           D6x6; 
+    typedef typename M::diagonal6x6_type           D6x6;
     typedef typename M::compressed4x6_type         CSR4x6;
     typedef typename M::compressed6x4_type         CSR6x4;
     typedef typename M::real_type                  T;
     typedef typename M::value_traits               VT;
 
     util::Log logging;
-    
+
     START_TIMER("stepper");
 
     SolverBinder<M>            prox_solver     = bind_solver<M>( params.solver_params().solver() );
-    RStrategyBinder<M>         strategy        = bind_strategy<M>( params.solver_params().r_factor_strategy() );    
+    RStrategyBinder<M>         strategy        = bind_strategy<M>( params.solver_params().r_factor_strategy() );
     NormalSubSolverBinder<T>   normal_solver   = bind_normal_solver<T>( params.solver_params().normal_sub_solver() );
     FrictionSubSolverBinder<T> friction_solver = bind_friction_solver<T>( params.solver_params().friction_sub_solver() );
 
@@ -103,14 +103,14 @@ namespace prox
                         , q
                         , tag
                         );
-    
+
     get_velocity_vector(
                         bodies.begin()
                         , bodies.end()
                         , u
                         , tag
                         );
-        
+
     collision_detection(
                         bodies
                         , broad_system
@@ -119,7 +119,7 @@ namespace prox
                         , params
                         , tag
                         );
-    
+
     unsigned int const number_of_contacts = contacts.size();
 
     logging << "semi_implicit_time_stepper(): Number of contacts = " << number_of_contacts << util::Log::newline();
@@ -130,7 +130,7 @@ namespace prox
                             , W
                             , tag
                             );
-    
+
     get_external_forces_vector(
                                bodies.begin()
                                , bodies.end()
@@ -142,7 +142,7 @@ namespace prox
 
     sparse::prod(dt, h);
     sparse::prod(W, h, Wdth);        // Wdth = dt M^{-1} f_ext
-    
+
     if( number_of_contacts > 0u )
     {
       get_jacobian_matrix< RigidBody<M> >(
@@ -199,11 +199,11 @@ namespace prox
                                       , tag
                                       , number_of_contacts
                                       );
-      
+
       M::compute_WJT( W, J, WJT );            // WJT = M^{-1} J^T
 
       M::compute_b( J, Wdth, u, e, g, b );    // b   = (I+E)J u + J W (dt h)
-      
+
       prox_solver(
                   J
                   , WJT
@@ -216,24 +216,24 @@ namespace prox
                   , params.solver_params()
                   , tag
                   );
-      
+
       fc.resize( WJT.nrows() );
 
       sparse::prod(WJT, lambda, fc, true);     // fc = M^{-1}*J^T*lambda
-      
+
       velocity_update( u, Wdth, fc, u, tag );  // u = u + dt M^{-1} h + fc
-      
-    } 
-    else 
+
+    }
+    else
     {
       velocity_update( u, Wdth, u, tag );      // u = u + dt M^{-1} h
     }
-    
+
     position_update( q, u, dt, q, tag );
-    
-    set_position_vector( bodies.begin(), bodies.end(), q, tag ); 
-    set_velocity_vector( bodies.begin(), bodies.end(), u, tag );  
-    
+
+    set_position_vector( bodies.begin(), bodies.end(), q, tag );
+    set_velocity_vector( bodies.begin(), bodies.end(), u, tag );
+
     STOP_TIMER("stepper");
 
     if(params.stepper_params().post_stabilization())
@@ -279,9 +279,9 @@ namespace prox
       STOP_TIMER("stabilization");
     }
 
-  } 
-  
+  }
+
 } //namespace prox
 
-// PROX_SEMI_IMPLICIT_TIME_STEPPER_H 
+// PROX_SEMI_IMPLICIT_TIME_STEPPER_H
 #endif

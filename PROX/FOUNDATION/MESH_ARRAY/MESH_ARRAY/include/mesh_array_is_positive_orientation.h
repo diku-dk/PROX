@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename T>
   bool is_positive_orientation(
                T4Mesh & mesh
@@ -14,7 +14,7 @@ namespace mesh_array
               , VertexAttribute<T,T4Mesh> & Y
               , VertexAttribute<T,T4Mesh> & Z
               );
-  
+
 } // namespace mesh_array
 
 //MESH_ARRAY_IS_POSITIVE_ORIENTATION_H

@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B );
 
     BOOST_CHECK( S.m_bitmask == (bit_A | bit_B));
-    
+
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B );
 
     BOOST_CHECK( S.m_bitmask == (bit_A | bit_B));
-    
+
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B );
 
     BOOST_CHECK( S.m_bitmask == (bit_A | bit_B));
-    
+
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B );
 
     BOOST_CHECK( S.m_bitmask == (bit_A | bit_B));
-    
+
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);
@@ -357,7 +357,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::get_used_indices( S.m_bitmask, idx_A, bit_A, idx_B, bit_B );
 
     BOOST_CHECK( S.m_bitmask == (bit_A | bit_B));
-    
+
     BOOST_CHECK(S.m_v[idx_A] == a);
     BOOST_CHECK(S.m_a[idx_A] == a);
     BOOST_CHECK(S.m_b[idx_A] == a);

@@ -9,7 +9,7 @@
 
 namespace tiny
 {
-  
+
 #ifdef WIN32
 #define is_finite(val) (_finite(val)!=0)  ///< Is finite number test
 #else

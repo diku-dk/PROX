@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(product_crm_vector_test)
   sparse::Vector< block1x1_type > su(4);
   sparse::CompressedVector< block1x1_type > csu(4,4);
   block1x1_type result(0);
-  
+
   sA(0,0)[0] = 1.0f;
   sA(0,3)[0] = 2.0f;
   sA(1,1)[0] = 3.0f;
@@ -43,13 +43,13 @@ BOOST_AUTO_TEST_CASE(product_crm_vector_test)
   BOOST_CHECK( result == 21.0f );
   sparse::row_prod(sA, csu, result, 1);
   BOOST_CHECK( result == 67.0f ); // 46 + 21
-  
+
   // block case
   sparse::CompressedRowMatrix< block3x4_type > A(1,1,1);
   sparse::Vector< block4x1_type > u(1);
   sparse::CompressedVector< block4x1_type > cu(1,1);
   block3x1_type block_result(0);
-  
+
   sparse::fill(A(0,0));
   sparse::fill(u(0));
   sparse::row_prod(A,u,block_result,0);
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(product_crm_vector_test)
   BOOST_CHECK( block_result[0] == 14 );
   BOOST_CHECK( block_result[1] == 38 );
   BOOST_CHECK( block_result[2] == 62 );
-  
+
   A.clear();
   u.clear();
   A.resize(2,4,4);

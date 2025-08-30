@@ -5,12 +5,12 @@ namespace prox
 {
   /**
    * A friction sub solver functor.
-   */  
+   */
   template<typename T>
   class FrictionSubSolver
-  {    
+  {
   public:
-    
+
     virtual void operator()(
                     T const & z_s
                     , T const & z_t
@@ -23,9 +23,9 @@ namespace prox
                     , T & lambda_t
                     , T & lambda_tau
                     ) const = 0;
-    
+
   };
-  
+
 } //namespace prox
 
 // PROX_FRICTION_SUB_SOLVER_H

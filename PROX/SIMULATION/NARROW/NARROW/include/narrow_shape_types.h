@@ -11,28 +11,28 @@ namespace narrow
 {
   namespace detail
   {
-    
+
     template<typename M>
     class ShapeTypes
     {
     protected:
-      
+
       typedef typename M::coordsys_type C;
       typedef typename M::real_type     T;
       typedef typename M::vector3_type  V;
       typedef typename M::value_traits  VT;
 
     protected:
-      
+
       class ShapeBase
       {
-        
+
       protected:
-        
+
         C m_transform; ///< A coordinate transformation from the local shape frame to the local frame of the object.
-        
+
       public:
-        
+
         /**
          * Shape Transformation Accessor.
          * The shape transformation places the shape in the local object frame.
@@ -41,20 +41,20 @@ namespace narrow
          */
         C const & transform(  ) const {  return m_transform; }
         C       & transform(  )       {  return m_transform; }
-        
+
         /**
          * Get a support map function of the shape.
          *
          * @return    A pointer to a support map functor.
          */
-        
+
       public:
-        
+
         ShapeBase( )
         : m_transform( C::identity() )
         {}
-        
-        
+
+
       };
 
     public:
@@ -66,7 +66,7 @@ namespace narrow
         // 2015-02-01 Kenny code review: Why not use convex::Sphere (or geometry::Sphere) as a member? Like for ConvexHull?
 
         T m_radius;
-        
+
       public:
 
         Sphere() {}
@@ -77,9 +77,9 @@ namespace narrow
         T const & radius() const { return m_radius; }
         T       & radius()       { return m_radius; }
         T const & scale()  const { return m_radius; }
-        
+
       };
-      
+
       class Box : public ShapeBase
       {
       protected:
@@ -87,7 +87,7 @@ namespace narrow
         // 2015-02-01 Kenny code review: Why not use convex::Box (or geometry::Box) as a member? Like for ConvexHull?
 
         V m_half_ext;
-        
+
       public:
 
         Box() {}
@@ -231,10 +231,10 @@ namespace narrow
       };
 
     };
-    
+
   } // namespace detail
-  
+
 } // namespace narrow
 
 // NARROW_SHAPE_TYPES_H
-#endif 
+#endif

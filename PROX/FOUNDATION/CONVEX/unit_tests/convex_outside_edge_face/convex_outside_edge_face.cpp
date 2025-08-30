@@ -21,55 +21,55 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
   // Front side of AB voronoi plane
   {
     V p = V::make(-0.5, -1.0,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( outside2 );
   }
   // Back side of AB voronoi plane
   {
     V p = V::make(-0.5, 1.0,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( !outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( !outside2 );
   }
   // In AB voronoi plane
   {
     V p = V::make(-0.5, 0.0,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( outside2 );
   }
   // Front side of AC voronoi plane
   {
     V p = V::make(-1.0, 0.5,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( outside2 );
   }
   // Back side of AC voronoi plane
   {
     V p = V::make( 1.0, 0.5,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( !outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( !outside2 );
   }
   // In AC voronoi plane
   {
     V p = V::make( 0.0, 0.5,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( outside2 );
   }
   // Front side of BC voronoi plane
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
   // In BC voronoi plane
   {
     V p = V::make( 0.5, 0.5,  1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a); 
+    bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
     BOOST_CHECK( outside );
 
     bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, b, a);
@@ -105,55 +105,55 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
   // Front side of AB voronoi plane
   {
     V p = V::make(-0.5, -1.0,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( outside2 );
   }
   // Back side of AB voronoi plane
   {
     V p = V::make(-0.5, 1.0,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( !outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( !outside2 );
   }
   // In AB voronoi plane
   {
     V p = V::make(-0.5, 0.0,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( outside2 );
   }
   // Front side of AC voronoi plane
   {
     V p = V::make(-1.0, 0.5,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( outside2 );
   }
   // Back side of AC voronoi plane
   {
     V p = V::make( 1.0, 0.5,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( !outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( !outside2 );
   }
   // In AC voronoi plane
   {
     V p = V::make( 0.0, 0.5,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( outside2 );
   }
   // Front side of BC voronoi plane
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
   // In BC voronoi plane
   {
     V p = V::make( 0.5, 0.5,  0.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a); 
+    bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
     BOOST_CHECK( outside );
 
     bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, b, a);
@@ -189,55 +189,55 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
   // Front side of AB voronoi plane
   {
     V p = V::make(-0.5, -1.0,  -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( outside2 );
   }
   // Back side of AB voronoi plane
   {
     V p = V::make(-0.5, 1.0,  -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( !outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( !outside2 );
   }
   // In AB voronoi plane
   {
     V p = V::make(-0.5, 0.0,  -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, b, a, c);
     BOOST_CHECK( outside2 );
   }
   // Front side of AC voronoi plane
   {
     V p = V::make(-1.0, 0.5,  -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( outside2 );
   }
   // Back side of AC voronoi plane
   {
     V p = V::make( 1.0, 0.5,  -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( !outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( !outside2 );
   }
   // In AC voronoi plane
   {
     V p = V::make( 0.0, 0.5,  -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);      
+    bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
     BOOST_CHECK( outside );
 
-    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);      
+    bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, a, b);
     BOOST_CHECK( outside2 );
   }
   // Front side of BC voronoi plane
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
   // In BC voronoi plane
   {
     V p = V::make( 0.5, 0.5, -1.0);
-    bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a); 
+    bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
     BOOST_CHECK( outside );
 
     bool outside2 = convex::outside_edge_face_voronoi_plane(p, c, b, a);

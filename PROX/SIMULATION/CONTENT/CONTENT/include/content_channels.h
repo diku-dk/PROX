@@ -6,7 +6,7 @@
 
 namespace content
 {
-  
+
   /**
    * Channel Device Class.
    * This class provides functionality for recording and retrieving motion channel data.
@@ -21,18 +21,18 @@ namespace content
 		class KeyTick
 		{
 		public:
-      
+
 			float m_time;         ///< The time of the key tick.
 			float m_x;            ///< The x coordinate.
 			float m_y;            ///< The y coordinate.
 			float m_z;            ///< The z coordinate.
 			float m_qs;           ///< Rotation represented as an unit quaternion.
-			float m_qx;        
-			float m_qy;        
-			float m_qz;        
-      
+			float m_qx;
+			float m_qy;
+			float m_qz;
+
     public:
-      
+
       KeyTick()
       : m_time(0.0f)
       , m_x(0.0f)
@@ -43,7 +43,7 @@ namespace content
       , m_qy(0.0f)
       , m_qz(1.0f)
       {}
-      
+
 		};
 		
     /**
@@ -52,37 +52,37 @@ namespace content
 		class Channel
 		{
 		public:
-      
+
 			size_t                  m_id;        ///< The identifier of this channel.
       std::string             m_name;      ///< The name of this channel.
 			std::vector< KeyTick >  m_keys;      ///< All key ticks of this channel.
-      
+
     public:
-      
+
       Channel()
       : m_id(0)
       , m_name("")
       , m_keys()
       {}
-      
+
 		};
 		
   protected:
-    
+
 		std::vector<Channel> m_channels;   ///< A storage of channel data
-    
+
 	public:
 		
 		ChannelStorage()
     : m_channels()
     {}
-    
+
 		~ChannelStorage(){}
 		
 	public:
 		
 		void clear();
-    
+
     /**
      * Create a channel with a specified id and name.
      *
@@ -96,7 +96,7 @@ namespace content
      * @return      An unique channel index representing the new channel.
      */
 		size_t create_channel( size_t const & id, std::string const & name );
-    
+
     /**
      * Create a new key tick in a channel.
      *
@@ -107,7 +107,7 @@ namespace content
      *                          channel which represents the new key tick.
      */
 		size_t create_key( size_t const & channel_idx, float const & time );
-    
+
     /**
      * Set Position of Key Tick.
      *
@@ -139,9 +139,9 @@ namespace content
                              , float const & qs
                              , float const & qx
                              , float const & qy
-                             , float const & qz 
+                             , float const & qz
                              );
-    
+
     /**
      * Get Number of Channels.
      * (Motion) channels are used to keep a baked simulation of for
@@ -162,7 +162,7 @@ namespace content
      * @return                   The id of the specified channel.
      */
 		size_t get_channel_id( size_t const & channel_idx ) const;
-    
+
     /**
      * Get the name of the Channel.
      *
@@ -201,7 +201,7 @@ namespace content
                           , size_t const & key_idx
                           , float & x
                           , float & y
-                          , float & z 
+                          , float & z
                           ) const;
 		
     /**
@@ -217,24 +217,24 @@ namespace content
                              , size_t const & key_idx
                              ,  float & qs
                              , float & qx
-                             , float & qy 
-                             , float & qz 
+                             , float & qy
+                             , float & qz
                              ) const;
 		
 	};
-  
-  
+
+
   /**
    * Read Motion Channels from XML file.
    */
   bool xml_read( std::string const & filename, ChannelStorage & storage );
-  
-  
+
+
   /**
    * Write Motion Channels to XML file.
    */
   bool xml_write( std::string const & filename, ChannelStorage const & storage );
-  
+
 }// namespace content
 
 // CONTENT_CHANNELS_H

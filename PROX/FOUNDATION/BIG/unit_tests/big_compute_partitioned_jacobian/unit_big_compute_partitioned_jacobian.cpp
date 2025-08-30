@@ -93,21 +93,21 @@ BOOST_AUTO_TEST_CASE(test_case2)
   typedef ublas::compressed_matrix<double> matrix_type;
 
   typedef size_t size_type;
-  
+
   matrix_type A;
   A.resize(10,10,false);
-  
+
   big::Random<double> value(0.0,1.0);
   for(size_t i=0;i<A.size1();++i)
   {
     for(size_t j=0;j<A.size2();++j)
       A(i,j) = value();
   }
-  
+
   idx_vector_type bitmask;
-  
+
   bitmask.resize(10,false);
-  
+
   bitmask(0) = big::IN_ACTIVE;
   bitmask(1) = big::IN_ACTIVE;
   bitmask(2) = big::IN_ACTIVE;
@@ -118,15 +118,15 @@ BOOST_AUTO_TEST_CASE(test_case2)
   bitmask(7) = big::IN_ACTIVE;
   bitmask(8) = big::IN_ACTIVE;
   bitmask(9) = big::IN_ACTIVE;
-  
+
   idx_vector_type old2new;
   idx_vector_type new2old;
-  
+
   big::compute_index_reordering( bitmask, old2new, new2old );
-  
+
   matrix_type A_aa;
   matrix_type A_ab;
-  
+
   big::compute_partitioned_jacobian(
                                     A
                                     , bitmask
@@ -136,9 +136,9 @@ BOOST_AUTO_TEST_CASE(test_case2)
                                     , A_aa
                                     , A_ab
                                     );
-  
+
   double tol = 0.01;
-  
+
   BOOST_CHECK( A_aa.size1()==10 );
   BOOST_CHECK( A_aa.size2()==10 );
   for(size_type i = 0;i<10;++i)
@@ -148,10 +148,10 @@ BOOST_AUTO_TEST_CASE(test_case2)
       BOOST_CHECK_CLOSE( double( A_aa(i,j) ), double( A(new2old(i),new2old(j)) ), tol );
     }
   }
-  
+
   BOOST_CHECK( A_ab.size1()==10 );
   BOOST_CHECK( A_ab.size2()==0 );
-  
+
 }
 
 
@@ -160,21 +160,21 @@ BOOST_AUTO_TEST_CASE(test_case3)
 {
   typedef ublas::vector<size_t>            idx_vector_type;
   typedef ublas::compressed_matrix<double> matrix_type;
-  
+
   matrix_type A;
   A.resize(10,10,false);
-  
+
   big::Random<double> value(0.0,1.0);
   for(size_t i=0;i<A.size1();++i)
   {
     for(size_t j=0;j<A.size2();++j)
       A(i,j) = value();
   }
-  
+
   idx_vector_type bitmask;
-  
+
   bitmask.resize(10,false);
-  
+
   bitmask(0) = big::IN_NON_ACTIVE;
   bitmask(1) = big::IN_NON_ACTIVE;
   bitmask(2) = big::IN_NON_ACTIVE;
@@ -185,15 +185,15 @@ BOOST_AUTO_TEST_CASE(test_case3)
   bitmask(7) = big::IN_NON_ACTIVE;
   bitmask(8) = big::IN_NON_ACTIVE;
   bitmask(9) = big::IN_NON_ACTIVE;
-  
+
   idx_vector_type old2new;
   idx_vector_type new2old;
-  
+
   big::compute_index_reordering( bitmask, old2new, new2old );
-  
+
   matrix_type A_aa;
   matrix_type A_ab;
-  
+
   big::compute_partitioned_jacobian(
                                     A
                                     , bitmask
@@ -203,13 +203,13 @@ BOOST_AUTO_TEST_CASE(test_case3)
                                     , A_aa
                                     , A_ab
                                     );
-    
+
   BOOST_CHECK( A_aa.size1()==0 );
   BOOST_CHECK( A_aa.size2()==0 );
-  
+
   BOOST_CHECK( A_ab.size1()==0 );
   BOOST_CHECK( A_ab.size2()==10 );
-  
+
 }
 
 

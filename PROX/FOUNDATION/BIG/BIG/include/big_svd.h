@@ -16,7 +16,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute Singular Value Decomposition of a matrix.
    *
@@ -39,9 +39,9 @@ namespace big
 #ifdef USE_ATLAS
     ublas::matrix<typename ME::value_type, ublas::column_major>  VT;
     ublas::matrix<typename ME::value_type, ublas::column_major>  UU;
-    
+
     detail::svd_impl_atlas( A, UU, s, VT);
-    
+
     V.resize( VT.size1(), VT.size2() );
     V = ublas::trans( VT );
     U = UU;
@@ -49,8 +49,8 @@ namespace big
     detail::svd_impl1(A, U, s, V);
 #endif
   }
-  
-  
+
+
   /**
    * Singular Value Decomposition Solver.
    * First the function computes the singular value
@@ -69,33 +69,33 @@ namespace big
   inline void svd( matrix_type const & A, vector_type & x, vector_type const & b )
   {
     using std::fabs;
-    
+
     typedef typename matrix_type::size_type                size_type;
     typedef typename vector_type::value_type               value_type;
     typedef ublas::matrix<value_type>                      row_major_matrix_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("svd(): A was empty");
-    
+
     if(b.size() != A.size1())
       throw std::invalid_argument("svd(): The size of b must be the same as the number of rows in A");
-    
+
     if(x.size() != A.size2())
       throw std::invalid_argument("svd(): The size of x must be the same as the number of columns in A");
-    
-    
+
+
     static value_type const tiny = ::boost::numeric_cast<value_type>( 10e-4);
-    
+
     //size_type m = A.size1();
     size_type const n = A.size2();
-    
+
     //--- SVD decomposition  : A = U S VT : Dimensions: mxn =  mxm  mxn   nxn
     row_major_matrix_type U;
     vector_type s;
     row_major_matrix_type V;
-    
+
     svd(A,U,s,V);
-    
+
     //--- x = V inv(diag(s)) (UT (b))
     for ( size_type i = 0u; i < n; ++i )
     {
@@ -107,8 +107,8 @@ namespace big
     vector_type y = ublas::prod( ublas::trans( U ), b );
     x = ublas::prod( V, ublas::element_prod( s, y) );
   }
-  
-  
+
+
   /**
    * Matrix Inversion by Singular Value Decomposition.
    *
@@ -120,32 +120,32 @@ namespace big
   inline void svd_invert(matrix_type const & A, matrix_type& invA)
   {
     using std::fabs;
-    
+
     typedef typename matrix_type::size_type                size_type;
     typedef typename matrix_type::value_type               value_type;
     typedef ublas::vector<value_type>                      vector_type;
     typedef ublas::matrix<value_type>                      row_major_matrix_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("svd(): A was empty");
-    
+
     static value_type const tiny = ::boost::numeric_cast<value_type>( 10e-4 );
-    
+
     size_type const m = A.size1();
     size_type const n = A.size2();
-    
+
     invA.resize(n,m,false);
-    
+
     //--- SVD decomposition  : A = U S VT : Dimensions: mxn =  mxm  mxn   nxn
     row_major_matrix_type U;
     vector_type s;
     row_major_matrix_type V;
     svd(A,U,s,V);
-    
+
     //--- x = V inv(diag(s)) (UT (b))
-    
+
     // This is brain-death way of creating a diagonal matrix from a vector
-    
+
     row_major_matrix_type D;
     D.resize(n,n);
     D.clear();
@@ -156,12 +156,12 @@ namespace big
       else
         D( i, i ) = 1.0 / s( i );
     }
-    
+
     row_major_matrix_type tmp = ublas::prod( D, ublas::trans(U) );
     invA.assign(   ublas::prod( V, tmp  )    );
   }
-  
-  
+
+
 } // namespace big
 
 // BIG_SVD_H

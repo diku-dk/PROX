@@ -8,7 +8,7 @@
 
 namespace big
 {
-  
+
   /**
    * Symmetric Gauss-Seidel Iteration.
    * This function implements a single iteration of a symmetric
@@ -30,7 +30,7 @@ namespace big
     forward_gauss_seidel( A, x, b );
     backward_gauss_seidel( A, x, b );
   }
-  
+
   /**
    * Symmetric Gauss-Seidel Solver.
    * This function is capable of performing several iterations of the symmetric Gauss Seidel iteration.
@@ -53,7 +53,7 @@ namespace big
   {
     if(max_iterations < 1u)
       throw std::invalid_argument("symmetric_gauss_seidel(): max_iterations must be a positive number");
-    
+
     iterations = 0u;
     while(iterations<max_iterations)
     {
@@ -61,7 +61,7 @@ namespace big
       symmetric_gauss_seidel(A,x,b);
     }
   }
-    
+
 } // end of namespace big
 
 // BIG_SYMMETRIC_GAUSS_SEIDEL_H

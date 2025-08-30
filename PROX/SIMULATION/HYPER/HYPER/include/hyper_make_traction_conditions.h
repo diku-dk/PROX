@@ -109,7 +109,7 @@ namespace hyper
 
       if( i_inside && m_inside && k_inside )
         body.m_traction_conditions.push_back( make_traction_info<MT>( i, m, k, load ));
-      
+
     }
 
   }
@@ -129,4 +129,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_MAKE_TRACTION_CONDITIONS_H
-#endif 
+#endif

@@ -21,7 +21,7 @@ namespace narrow
     inline void dispatch_primitives( System<M> const & system, std::vector<TestPair<M> > & test_pairs )
     {
       assert( ! test_pairs.empty() || !"dispatch_primitives : test_pairs are empty" );
-      
+
       typedef typename std::vector<TestPair<M> >::iterator pair_iterator;
       typedef typename Geometry<M>::box_container          box_container;
       typedef typename Geometry<M>::sphere_container       sphere_container;
@@ -109,7 +109,7 @@ namespace narrow
     inline void dispatch_mixed( System<M> const & system, std::vector<TestPair<M> > & test_pairs )
     {
       assert( ! test_pairs.empty() || !"dispatch_mixed : test_pairs are empty" );
-      
+
       typedef typename std::vector<TestPair<M> >::iterator pair_iterator;
       typedef typename Geometry<M>::sphere_container       sphere_container;
 
@@ -163,7 +163,7 @@ namespace narrow
   inline void dispatch_collision_handlers( System<M> const & system, std::vector<TestPair<M> > const & test_pairs )
   {
     assert( ! test_pairs.empty() || !"dispatch_collision_handlers : test_pairs are empty" );
-    
+
     typedef typename std::vector<TestPair<M> >::const_iterator pair_iterator;
 
     std::vector< TestPair<M> > tetramesh_pairs;
@@ -195,7 +195,7 @@ namespace narrow
         primitive_pairs.push_back( *current );
       }
     }
-    
+
     if ( ! primitive_pairs.empty() )
       details::dispatch_primitives( system, primitive_pairs );
     if ( ! tetramesh_pairs.empty() )
@@ -203,7 +203,7 @@ namespace narrow
     if ( ! mixed_pairs.empty() )
       details::dispatch_mixed( system, mixed_pairs );
   }
-  
+
 } //namespace narrow
 
 // NARROW_DISPATCH_COLLISION_HANDLER_H

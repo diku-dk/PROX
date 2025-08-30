@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute Jacobian.
    *
@@ -19,7 +19,7 @@ namespace big
                          , ublas::vector<size_t> const & bitmask
                          , ublas::compressed_matrix<T>  & J
                          );
-  
+
 } // namespace big
 
 // BIG_COMPUTE_JACOBIAN_H

@@ -11,13 +11,13 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   inline V closest_point_on_line(V const & p, Line<V> const & L)
   {
     V const & o = L.point();
     V const & d = L.direction();
-    
+
     V const   q = o + d * inner_prod( d, (p-o) );
 
     assert( is_number(q(0)) || !"closest_point_on_line(): NaN encountered");

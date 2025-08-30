@@ -7,7 +7,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Test if point is outside a vertex edge voronoi plane.
    * The vertex edge voronoi plane is defined such that the plane normal is given
@@ -29,13 +29,13 @@ namespace convex
   {
     typedef typename V::value_traits    VT;
     typedef typename V::real_type       T;
-    
+
     V const n = (A-B);
     assert( tiny::inner_prod( n, n ) > VT::zero() || !"outside_vertex_edge_voronoi_plane(): Degenerate edge encountered");
-    
+
     T const sign_p = tiny::inner_prod( n, (p-A) );
     assert( is_number( sign_p ) || !"outside_vertex_edge_voronoi_plane(): Not a Number encountered");
-    
+
     return sign_p >= VT::zero();
   }
 

@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
   {
     fullscreen = strcmp(argv[i], "--fullscreen");
   }
-    
+
   QApplication app(argc, argv);
 
   QGLFormat format;
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
   // Create a GLWidget requesting our format
   rigid_body::gui::Widget window(format);
-  
+
   if (fullscreen == 0)
   {
     window.showFullScreen();

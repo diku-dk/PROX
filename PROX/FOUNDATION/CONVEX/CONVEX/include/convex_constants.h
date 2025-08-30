@@ -20,7 +20,7 @@ namespace convex
      *
      */
     size_t const ABSOLUTE_CONVERGENCE = 0u;
-    
+
     /**
      * Relative convergence status code.
      * This means that the relative improvement in function value has dropped below
@@ -32,7 +32,7 @@ namespace convex
      *where \f$\varepsilon \eq 0\f$ is a user specified test-threshold.
      */
     size_t const RELATIVE_CONVERGENCE = 1u;
-    
+
     /**
      * Stagnation status code.
      * Stagnation means that the maximum difference between the
@@ -42,17 +42,17 @@ namespace convex
      * have been made by the numerical method used.
      */
     size_t const STAGNATION = 2u;
-    
+
     /**
      * Intersection status code.
      */
     size_t const INTERSECTION = 3u;
-    
+
     /**
      * Exceeded maximum iterations limit status code.
      */
     size_t const EXCEEDED_MAX_ITERATIONS_LIMIT = 4u;
-    
+
     /**
      * Iterating status code.
      * This status code basically means that one got an unexpected
@@ -60,31 +60,31 @@ namespace convex
      * indication of an internal error.
      */
     size_t const ITERATING = 5u;
-    
+
     /**
      * Non-descend status code.
      * This status code is returned if an iteration is encountered
      * where the closest distance has increased.
      */
     size_t const NON_DESCEND_DIRECTION = 6u;
-    
+
     /**
      * Simplex Expansion Failure.
      * This status code is returned if during an iteration no
      * new points can be added to the current simplex.
      */
     size_t const SIMPLEX_EXPANSION_FAILED = 7u;
-    
+
     /**
      * Relative Convergene by Lower Error Bound.
      */
     size_t const LOWER_ERROR_BOUND_CONVERGENCE = 8u;
-    
+
     /**
      * Attempt to add point that will result in degenerate simplex.
      */
     size_t const DEGENERATE_SIMPLEX_ADDITION = 9u;
-    
+
     /**
      * Get Status Message.
      * This function decodes an given status code value
@@ -115,7 +115,7 @@ namespace convex
     return msg;
   }
 
-    
+
 } // namespace convex
 
 // CONVEX_CONSTANTS_H

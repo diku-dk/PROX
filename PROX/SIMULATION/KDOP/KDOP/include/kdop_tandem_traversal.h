@@ -14,7 +14,7 @@ namespace kdop
 {
   namespace details
   {
-    
+
     template< typename V, size_t K, typename T>
     inline void traversal(
                           size_t const & node_idx_A
@@ -35,16 +35,16 @@ namespace kdop
                           )
     {
       using namespace mesh_array;
-      
+
       Node<T,K> const & node_A = branch_A.m_nodes[node_idx_A];
       Node<T,K> const & node_B = branch_B.m_nodes[node_idx_B];
-      
+
       if(!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume))
         return;
-      
+
       bool const A_is_leaf = node_A.is_leaf();
       bool const B_is_leaf = node_B.is_leaf();
-      
+
       if(A_is_leaf && B_is_leaf)
       {
         PAUSE_TIMER("tandem_traversal");
@@ -52,7 +52,7 @@ namespace kdop
 
         Tetrahedron const & tet_A = mesh_A.tetrahedron( node_A.m_start );
         Tetrahedron const & tet_B = mesh_B.tetrahedron( node_B.m_start );
-        
+
         bool const & surface_Ai = surface_map_A( tet_A ).m_i;
         bool const & surface_Aj = surface_map_A( tet_A ).m_j;
         bool const & surface_Ak = surface_map_A( tet_A ).m_k;
@@ -91,7 +91,7 @@ namespace kdop
         V const a1 = V::make( X_A( tet_A.j() ), Y_A( tet_A.j() ), Z_A( tet_A.j() ) );
         V const a2 = V::make( X_A( tet_A.k() ), Y_A( tet_A.k() ), Z_A( tet_A.k() ) );
         V const a3 = V::make( X_A( tet_A.m() ), Y_A( tet_A.m() ), Z_A( tet_A.m() ) );
-        
+
         V const b0 = V::make( X_B( tet_B.i() ), Y_B( tet_B.i() ), Z_B( tet_B.i() ) );
         V const b1 = V::make( X_B( tet_B.j() ), Y_B( tet_B.j() ), Z_B( tet_B.j() ) );
         V const b2 = V::make( X_B( tet_B.k() ), Y_B( tet_B.k() ), Z_B( tet_B.k() ) );
@@ -107,7 +107,7 @@ namespace kdop
         surface_A[1] = surface_Aj;
         surface_A[2] = surface_Ak;
         surface_A[3] = surface_Am;
-        
+
         surface_B[0] = surface_Bi;
         surface_B[1] = surface_Bj;
         surface_B[2] = surface_Bk;
@@ -152,9 +152,9 @@ namespace kdop
                            );
         }
       }
-      
+
     }
-    
+
   }// namespace details
 
   template< typename V, size_t K, typename T>

@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(convert_test)
   typedef MT::vector3_type       V;
   typedef MT::value_traits       VT;
   typedef MT::real_type          T;
-  
+
   {
     V                   const center = V::zero();
     T                   const radius = VT::one();
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(convert_test)
     BOOST_CHECK_CLOSE(  dop(0).upper(),  VT::one(), 0.01 );
     BOOST_CHECK_CLOSE(  dop(1).upper(),  VT::one(), 0.01 );
     BOOST_CHECK_CLOSE(  dop(2).upper(),  VT::one(), 0.01 );
-    
+
   }
 
   {

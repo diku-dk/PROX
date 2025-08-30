@@ -19,7 +19,7 @@
 
 namespace prox
 {
-  
+
   /**
    * Solver function pointer binder.
    */
@@ -28,7 +28,7 @@ namespace prox
   : public Stepper< M >
   {
   public:
-    
+
     typedef void func_type(
                            typename M::real_type const & dt
                            , std::vector< RigidBody< M > > & bodies
@@ -41,21 +41,21 @@ namespace prox
                            , std::vector< ContactPoint< M > > & contacts
                            , M const & tag
                            );
-    
+
     func_type * m_stepper;
-    
+
   public:
-    
+
     StepperBinder()
     : m_stepper(0)
     {
     }
-    
+
     StepperBinder(func_type * stepper)
     : m_stepper(stepper)
     {
     }
-    
+
   public:
 
     void operator()(
@@ -72,12 +72,12 @@ namespace prox
                     ) const
     {
       assert( this->m_stepper || !"StepperBinder(): stepper was null");
-      
+
       this->m_stepper( dt, bodies, properties, gravity, damping, params, broad_system, narrow_system, contacts, tag );
     }
-    
+
   };
-  
+
   /**
    *
    */
@@ -91,7 +91,7 @@ namespace prox
       case moreau:
         logging << "bind_stepper(): using moreau stepper"<< util::Log::newline();
         return StepperBinder<M>( &moreau_time_stepper<M> );
-        
+
       case semi_implicit:
         logging << "bind_stepper(): using semi-implicit stepper"<< util::Log::newline();
         return StepperBinder<M>( &semi_implicit_time_stepper<M> );
@@ -99,15 +99,15 @@ namespace prox
       case empty:
         logging << "bind_stepper(): using empty stepper"<< util::Log::newline();
         return StepperBinder<M>( &empty_stepper<M> );
-        
+
       default:
         assert(!"bind_stepper(): unknown stepper type");
         break;
     };
-    
+
     return StepperBinder<M>();
   }
-  
+
 } //namespace prox
 
 // PROX_BIND_STEPPER_H

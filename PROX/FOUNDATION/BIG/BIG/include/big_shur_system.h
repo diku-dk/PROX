@@ -9,7 +9,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute Shur Equation.
    * WARNING: This function performs an inplace solve, which means that some of the arguments are used as temporaries. That is the values of the arguments are overridden.
@@ -68,13 +68,13 @@ namespace big
     typedef          ublas::compressed_matrix<T>       matrix_type;
     typedef          ublas::vector<T>                  vector_type;
     typedef typename vector_type::size_type            size_type;
-    
+
     size_type A = rhs_a.size();
     size_type B = rhs_b.size();
-    
+
     dx_a.resize(A);
     dx_b.resize(B);
-    
+
     if(A>0)
     {
       if(B>0)
@@ -83,32 +83,32 @@ namespace big
         //
         //   q = rhs_a  - A_ab * inv(D) * rhs_b;
         //
-        
+
         big::prod(invD, rhs_b, dx_b);
         big::prod(A_ab,  dx_b, dx_a);
         rhs_a -= dx_a;
-        
+
         // Compute Shur Matrix
         //
         //  M  = A_aa   - A_ab * inv(D) * C;
         //
-   
+
         matrix_type M1;
         matrix_type M2;
         M1.resize( B, A, false );
         M2.resize( A, A, false );
-        
+
         ublas::noalias( M1 ) = ublas::sparse_prod<matrix_type>( invD, C);
         ublas::noalias( M2 ) = ublas::sparse_prod<matrix_type>( A_ab, M1);
         ublas::noalias( A_aa ) -= M2;
       }
-      
+
       // Solve Shur System
       //
       //   dx_a = M^{-1} q
       //
       solve(A_aa, dx_a, rhs_a);
-      
+
       if(B>0)
       {
         // Substitute dx_a into equation for dx_b
@@ -122,9 +122,9 @@ namespace big
     {
       big::prod(invD, rhs_b, dx_b);
     }
-    
+
   }
-  
+
 } // namespace big
 
 // BIG_SHUR_SYSTEM_H

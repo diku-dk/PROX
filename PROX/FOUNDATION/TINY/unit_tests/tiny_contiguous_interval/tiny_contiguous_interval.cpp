@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE(opentissue_math_contiguous_interval);
 
 BOOST_AUTO_TEST_CASE(zero_to_two_pi_intervals)
 {
-  // precomputed interval end-points 
+  // precomputed interval end-points
 
   double const two_pi = tiny::detail::pi<double>()*2.0;
   double const pi_sixth = tiny::detail::pi<double>()/6.0;
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(zero_to_two_pi_intervals)
     theta[i] = theta[i-1] + pi_sixth;
 
   // number of samples
-  size_t N = 100u; 
+  size_t N = 100u;
 
   // distance between samples
   double dt = pi_third/(N-1u);
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(zero_to_two_pi_intervals)
 
 BOOST_AUTO_TEST_CASE(minus_pi_to_plus_pi_intervals)
 {
-  // precomputed interval end-points 
+  // precomputed interval end-points
 
   double const pi = tiny::detail::pi<double>();
   double const two_pi = tiny::detail::pi<double>()*2.0;
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(minus_pi_to_plus_pi_intervals)
     theta[i] = theta[i-1] + pi_sixth;
 
   // number of samples
-  size_t N = 100u; 
+  size_t N = 100u;
 
   // distance between samples
   double dt = pi_third/(N-1u);
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(minus_pi_to_plus_pi_intervals)
 
 BOOST_AUTO_TEST_CASE(real_data_test)
 {
-  // precomputed interval end-points 
+  // precomputed interval end-points
   double const two_pi = tiny::detail::pi<double>()*2.0;
   double const four_pi = tiny::detail::pi<double>()*4.0;
 

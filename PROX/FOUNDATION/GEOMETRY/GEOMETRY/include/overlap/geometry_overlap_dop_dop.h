@@ -8,7 +8,7 @@
 
 namespace geometry
 {
-  
+
   template<typename T, size_t K>
   inline bool overlap_dop_dop( DOP<T,K> const & A, DOP<T,K> const & B)
   {
@@ -22,7 +22,7 @@ namespace geometry
     }
     return true;
   }
-  
+
 }// namespace geometry
 
 // GEOMETRY_OVERLAP_DOP_DOP_H

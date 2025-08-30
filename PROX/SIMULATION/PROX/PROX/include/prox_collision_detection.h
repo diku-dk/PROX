@@ -97,8 +97,8 @@ namespace prox
         assert( this->m_body_j              || !"operator(): body j is null" );
         assert( this->m_results             || !"operator(): results is null");
         assert( tiny::norm(n) > VT::zero()  || !"operator(): normal is zero" );
-          
-          
+
+
         contact_type contact;
 
         contact.set_position( p );
@@ -190,12 +190,12 @@ namespace prox
                                   );
         } else {
 #endif // HAS_DIKUCL
-          
+
           // use regular updating of KDOP BVHs if DIKUCL is not available or should not be used
           narrow::update_kdop_bvh(  kdop_bvh_update_work_pool
                                   , narrow::sequential()
                                   );
-          
+
 #ifdef HAS_DIKUCL
         }
 #endif // HAS_DIKUCL
@@ -242,7 +242,7 @@ namespace prox
       // algorithm is trying to run in O(n). Hence, one could argue that
       // a sweep-line algorithm would be better as its performance do
       // not depend on the obejct sizes.
-      broad_system.compute_optimal_cell_spacing(); 
+      broad_system.compute_optimal_cell_spacing();
 
       STOP_TIMER("collision_detection_preprocessing");
     }
@@ -336,7 +336,7 @@ namespace prox
       {
         narrow::dispatch_collision_handlers( narrow_system, narrow_test_pairs );
       }
-      
+
       STOP_TIMER("narrow_phase");
     }
 

@@ -17,10 +17,10 @@ namespace sparse
     typedef Block<A,B,T> B1;
     typedef Block<B,C,T> B2;
     typedef Block<A,C,T> BR;
-    
+
     size_t a = 0;
     size_t b = 0;
-    
+
     for (size_t i = 0; i < B1::nrows(); ++i, a += BR::ncols(), b+= B1::ncols())
     {
       for (size_t j = 0; j < B2::ncols(); ++j)
@@ -51,7 +51,7 @@ namespace sparse
     B tmp;
 
      size_t a = 0;
-  
+
      for (size_t i = 0; i < N; ++i, a += N)
      {
        for (size_t j = 0; j < N; ++j)
@@ -70,7 +70,7 @@ namespace sparse
      }
      res = tmp; //move semantics might help
   }
-  
+
   /**
    * Optimised block-vector version of block product function. res += lhs*rhs
    */
@@ -80,7 +80,7 @@ namespace sparse
     typedef Block<A,B,T> B1;
     //typedef Block<B,1,T> B2;
     //typedef Block<A,1,T> BR;
-    
+
     size_t b = 0;
     for (size_t i = 0; i < B1::nrows(); ++i, b+= B1::ncols())
     {
@@ -89,7 +89,7 @@ namespace sparse
       {
         dot += lhs[b+k] * rhs[k];
       }
-      res[i] += dot; 
+      res[i] += dot;
     }
   }
 
@@ -108,11 +108,11 @@ namespace sparse
        {
          dot += lhs[b+k] * res[k];
        }
-       tmp[i] = dot; 
+       tmp[i] = dot;
      }
      res = tmp; //move semantics might improve this
   }
-  
+
   /**
    * Optimised scalar version of block product function.
    */
@@ -144,7 +144,7 @@ namespace sparse
   }
 
   /**
-  * Division of a block by a scalar res = rhs /lhs 
+  * Division of a block by a scalar res = rhs /lhs
   * note the reversal of arguments
   */
   template <size_t A, size_t B, typename T>
@@ -227,7 +227,7 @@ namespace sparse
   }
 
   /**
-   * Dot product of lhs and rhs, 
+   * Dot product of lhs and rhs,
    */
   template <size_t N, typename T>
   inline void dot(Block<N,1,T> const& lhs, Block<N,1,T> const& rhs, T & res)
@@ -236,12 +236,12 @@ namespace sparse
     for(size_t i = 0; i < N; ++i)
     {
       res += lhs[i] * rhs[i];
-      
+
     }
   }
 
   /**
-   * cross product of three dimensional vectors lhs and rhs. res = lhs x rhs 
+   * cross product of three dimensional vectors lhs and rhs. res = lhs x rhs
    */
   template <typename T>
   inline void cross(Block<3,1,T> const& lhs, Block<3,1,T> const& rhs, Block<3,1,T> & res)
@@ -342,11 +342,11 @@ namespace sparse
   template <typename T>
   inline void det(Block<3, 3, T> const& lhs, T & rhs)
   {
-    rhs = lhs(0,0) * (lhs(1,1)*lhs(2,2) - lhs(1,2)*lhs(2,1)) 
-        - lhs(0,1) * (lhs(1,0)*lhs(2,2) - lhs(1,2)*lhs(2,0)) 
+    rhs = lhs(0,0) * (lhs(1,1)*lhs(2,2) - lhs(1,2)*lhs(2,1))
+        - lhs(0,1) * (lhs(1,0)*lhs(2,2) - lhs(1,2)*lhs(2,0))
         + lhs(0,2) * (lhs(1,0)*lhs(2,1) - lhs(1,1)*lhs(2,0));
   }
-  
+
   /**
    * Optimised scalar version of block transpose function.
    */
@@ -410,14 +410,14 @@ namespace sparse
   }
 
   /**
-   * Changes A to have length 1 
+   * Changes A to have length 1
    */
   template<size_t M, typename T>
   inline void unit(Block<M,1,T> &A)
   {
     div(length(A),A);
   }
-  
+
   /**
    * returns a vector of length 1 with the same direction as A in res
    */
@@ -441,14 +441,14 @@ namespace sparse
     }
     return res;
   }
-  
+
   /**
    * Generic Block inversion function.
    * End-user must supply own specialized block inversion routines.
-   */ 
+   */
   template <size_t N,size_t M, typename T>
   inline void inverse( Block<N,M,T> & b);
-  
+
   /**
    * Specialized scalar block inversion function.
    */
@@ -457,7 +457,7 @@ namespace sparse
   {
     // 2009-06-30 Kenny: Potential Divsion by zero
     // 2009-06-30 Kenny: Make proper use of value traits
-    b = 1.0 / b;   
+    b = 1.0 / b;
   }
 
 

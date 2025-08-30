@@ -14,15 +14,15 @@
 
 namespace prox
 {
-  
+
   /**
    * A stepper functor.
    */
   template< typename M >
   class Stepper
-  {    
+  {
   public:
-    
+
     virtual void operator()(
                             typename M::real_type const &
                             , std::vector< RigidBody< M > > &
@@ -37,7 +37,7 @@ namespace prox
                             ) const = 0;
 
   };
-  
+
 } //namespace prox
 
 // PROX_STEPPER_H

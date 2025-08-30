@@ -104,7 +104,7 @@ namespace rigid_body
             V const p = V::make( coordinates[3u*k], coordinates[3u*k+1u], coordinates[3u*k+2u]);
             V const q = tiny::xform_point(X_s2w, p);//changed from X_s2b
             file << "(" << q(0) << "," << q(1) << "," << q(2) << ")";
-            
+
             if(k < no_points-1)
               file << ",";
           }
@@ -113,8 +113,8 @@ namespace rigid_body
         file.flush();
         file.close();
       }
-      
-      
+
+
     }//namespace chalk
   }//namespace gui
 }//namespace rigid_body

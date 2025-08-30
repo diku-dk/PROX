@@ -7,7 +7,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Test if Point is outside Edge Face Voronoi Plane.
    *
@@ -32,17 +32,17 @@ namespace convex
   {
     typedef typename V::value_traits    value_traits;
     typedef typename V::real_type      T;
-    
+
     V const m = tiny::cross( A-C, B-C );
     assert( tiny::inner_prod( m, m ) > value_traits::zero() || !"outside_edge_face_voronoi_plane(): Degenerate triangle encountered");
-    
+
     V const n      = tiny::cross( B-A, m );
     T const sign_p = tiny::inner_prod( n, p-B );
     T const sign_C = tiny::inner_prod( n, C-B );
-    
+
     assert( is_number( sign_p ) || !"outside_edge_face_voronoi_plane(): Not a Number encountered");
     assert( is_number( sign_C ) || !"outside_edge_face_voronoi_plane(): Not a Number encountered");
-    
+
     return (sign_p*sign_C) <= value_traits::zero();
   }
 

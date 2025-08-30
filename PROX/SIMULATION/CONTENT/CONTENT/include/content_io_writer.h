@@ -7,7 +7,7 @@
 
 namespace content
 {
-  
+
   /**
    * Write Physics XML data.
    *
@@ -18,7 +18,7 @@ namespace content
    *                    return value is true otherwise it is false.
    */
   bool xml_write( std::string const & filename, content::Output * output );
-  
+
 }// namespace content
 
 // CONTENT_IO_WRITER_H

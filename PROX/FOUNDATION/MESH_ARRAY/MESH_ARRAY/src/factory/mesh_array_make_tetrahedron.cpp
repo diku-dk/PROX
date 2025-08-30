@@ -4,7 +4,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_tetrahedron(
                    typename MT::vector3_type const & p0
@@ -18,23 +18,23 @@ namespace mesh_array
                    )
   {
     mesh.clear();
-    
+
     mesh.set_capacity( 4u, 4u );
- 
+
     X.bind(mesh);
     Y.bind(mesh);
     Z.bind(mesh);
-    
+
     Vertex const vi = mesh.push_vertex();
     Vertex const vj = mesh.push_vertex();
     Vertex const vk = mesh.push_vertex();
     Vertex const vm = mesh.push_vertex();
-    
+
     X(vi) = p0(0);    Y(vi) = p0(1);    Z(vi) = p0(2);
     X(vj) = p1(0);    Y(vj) = p1(1);    Z(vj) = p1(2);
     X(vk) = p2(0);    Y(vk) = p2(1);    Z(vk) = p2(2);
     X(vm) = p3(0);    Y(vm) = p3(1);    Z(vm) = p3(2);
-    
+
 		mesh.push_triangle( vi, vk, vj );
 		mesh.push_triangle( vi, vj, vm );
 		mesh.push_triangle( vj, vk, vm );

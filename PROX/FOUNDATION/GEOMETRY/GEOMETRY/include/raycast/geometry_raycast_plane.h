@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace geometry 
+namespace geometry
 {
 
   /**
@@ -71,4 +71,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_COMPUTE_RAYCAST_PLANE_H
-#endif 
+#endif

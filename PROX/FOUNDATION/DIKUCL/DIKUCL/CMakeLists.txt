@@ -8,16 +8,16 @@ file(GLOB
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/DIKUCL/DIKUCL/src/*.c
   )
 
-file(GLOB 
-  DIKUCL_HEADERS 
+file(GLOB
+  DIKUCL_HEADERS
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/DIKUCL/DIKUCL/include/*.hpp
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/DIKUCL/DIKUCL/include/*.h
   )
 
-add_library( 
-  dikucl 
-  ${DIKUCL_SOURCES} 
-  ${DIKUCL_HEADERS} 
+add_library(
+  dikucl
+  ${DIKUCL_SOURCES}
+  ${DIKUCL_HEADERS}
   )
 
 target_link_libraries(

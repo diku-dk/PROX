@@ -119,21 +119,21 @@ namespace rigid_body
         T const scale =  m_hit_distance*s1;
 
         assert(scale>VT::zero() || !"move_selection(): internal error");
-        
+
         V const d =  (r2 - r1)*scale;
-        
+
         float x = m_anchor_x + d(0);
         float y = m_anchor_y + d(1);
         float z = m_anchor_z + d(2);
-        
+
         engine->set_rigid_body_position( m_id, x, y, z );
-        
+
       }
-      
+
     };
-    
+
   }//namespace gui
-  
+
 }//namespace rigid_body
 
 // RIGID_BODY_GUI_SELECT_TOOL_H

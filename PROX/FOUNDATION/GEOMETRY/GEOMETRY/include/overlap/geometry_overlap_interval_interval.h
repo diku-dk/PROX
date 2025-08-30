@@ -7,7 +7,7 @@
 
 namespace geometry
 {
-  
+
   template<typename T>
   inline bool overlap_interval_interval(Interval<T> const & A, Interval<T> const & B)
   {

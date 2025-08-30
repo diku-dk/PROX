@@ -1,12 +1,12 @@
 #ifndef SPARSE_AMBI_VECTOR_H
 #define SPARSE_AMBI_VECTOR_H
 
-namespace sparse 
+namespace sparse
 {
   namespace detail
   {
-    
-    // 2009-07-01 Kenny: This class is only used for matrix products and the field ``key'' seems to always be the same as column index, so why not call it col instead of key for clarity? 
+
+    // 2009-07-01 Kenny: This class is only used for matrix products and the field ``key'' seems to always be the same as column index, so why not call it col instead of key for clarity?
     /**
      * Auxiliary Class for Sparse Matrix Products.
      * An adaption of Eigen's AmbiVector, specialised for blocks it is used for the prod() of two CompressedRowMatrix's
@@ -21,40 +21,40 @@ namespace sparse
     class Ambi_vector
       {
       public:
-        
+
         typedef B block_type;
-        
+
         class Iterator;  // forward declaration
-       
+
       protected:
-        
+
         // 2009-07-01 Kenny: Why creating your own data structure for this? You are already using STL vector container so would this not make the code more ``pretty''?
-        
+
         struct ListElement
         {
           int        m_next;   // The index in array to next element in list. If next == -1 then it means null
           int        m_key;    // If dense mode  then key == -1 means null value (as checking block_type is often expensive)
           block_type m_value;
         };
-        
+
         ListElement * m_data;     ///< Data
         // 2009-07-01 Kenny: Why not size_t?
         int  m_size;            ///< Number of elements in data
         int  m_allocated_size;  ///< Number of elements allocated
         bool m_is_sparse;      ///< Mode
-        
+
         // Used only when in linked list mode
         // 2009-07-01 Kenny: Why not size_t?
         int m_lcurrent;        ///< Current listindex if m_lcurrent_ == -1 then it means null
         int m_lsize;           ///< Number of elements in the list
-        
+
       private:
-      
+
         // 2009-07-01 Kenny: Why not copy-constructable?
         Ambi_vector(Ambi_vector const&);
 
       public:
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         Ambi_vector(int size)
         : m_data(0)
@@ -64,19 +64,19 @@ namespace sparse
         {
           resize(size);
         }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         ~Ambi_vector()
         {
           // 2009-07-01 Kenny: delete unsafe?
           delete[] m_data;
         }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         block_type & operator()(int i)
         {
           assert(i >= 0 && i < m_size && "index into Ambi_vector out of bounds");
-          
+
           if (!m_is_sparse)
           {
             if (m_data[i].m_key == -1)
@@ -107,7 +107,7 @@ namespace sparse
                 m_lcurrent = next_elem;
                 next_elem = m_data[next_elem].m_next;
               }
-              
+
               if (m_data[m_lcurrent].m_key == i)
               {
                 // return existing element
@@ -138,7 +138,7 @@ namespace sparse
             }
           }
         }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         void init(float const density)
         {
@@ -149,7 +149,7 @@ namespace sparse
             m_lsize = 0;
           }
         }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         // 2009-07-01 Kenny: This is a really bad name I think... it did not make sense before I reviewed all the code to understand what the class does.
         void zero_out()
@@ -166,13 +166,13 @@ namespace sparse
             m_lsize = 0;
           }
         }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         /**
          * if mode is sparse then this method must be called before inserting elements with key > m_lcurrent.
          */
         void restart() { m_lcurrent = ( m_lsize == 0 ) ? -1 : 0; }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         void resize(int size)
         {
@@ -185,12 +185,12 @@ namespace sparse
           }
           m_size = size;
         }
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         int size() const { return m_size; }
-        
+
       protected:
-        
+
         // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
         void reallocate()
         {
@@ -202,25 +202,25 @@ namespace sparse
           delete[] m_data;
           m_data = new_buffer;
         }
-        
+
       };
-    
-    
+
+
     template<typename B>
     class Ambi_vector<B>::Iterator
     {
     protected:
 
       // 2009-07-01 Kenny: Why use space on m_is_sparse? Why not just access the same value from the vector reference when needed?
-      
+
       Ambi_vector & m_vec_ref;       ///< The target vector
       int           m_current;       ///< The current index into m_vec_ref
       bool          m_is_sparse;     ///< The mode of the vector
-      
+
     public:
-      
+
       typedef B block_type;
-      
+
       // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
       Iterator(Ambi_vector& vec)
       : m_vec_ref(vec)
@@ -236,7 +236,7 @@ namespace sparse
           m_current = m_vec_ref.m_lsize == 0 ? -1 : 0;
         }
       }
-      
+
       // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
       Iterator& operator++()
       {
@@ -248,7 +248,7 @@ namespace sparse
             ++m_current;
           }
           while ( m_current < m_vec_ref.m_size && m_vec_ref.m_data[m_current].m_key < 0);
-          
+
           if (m_current >= m_vec_ref.m_size)
           {
             m_current = -1;
@@ -261,27 +261,27 @@ namespace sparse
         }
         return *this;
       }
-      
+
       // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
       int key() const
       {
         assert( m_current >= 0 && m_current < m_vec_ref.size() && "Iterator index into Ambi_vector out of bounds");
         return m_vec_ref.m_data[m_current].m_key;
       }
-      
+
       // 2009-07-01 Kenny: Why no use this-> for member/method access in a template class?
       block_type & value()
       {
         assert( m_current >= 0 && m_current < m_vec_ref.size() && "Iterator index into Ambi_vector out of bounds");
         return m_vec_ref.m_data[m_current].m_value;
       }
-      
+
       operator bool() const { return m_current >= 0; }
-      
+
     };
-    
+
   } // namespace detail
 } // namespace sparse
 
 // SPARSE_AMBI_VECTOR_H
-#endif 
+#endif

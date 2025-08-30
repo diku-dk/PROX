@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Minimum Map Reformulation.
    *

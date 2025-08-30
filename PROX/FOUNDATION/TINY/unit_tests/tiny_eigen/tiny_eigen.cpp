@@ -23,7 +23,7 @@ inline void eigen_value_decomposition_test(vector3_type d,matrix3x3_type R)
   real_type const d0  = d(0);
   real_type const d1  = d(1);
   real_type const d2  = d(2);
-  
+
   matrix3x3_type D = matrix3x3_type::make_diag(d);
   matrix3x3_type A = R*D*tiny::trans(R);
   BOOST_CHECK( tiny::is_symmetric(A,tol) );
@@ -50,7 +50,7 @@ inline void eigen_value_decomposition_test(vector3_type d,matrix3x3_type R)
   BOOST_CHECK( fabs(Itest(2,1))<epsilon );
 
   matrix3x3_type Atest = A - V*matrix3x3_type::make_diag(d)*tiny::trans(V);
-  
+
   BOOST_CHECK( fabs(Atest(0,0))<epsilon );
   BOOST_CHECK( fabs(Atest(0,1))<epsilon );
   BOOST_CHECK( fabs(Atest(0,2))<epsilon );
@@ -61,7 +61,7 @@ inline void eigen_value_decomposition_test(vector3_type d,matrix3x3_type R)
   BOOST_CHECK( fabs(Atest(2,1))<epsilon );
   BOOST_CHECK( fabs(Atest(2,2))<epsilon );
 
-  bool match1 = fabs( d0 - d(0) ) < epsilon &&  
+  bool match1 = fabs( d0 - d(0) ) < epsilon &&
                 fabs( d1 - d(1) ) < epsilon &&
                 fabs( d2 - d(2) ) < epsilon ;
 
@@ -197,26 +197,26 @@ BOOST_AUTO_TEST_SUITE(tiny_eigen);
 
 
 BOOST_AUTO_TEST_CASE(detailed_testing)
-{  
+{
   typedef tiny::MathTypes<double>           MT;
   typedef MT::vector3_type                  V;
   typedef MT::matrix3x3_type                M;
   typedef MT::value_traits                  VT;
 
   M A;
-  
+
   // This test case is known to result in a R-matrix with det(R)=-1
   A(0,0) =  10.0;  A(0,1) = -1.0;  A(0,2) = -1.0;
   A(1,0) =  -1.0;  A(1,1) = 10.0;  A(1,2) = -1.0;
   A(2,0) =  -1.0;  A(2,1) = -1.0;  A(2,2) = 10.0;
-    
+
   M R;
   V d;
   tiny::eigen(A, R, d);
-  
+
   double determinant = tiny::det(R);
   BOOST_CHECK_CLOSE( determinant, -VT::one(), 0.01 );
-  
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();

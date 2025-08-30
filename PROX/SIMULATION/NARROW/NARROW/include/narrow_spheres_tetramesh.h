@@ -55,9 +55,9 @@ namespace narrow
                                         );
       }
     }
-    
+
   } // namespace detail
-  
+
 } //namespace narrow
 
 // NARROW_SPHERES_TETRAMESH_H

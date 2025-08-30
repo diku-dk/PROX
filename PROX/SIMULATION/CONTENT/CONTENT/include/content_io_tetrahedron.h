@@ -23,8 +23,8 @@ namespace content
       , m_m(0u)
       {}
     };
-        
-  }// namespace details  
+
+  }// namespace details
 }// namespace content
 
 // CONTENT_IO_TETRAHEDRON_H

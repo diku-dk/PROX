@@ -12,12 +12,12 @@ __kernel void do_transform_vertices(
   const size_t group_id   = get_group_id(0);
   const size_t local_id   = get_local_id(0);
   const size_t local_size = get_local_size(0);
-  
+
   __local uint            vertices_start;
   __local uint            vertices_end;
   __local vector3_type    position;
   __local quaternion_type rotation;
-  
+
   if (local_id == 0) {
     // first object's offset is 0
     vertices_start = group_id == 0 ? 0 : vertex_offsets[group_id - 1];
@@ -26,7 +26,7 @@ __kernel void do_transform_vertices(
     rotation       = rotations[group_id];
   }
   barrier(CLK_LOCAL_MEM_FENCE);
-  
+
   for (  size_t offset = vertices_start + local_id
        ; offset < vertices_end
        ; offset += local_size

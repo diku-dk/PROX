@@ -24,7 +24,7 @@ namespace sparse
         throw std::logic_error("could not open the specified file");
       }
     }
-    
+
     /**
      * @tparam FS   The file stream type.
      */
@@ -34,9 +34,9 @@ namespace sparse
       file.flush();
       file.close();
     }
-    
+
   } // namespace io
 }   // namespace sparse
 
 // SPARSE_FILE_STREAM_HELPERS_H
-#endif 
+#endif

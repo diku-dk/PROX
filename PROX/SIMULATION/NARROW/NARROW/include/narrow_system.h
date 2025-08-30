@@ -48,7 +48,7 @@ namespace narrow
     {
       return this->m_geometries.size();
     }
-    
+
     size_t create_geometry()
     {
       Geometry<M> G = Geometry<M>();
@@ -90,7 +90,7 @@ namespace narrow
     }
 
   };
-  
+
 } // namespace narrow
 
 // NARROW_SYSTEM_H

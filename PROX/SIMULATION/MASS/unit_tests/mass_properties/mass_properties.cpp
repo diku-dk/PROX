@@ -11,9 +11,9 @@ BOOST_AUTO_TEST_SUITE(mass);
 BOOST_AUTO_TEST_CASE(properties)
 {
   typedef mass::Properties<float> prop_type;
-  
+
   prop_type A;
-  
+
   BOOST_CHECK_CLOSE( A.m_m,   0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Ixx, 0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Iyy, 0.0f, 0.01f );
@@ -28,15 +28,15 @@ BOOST_AUTO_TEST_CASE(properties)
   BOOST_CHECK_CLOSE( A.m_Qx,  0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Qy,  0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Qz,  0.0f, 0.01f );
-  
+
   BOOST_CHECK( A.is_body_space() == true );
   BOOST_CHECK( A.is_model_space() == false );
-  
+
   A.m_x = 5.0f;
   BOOST_CHECK( A.is_body_space() == false );
   BOOST_CHECK( A.is_model_space() == true );
-  
-  A.clear();    
+
+  A.clear();
   BOOST_CHECK_CLOSE( A.m_m,   0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Ixx, 0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Iyy, 0.0f, 0.01f );
@@ -51,16 +51,16 @@ BOOST_AUTO_TEST_CASE(properties)
   BOOST_CHECK_CLOSE( A.m_Qx,  0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Qy,  0.0f, 0.01f );
   BOOST_CHECK_CLOSE( A.m_Qz,  0.0f, 0.01f );
- 
+
   A.m_x = 5.0f;
-  
+
   prop_type B;
-  BOOST_CHECK( (A==B) == false ); 
+  BOOST_CHECK( (A==B) == false );
   B = A;
-  BOOST_CHECK( (A==B) == true ); 
-  
+  BOOST_CHECK( (A==B) == true );
+
   prop_type C = prop_type( A );
-  BOOST_CHECK( (A==C) == true ); 
+  BOOST_CHECK( (A==C) == true );
 }
 
 BOOST_AUTO_TEST_SUITE_END();

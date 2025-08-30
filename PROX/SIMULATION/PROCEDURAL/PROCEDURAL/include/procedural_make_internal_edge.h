@@ -240,9 +240,9 @@ namespace procedural
 
       engine->set_rigid_body_velocity(rid, 0.0, 0.0, 0.0);
     }
-    
+
   }
-  
+
 } //namespace procedural
 
 // PROCEDURAL_MAKE_INTERNAL_EDGE_H

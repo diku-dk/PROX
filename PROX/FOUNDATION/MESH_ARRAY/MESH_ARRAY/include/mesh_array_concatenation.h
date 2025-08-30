@@ -108,12 +108,12 @@ namespace mesh_array
     {
       Vertex const & b = B.vertex(v);
       Vertex const & c = b2c[b.idx()];
-      
+
       Cx(c) = Bx(b);
       Cy(c) = By(b);
       Cz(c) = Bz(b);
     }
-  
+
   }
 
   template<typename MT>

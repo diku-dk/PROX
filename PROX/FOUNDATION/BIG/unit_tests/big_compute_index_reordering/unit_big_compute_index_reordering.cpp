@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(test_case1)
   bitmask(5) = big::IN_NON_ACTIVE;        // 7
   bitmask(7) = big::IN_NON_ACTIVE;        // 8
   bitmask(8) = big::IN_NON_ACTIVE;        // 9
-  
+
   idx_vector_type old2new;
   idx_vector_type new2old;
 
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(test_case1)
   BOOST_CHECK( old2new( 5 ) == 7 );
   BOOST_CHECK( old2new( 7 ) == 8 );
   BOOST_CHECK( old2new( 8 ) == 9 );
-  
+
   BOOST_CHECK( new2old( 0 ) == 2 );
   BOOST_CHECK( new2old( 1 ) == 4 );
   BOOST_CHECK( new2old( 2 ) == 6 );
@@ -61,28 +61,28 @@ BOOST_AUTO_TEST_CASE(test_case1)
 BOOST_AUTO_TEST_CASE(test_case2)
 {
   typedef ublas::vector<size_t>   idx_vector_type;
-  
+
   idx_vector_type bitmask;
-  
+
   bitmask.resize(10,false);
-  
+
   bitmask(2) = big::IN_ACTIVE;
   bitmask(4) = big::IN_ACTIVE;
   bitmask(6) = big::IN_ACTIVE;
   bitmask(9) = big::IN_ACTIVE;
-  
+
   bitmask(1) = big::IN_ACTIVE;
   bitmask(3) = big::IN_ACTIVE;
   bitmask(8) = big::IN_ACTIVE;
   bitmask(0) = big::IN_ACTIVE;
   bitmask(5) = big::IN_ACTIVE;
   bitmask(7) = big::IN_ACTIVE;
-  
+
   idx_vector_type old2new;
   idx_vector_type new2old;
-  
+
   big::compute_index_reordering( bitmask, old2new, new2old );
-  
+
   BOOST_CHECK( old2new( 0 ) == 0 );
   BOOST_CHECK( old2new( 1 ) == 1 );
   BOOST_CHECK( old2new( 2 ) == 2 );
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(test_case2)
   BOOST_CHECK( old2new( 7 ) == 7 );
   BOOST_CHECK( old2new( 8 ) == 8 );
   BOOST_CHECK( old2new( 9 ) == 9 );
-  
-  
+
+
   BOOST_CHECK( new2old( 0 ) == 0 );
   BOOST_CHECK( new2old( 1 ) == 1 );
   BOOST_CHECK( new2old( 2 ) == 2 );
@@ -110,28 +110,28 @@ BOOST_AUTO_TEST_CASE(test_case2)
 BOOST_AUTO_TEST_CASE(test_case3)
 {
   typedef ublas::vector<size_t>   idx_vector_type;
-  
+
   idx_vector_type bitmask;
-  
+
   bitmask.resize(10,false);
-  
+
   bitmask(2) = big::IN_NON_ACTIVE;
   bitmask(4) = big::IN_NON_ACTIVE;
   bitmask(6) = big::IN_NON_ACTIVE;
   bitmask(9) = big::IN_NON_ACTIVE;
-  
+
   bitmask(1) = big::IN_NON_ACTIVE;
   bitmask(3) = big::IN_NON_ACTIVE;
   bitmask(8) = big::IN_NON_ACTIVE;
   bitmask(0) = big::IN_NON_ACTIVE;
   bitmask(5) = big::IN_NON_ACTIVE;
   bitmask(7) = big::IN_NON_ACTIVE;
-  
+
   idx_vector_type old2new;
   idx_vector_type new2old;
-  
+
   big::compute_index_reordering( bitmask, old2new, new2old );
-  
+
   BOOST_CHECK( old2new( 0 ) == 0 );
   BOOST_CHECK( old2new( 1 ) == 1 );
   BOOST_CHECK( old2new( 2 ) == 2 );
@@ -142,8 +142,8 @@ BOOST_AUTO_TEST_CASE(test_case3)
   BOOST_CHECK( old2new( 7 ) == 7 );
   BOOST_CHECK( old2new( 8 ) == 8 );
   BOOST_CHECK( old2new( 9 ) == 9 );
-  
-  
+
+
   BOOST_CHECK( new2old( 0 ) == 0 );
   BOOST_CHECK( new2old( 1 ) == 1 );
   BOOST_CHECK( new2old( 2 ) == 2 );

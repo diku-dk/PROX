@@ -31,9 +31,9 @@ namespace convex
   inline V reduce_simplex( Simplex<V> & S, V & a, V & b )
   {
     typedef typename V::value_traits   VT;
-    
+
     V const p = V::make( VT::zero(), VT::zero(), VT::zero() );
-    
+
     switch( dimension( S ) )
     {
       case 1:
@@ -41,13 +41,13 @@ namespace convex
         // Nothing to do, a vertex can not be reduced!
         int    bit_A = 0;
         size_t idx_A = 0;
-        
+
         get_used_indices( S.m_bitmask, idx_A, bit_A );
-        
+
         S.m_bitmask = bit_A;        // 2011-11-12 Kenny: Why do we set the bitmask? It already has this value?
-        
+
         S.m_w[idx_A] = VT::one();
-        
+
         // 2011-11-12 Kenny: Are we certain that all other w's are zero? If not then we might get 'garbage' into the computation of the closest point? I think we should clear all w's and then set the idxA value to one!
       }
         break;
@@ -64,7 +64,7 @@ namespace convex
         assert(false || !"reduce_simplex(): can not reduce simplex of that size");
         break;
     };
-    
+
     // Now compute the actual closest points based on the bary-centric coordinates.
     a.clear();
     b.clear();

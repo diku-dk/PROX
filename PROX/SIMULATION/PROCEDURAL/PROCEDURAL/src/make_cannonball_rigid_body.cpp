@@ -19,10 +19,10 @@ namespace procedural
                                     )
 	{
     typedef typename MT::real_type       T;
-    
+
     T      const density = get_material_density<MT>(mat_info, "Cannonball");
 		size_t const mid     = get_material_id<MT>(mat_info, "Cannonball");
-    
+
 		static size_t counter = 0u;
 		
     std::string const body_name = "ball_" + util::to_string( counter++ );
@@ -47,14 +47,14 @@ namespace procedural
 		engine->connect_collision_geometry( rid, ball.m_gid );
 		
 		engine->set_rigid_body_material( rid, mid );
-    
+
     engine->set_rigid_body_fixed(rid, false);
 		
 		return rid;
 	}
-  
+
   typedef tiny::MathTypes<float>  MTf;
-  
+
   template
 	size_t make_cannonball_rigid_body<MTf>(
                                          content::API * engine
@@ -64,5 +64,5 @@ namespace procedural
                                          , MTf::vector3_type const & vbf
                                          , MaterialInfo<MTf::real_type> mat_info
                                          );
-  
+
 } //namespace procedural

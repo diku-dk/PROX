@@ -10,7 +10,7 @@
 typedef tiny::MathTypes<float>   M;
 typedef M::real_type             T;
 typedef M::vector3_type          V;
-typedef M::quaternion_type       Q; 
+typedef M::quaternion_type       Q;
 typedef M::coordsys_type         C;
 
 class MyObject : public narrow::Object< M > {};
@@ -79,8 +79,8 @@ inline void do_test(
 
   geometry_type  & geoA = system.get_geometry(objA);
   geometry_type  & geoB = system.get_geometry(objB);
-  
-  geoA.add_shape( shapeA ); 
+
+  geoA.add_shape( shapeA );
   geoB.add_shape( shapeB );
 
 
@@ -134,15 +134,15 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_box_test)
 {	
   sphere_type shapeA;
   shapeA.radius()    = 1.0f;
-  shapeA.transform() = C::identity();    
-  
+  shapeA.transform() = C::identity();
+
   box_type shapeB;
   shapeB.half_extent()(0) = 1.0f;
   shapeB.half_extent()(1) = 1.0f;
   shapeB.half_extent()(2) = 1.0f;
-  
-  shapeB.transform() = C::identity();    
-  
+
+  shapeB.transform() = C::identity();
+
   {
     V posA = V::make(-1.0f, 0.0f, 0.0f);
     V posB = V::make( 1.0f, 0.0f, 0.0f);
@@ -150,26 +150,26 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_box_test)
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
   }
-  
+
   {
     V posA = V::make(-2.0f, 0.0f, 0.0f);
     V posB = V::make( 2.0f, 0.0f, 0.0f);
     Q rotA = Q::identity();
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
-  }  
+  }
 }
 
 BOOST_AUTO_TEST_CASE(dispatch_sphere_sphere_test)
 {	
   sphere_type shapeA;
   shapeA.radius()    = 1.0f;
-  shapeA.transform() = C::identity();    
-  
+  shapeA.transform() = C::identity();
+
   sphere_type shapeB;
   shapeB.radius()    = 1.0f;
-  shapeB.transform() = C::identity();    
-  
+  shapeB.transform() = C::identity();
+
   {
     V posA = V::make(-1.0f, 0.0f, 0.0f);
     V posB = V::make( 1.0f, 0.0f, 0.0f);
@@ -177,14 +177,14 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_sphere_test)
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
   }
-  
+
   {
     V posA = V::make(-2.0f, 0.0f, 0.0f);
     V posB = V::make( 2.0f, 0.0f, 0.0f);
     Q rotA = Q::identity();
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
-  }  
+  }
 }
 
 BOOST_AUTO_TEST_CASE(dispatch_box_box_test)
@@ -193,14 +193,14 @@ BOOST_AUTO_TEST_CASE(dispatch_box_box_test)
   shapeA.half_extent()(0) = 1.0f;
   shapeA.half_extent()(1) = 1.0f;
   shapeA.half_extent()(2) = 1.0f;
-  shapeA.transform()      = C::identity();    
-  
+  shapeA.transform()      = C::identity();
+
   box_type shapeB;
   shapeB.half_extent()(0) = 1.0f;
   shapeB.half_extent()(1) = 1.0f;
   shapeB.half_extent()(2) = 1.0f;
-  shapeB.transform()      = C::identity();    
-  
+  shapeB.transform()      = C::identity();
+
   {
     V posA = V::make(-1.0f, 0.0f, 0.0f);
     V posB = V::make( 1.0f, 0.0f, 0.0f);
@@ -208,14 +208,14 @@ BOOST_AUTO_TEST_CASE(dispatch_box_box_test)
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
   }
-  
+
   {
     V posA = V::make(-2.0f, 0.0f, 0.0f);
     V posB = V::make( 2.0f, 0.0f, 0.0f);
     Q rotA = Q::identity();
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
-  }  
+  }
 }
 
 BOOST_AUTO_TEST_CASE(dispatch_box_sphere_test)
@@ -224,12 +224,12 @@ BOOST_AUTO_TEST_CASE(dispatch_box_sphere_test)
   shapeA.half_extent()(0) = 1.0f;
   shapeA.half_extent()(1) = 1.0f;
   shapeA.half_extent()(2) = 1.0f;
-  shapeA.transform()      = C::identity();    
-  
+  shapeA.transform()      = C::identity();
+
   sphere_type shapeB;
   shapeB.radius()    = 1.0f;
-  shapeB.transform() = C::identity();    
-  
+  shapeB.transform() = C::identity();
+
   {
     V posA = V::make(-1.0f, 0.0f, 0.0f);
     V posB = V::make( 1.0f, 0.0f, 0.0f);
@@ -237,14 +237,14 @@ BOOST_AUTO_TEST_CASE(dispatch_box_sphere_test)
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
   }
-  
+
   {
     V posA = V::make(-2.0f, 0.0f, 0.0f);
     V posB = V::make( 2.0f, 0.0f, 0.0f);
     Q rotA = Q::identity();
     Q rotB = Q::identity();
     do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
-  }  
+  }
 }
 
 BOOST_AUTO_TEST_CASE(dispatch_tetmesh_tetmesh_test)
@@ -340,8 +340,8 @@ BOOST_AUTO_TEST_CASE(dispatch_convex_convex_test)
   shapeA.data().add_point( V::make(-1.0f,  1.0f, -1.0f ) );
   shapeA.data().add_point( V::make( 1.0f, -1.0f, -1.0f ) );
   shapeA.data().add_point( V::make(-1.0f, -1.0f, -1.0f ) );
-  shapeA.transform() = C::identity();    
-  
+  shapeA.transform() = C::identity();
+
   convex_type shapeB;
   shapeB.data().add_point( V::make( 1.0f,  1.0f,  1.0f ) );
   shapeB.data().add_point( V::make(-1.0f,  1.0f,  1.0f ) );
@@ -351,8 +351,8 @@ BOOST_AUTO_TEST_CASE(dispatch_convex_convex_test)
   shapeB.data().add_point( V::make(-1.0f,  1.0f, -1.0f ) );
   shapeB.data().add_point( V::make( 1.0f, -1.0f, -1.0f ) );
   shapeB.data().add_point( V::make(-1.0f, -1.0f, -1.0f ) );
-  shapeB.transform() = C::identity();    
-  
+  shapeB.transform() = C::identity();
+
   {
     V posA = V::make(-1.0f, 0.0f, 0.0f);
     V posB = V::make( 1.0f, 0.0f, 0.0f);
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(dispatch_convex_convex_test)
     // 2015-11-30 Kenny: Convex types not yet supported
     //    do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
   }
-  
+
   {
     V posA = V::make(-2.0f, 0.0f, 0.0f);
     V posB = V::make( 2.0f, 0.0f, 0.0f);
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(dispatch_convex_convex_test)
     Q rotB = Q::identity();
     // 2015-11-30 Kenny: Convex types not yet supported
     // do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
-  }  
+  }
 }
 
 

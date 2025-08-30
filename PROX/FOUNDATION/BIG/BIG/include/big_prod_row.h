@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute y_i = prod(row_i(A),x).
    *
@@ -21,7 +21,7 @@ namespace big
              , boost::numeric::ublas::vector<T> const & x
              , typename boost::numeric::ublas::vector<T>::size_type i
              );
-  
+
 } // end namespace big
 
 // BIG_PROD_ROW_H

@@ -112,14 +112,14 @@ namespace mesh_array
       size_t const opposite_j  = A.j( e );
       size_t const opposite_k  = A.k( e );
       size_t const opposite_m  = A.m( e );
-      
+
       Tetrahedron const tet = tetmesh.tetrahedron( e );
-      
+
       size_t const i  = tet.i();
       size_t const j  = tet.j();
       size_t const k  = tet.k();
       size_t const m  = tet.m();
-      
+
       if ( opposite_i == EMPTY )
       {
         if(vertices[j].idx() == EMPTY)
@@ -133,7 +133,7 @@ namespace mesh_array
 
         mesh.push_triangle(vertices[j], vertices[k], vertices[m] );
       }
-      
+
       if ( opposite_j == EMPTY )
       {
         if(vertices[i].idx() == EMPTY)
@@ -190,9 +190,9 @@ namespace mesh_array
         Z(v_out) = tetZ(v_in);
       }
     }
-    
+
   }
 }// namespace mesh_array
-  
+
   // MESH_ARRAY_MAKE_T3MESH_H
 #endif

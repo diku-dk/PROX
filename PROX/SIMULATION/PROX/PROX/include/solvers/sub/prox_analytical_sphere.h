@@ -8,7 +8,7 @@
 
 namespace prox
 {
-  
+
   namespace detail
   {
 
@@ -16,11 +16,11 @@ namespace prox
     *
     * This function computes the proximal point of a sphere
     */
-    template <typename T> 
-    inline static void analytical_sphere(      
-                                              T const & z_s     
+    template <typename T>
+    inline static void analytical_sphere(
+                                              T const & z_s
                                               , T const & z_t
-                                              , T const & z_tau    
+                                              , T const & z_tau
                                               , T const & mu
                                               , T const & lambda_n
                                               , T & lambda_s
@@ -32,7 +32,7 @@ namespace prox
       typedef tiny::ValueTraits<T> value_traits;
 
       // Special case when cold starting
-      if ( lambda_n <= value_traits::zero() )    
+      if ( lambda_n <= value_traits::zero() )
       {
         lambda_s   = value_traits::zero();
         lambda_t   = value_traits::zero();
@@ -43,7 +43,7 @@ namespace prox
       T const radius = mu*lambda_n;
 
       assert( is_number( radius ) || !"analytical_sphere(): a was not a number");
-      assert( radius > value_traits::zero()  || !"analytical_sphere(): a non-positive");  
+      assert( radius > value_traits::zero()  || !"analytical_sphere(): a non-positive");
 
       T const s = z_s*z_s + z_t*z_t + z_tau*z_tau;
 
@@ -55,7 +55,7 @@ namespace prox
         return;
       }
 
-      assert( s > value_traits::zero() || !"analytical_sphere(): internal error");   
+      assert( s > value_traits::zero() || !"analytical_sphere(): internal error");
 
       T const scale = radius /sqrt(s);
 
@@ -69,11 +69,11 @@ namespace prox
      * Overloaded version. The only purpose of this version is
      * such that all sub solvers have the same function signature.
      */
-    template <typename T> 
-    inline static void analytical_sphere(      
-                                              T const & z_s     
+    template <typename T>
+    inline static void analytical_sphere(
+                                              T const & z_s
                                               , T const & z_t
-                                              , T const & z_tau    
+                                              , T const & z_tau
                                               , T const & mu_s
                                               , T const & /*mu_t*/
                                               , T const & /*mu_tau*/
@@ -85,7 +85,7 @@ namespace prox
     {
       analytical_sphere(z_s, z_t, z_tau, mu_s,lambda_n,lambda_s,lambda_t, lambda_tau);
     }
-      
+
   } // namespace detail
 } // namespace prox
 

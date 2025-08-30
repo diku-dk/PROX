@@ -9,7 +9,7 @@
 
 namespace big
 {
-  
+
 #ifdef WIN32
 #define is_number(val) (_isnan(val)==0)   ///< Is a number test
 #else
@@ -23,7 +23,7 @@ namespace big
 #endif
 #endif
 #endif
-  
+
 } // namespace big
 
 //BIG_IS_NUMBER_H

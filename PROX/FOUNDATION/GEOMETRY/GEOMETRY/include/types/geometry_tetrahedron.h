@@ -13,29 +13,29 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Tetrahedron
   : public SupportMapping<V>
   {
   public:
-    
+
     typedef typename V::real_type       T;
     typedef typename V::value_traits    VT;
-    
+
   protected:
-    
+
     V m_point[4];
 
   public:
-    
+
     V const & point(unsigned int const & idx ) const { return m_point[idx]; }
     V       & point(unsigned int const & idx )       { return m_point[idx]; }
     V const & p(unsigned int const & idx )     const { return m_point[idx]; }
     V       & p(unsigned int const & idx )           { return m_point[idx]; }
 
   public:
-    
+
     Tetrahedron()
     {
       m_point[0] = V::zero();
@@ -121,7 +121,7 @@ namespace geometry
       assert( is_finite(p(0)) || !"get_support_point(): INF encountered");
       assert( is_finite(p(1)) || !"get_support_point(): INF encountered");
       assert( is_finite(p(2)) || !"get_support_point(): INF encountered");
-      
+
       return p;
     }
 

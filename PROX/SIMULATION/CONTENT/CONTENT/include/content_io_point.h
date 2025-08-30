@@ -12,16 +12,16 @@ namespace content
     {
       float m_x; ///< Coordinates of the point
       float m_y;
-      float m_z; 
-      
+      float m_z;
+
       Point()
       : m_x(0.0f)
       , m_y(0.0f)
       , m_z(0.0f)
       {}
     };
-        
-  }// namespace details  
+
+  }// namespace details
 }// namespace content
 
 // CONTENT_IO_POINT_H

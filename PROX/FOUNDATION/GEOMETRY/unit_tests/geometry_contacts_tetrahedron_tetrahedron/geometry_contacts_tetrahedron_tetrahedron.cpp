@@ -662,7 +662,7 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     BOOST_CHECK_CLOSE( callback.m_contacts[9].m_normal(1),  0.0,       0.01);
     BOOST_CHECK_CLOSE( callback.m_contacts[9].m_normal(2), -1.0,       0.01);
     BOOST_CHECK_CLOSE( callback.m_contacts[9].m_distance,  -0.1,       0.01);
-    
+
   }
 
   // Edge from B goes through A and vice-versa
@@ -716,7 +716,7 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     BOOST_CHECK_CLOSE( callback.m_contacts[3].m_normal(1), 0.707107, 0.01);
     BOOST_CHECK_CLOSE( callback.m_contacts[3].m_normal(2), -0, 0.01);
     BOOST_CHECK_CLOSE( callback.m_contacts[3].m_distance, -0.282843, 0.01);
-    
+
   }
 
 }

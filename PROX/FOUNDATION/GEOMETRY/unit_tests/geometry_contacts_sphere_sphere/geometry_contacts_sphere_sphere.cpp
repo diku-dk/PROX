@@ -111,8 +111,8 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_sphere_test)
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal[2], 0.0, 0.01);
 
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance,  0.0, 0.01);
-    
-    
+
+
   }
 
   // Separation

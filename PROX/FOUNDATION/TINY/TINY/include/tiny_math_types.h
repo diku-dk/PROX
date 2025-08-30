@@ -10,7 +10,7 @@
 
 namespace tiny
 {
-  
+
   /**
    * Math Types Container.
    * This class contains the most common used small-sized matrix
@@ -22,40 +22,40 @@ namespace tiny
    */
   template< typename T >
   class MathTypes;
-  
+
   template<  >
   class MathTypes<float>
   {
   public:
-    
+
     typedef float_traits                  type_traits;
     typedef type_traits::real_type        real_type;
     typedef Vector<3,type_traits>         vector3_type;
     typedef Vector<4,type_traits>         vector4_type;
-    
+
     typedef Quaternion<type_traits>       quaternion_type;
     typedef Matrix<3,3,type_traits>       matrix3x3_type;
     typedef Matrix<4,4,type_traits>       matrix4x4_type;
     typedef CoordSys<type_traits>         coordsys_type;
     typedef ValueTraits<real_type>        value_traits;
   };
-  
+
   template<  >
   class MathTypes<double>
   {
   public:
-    
+
     typedef double_traits                 type_traits;
     typedef type_traits::real_type        real_type;
     typedef Vector<3,type_traits>         vector3_type;
     typedef Vector<4,type_traits>         vector4_type;
-    
+
     typedef Quaternion<type_traits>       quaternion_type;
     typedef Matrix<3,3,type_traits>       matrix3x3_type;
     typedef CoordSys<type_traits>         coordsys_type;
     typedef ValueTraits<real_type>        value_traits;
   };
-  
+
 } // namespace tiny
 
 //TINY_MATH_TYPES_H

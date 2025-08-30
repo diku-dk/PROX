@@ -152,9 +152,9 @@ namespace tiny
 
       template<typename R, typename T>
       inline R numeric_cast(T const & value) {  return boost::numeric_cast<R>(value); }
-            
+
     } // namespace detail
-  
+
 }  // namespace tiny
 
 // TINY_CONSTANTS_H

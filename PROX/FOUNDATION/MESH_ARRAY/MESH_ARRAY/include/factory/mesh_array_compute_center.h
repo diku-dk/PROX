@@ -25,9 +25,9 @@ namespace mesh_array
       Vertex const v = mesh.vertex(i);
       center += V::make( X(v), Y(v), Z(v) );
     }
-    
+
     center /= mesh.vertex_size();
-    
+
     return center;
   }
 
@@ -50,7 +50,7 @@ namespace mesh_array
     }
 
     center /= mesh.vertex_size();
-    
+
     return center;
   }
 
@@ -60,4 +60,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_COMPUTE_CENTER_H
-#endif 
+#endif

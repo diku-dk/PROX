@@ -5,7 +5,7 @@
 
 namespace tiny
 {
-  
+
   /**
    * Compute Covariance Matrix and Mean.
    *
@@ -20,15 +20,15 @@ namespace tiny
              vector3_iterator begin, vector3_iterator end
              , vector3_type & mean, matrix3x3_type & C
              )
-  {    
+  {
     unsigned int N = 0;
-    
+
     mean.clear();
-    
+
     for(vector3_iterator v = begin;v!=end;++v,++N)
       mean += (*v);
     mean /= N;
-    
+
     C.clear();
     for(vector3_iterator v = begin;v!=end;++v,++N)
     {
@@ -44,7 +44,7 @@ namespace tiny
     C(2,1) = C(1,2);
     C /= N;
   }
-  
+
   /**
    * Union of two covariance matrices.
    *
@@ -60,14 +60,14 @@ namespace tiny
                    )
   {
     typedef typename vector3_type::value_traits   value_traits;
-    
+
     mean = (mean1 + mean2)/value_traits::two();
     matrix3x3_type KK = outer_prod(mean,mean);
     matrix3x3_type NN = outer_prod(mean1,mean1);
     matrix3x3_type MM = outer_prod(mean2,mean2);
     C = ((C1 + NN + C2 + MM)/value_traits::two() - KK) ;
   }
-  
+
 } // namespace tiny
 
 // TINY_COVARIANCE3X3_H

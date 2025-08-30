@@ -9,7 +9,7 @@
 
 namespace tiny
 {
-    
+
     /**
      * This method assumes that the point is in this coordinate system.
      * In other words this method maps local points into non local
@@ -25,7 +25,7 @@ namespace tiny
      */
     template<typename T>
     inline Vector<3,T> xform_point(CoordSys<T> const & X, Vector<3,T> const & p) {    return rotate(X.Q(), p) + X.T();  }
-    
+
     /**
      * This method assumes that the vector is in this
      * coordinate system. That is it maps the vector
@@ -33,7 +33,7 @@ namespace tiny
      */
     template<typename T>
     inline Vector<3,T> xform_vector(CoordSys<T> const & X, Vector<3,T> const & v) { return rotate(X.Q(), v); }
-    
+
     /**
      * Transform Matrix.
      *
@@ -41,7 +41,7 @@ namespace tiny
      */
     template<typename T>
     inline Matrix<3,3,T> xform_matrix(CoordSys<T> const & X, Matrix<3,3,T> const & O) { return make(X.Q()) * O; }
-    
+
     /**
      * Coordinate Transformation Product.
      * This function should be used to concatenate coordinate transformations.
@@ -73,7 +73,7 @@ namespace tiny
     {
         return CoordSys<T>(    rotate(L.Q(), R.T() )  +  L.T() , unit( prod( L.Q() , R.Q()) ) );
     }
-    
+
     /**
      * Inverse Transform.
      *
@@ -98,7 +98,7 @@ namespace tiny
         //---
         return CoordSys<T>(  rotate(conj(X.Q()), -X.T()) , conj(X.Q()) );
     }
-    
+
     /**
      * Model Update Transform.
      * This function computes the necessary transform needed in
@@ -140,7 +140,7 @@ namespace tiny
         //---   T = RB^T (TA - TB)
         //---
         Quaternion<T> q;
-        
+
         if(fabs(VT::one()- tiny::inner_prod(QA, QB)) < working_precision<R>())
         {
             q = Quaternion<T>::identity();
@@ -151,20 +151,20 @@ namespace tiny
         }
         return CoordSys<T>( rotate( conj(QB), (TA - TB)) ,  q);
     }
-    
+
     template<typename T>
     inline CoordSys<T> model_update(CoordSys<T> const & A, CoordSys<T> const & B)
     {
         return model_update(A.T(),A.Q(),B.T(),B.Q());
     }
-    
+
     template<typename T>
     inline std::ostream & operator<< (std::ostream & o, CoordSys<T> const & C)
     {
         o << "[" << C.T() << "," << C.Q() << "]";
         return o;
     }
-    
+
     template<typename T>
     inline std::istream & operator>>(std::istream & i, CoordSys<T> & C)
     {
@@ -176,7 +176,7 @@ namespace tiny
         i >> dummy;
         return i;
     }
-    
+
 } // namespace tiny
 
 //TINY_COORDSYS_FUNCTIONS_H

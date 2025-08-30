@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Generate Diagonal Matrix.
    * This function is a convenience function that is usefull
@@ -18,16 +18,16 @@ namespace big
   inline void diag( ublas::vector<value_type> const & v, matrix_type & D  )
   {
     size_t const n = v.size();
-    
+
     assert( n > 0u         || !"diag(): n was out of range");
-    
+
     D.resize(n,n,false);
     D.clear();
-    
+
     for(size_t i=0u;i<n;++i)
       D(i,i) = v(i);
   }
-  
+
 } // end of namespace big
 
 // BIG_DIAG_H

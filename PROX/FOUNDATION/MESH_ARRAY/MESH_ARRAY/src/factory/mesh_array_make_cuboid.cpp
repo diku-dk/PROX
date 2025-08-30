@@ -4,7 +4,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_cuboid(
                    typename MT::vector3_type const & v0
@@ -20,7 +20,7 @@ namespace mesh_array
                    , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                    , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                    )
-  {    
+  {
 		mesh.clear();
     X.release();
     Y.release();
@@ -55,7 +55,7 @@ namespace mesh_array
 			Vertex const vj = mesh.vertex( quads[i][1] );
 			Vertex const vk = mesh.vertex( quads[i][2] );
 			Vertex const vm = mesh.vertex( quads[i][3] );
-      
+
       mesh.push_triangle(vi,vj,vk);
       mesh.push_triangle(vi,vk,vm);
 		}
@@ -94,7 +94,7 @@ namespace mesh_array
 	
   typedef tiny::MathTypes<float> MTf;
   typedef tiny::MathTypes<double> MTd;
-  
+
   template
   void make_cuboid<MTf>(
                         MTf::vector3_type const & v0
@@ -110,7 +110,7 @@ namespace mesh_array
                         , VertexAttribute<MTf::real_type,T3Mesh> & Y
                         , VertexAttribute<MTf::real_type,T3Mesh> & Z
                         );
-  
+
   template
   void make_cuboid<MTd>(
                         MTd::vector3_type const & v0
@@ -126,6 +126,6 @@ namespace mesh_array
                         , VertexAttribute<MTd::real_type,T3Mesh> & Y
                         , VertexAttribute<MTd::real_type,T3Mesh> & Z
                         );
-  
-  
+
+
 } //namespace mesh_array

@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_conical(
                     typename MT::real_type const & bottom_radius
@@ -22,4 +22,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_CONICAL_H
-#endif 
+#endif

@@ -102,13 +102,13 @@ namespace soft_body
       program.set_uniform("material.use_texture"
                           , (material.m_use_texture ? 1 : 0)
                           );
-      
+
       program.set_uniform("material.alpha"
                           , material.m_alpha
                           );
-      
+
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

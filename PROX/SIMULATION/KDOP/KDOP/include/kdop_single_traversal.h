@@ -159,7 +159,7 @@ namespace kdop
                                   );
     }
   }
-  
+
 }// namespace kdop
 
 // KDOP_SINGLE_TRAVERSAL_H

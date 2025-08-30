@@ -3,7 +3,7 @@
 
 namespace big
 {
-  
+
   /**
    * Relative Convergence Test Function.
    *

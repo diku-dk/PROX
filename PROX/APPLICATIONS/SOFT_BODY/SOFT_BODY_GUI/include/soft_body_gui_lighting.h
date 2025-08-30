@@ -188,16 +188,16 @@ namespace soft_body
                             , lights[i].m_Id_green
                             , lights[i].m_Id_blue
                             );
-        
+
         program.set_uniform("lights[" +  util::to_string(i) +  "].Is"
                             , lights[i].m_Is_red
                             , lights[i].m_Is_green
                             , lights[i].m_Is_blue
                             );
       }
-      
+
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

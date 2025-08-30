@@ -20,15 +20,15 @@ namespace procedural
     typedef typename MT::value_traits    VT;
 		
     size_t const mid = get_material_id<MT>(mat_info, "Ground");
-    
+
     GeometryHandle<MT> ground = create_geometry_handle_box<MT>(  engine, width, height, depth);
-    
+
     V const Pw = rotate(
                         orientation
                         , V::make( VT::zero(), -height*VT::half(), VT::zero())
                         ) + position;
     Q const Qw = orientation;
-    
+
     create_rigid_body<MT>(  engine
                           , Pw
                           , Qw
@@ -38,11 +38,11 @@ namespace procedural
                           , true
                           , "Visualizer/ground"
                           );
-    
+
 	}
-  
+
 	typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_ground<MTf>(  content::API *  engine
                         , MTf::vector3_type const & position
@@ -52,5 +52,5 @@ namespace procedural
                         , MTf::real_type const & height
                         , MTf::real_type const & depth
                         );
-  
+
 } //namespace procedural

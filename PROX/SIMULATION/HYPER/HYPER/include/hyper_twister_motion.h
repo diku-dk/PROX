@@ -69,4 +69,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_TWISTER_MOTION_H
-#endif 
+#endif

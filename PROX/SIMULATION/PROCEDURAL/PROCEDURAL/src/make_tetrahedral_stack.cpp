@@ -21,7 +21,7 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
 		T      const stone_density	= get_material_density<MT>(mat_info, "Stone");
 		size_t const mid	      		= get_material_id<MT>(mat_info, "Stone");
 		
@@ -29,7 +29,7 @@ namespace procedural
 		T const box_width  = cube_width/sub_divisions;
 		T const box_height = cube_height/sub_divisions;
 		T const box_depth  = cube_depth/sub_divisions;
-    
+
 		//--- The dimensions of the box is in place now we will make the individual tetras that make up the box
 		V one   = V::make( -box_width/2.0, -box_height/2.0, -box_depth/2.0 );
 		V two   = V::make(  box_width/2.0, -box_height/2.0, -box_depth/2.0 );
@@ -50,7 +50,7 @@ namespace procedural
 		T x = VT::one();
     T y = VT::one();
     T z = VT::one();
-    
+
 		for (size_t i = 0; i < sub_divisions; ++i)
     {
       x = i*box_width - (cube_width/VT::two()) + (box_width/VT::two());
@@ -60,7 +60,7 @@ namespace procedural
         for (size_t k = 0; k < sub_divisions; ++k)
         {
           z = k*box_depth;
-          
+
           V const Tb = tetra_handle1.Tb2m();
           Q const Qb = tetra_handle1.Qb2m();
 					V const Tm = V::make( x, y, z );
@@ -74,7 +74,7 @@ namespace procedural
                                 , mid
                                 , stone_density
                                 );
-          
+
 					V const Tb2 = tetra_handle2.Tb2m();
           Q const Qb2 = tetra_handle2.Qb2m();
           V const Tu2 = rotate(Qm,Tb2) + Tm;
@@ -86,7 +86,7 @@ namespace procedural
                                 , mid
                                 , stone_density
                                 );
-          
+
 					V const Tb3 = tetra_handle3.Tb2m();
           Q const Qb3 = tetra_handle3.Qb2m();
           V const Tu3 = rotate(Qm,Tb3) + Tm;
@@ -98,7 +98,7 @@ namespace procedural
                                 , mid
                                 , stone_density
                                 );
-          
+
 					V const Tb4 = tetra_handle4.Tb2m();
           Q const Qb4 = tetra_handle4.Qb2m();
           V const Tu4 = rotate(Qm,Tb4) + Tm;
@@ -110,7 +110,7 @@ namespace procedural
                                 , mid
                                 , stone_density
                                 );
-          
+
 					V const Tb5 = tetra_handle5.Tb2m();
           Q const Qb5 = tetra_handle5.Qb2m();
           V const Tu5 = rotate(Qm,Tb5) + Tm;
@@ -126,9 +126,9 @@ namespace procedural
       }
     }
   }
-  
+
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_tetrahedral_stack<MTf>(
                        content::API *  engine
@@ -140,5 +140,5 @@ namespace procedural
                        , size_t const & sub_divisions
                        , MaterialInfo<MTf::real_type> mat_info
                        );
-  
+
 } //namespace procedural

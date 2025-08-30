@@ -7,7 +7,7 @@
 
 namespace narrow
 {
-  
+
   namespace detail
   {
     /**
@@ -21,7 +21,7 @@ namespace narrow
      * @param results  Upon return any new proximity information will have been added to this container.
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
-    
+
     template<typename M>
     inline void box_box(
                         typename Geometry<M>::box_container const & A
@@ -38,17 +38,17 @@ namespace narrow
 
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
-      
+
       typedef typename Geometry<M>::box_container::const_iterator    box_iterator;
-      
+
       assert( envelope > VT::zero() || !"box_box(): collision envelope must be positive");
-      
+
       if( A.empty() || B.empty())
         return;
-      
+
       C bodyAtoWCS = C(tA, qA);
       C bodyBtoWCS = C(tB, qB);
-      
+
       for( box_iterator a = A.begin(); a!=A.end(); ++a )
       {
         for( box_iterator b = B.begin(); b!=B.end(); ++b )
@@ -60,7 +60,7 @@ namespace narrow
 
           geometry::OBB<M> const A = geometry::make_obb<M>( shapeAtoWCS.T(), shapeAtoWCS.Q(), a->half_extent());
           geometry::OBB<M> const B = geometry::make_obb<M>( shapeBtoWCS.T(), shapeBtoWCS.Q(), b->half_extent());
-          
+
           geometry::contacts_obb_obb(
                                      A
                                      , B
@@ -70,7 +70,7 @@ namespace narrow
         }
       }
     }
-    
+
   } //namespace detail
 
 } //namespace narrow

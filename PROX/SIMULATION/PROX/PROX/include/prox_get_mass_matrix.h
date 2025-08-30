@@ -22,17 +22,17 @@ namespace prox
     typedef typename MT::matrix3x3_type      M3x3;
     typedef typename MT::block6x6_type       B6x6;
     typedef typename MT::value_traits        VT;
-    
+
     size_t const N = std::distance(begin,end);
     M.resize( N );
-    
+
     size_t k = 0u;
     for(body_iterator body = begin;body!=end;++body, ++k)
     {
       T const mass      = body->get_mass();
       M3x3 const I_bf   = body->get_inertia_bf();
       M3x3 const R      = tiny::make( body->get_orientation() );
-      
+
       M3x3 I;
       detail::update_inertia_tensor<MT>( R, I_bf, I );
 
@@ -45,9 +45,9 @@ namespace prox
       {
         mass = VT::infinity();
       }
-      
+
       B6x6 & b = M( k );
-      
+
       b(0,0) = mass;
       b(1,1) = mass;
       b(2,2) = mass;
@@ -64,4 +64,4 @@ namespace prox
   }
 } // namespace prox
 // PROX_GET_MASS_MATRIX_H
-#endif 
+#endif

@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   /**
    * Sweep a profile around the y-axis to create a full closed mesh surface.
    */
@@ -19,8 +19,8 @@ namespace mesh_array
                      , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                      , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                      );
-  
+
 } //namespace mesh_array
 
 // MESH_ARRAY_PROFILE_SWEEP_H
-#endif 
+#endif

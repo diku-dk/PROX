@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_cylinder(
                      typename MT::real_type const & radius
@@ -21,4 +21,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_CYLINDER_H
-#endif 
+#endif

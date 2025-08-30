@@ -26,15 +26,15 @@ namespace big
     typedef boost::numeric::ublas::vector<T> vector_type;
     typedef typename vector_type::size_type  size_type;
     typedef typename vector_type::value_type real_type;
-    
+
     assert(A.size1()>0            || !"residual(): A was empty"            );
     assert(A.size2()>0            || !"residual(): A was empty"            );
     assert(A.size2() ==  x.size() || !"residual(): incompatible dimensions");
     assert(A.size1() ==  b.size() || !"residual(): incompatible dimensions");
-    
+
     if(r.size() != b.size())
       r.resize(b.size(), false );
-    
+
     //
     //  Example of compressed matrix format:
     //
@@ -68,7 +68,7 @@ namespace big
       r (i) = t;
     }
   }
-  
+
 } // end of namespace big
 
 // BIG_RESIDUAL_H

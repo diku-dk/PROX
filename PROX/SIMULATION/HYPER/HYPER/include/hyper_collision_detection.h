@@ -151,7 +151,7 @@ namespace hyper
       // 2015_03_12 Kenny: This non-batch mode seems completely stupid to
       // have as a designated "dispatcher" logic... we have the "sequential" mode
       // anyway that does this for non openCL version. So why do we have this at all?
-      
+
       std::vector< kdop::TestPair<V, 8, T> > single_work;
       single_work.resize(1);
 
@@ -168,8 +168,8 @@ namespace hyper
     STOP_TIMER("narrow_phase");
 
     RECORD("contacts", engine.contacts().size() );
-    
-    STOP_TIMER("collision_detection");    
+
+    STOP_TIMER("collision_detection");
   }
 } // namespace hyper
 

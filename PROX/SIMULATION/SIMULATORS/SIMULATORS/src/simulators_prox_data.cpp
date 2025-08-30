@@ -80,12 +80,12 @@ namespace simulators
   void ProxData::step_simulation(float const & dt)
   {
     typedef prox::StepperBinder< MT > stepper_binder_type;
-    
+
     assert( dt>0.0f         || !"step_simulation(): invalid step size");
     assert( dt<=m_time_step || !"step_simulation(): invalid step size");
-    
+
     stepper_binder_type stepper = prox::bind_stepper< MT >( m_params.stepper_params().stepper() );
-    
+
     stepper( dt, m_bodies, m_properties, m_gravity, m_damping, m_params, m_broad, m_narrow, m_contacts, MT() );
 
     T E_kinetic;

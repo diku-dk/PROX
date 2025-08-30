@@ -216,10 +216,10 @@ namespace procedural
                                                  , mid
                                                  , stone_density
                                                  );
-        
+
         engine->set_rigid_body_fixed(rid, true);
       }
-      
+
     }
 
 
@@ -305,14 +305,14 @@ namespace procedural
                                                  , mid
                                                  , stone_density
                                                  );
-        
+
         engine->set_rigid_body_fixed(rid, true);
       }
-      
+
     }
-    
+
   }
-  
+
 } //namespace procedural
 
 // PROCEDURAL_MAKE_TWO_POINTS_H

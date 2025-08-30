@@ -55,7 +55,7 @@ namespace hyper
 #ifdef HAS_DIKUCL
     }
 #endif // HAS_DIKUCL
-    
+
   }
 
 } //namespace narrow

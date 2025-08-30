@@ -10,7 +10,7 @@
 
 namespace big
 {
-  
+
   /**
    * Generate Symmetric Positive Semi-Definite (PSD) Matrix.
    * This function is a convenience function that is usefull
@@ -36,20 +36,20 @@ namespace big
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
     typedef          ublas::vector<value_type>      vector_type;
-    
+
     assert( fraction >= value_traits::zero() || !"generate_PSD(): invalid fraction specified");
     assert( fraction <= value_traits::one()  || !"generate_PSD(): invalid fraction specified");
     assert( n > 0                            || !"generate_PSD(): invalid problem size specified");
-    
+
     Random<value_type> value(value_traits::zero(),value_traits::one());
-    
+
     matrix_type Q;
     matrix_type D;
     matrix_type M;
     vector_type d;
-    
+
     big::generate_random( n, d );
-    
+
     if(fraction>value_traits::zero())
     {
       for(size_t i = 0;i< n;++i)
@@ -58,17 +58,17 @@ namespace big
           d(i) = value_traits::zero();
       }
     }
-    
+
     big::diag( d, D );
     big::generate_random(n, n, Q);
     big::gram_schmidt(Q);
-    
+
     A.resize(n,n,false);
     M.resize(n,n,false);
     M = ublas::prod(D, ublas::trans(Q) );
     A = ublas::prod( Q, M );
   }
-  
+
 } // end of namespace big
 
 // BIG_GENERATE_PSD_H

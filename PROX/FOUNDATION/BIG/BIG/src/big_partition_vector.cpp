@@ -17,9 +17,9 @@ namespace big
   {
     x_a.resize( cnt_active );
     x_b.resize( cnt_inactive );
-    
+
     size_t const n = x.size();
-    
+
     for(size_t i_old = 0u; i_old < n; ++i_old)
     {
       size_t i_new = old2new( i_old );
@@ -29,7 +29,7 @@ namespace big
         x_b( i_new-cnt_active ) = x( i_old);
     }
   }
-  
+
   template
   void  partition_vector<float>(
                                 ublas::vector<float> const & x
@@ -50,5 +50,5 @@ namespace big
                                  , ublas::vector<double>  & x_a
                                  , ublas::vector<double>  & x_b
                                  );
-  
+
 } // namespace big

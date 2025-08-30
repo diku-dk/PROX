@@ -66,5 +66,5 @@ namespace procedural
                           , size_t const & segments
                           , MaterialInfo<MTf::real_type> mat_info
                           );
-  
+
 } //namespace procedural

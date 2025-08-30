@@ -674,7 +674,7 @@ namespace soft_body
         ++m_frame_number;
 
         update_scene(m_scene_manager, m_engine);
-        
+
         return true;
       }
 
@@ -682,20 +682,20 @@ namespace soft_body
       {
         if (middle || (alt && left))  // 2008-08-13 micky: not all mice have a "normal" middle button!
           m_dolly_mode = true;
-        
+
         if ( shift && left )
           m_pan_mode = true;
-        
+
         if(!middle && !right && !ctrl && !alt && !shift && left)// only left button allowed
         {
           m_camera.mouse_down( cur_x, cur_y );
           m_trackball_mode = true;
         }
-        
+
         m_begin_x = cur_x;
         m_begin_y = cur_y;
       }
-      
+
       void mouse_up(double cur_x,double cur_y,bool shift,bool ctrl,bool alt,bool left,bool middle,bool right)
       {
         if (m_dolly_mode )
@@ -716,11 +716,11 @@ namespace soft_body
           m_camera.mouse_up( cur_x, cur_y );
           m_trackball_mode = false;
         }
-        
+
         m_begin_x = cur_x;
         m_begin_y = cur_y;
       }
-      
+
       void mouse_move(double cur_x,double cur_y)
       {
         if (m_dolly_mode )
@@ -738,25 +738,25 @@ namespace soft_body
         {
           m_camera.mouse_move( cur_x, cur_y);
         }
-        
+
         m_begin_x = cur_x;
         m_begin_y = cur_y;
       }
-      
+
     };
-    
-    
+
+
   } // end of namespace gui
 } // end of namespace soft_body
 
 class Instance
 {
 public:
-  
+
   static soft_body::gui::Application & app()
   {
     static soft_body::gui::Application my_instance;
-    
+
     return my_instance;
   }
 

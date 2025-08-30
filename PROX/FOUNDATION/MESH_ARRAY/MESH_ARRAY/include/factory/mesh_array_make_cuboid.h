@@ -6,9 +6,9 @@
 
 namespace mesh_array
 {
-  
+
   /**
-   * The vertices of the eight corners of a cuboid are specified. 
+   * The vertices of the eight corners of a cuboid are specified.
    * The first four vertices are the front face in CCW order. The last four gives
    * the back face vertices in same order as the front face. That is in CW order if
    * one is looking at the front-side of the back face.
@@ -28,8 +28,8 @@ namespace mesh_array
                    , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                    , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                    );
-  
+
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_CUBOID_H
-#endif 
+#endif

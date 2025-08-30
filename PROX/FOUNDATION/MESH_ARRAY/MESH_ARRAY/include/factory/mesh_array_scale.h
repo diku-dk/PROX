@@ -62,4 +62,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_SCALE_H
-#endif 
+#endif

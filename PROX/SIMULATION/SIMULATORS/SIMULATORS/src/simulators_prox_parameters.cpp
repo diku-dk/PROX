@@ -201,7 +201,7 @@ namespace simulators
         VALUE_RESTRICTED
         VALUE_OPPOSING
         VALUE_GROWTH
-       
+
        */
       kdop::SelectContactPointAlgorithm::set_algorithm( value );
     }

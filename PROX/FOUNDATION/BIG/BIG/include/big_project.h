@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Project Operator.
    */

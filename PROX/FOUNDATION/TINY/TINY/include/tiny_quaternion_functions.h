@@ -15,7 +15,7 @@
 namespace tiny
 {
   /**
-   * Rotation Matrix to Quaternion Conversion Factory Function. 
+   * Rotation Matrix to Quaternion Conversion Factory Function.
    * Quaternions can be used to represent rotations, so can matrices. This function converts matrices into quaternions.
    *
    * @param M       A reference to a matrix. This matrix should be a rotation matrix. That is an othogonal matrix.
@@ -26,12 +26,12 @@ namespace tiny
   Quaternion<T>  make(Matrix<3,3,T> const & M)
   {
     using std::sqrt;
-    
+
     typedef typename T::real_type                  real_type;
     typedef typename Quaternion<T>::value_traits   value_traits;
-    
+
     Quaternion<T> Q;
-    
+
     real_type const & M00 = M(0,0);
     real_type const & M01 = M(0,1);
     real_type const & M02 = M(0,2);
@@ -41,12 +41,12 @@ namespace tiny
     real_type const & M20 = M(2,0);
     real_type const & M21 = M(2,1);
     real_type const & M22 = M(2,2);
-    
+
     real_type tr = M00 + M11 + M22;
     real_type r;
-    
+
     real_type const half = value_traits::one()/value_traits::two();
-    
+
     if(tr>=value_traits::zero())
     {
       r           = sqrt(tr + value_traits::one());
@@ -93,64 +93,64 @@ namespace tiny
     }
     return Q;
   }
-  
+
   template <typename T>
   inline Quaternion<T> operator*( Quaternion<T> const & q, typename T::real_type const & s )  {    return Quaternion<T>( q.real()*s, q.imag()*s);  }
-  
+
   template <typename T>
   inline Quaternion<T> operator*( typename T::real_type const & s, Quaternion<T> const & q )  {    return Quaternion<T>( q.real()*s, q.imag()*s);  }
-  
+
   template <typename T>
   inline Quaternion<T> operator/( Quaternion<T> const & q, typename T::real_type const & s )  {    return Quaternion<T>( q.real()/s, q.imag()/s);  }
-  
+
 //  template <typename T>
 //  inline Quaternion<T> operator/( typename T::real_type const & s, Quaternion<T> const & q )  {    return Quaternion<T>( q.real()/s, q.imag()/s);  }
 
   template<typename T>
   inline Quaternion<T> operator + (Quaternion<T> const & lhs, Quaternion<T> const & rhs)
   {
-    typedef detail::CommonOpsPolicy< Quaternion<T> > ops_policy;  
+    typedef detail::CommonOpsPolicy< Quaternion<T> > ops_policy;
     return ops_policy::add(lhs,rhs);
   }
-  
+
   template<typename T>
   inline Quaternion<T>& operator *= (Quaternion<T> & lhs, Quaternion<T> const & rhs)
   {
     typedef detail::QuaternionOpsPolicy< Quaternion<T> > ops_policy;
     return ops_policy::mul_assign(lhs,rhs);
   }
-  
+
   template<typename T>
   inline Quaternion<T> operator * (Quaternion<T> const & lhs, Quaternion<T> const & rhs)
   {
     typedef detail::QuaternionOpsPolicy< Quaternion<T> > ops_policy;
     return ops_policy::mul(lhs,rhs);
   }
-  
+
   template<typename T>
   inline Quaternion<T> prod(Quaternion<T> const & lhs, Quaternion<T> const & rhs)
   {
     return (lhs * rhs);
   }
-  
+
   template<typename T>
   inline Quaternion<T> prod(Quaternion<T> const & a, Vector<3,T> const & b)
   {
     return Quaternion<T>(  - inner_prod(a.imag() , b),   cross(a.imag() , b) + b*a.real()  );
   }
-  
+
   template<typename T>
   inline Quaternion<T> prod(Vector<3,T> const & a, Quaternion<T> const & b)
   {
     return Quaternion<T>( - inner_prod(a , b.imag()),  cross(a , b.imag()) + a*b.real()  );
   }
-  
+
   template<typename T>
   inline Vector<3,T> rotate(Quaternion<T> const & q, Vector<3,T> const & r)
   {
     return prod(  prod(q , r)  , conj(q) ).imag();
   }
-  
+
   template<typename T>
   inline typename T::real_type inner_prod ( Quaternion<T> const & q, Quaternion<T> const & r )
   {
@@ -164,7 +164,7 @@ namespace tiny
     typedef detail::QuaternionOpsPolicy< Quaternion<T> > ops_policy;
     return ops_policy::norm(q);
   }
-    
+
   template<typename T>
   inline Quaternion<T> conj ( Quaternion<T> const & q )
   {
@@ -186,19 +186,19 @@ namespace tiny
    *
    * @param q   A reference to an unit quaterion.
    * @return
-   */      
+   */
   template<typename T>
   inline typename T::real_type log( Quaternion<T> const & q )
   {
     using std::acos;
     using std::sin;
-    
+
     typedef typename T::real_type                 real_type;
     typedef typename Quaternion<T>::value_traits  value_traits;
-        
+
     if(  q == Quaternion<T>(value_traits::one(), value_traits::zero(), value_traits::zero(),value_traits::zero())    )
       return Quaternion<T>(value_traits::zero(),value_traits::zero(),value_traits::zero(),value_traits::zero());
-    
+
     real_type const theta    = value_traits::numeric_cast( acos( q.real() ) );
     real_type const stheta   = value_traits::numeric_cast( sin(theta)    );
     return Quaternion<T>(value_traits::zero(), q.imag()*(theta/stheta));
@@ -210,13 +210,13 @@ namespace tiny
    * of the specififed Quaternion. In otherwords the resulting
    * angle between the specified Quaternion and this Quaternion
    * is pi/2.
-   */      
+   */
   template<typename T>
   inline Quaternion<T> hat(Quaternion<T> const & q)
   {
-    return Quaternion<T> ( q.imag()(2), - q.imag()(1) , q.imag()(0), -q.real()); 
+    return Quaternion<T> ( q.imag()(2), - q.imag()(1) , q.imag()(0), -q.real());
   }
-  
+
   /**
    * Expoent
    * Sets the Quaternion equal to the expoent of
@@ -240,7 +240,7 @@ namespace tiny
     real_type const st   = value_traits::numeric_cast(  sin(teta)           );
     return Quaternion<T>(ct,q.imag()*st);
   }
-  
+
   /**
    * Linear Interpolation of Quaterions.
    *
@@ -260,11 +260,11 @@ namespace tiny
   {
     typedef typename Quaternion<T>::value_traits   value_traits;
     assert(w>=value_traits::zero() || !"lerp(): w must not be less than 0");
-    assert(w<=value_traits::one()  || !"lerp(): w must not be larger than 1");	  
-    typename T::real_type const mw = value_traits::one() - w; 
+    assert(w<=value_traits::one()  || !"lerp(): w must not be larger than 1");	
+    typename T::real_type const mw = value_traits::one() - w;
     return ((mw * A) + (w * B));
   }
-  
+
   /**
    * Spherical Linear Interpolation of Quaterions.
    *
@@ -279,16 +279,16 @@ namespace tiny
   {
     typedef typename Quaternion<T>::value_traits   value_traits;
     typedef typename T::real_type                  real_type;
-    
+
     using std::acos;
     using std::sin;
-    
+
     assert(w>=value_traits::zero() || !"slerp(): w must not be less than 0");
-    assert(w<=value_traits::one()  || !"slerp(): w must not be larger than 1");	  
-    
-    real_type const q_tiny = value_traits::numeric_cast( 10e-7 ); 
+    assert(w<=value_traits::one()  || !"slerp(): w must not be larger than 1");	
+
+    real_type const q_tiny = value_traits::numeric_cast( 10e-7 );
     real_type norm = inner_prod(A, B);
-    
+
     bool flip = false;
     if( norm < value_traits::zero() )
     {
@@ -304,7 +304,7 @@ namespace tiny
     else
     {
       real_type const theta = value_traits::numeric_cast( acos(norm)                                          );
-      real_type const s_val = value_traits::numeric_cast( value_traits::one() / sin(theta)                    ); 
+      real_type const s_val = value_traits::numeric_cast( value_traits::one() / sin(theta)                    );
       inv_weight            = value_traits::numeric_cast( sin((value_traits::one() - weight) * theta) * s_val );
       weight                = value_traits::numeric_cast( sin(weight * theta) * s_val                         );
     }
@@ -314,7 +314,7 @@ namespace tiny
     }
     return ( inv_weight * A + weight * B);
   }
-  
+
   /**
    * "Cubical" Sphereical Interpolation.
    * In popular terms this correpons to a cubic spline in
@@ -341,14 +341,14 @@ namespace tiny
   {
     typedef typename T::real_type                  real_type;
     typedef typename Quaternion<T>::value_traits   value_traits;
-    
+
     assert(u>=value_traits::zero() || !"squad(): u must not be less than 0");
-    assert(u<=value_traits::one()  || !"squad(): u must not be larger than 1");	  
-    
-    real_type const u2 = value_traits::two() *u*(value_traits::one() -u); 
+    assert(u<=value_traits::one()  || !"squad(): u must not be larger than 1");	
+
+    real_type const u2 = value_traits::two() *u*(value_traits::one() -u);
     return slerp( slerp(q0,q3,u), slerp(q1,q2,u), u2);
   }
-    
+
   /**
    * Get Axis Angle Representation.
    * This function converts a unit-quaternion into the
@@ -362,7 +362,7 @@ namespace tiny
   inline void get_axis_angle(Quaternion<T> const & Q,Vector<3,T> & axis, typename T::real_type & theta)
   {
     using std::atan2;
-    
+
     typedef typename T::real_type                    real_type;
     typedef typename Quaternion<T>::value_traits     value_traits;
     typedef          Vector<3,T>                     V;
@@ -397,7 +397,7 @@ namespace tiny
     // This is seen by straightforward substitution
     //
     //  [ cos(-theta/2), sin(-theta/2) (-n) ] = [ cos(theta/2), sin(theta/2) n ]
-    // 
+    //
     // Thus we get the same quaternion regardless of whether we
     // use (+theta,+n) or (-theta,-n).
     //
@@ -419,7 +419,7 @@ namespace tiny
     //
     //  theta_1 = 2 atan2( y, x)        equivalent to      sign(sin(theta/2)) = 1
     //
-    // or 
+    // or
     //
     //  theta_2 = 2 atan2( -y, x)       equivalent to      sign(sin(theta/2)) = -1
     //
@@ -437,14 +437,14 @@ namespace tiny
     // the correspoding quaternion for that solution would be
     //
     //         Q_1 = [cos(theta_1/2),  sin(theta_1/2)   \frac{v}{\norm{v}}]
-    //             = [s ,  \norm{v}   \frac{v}{\norm{v}}] 
+    //             = [s ,  \norm{v}   \frac{v}{\norm{v}}]
     //             = Q
     //
     // Now if we choose theta_2 as the solution we would have
     //
     //         Q_2 = [cos(theta_2/2),  sin(theta_2/2)   -\frac{v}{\norm{v}}]
-    //             = [s ,  -\norm{v}   -\frac{v}{\norm{v}}] 
-    //             = [s ,  \norm{v}   \frac{v}{\norm{v}}] 
+    //             = [s ,  -\norm{v}   -\frac{v}{\norm{v}}]
+    //             = [s ,  \norm{v}   \frac{v}{\norm{v}}]
     //             = Q
     //
     // Thus we observe that regardless of which solution we pick we always have Q = Q_1 = Q_2.
@@ -455,16 +455,16 @@ namespace tiny
     //
     real_type const ct2   = Q.real();           //---   cos(theta/2)
     real_type const st2   = norm( Q.imag() );   //---  |sin(theta/2)|
-    
+
     theta = value_traits::two()* atan2(st2,ct2);
-    
+
     assert( st2 >= value_traits::zero()   || !"get_axis_angle(): |sin(theta/2)| must be non-negative");
     assert( theta >= value_traits::zero() || !"get_axis_angle(): theta must be non-negative");
     assert( is_number(theta)              || !"get_axis_angle(): NaN encountered");
-    
+
     axis = st2 > value_traits::zero() ? Q.imag() / st2 : V( value_traits::zero() );
   }
-  
+
   /**
    *  Get Rotation Angle wrt. an Axis.
    * Think of it as if you have a fixated body A so only body B is allowd to move.
@@ -502,9 +502,9 @@ namespace tiny
   {
     typedef typename T::real_type                  real_type;
     typedef typename Quaternion<T>::value_traits   value_traits;
-    
+
     using std::atan2;
-    
+
     //--- The angle between the two bodies is extracted from the Quaternion Q_rel
     //---
     //---    [s,v] = [ cos(theta/2) , sin(theta/2) * u ]
@@ -540,7 +540,7 @@ namespace tiny
     real_type const ct2 = Q_rel.real();           //---   cos(theta/2)
     real_type const st2 = norm( Q_rel.imag() );   //---  |sin(theta/2)|
     real_type theta = value_traits::zero();
-    
+
     //--- Remember that Q_rel : BF_B' -> BF_B, so we need the axis in body B's local frame
     if( Q_rel.imag() * axis  >= value_traits::zero())
     {
@@ -554,9 +554,9 @@ namespace tiny
     }
     //--- The angle we get will be between 0..2*pi, but we want
     //--- to return angles between -pi..pi
-    if (theta > value_traits::pi())   
+    if (theta > value_traits::pi())
       theta -= value_traits::two()*value_traits::pi();
-    
+
     //--- The angle we've just extracted has the wrong sign (Why???).
     theta = -theta;
     //
@@ -584,14 +584,14 @@ namespace tiny
     // we need to flip the sign of the extracted angle!!!
     return theta;
   }
-  
+
   template<typename T>
   inline std::ostream & operator<< (std::ostream & o,Quaternion<T> const & q)
   {
     o << "[" << q.real() << "," << q.imag()(0) << "," << q.imag()(1) << "," << q.imag()(2) << "]";
     return o;
   }
-  
+
   template<typename T>
   inline std::istream & operator>>(std::istream & i,Quaternion<T> & q)
   {
@@ -607,10 +607,10 @@ namespace tiny
     i >> dummy;
     return i;
   }
-  
-  
+
+
 } // namespace tiny
 
 // TINY_QUATERNION_FUNCTIONS_H
-#endif 
+#endif
 

@@ -12,7 +12,7 @@
 
 namespace procedural
 {
-  
+
   template<typename MT>
   size_t create_rigid_body(  content::API *  engine
                            , typename MT::vector3_type const & Tb2w
@@ -35,14 +35,14 @@ namespace procedural
                                                    content::API * engine
                                                    , typename MT::real_type const & radius
                                                    );
-  
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_capsule(
                                                     content::API * engine
                                                     , typename MT::real_type const & radius
                                                     , typename MT::real_type const & height
                                                     );
-  
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_box(
                                                 content::API * engine
@@ -50,13 +50,13 @@ namespace procedural
                                                 , typename MT::real_type  const & height
                                                 , typename MT::real_type  const & depth
                                                 );
-  
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_cuboid(
                                                    content::API * engine
                                                    , typename MT::vector3_type * vertices
                                                    );
-  
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_tetrahedron(
                                                         content::API * engine
@@ -65,7 +65,7 @@ namespace procedural
                                                         , typename MT::vector3_type three
                                                         , typename MT::vector3_type four
                                                         );
-  
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_pillar_segment(
                                                            content::API * engine
@@ -75,7 +75,7 @@ namespace procedural
                                                            , size_t const & slices
                                                            , mesh_array::TetGenSettings tetset  = mesh_array::tetgen_default_settings()
                                                            );
-  
+
   template<typename MT>
   void compute_arch_stone_vertices(
                                    typename MT::real_type const & theta
@@ -95,21 +95,21 @@ namespace procedural
                                    , typename MT::vector3_type    & Tb2w
                                    , typename MT::quaternion_type & Qb2w
                                    );
-  
-  
+
+
   template<typename MT>
   size_t get_material_id(
                          MaterialInfo<typename MT::real_type> info
                          , std::string const material
                          );
-  
+
   template<typename MT>
   typename MT::real_type get_material_density(
                                               MaterialInfo<typename MT::real_type> info
                                               , std::string const material
                                               );
-  
-  
+
+
 } // end of namespace procedural
 
 

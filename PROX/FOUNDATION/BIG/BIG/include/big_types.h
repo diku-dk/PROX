@@ -6,7 +6,7 @@
 #include <boost/numeric/ublas/triangular.hpp>
 #include <boost/numeric/ublas/vector_sparse.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
-#include <boost/numeric/ublas/operation.hpp> 
+#include <boost/numeric/ublas/operation.hpp>
 #include <boost/numeric/ublas/operation_sparse.hpp>
 #include <boost/numeric/ublas/matrix_expression.hpp>
 #include <boost/numeric/ublas/vector_expression.hpp>

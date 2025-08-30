@@ -29,9 +29,9 @@ namespace hyper
 
       kdop::refit_tree<V,8,T>(body.m_tree, body.m_mesh, body.m_X, body.m_Y, body.m_Z, tag );
     }
-    
+
   }
-  
+
 } // namespace hyper
 
 // HYPER_UPDATE_KDOP_BVH_H

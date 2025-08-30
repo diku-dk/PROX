@@ -16,7 +16,7 @@
 
 namespace procedural
 {
-  
+
   typedef tiny::MathTypes<float> MTf;
 
   template<typename MT>
@@ -99,29 +99,29 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const geom_name = "sphere_" + util::to_string( counter++ );
-    
+
     mass::Properties<T> props = mass::compute_sphere(VT::one(), radius);
-    
+
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_sphere_shape( gid );
-    
+
     engine->set_sphere_shape( gid, sid, radius );
-    
+
     return GeometryHandle<MT>( props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, V::zero(), Q::identity(), gid );
   }
-  
+
   template
   GeometryHandle<MTf> create_geometry_handle_sphere<MTf>(
                                                          content::API * engine
                                                          , MTf::real_type const & radius
                                                          );
-  
-  
-  
+
+
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_capsule(
                                                     content::API * engine
@@ -133,30 +133,30 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const geom_name = "capsule_" + util::to_string( counter++ );
-    
+
     mass::Properties<T> props = mass::compute_capsule(VT::one(), radius, VT::half()*height);
-    
+
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_capsule_shape( gid );
-    
+
     engine->set_capsule_shape( gid, sid, radius, height );
-    
+
     return GeometryHandle<MT>( props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, V::zero(), Q::identity(), gid );
   }
-  
-  
+
+
   template
   GeometryHandle<MTf> create_geometry_handle_capsule<MTf>(
                                                           content::API * engine
                                                           , MTf::real_type const & radius
                                                           , MTf::real_type const & height
                                                           );
-  
-  
+
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_box(
                                                 content::API * engine
@@ -169,21 +169,21 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const geom_name = "box_" + util::to_string( counter++ );
-    
+
     mass::Properties<T> props = mass::compute_box(VT::one(), width/VT::two(), height/VT::two(), depth/VT::two());
-    
+
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_box_shape( gid );
-    
+
     engine->set_box_shape( gid, sid, width, height, depth );
-    
+
     return GeometryHandle<MT>( props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, V::zero(), Q::identity(), gid );
   }
-  
+
   template
   GeometryHandle<MTf> create_geometry_handle_box<MTf>(
                                                       content::API * engine
@@ -191,7 +191,7 @@ namespace procedural
                                                       , MTf::real_type  const & height
                                                       , MTf::real_type  const & depth
                                                       );
-  
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_tetrahedron(
                                                   content::API * engine
@@ -205,33 +205,33 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const geom_name = "tetra_" + util::to_string( counter++ );
-    
+
     detail::MeshData<MT> data;
-    
+
     mesh_array::make_tetrahedron<MT>(one, two, three, four, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-    
+
     mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
-    
+
 
       // Change geometry from model space to body space
     V const d = - V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z);
     Q const R =   Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
     mesh_array::translate<MT>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
     mesh_array::rotate<MT>(conj(R), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-    
+
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_convex_shape( gid );
     size_t const N	 = data.m_mesh.vertex_size();
-    
+
     std::vector<T> coords;
     coords.resize(3u*N);
-    
+
     for(size_t i = 0; i<N; ++i)
     {
       mesh_array::Vertex const v = data.m_mesh.vertex( i );
@@ -239,7 +239,7 @@ namespace procedural
       coords[3*i+1] = data.m_Y(v);
       coords[3*i+2] = data.m_Z(v);
     }
-    
+
     engine->set_convex_shape( gid, sid, N ,&coords[0] );
 
     return GeometryHandle<MT>(
@@ -252,7 +252,7 @@ namespace procedural
                               , gid
                               );
   }
-  
+
   template
   GeometryHandle<MTf> create_geometry_handle_tetrahedron<MTf>(
                                                         content::API * engine
@@ -261,8 +261,8 @@ namespace procedural
                                                         , MTf::vector3_type three
                                                         , MTf::vector3_type four
                                                         );
-  
-  
+
+
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_cuboid(
                                                    content::API * engine
@@ -273,13 +273,13 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const geom_name = "cuboid_" + util::to_string( counter++ );
-    
+
     detail::MeshData<MT> data;
-    
+
     //fix vertex sequence
     mesh_array::make_cuboid<MT>(
                                   vertices[0]
@@ -292,24 +292,24 @@ namespace procedural
                                 , vertices[7]
                                 , data.m_mesh, data.m_X, data.m_Y, data.m_Z
                                 );
-    
+
     mass::Properties<T> props_mf = mass::compute_mesh(VT::one(), data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
-    
+
       // Change geometry from model space to body space
     V const d = - V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z);
     Q const R = Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
     mesh_array::translate<MT>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
     mesh_array::rotate<MT>(conj(R), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-    
+
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_convex_shape( gid );
     size_t const N	 = data.m_mesh.vertex_size();
-    
+
     std::vector<T> coords;
     coords.resize(3u*N);
-    
+
     for(size_t i = 0; i<N; ++i)
     {
       mesh_array::Vertex const v = data.m_mesh.vertex( i );
@@ -317,7 +317,7 @@ namespace procedural
       coords[3*i+1] = data.m_Y(v);
       coords[3*i+2] = data.m_Z(v);
     }
-    
+
     engine->set_convex_shape( gid, sid, N ,&coords[0] );
 
     return GeometryHandle<MT>(
@@ -330,7 +330,7 @@ namespace procedural
                               , gid
                               );
   }
-  
+
   template
   GeometryHandle<MTf> create_geometry_handle_cuboid<MTf>(
                                                          content::API * engine
@@ -351,18 +351,18 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const geom_name = "pillar_segment_" + util::to_string( counter++ );
-    
+
     mesh_array::T3Mesh mesh;
     mesh_array::VertexAttribute<T,mesh_array::T3Mesh> X;
     mesh_array::VertexAttribute<T,mesh_array::T3Mesh> Y;
     mesh_array::VertexAttribute<T,mesh_array::T3Mesh> Z;
-    
+
     mesh_array::make_conical<MT>( bottom_radius, top_radius, height, slices, mesh, X, Y, Z );
-    
+
     mass::Properties<T> props_mf = mass::compute_conical_solid(VT::one(), bottom_radius, top_radius, height);
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
@@ -379,22 +379,22 @@ namespace procedural
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> volZ;
 
     mesh_array::tetgen(mesh, X, Y, Z, volume, volX, volY, volZ, tetset);
-  
+
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const N	 = volume.vertex_size();
     size_t const K   = volume.tetrahedron_size();
-    
+
     std::vector<size_t> verts;
     verts.resize(N);
-    
+
     for(size_t i = 0; i<N; ++i)
     {
       verts[ i ] = i;
     }
-    
+
     std::vector<T> coords;
     coords.resize(3u*N);
-    
+
     for(size_t i = 0; i<N; ++i)
     {
       mesh_array::Vertex const v = volume.vertex( i );
@@ -402,10 +402,10 @@ namespace procedural
       coords[3*i+1] = volY(v);
       coords[3*i+2] = volZ(v);
     }
-    
+
     std::vector<size_t> tets;
     tets.resize(4u*K);
-    
+
     for(size_t i = 0; i<K; ++i)
     {
       mesh_array::Tetrahedron const t = volume.tetrahedron( i );
@@ -414,9 +414,9 @@ namespace procedural
       tets[4*i+2] = t.k();
       tets[4*i+3] = t.m();
     }
-    
+
     engine->set_tetramesh_shape(gid, N, K, &verts[0], &tets[0], &coords[0]);
-    
+
     return GeometryHandle<MT>(
                               props.m_m
                               , props.m_Ixx
@@ -427,7 +427,7 @@ namespace procedural
                               , gid
                               );
   }
-  
+
   template
   GeometryHandle<MTf> create_geometry_handle_pillar_segment<MTf>( content::API * engine
                                                                  , MTf::real_type const & bottom_radius
@@ -436,7 +436,7 @@ namespace procedural
                                                                  , size_t const & slices
                                                                  , mesh_array::TetGenSettings tetset
                                                                  );
-  
+
   template<typename MT>
   size_t create_rigid_body(  content::API * engine
                            , typename MT::vector3_type const & Tb2w
@@ -449,13 +449,13 @@ namespace procedural
                            )
   {
     typedef typename MT::value_traits    VT;
-    
+
     static size_t counter = 0u;
-    
+
     std::string const body_name = "body_" + util::to_string( counter++ );
-    
+
     size_t const rid = engine->create_rigid_body( body_name );
-    
+
       //2011-05-04 Mort: should these be passed as a parameter? Right now I have just hardcoded them to zero;
       //set_rigid_body spin?
     engine->set_rigid_body_velocity( rid, VT::zero(), VT::zero(), VT::zero());
@@ -479,23 +479,23 @@ namespace procedural
     engine->set_rigid_body_orientation( rid, Qb2w.real(), Qb2w.imag()(0), Qb2w.imag()(1), Qb2w.imag()(2) );
 
     engine->set_rigid_body_mass( rid , geometry.m_m*density );
-    
+
     engine->set_rigid_body_inertia(
                                    rid
                                    , geometry.m_Ixx*density
                                    , geometry.m_Iyy*density
                                    , geometry.m_Izz*density
                                    );
-    
+
     engine->connect_collision_geometry( rid, geometry.m_gid );
-    
+
     engine->set_rigid_body_material( rid, mid );
-    
+
     engine->set_rigid_body_fixed( rid, fixed);
-    
+
     return rid;
   }
-  
+
   template
   size_t create_rigid_body<MTf>(  content::API * engine
                                 , MTf::vector3_type const & Tb2w
@@ -506,7 +506,7 @@ namespace procedural
                                 , bool const fixed
                                 , std::string const material_name
                                 );
-  
+
   template<typename MT>
   void compute_arch_stone_vertices(
                                     typename MT::real_type const & theta
@@ -519,28 +519,28 @@ namespace procedural
     typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::value_traits    VT;
-    
+
     using std::sin;
     using std::cos;
-    
+
     T const center_height    = (r_outer + r_inner)*0.5f;
     T const max_height       = r_outer*cos( theta*0.5f );
     T const min_height       = r_inner*cos( theta*0.5f );
     T const half_width_inner = r_inner * sin( theta*0.5f );
     T const half_width_outer = r_outer * sin( theta*0.5f );
     T const half_depth       = depth*0.5f;
-    
+
     vertices[0] = V::make( - half_width_inner, min_height-center_height, half_depth );
     vertices[1] = V::make(   half_width_inner, min_height-center_height, half_depth );
     vertices[2] = V::make(   half_width_outer, max_height-center_height, half_depth );
     vertices[3] = V::make( - half_width_outer, max_height-center_height, half_depth );
-    
+
     vertices[4] =  vertices[0] - V::make( VT::zero(), VT::zero(), depth );
     vertices[5] =  vertices[1] - V::make( VT::zero(), VT::zero(), depth );
     vertices[6] =  vertices[2] - V::make( VT::zero(), VT::zero(), depth );
     vertices[7] =  vertices[3] - V::make( VT::zero(), VT::zero(), depth );
   }
-  
+
   template
   void compute_arch_stone_vertices<MTf>(
                                         MTf::real_type const & theta
@@ -549,7 +549,7 @@ namespace procedural
                                         , MTf::real_type const & r_inner
                                         , MTf::vector3_type * vertices
                                         );
-  
+
   template<typename MT>
   void compute_body_to_world_transform(
                                          typename MT::vector3_type      const & T_body2model
@@ -585,7 +585,7 @@ namespace procedural
                                        , MTf::vector3_type & body_world_translation
                                        , MTf::quaternion_type & body_world_orientation
                                        );
-  
+
   template<typename MT>
   size_t get_material_id(
                          MaterialInfo<typename MT::real_type> info
@@ -594,22 +594,22 @@ namespace procedural
   {
     if( material.compare( "Stone" ) == 0 )
       return info.m_stone_mid;
-    
+
     if( material.compare( "Ground" ) == 0)
       return info.m_ground_mid;
-    
+
     if( material.compare( "Cannonball") == 0)
       return info.m_cannonball_mid;
-    
+
     return 0u;
   }
-  
+
   template
   size_t get_material_id<MTf>(
                               MaterialInfo<MTf::real_type> info
                               , std::string const material
                               );
-  
+
   template<typename MT>
   typename MT::real_type get_material_density(
                                               MaterialInfo<typename MT::real_type> info
@@ -617,23 +617,23 @@ namespace procedural
                                               )
   {
     typedef typename MT::value_traits    VT;
-    
+
     if ( material.compare( "Stone" ) == 0)
       return info.m_stone_density;
-    
+
     if ( material.compare( "Ground" ) == 0)
       return info.m_ground_density;
-    
+
     if ( material.compare(  "Cannonball" ) == 0)
       return info.m_cannonball_density;
-    
+
     return VT::zero();
   }
-  
+
   template
   MTf::real_type get_material_density<MTf>(
                                            MaterialInfo<MTf::real_type> info
                                            , std::string const material
                                            );
-  
+
 } //namespace procedural

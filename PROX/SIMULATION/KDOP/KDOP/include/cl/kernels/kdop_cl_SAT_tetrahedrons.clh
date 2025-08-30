@@ -19,7 +19,7 @@ bool SAT_tetrahedrons(
     )
 {
     real_type_64 face_table[4];
-    
+
     vector3_type_64 face_normal = cross(A[1]-A[0],A[2]-A[0]);
     uchar flip_normal = gt(dot(face_normal, A[3]-A[0]), 0);
     face_normal = flip_normal * (-face_normal) * (!flip_normal) * face_normal;
@@ -28,7 +28,7 @@ bool SAT_tetrahedrons(
     face_table[1u] = dot(face_normal, B[1] - A[0]);
     face_table[2u] = dot(face_normal, B[2] - A[0]);
     face_table[3u] = dot(face_normal, B[3] - A[0]);
-  
+
     bool result =
             gt(face_table[0], 0) && gt(face_table[1], 0) &&
             gt(face_table[2], 0) && gt(face_table[3], 0);

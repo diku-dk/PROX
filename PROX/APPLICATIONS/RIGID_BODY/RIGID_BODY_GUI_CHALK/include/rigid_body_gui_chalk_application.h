@@ -836,9 +836,9 @@ namespace rigid_body
           else
           {
             m_engine.simulate(m_time_step);
-            
+
             m_time = m_time + m_time_step;
-            
+
             if (m_xml_record)
             {
               // record xml motion channel data
@@ -854,7 +854,7 @@ namespace rigid_body
                   m_engine.get_rigid_body_position( body_idx, x, y, z);
                   m_channel_storage.set_key_position( channel_idx, key_idx, x, y, z);
                 }
-                
+
                 {
                   float qs = 0.0f;
                   float qx = 0.0f;
@@ -864,44 +864,44 @@ namespace rigid_body
                   m_channel_storage.set_key_orientation( channel_idx, key_idx, qs, qx, qy, qz);
                 }
               }
-              
-              
+
+
             }
-            
+
           }
-          
+
           update_scene(m_scene_manager, &m_engine);
           return true;
         }
-        
+
         void mouse_down(double cur_x,double cur_y,bool shift,bool ctrl,bool alt,bool left,bool middle,bool right)
         {
           if (middle || (alt && left))  // 2008-08-13 micky: not all mice have a "normal" middle button!
             m_dolly_mode = true;
-          
+
           if ( shift && left )
             m_pan_mode = true;
-          
+
           if(!middle && !right && !ctrl && !alt && !shift && left)// only left button allowed
           {
             m_camera.mouse_down( cur_x, cur_y );
             m_trackball_mode = true;
           }
-          
+
           m_begin_x = cur_x;
           m_begin_y = cur_y;
-          
+
           if(ctrl)
           {
             V p;
             V r;
             get_ray(cur_x, cur_y,p,r);
-            
+
             m_select_tool.select( p, r, &m_engine );
             m_selection_mode = true;
           }
         }
-        
+
         void mouse_up(double cur_x,double cur_y,bool shift,bool ctrl,bool alt,bool left,bool middle,bool right)
         {
           if (m_dolly_mode )
@@ -922,17 +922,17 @@ namespace rigid_body
             m_camera.mouse_up( cur_x, cur_y );
             m_trackball_mode = false;
           }
-          
+
           if(ctrl)
           {
             m_select_tool.deselect();
             m_selection_mode = false;
           }
-          
+
           m_begin_x = cur_x;
           m_begin_y = cur_y;
         }
-        
+
         void mouse_move(double cur_x,double cur_y)
         {
           if (m_dolly_mode )
@@ -950,39 +950,39 @@ namespace rigid_body
           {
             m_camera.mouse_move( cur_x, cur_y);
           }
-          
+
           m_begin_x = cur_x;
           m_begin_y = cur_y;
-          
+
           if(m_selection_mode)
           {
             V p;
             V r;
             get_ray(cur_x, cur_y, p,r);
-            
+
             V const dof = V::make( m_camera.dof().x, m_camera.dof().y, m_camera.dof().z );
-            
+
             m_select_tool.move_selection(p, r, dof, &m_engine);
-            
+
             update_scene(m_scene_manager, &m_engine); // 2014-10-7 Kenny: This is expensive to update all objects when only one object has been manipulated
           }
         }
-        
+
       };
-      
+
       class Instance
       {
       public:
-        
+
         static Application & app()
         {
           static Application my_instance;
-          
+
           return my_instance;
         }
-        
+
       };
-      
+
     }// end namespace chalk
   }// end namespace gui
 }// end namespace rigid_body

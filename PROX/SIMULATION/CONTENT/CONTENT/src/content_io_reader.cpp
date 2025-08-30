@@ -10,31 +10,31 @@ namespace content
 {
   namespace details
   {
-    
+
     bool read_point(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing point tag");
-      
+
       Point P;
-      
+
       P.m_x = read_float( tag, "x", 0.0f, false );
       P.m_y = read_float( tag, "y", 0.0f, false );
       P.m_z = read_float( tag, "z", 0.0f, false );
-      
-      data.add_point( P ); 
+
+      data.add_point( P );
       return true;
     }
-    
+
     bool read_box(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing box tag");
       size_t geometry_idx = data.get_idx();
-      
+
       // read width height and depth of box
       float w = read_float( tag, "width",  1.0f, false );
       float h = read_float( tag, "height", 1.0f, false );
       float d = read_float( tag, "depth",  1.0f, false );
-      
+
       size_t box_number = data.input()->create_box_shape( geometry_idx );
       data.input()->set_box_shape( geometry_idx, box_number,  w, h, d);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -43,19 +43,19 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_box_position( geometry_idx, box_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_box_orientation( geometry_idx, box_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
-    
+
     bool read_capsule(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing capsule tag");
       size_t geometry_idx = data.get_idx();
-      
+
       // Read height and radius of capsule
       float h = read_float( tag, "height", 1.0f, false );
       float r = read_float( tag, "radius", 1.0f, false );
-      
+
       size_t capsule_number = data.input()->create_capsule_shape( geometry_idx );
       data.input()->set_capsule_shape( geometry_idx, capsule_number,  r, h);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -64,19 +64,19 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_capsule_position( geometry_idx, capsule_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_capsule_orientation( geometry_idx, capsule_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
-    
+
     bool read_cone(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing cone tag");
       size_t geometry_idx = data.get_idx();
-      
+
       // Read height of cone and base radius
       float h = read_float( tag, "height", 1.0f, false );
       float r = read_float( tag, "radius", 1.0f, false );
-      
+
       size_t cone_number = data.input()->create_cone_shape( geometry_idx );
       data.input()->set_cone_shape( geometry_idx, cone_number,  r, h);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -85,23 +85,23 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_cone_position( geometry_idx, cone_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_cone_orientation( geometry_idx, cone_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
-    
+
     bool read_convex(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing convex tag");
       size_t geometry_idx = data.get_idx();
-      
+
       data.clear_points();
-      if ( !read_collection( tag, "point", &read_point, data  ) ) 
+      if ( !read_collection( tag, "point", &read_point, data  ) )
         return false;
-      
+
       size_t N = data.size_points();
       std::vector<float> coordinates;
       coordinates.resize(3*N);
-      
+
       Point const * points = data.get_points();
       for(size_t i=0;i<N;++i,++points)
       {
@@ -109,7 +109,7 @@ namespace content
         coordinates[i*3+1] = points->m_y;
         coordinates[i*3+2] = points->m_z;
       }
-      
+
       size_t convex_number = data.input()->create_convex_shape( geometry_idx );
       data.input()->set_convex_shape( geometry_idx, convex_number,  N, &coordinates[0]);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -118,7 +118,7 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_convex_position( geometry_idx, convex_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_convex_orientation( geometry_idx, convex_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
 
@@ -154,7 +154,7 @@ namespace content
       assert( T.m_j != T.m_k || !"read_tetrahedron(): j and k was the same index");
       assert( T.m_j != T.m_m || !"read_tetrahedron(): j and m was the same index");
       assert( T.m_k != T.m_m || !"read_tetrahedron(): k and m was the same index");
-      
+
       data.add_tetrahedron( T );
       return true;
     }
@@ -208,11 +208,11 @@ namespace content
     {
       assert( tag || !"missing cylinder tag");
       size_t geometry_idx = data.get_idx();
-      
+
       // Read height and radius of cylinder
       float h = read_float( tag, "height", 1.0f, false );
       float r = read_float( tag, "radius", 1.0f, false );
-      
+
       size_t cylinder_number = data.input()->create_cylinder_shape( geometry_idx );
       data.input()->set_cylinder_shape( geometry_idx, cylinder_number,  r, h);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -221,27 +221,27 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_cylinder_position( geometry_idx, cylinder_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_cylinder_orientation( geometry_idx, cylinder_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
-    
+
     bool read_ellipsoid(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing ellipsoid tag");
       size_t geometry_idx = data.get_idx();
-      
+
       // Read scales along the principal axes
       TiXmlElement const * scale = get_singleton_child(tag, "scale", false);
       float sx =  1.0f;
       float sy =  1.0f;
       float sz =  1.0f;
       if(scale)
-      {        
+      {
         sx = read_float( scale, "x", sx, false );
         sy = read_float( scale, "y", sy, false );
         sz = read_float( scale, "z", sz, false );
       }
-      
+
       size_t ellipsoid_number = data.input()->create_ellipsoid_shape( geometry_idx );
       data.input()->set_ellipsoid_shape( geometry_idx, ellipsoid_number,  sx, sy, sz);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -250,18 +250,18 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_ellipsoid_position( geometry_idx, ellipsoid_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_ellipsoid_orientation( geometry_idx, ellipsoid_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
-    
+
     bool read_sphere(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing sphere tag");
       size_t geometry_idx = data.get_idx();
-      
+
       // read radius of shpere
       float r = read_float( tag, "radius", 1.0f, false );
-      
+
       size_t sphere_number = data.input()->create_sphere_shape( geometry_idx );
       data.input()->set_sphere_shape( geometry_idx, sphere_number,  r);
       TiXmlElement const * transform = get_singleton_child(tag,"transform", false);
@@ -270,38 +270,38 @@ namespace content
         Transform T = read_transform( transform, data );
         data.input()->set_sphere_position( geometry_idx, sphere_number,  T.m_x, T.m_y, T.m_z);
         data.input()->set_sphere_orientation( geometry_idx, sphere_number, T.m_qs, T.m_qx, T.m_qy, T.m_qz );
-      }      
+      }
       return true;
     }
-    
+
     bool read_geometry(TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"missing geometry tag");
-      
+
       std::string name = read_string(tag, "name", true);
       if(name.size()==0)
         return false;
-      
+
       std::string type = read_string(tag, "type");
-      
+
       // Default type if not specified is collection
       if(type.size()==0 || type.compare("collection")==0)
       {
         size_t geometry_idx = data.input()->create_collision_geometry(name);
         data.set_idx_for_name( name ,  geometry_idx );
         data.set_idx( geometry_idx );
-        
-        if ( !read_collection( tag, "box", &read_box, data  ) ) 
+
+        if ( !read_collection( tag, "box", &read_box, data  ) )
           return false;
-        if ( !read_collection( tag, "capsule", &read_capsule, data  ) ) 
+        if ( !read_collection( tag, "capsule", &read_capsule, data  ) )
           return false;
-        if ( !read_collection( tag, "cone", &read_cone, data  ) ) 
+        if ( !read_collection( tag, "cone", &read_cone, data  ) )
           return false;
-        if ( !read_collection( tag, "convex", &read_convex, data  ) ) 
+        if ( !read_collection( tag, "convex", &read_convex, data  ) )
           return false;
-        if ( !read_collection( tag, "cylinder", &read_cylinder, data  ) ) 
+        if ( !read_collection( tag, "cylinder", &read_cylinder, data  ) )
           return false;
-        if ( !read_collection( tag, "ellipsoid", &read_ellipsoid, data  ) ) 
+        if ( !read_collection( tag, "ellipsoid", &read_ellipsoid, data  ) )
           return false;
         if ( !read_collection( tag, "sphere", &read_sphere, data  ) )
           return false;
@@ -315,63 +315,63 @@ namespace content
 
         return true;
       }
-      
+
       // no geometry shape information was found?
       return false;
     }
-    
+
     bool read_property(TiXmlElement const * tag, Cache & data )
     {
       // get restitution coefficient
       float e     = read_float(tag, "restitution", 0.0f, false );
-      
+
       // get planar friction coefficients (x,y) and torque coefficient (z)
       TiXmlElement const * friction = get_singleton_child(tag, "friction", false);
       float mu_x = 0.0f;
       float mu_y = 0.0f;
-      float mu_z = 0.0f;      
+      float mu_z = 0.0f;
       if(friction)
       {
         mu_x = read_float(friction, "x", mu_x, false );
         mu_y = read_float(friction, "y", mu_y, false );
         mu_z = read_float(friction, "z", mu_z, false );
       }
-      
+
       TiXmlElement const * direction = get_singleton_child(tag, "direction", false);
       float dir_x = 0.0f;
       float dir_y = 0.0f;
-      float dir_z = 0.0f;      
+      float dir_z = 0.0f;
       if(direction)
       {
         dir_x = read_float(direction, "x", dir_x, false );
         dir_y = read_float(direction, "y", dir_y, false );
         dir_z = read_float(direction, "z", dir_z, false );
       }
-      
+
       std::string materials = read_string(tag,"materials",true);
       if(materials.size()==0)
         return false;
-      
+
       // Now extract the paired material names from the materials-string
       size_t first_pos = 0u;
       size_t last_pos  = (materials.size() -  1u);
-      
+
       char  first_char = materials[first_pos];   // 2009-12-27 kenny: hmm maybe utf8/16 problems?
       char  last_char  = materials[ last_pos];
       size_t comma_pos = materials.find(',', 1);  // 2009-12-27 kenny: hmm maybe utf8/16 problems?
-      
+
       if(first_pos>=last_pos || first_char!='(' || last_char!=')' || comma_pos<=first_pos ||comma_pos>=last_pos )
       {
         throw std::runtime_error("invalid syntax for material pair references");
         return false;
       }
-      
+
       std::string first_material  = materials.substr(          1u, comma_pos - 1u );
       std::string second_material = materials.substr(comma_pos+1u, last_pos - comma_pos - 1u  );
-      
-      size_t first_idx  = data.get_idx_from_name( first_material ); 
-      size_t second_idx = data.get_idx_from_name( second_material ); 
-      
+
+      size_t first_idx  = data.get_idx_from_name( first_material );
+      size_t second_idx = data.get_idx_from_name( second_material );
+
       // get master material
       std::string master = read_string(tag, "master", true);
 
@@ -382,30 +382,30 @@ namespace content
         throw std::runtime_error( "Missing master of the paired materials: " + first_material + " or " + second_material );
         return false;
       }
-      
+
       if( !(master.compare( first_material)==0 || master.compare( second_material)==0) )
       {
         throw std::runtime_error( master + " was none one of the paired materials: " + first_material + " or " + second_material );
         return false;
       }
-      
+
       master_idx = data.get_idx_from_name( master);
-      
+
       if( !(master_idx == first_idx || master_idx == second_idx) )
       {
         throw std::runtime_error( " master idx was not equal to first or second idx" );
         return false;
       }
-      
+
       data.input()->create_material_property( first_idx, second_idx );
       data.input()->set_master( first_idx, second_idx, master_idx );
       data.input()->set_friction( first_idx, second_idx, mu_x, mu_y, mu_z );
       data.input()->set_master_direction( first_idx, second_idx, dir_x, dir_y, dir_z );
       data.input()->set_restitution( first_idx, second_idx, e );
-      
+
       return true;
     }
-    
+
     bool read_material(TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"material tag was missing?");
@@ -416,7 +416,7 @@ namespace content
       data.set_idx_for_name( name, material_idx );
       return true;
     }
-    
+
     bool read_gravity(TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"gravity tag was missing");
@@ -443,48 +443,48 @@ namespace content
 
       return true;
     }
-    
+
     bool read_apply_force(TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"apply force tag was missing");
-      
+
       std::string ref = read_string(tag, "ref", true);
 
       if(ref.size()==0)
         return false;
-      
+
       size_t force_idx = data.get_idx_from_name( ref );
       size_t body_idx  = data.get_idx();
-      
+
       data.input()->connect_force( body_idx, force_idx );
       return true;
-    } 
-    
+    }
+
     RigidBodyState read_state (TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"state tag was missing");
-      
+
       RigidBodyState value;
-      
+
       // check to see if this state references a global state
       std::string ref = read_string(tag,"ref", false);
       if(ref.size() != 0)
       {
         value = data.get_state_from_name(ref);
       }
-      
+
       TiXmlElement const * transform = get_singleton_child(tag, "transform", false);
       if(transform)
         value.m_T = read_transform( transform, data, value.m_T );
-      
+
       TiXmlElement const * motion = get_singleton_child(tag, "motion", false);
       if(motion)
         value.m_M = read_motion( motion, data, value.m_M );
-      
+
       TiXmlElement const * mass = get_singleton_child(tag, "mass", false);
       if(mass)
         value.m_mass = read_float(mass,   "value",   value.m_mass, false );
-      
+
       TiXmlElement const * inertia = get_singleton_child(tag, "inertia", false);
       if(inertia)
       {
@@ -492,7 +492,7 @@ namespace content
         value.m_Iyy = read_float(inertia, "yy", value.m_Iyy, false );
         value.m_Izz = read_float(inertia, "zz", value.m_Izz, false );
       }
-      
+
       value.m_active = read_bool( tag, "active", value.m_active, false );
       value.m_fixed  = read_bool( tag, "fixed" ,  value.m_fixed, false );
 
@@ -505,66 +505,66 @@ namespace content
       std::string material = read_string(tag, "material", mandatory);
       if(material.size()>0u)
         value.m_material_idx = data.get_idx_from_name( material );
-      
+
       return value;
     }
-    
+
     bool read_global_state (TiXmlElement const * tag, Cache & data )
     {
       assert( tag || !"state tag was missing");
-      
+
       std::string name = read_string(tag, "name", true);
       if(name.size() == 0)
         return false;
-      
+
       RigidBodyState value = read_state( tag, data);
       data.set_state_for_name(name, value);
-      
+
       return true;
-    }      
-    
+    }
+
     bool read_global_transform (TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"transform tag was missing");
-      
+
       std::string name = read_string(tag,"name", true);
       if(name.size() == 0)
         return false;
-      
+
       Transform value = read_transform( tag, data);
       data.set_transform_for_name(name, value);
-      
+
       return true;
-    }      
-    
+    }
+
     bool read_global_motion (TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"motion tag was missing");
-      
+
       std::string name = read_string(tag,"name", true);
       if(name.size() == 0)
         return false;
-      
+
       Motion value = read_motion( tag, data);
       data.set_motion_for_name(name, value);
-      
+
       return true;
-    }      
-    
+    }
+
     bool read_object (TiXmlElement const * tag, Cache & data )
     {
       assert(tag || !"tag was null");
-      
+
       std::string name = read_string(tag, "name", true);
       if(name.size()==0)
         return false;
-      
+
       std::string type = read_string(tag, "type");
-      
+
       if(type.size()==0 || type.compare("rigid")==0)
       {
-        RigidBodyState state = read_state( get_singleton_child(tag,"state", true), data ); 
-        
+        RigidBodyState state = read_state( get_singleton_child(tag,"state", true), data );
+
         size_t body_idx = data.input()->create_rigid_body( name );
         data.input()->set_rigid_body_position(    body_idx, state.m_T.m_x,  state.m_T.m_y , state.m_T.m_z                  );
         data.input()->set_rigid_body_orientation( body_idx, state.m_T.m_qs, state.m_T.m_qx, state.m_T.m_qy, state.m_T.m_qz );
@@ -581,12 +581,12 @@ namespace content
 
         data.set_idx_for_name( name , body_idx );
         data.set_idx( body_idx );
-        
+
         // Get reference to the collision shape
         std::string geometry_ref = read_string(get_singleton_child(tag,"shape", true), "ref", true);
         size_t geometry_idx = data.get_idx_from_name( geometry_ref );
         data.input()->connect_collision_geometry(body_idx, geometry_idx );
-        
+
         // Get all applied external forces on the object
         TiXmlElement const * forces = get_singleton_child(tag,"forces",false);
         if(forces)
@@ -597,29 +597,29 @@ namespace content
 
         return true;
       }
-      
+
       throw std::runtime_error( "object " + name + " of " + type + " can not be processed" );
-      
+
       return false;
     }
-    
+
     bool read_params( TiXmlElement const * tag, Cache & data  )
     {
       assert(tag || !"tag was null");
-      
+
       TiXmlElement const * envelope = get_singleton_child(tag,"envelope",false);
       if(envelope)
       {
         float value = read_float( envelope,  "value", 0.01f );
         data.input()->set_parameter("collision_envelope", value );
       }
-      
+
       TiXmlElement const * timestep = get_singleton_child(tag,"timestep",false);
-      if(timestep)  
+      if(timestep)
       {
-        float value = read_float( timestep,  "value", 0.01f );      
+        float value = read_float( timestep,  "value", 0.01f );
         data.input()->set_parameter("time_step", value );
-      }     
+      }
       return true;
     }
 
@@ -776,11 +776,11 @@ namespace content
     bool read_configuration ( TiXmlElement const * tag, Cache & data  )
     {
       assert(tag || !"tag was null");
-      
+
       if ( !read_collection( tag, "transform", &read_global_transform, data ) ) return false;
       if ( !read_collection( tag,    "motion",    &read_global_motion, data )    ) return false;
       if ( !read_collection( tag,     "state",     &read_global_state, data ) ) return false;
-      
+
       if ( !read_collection( get_singleton_child( tag, "geometries" ), "geometry", &read_geometry, data  ) ) return false;
 
       if ( !read_forces( get_singleton_child( tag, "forces" ), data  ) ) return false;
@@ -788,45 +788,45 @@ namespace content
       if ( !read_scripted_motions( get_singleton_child( tag, "scripted_motions" ), data  ) ) return false;
 
       if ( !read_collection( get_singleton_child( tag, "objects" )   , "object"  , &read_object  , data  ) ) return false;
-      
+
       return true;
     }
-    
+
     bool read_physics ( TiXmlElement const * tag, Cache & data  )
     {
       assert(tag || !"physics tag was missing");
-      
+
       data.input()->clear();
-      
-      if( !read_params ( get_singleton_child( tag, "params" ), data ) ) 
+
+      if( !read_params ( get_singleton_child( tag, "params" ), data ) )
         return false;
-      
+
       TiXmlElement const * materials  = get_singleton_child( tag, "materials" );
       if( materials )
       {
         TiXmlElement const * properties = get_singleton_child( materials, "properties" );
-        
-        if ( !read_collection( materials , "material", &read_material, data  ) ) 
+
+        if ( !read_collection( materials , "material", &read_material, data  ) )
           return false;
-        
+
         assert(properties || !"properties tag was missing");
-        
-        if ( !read_collection( properties , "property", &read_property, data  ) ) 
+
+        if ( !read_collection( properties , "property", &read_property, data  ) )
           return false;
       }
-      
-      if ( !read_configuration ( get_singleton_child( tag, "configuration" ), data ) )  
+
+      if ( !read_configuration ( get_singleton_child( tag, "configuration" ), data ) )
         return false;
-      
+
       return true;
     }
-    
+
   } // namespace details
-  
+
   bool xml_read( std::string const & filename, content::Input * input )
   {
     assert( input || !"manager was null");
-    
+
 #ifdef TIXML_USE_STL
     TiXmlDocument xml_document ( filename );
 #else
@@ -839,7 +839,7 @@ namespace content
     }
     TiXmlHandle document_tag ( &xml_document );
     details::Cache data( input );
-    
+
     TiXmlElement const * physics = details::get_singleton_child( document_tag.Node(), "physics", true );
     if ( !details::read_physics( physics, data ) )
     {
@@ -847,5 +847,5 @@ namespace content
     }
     return true;
   }
-  
+
 }// namespace content

@@ -12,7 +12,7 @@
 #include <algorithm>  // needed for std::pair and std::sort
 
 namespace broad
-{  
+{
 
   /**
    * Algorithm tags, can be used by end-user for making specific algorithm
@@ -21,23 +21,23 @@ namespace broad
    */
   struct grid_algorithm {};
   struct all_pair_algorithm {};
-    
+
   namespace detail
   {
     template<typename T>
     inline std::pair<Object<T>*,Object<T>*>  make_overlap( Object<T> const * A, Object<T> const * B )
-    {          
+    {
       assert( A || !"make_overlap(): A object pointer was null");
       assert( B || !"make_overlap(): B object pointer was null");
-      
+
       Object<T> * obj1 = const_cast<Object<T> *> ( A < B ? A : B );
       Object<T> * obj2 = const_cast<Object<T> *> ( A < B ? B : A );
-      
+
       return std::make_pair( obj1, obj2 );
     }
-    
+
   }// namespace detail
-  
+
   /**
    * This function implements a simple ground truth algorithm for comparison purposes.
    *
@@ -46,7 +46,7 @@ namespace broad
    *                      close to 1 is optimal whereas a ratio close to zero is very bad.
    */
   template<typename T, typename overlap_container>
-  inline bool find_overlaps( 
+  inline bool find_overlaps(
                               System<T> & sys
                             , overlap_container & overlaps
                             , float & efficiency
@@ -57,21 +57,21 @@ namespace broad
     typedef Object<T>                                          object_type;
     typedef typename System<T>::object_ptr_container           object_ptr_container;
     typedef typename object_ptr_container::iterator            object_ptr_iterator;
-    
+
     // Clean up any potential old left over information
     overlaps.clear();
-    
+
     // Determine box overlaps
     object_ptr_container & objects = accessor::get_objects( sys );
     object_ptr_iterator end   = objects.end();
     object_ptr_iterator iterA = objects.begin();
-    
+
     size_t cnt_tests = 0u;
-    
+
     for(;iterA!=end;)
-    {     
+    {
       object_type * A = (*iterA);
-            
+
       // Get axis aligned bounding box of object A
       T min_x_A;
       T min_y_A;
@@ -80,12 +80,12 @@ namespace broad
       T max_y_A;
       T max_z_A;
       A->get_box( min_x_A, min_y_A, min_z_A, max_x_A, max_y_A, max_z_A);
-      
-      object_ptr_iterator iterB = ++iterA; 
+
+      object_ptr_iterator iterB = ++iterA;
       for(;iterB!=end;++iterB)
       {
         object_type * B = (*iterB);
-                
+
         // Get axis aligned bounding box of object B
         T min_x_B;
         T min_y_B;
@@ -94,17 +94,17 @@ namespace broad
         T max_y_B;
         T max_z_B;
         B->get_box( min_x_B, min_y_B, min_z_B, max_x_B, max_y_B, max_z_B);
-        
+
         ++cnt_tests;
-        
+
         // Test if bounding boxes of A and B are overlapping
         if(max_x_B  < min_x_A) continue;
-        if(max_x_A  < min_x_B) continue;        
+        if(max_x_A  < min_x_B) continue;
         if(max_y_B  < min_y_A) continue;
-        if(max_y_A  < min_y_B) continue;        
+        if(max_y_A  < min_y_B) continue;
         if(max_z_B  < min_z_A) continue;
         if(max_z_A  < min_z_B) continue;
-        
+
         // Report that we have found an overlap between the bounding boxes of object A and B.
         overlaps.push_back( detail::make_overlap(A, B) );
       }
@@ -129,8 +129,8 @@ namespace broad
 
     // Return a status flag indicating whether we have seen an overlap or not
     return (overlaps.size()>0);
-  }    
-  
+  }
+
 
   /**
    * This function implements a simple grid based algorithm for broad phase collision detection.
@@ -140,7 +140,7 @@ namespace broad
    *                      close to 1 is optimal whereas a ratio close to zero is very bad.
    */
   template<typename T, typename overlap_container>
-  inline bool find_overlaps( 
+  inline bool find_overlaps(
                             System<T> & sys
                             , overlap_container & overlaps
                             , float & efficiency
@@ -151,18 +151,18 @@ namespace broad
     typedef Object<T>                                          object_type;
     typedef typename System<T>::object_ptr_container           object_ptr_container;
     typedef typename object_ptr_container::iterator            object_ptr_iterator;
-    
+
     typedef detail::Grid<T>                    grid_type;
     typedef detail::Cell<T>                    cell_type;
     typedef typename grid_type::cell_iterator  cell_iterator;
-    
+
     // Clean up any potential old left over information
     overlaps.clear();
-    
+
     // Prepare grid for new collision query
     grid_type & grid = accessor::get_grid( sys );
     grid.clear();
-    
+
     // Reset touched time stamp on all grid cells so we can guard against hash
     // collisions in the grid
     {
@@ -171,16 +171,16 @@ namespace broad
       for( ; cell != cell_end; ++cell)
         cell->touched() = 0u;
     }
-    
+
     // Next we iterate over all objects and map each object into the cells
     // of grids. If a cell already contains any objects then we report overlaps
     // between the already added objects and the newly added object.
     object_ptr_container & objects = accessor::get_objects( sys );
     object_ptr_iterator end   = objects.end();
     object_ptr_iterator iter  = objects.begin();
-  
+
     size_t touched_time        = 0u;
-    
+
     size_t cnt_tests           = 0u;   // Total number of pair wise object tests done
     size_t cnt_hash_collisions = 0u;   // Total number of times we encountered a cell hash collision
     size_t cnt_skipped_tests   = 0u;   // Total number of times we skipped a redundant pair-wise test
@@ -188,9 +188,9 @@ namespace broad
     for(; iter!=end; ++iter)
     {
       ++touched_time;
-      
+
       object_type * A = *iter;
-      
+
       // Get axis aligned bounding box of object A
       T min_x_A;
       T min_y_A;
@@ -249,7 +249,7 @@ namespace broad
               ++cnt_hash_collisions;
               continue;
             }
-            
+
             // Iterate over all objects already stored in the grid cell
             size_t const number_of_objs = cell.size( grid.get_time() );
 //            {
@@ -264,7 +264,7 @@ namespace broad
 //            }
 
             for( size_t idx=0u; idx < number_of_objs; ++idx)
-            {              
+            {
               object_type * B = cell.get_object_ptr( idx );
 
               // Test if we have already seen B versus A in this query
@@ -275,7 +275,7 @@ namespace broad
               }
 
               B->m_seen_by = A;   // Make sure we remember that we have seen (A,B)
-               
+
               // Get axis aligned bounding box of object B
               T min_x_B;
               T min_y_B;
@@ -300,31 +300,31 @@ namespace broad
               assert(is_finite(min_z_B) || !"broad::find_overlaps(): Inf");
 
               ++cnt_tests;
-              
+
               // Test if bounding boxes of A and B are overlapping
               if(max_x_B  < min_x_A) continue;
               if(max_x_A  < min_x_B) continue;
-              
+
               if(max_y_B  < min_y_A) continue;
               if(max_y_A  < min_y_B) continue;
-              
+
               if(max_z_B  < min_z_A) continue;
               if(max_z_A  < min_z_B) continue;
-              
+
               // Report that we have found an overlap between the bounding boxes of object A and B.
               overlaps.push_back( detail::make_overlap(A, B) );
             }
-            
+
             // Finally we mark the cell as touched by object A
             cell.touched() = touched_time;
-            
+
             // and add object A to the cell
             cell.add( A, grid.get_time() );
-            
+
             A->m_seen_by = 0; // Make sure that there are no left overs when we later query against A
           }
     }
-    
+
     // Lexiographic storting of overlaps, this is to ensure deterministic behaviour
     std::sort( overlaps.begin(), overlaps.end() );
 
@@ -352,11 +352,11 @@ namespace broad
       //        logging << cell->last_size() << ",";
       //      logging << "];"  << util::Log::newline();
     }
-    
+
     // Return a status flag indicating whether we have seen an overlap or not
     return (overlaps.size()>0);
   }
-    
+
   /**
    * Default version of the find-overlaps function.
    *
@@ -369,8 +369,8 @@ namespace broad
   {
     return find_overlaps( sys, overlaps, efficiency, all_pair_algorithm() );
   }
-  
+
 } //namespace broad
 
 // BROAD_FIND_OVERLAPS_H
-#endif 
+#endif

@@ -19,13 +19,13 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
 		T      const bottom_stone_density	= get_material_density<MT>(mat_info, "Stone");
 		T      const top_stone_density    = bottom_stone_density*scale;
 		size_t const mid                  = get_material_id<MT>(mat_info, "Stone");
-    
+
     GeometryHandle<MT> sphere_handle = create_geometry_handle_sphere<MT>( engine, sphere_radius );
-    
+
     // light sphere, on ground
     V const T_b2m = sphere_handle.Tb2m();
     Q const Q_b2m = sphere_handle.Qb2m();
@@ -57,7 +57,7 @@ namespace procedural
                       , mid
                       , bottom_stone_density
                       );
-    
+
 
     // heavy sphere on top of light sphere
     T_m2l = V::make( VT::zero(), 3*sphere_radius, VT::zero() );
@@ -80,11 +80,11 @@ namespace procedural
                       , mid
                       , top_stone_density
                       );
-    
+
   }
-  
+
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_heavy_sphere_light_sphere<MTf>(
                                            content::API *  engine
@@ -94,7 +94,7 @@ namespace procedural
                                            , size_t const & scale
                                            , MaterialInfo<MTf::real_type> mat_info
                                            );
-  
+
 	
 } //namespace procedural
 

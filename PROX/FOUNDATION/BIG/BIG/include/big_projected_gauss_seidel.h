@@ -30,7 +30,7 @@ namespace big
         , size_t       & iter
         , T            & err
         , ublas::vector<T> * profiling = 0
-        )  
+        )
       {
         using std::fabs;
         using std::min;

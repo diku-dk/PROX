@@ -19,17 +19,17 @@ namespace prox
                                       body_iterator end,
                                       typename MT::diagonal6x6_type & W,
                                       MT const & /*math types tag*/
-                                      ) 
+                                      )
   {
     typedef typename MT::real_type                T;
     typedef typename MT::matrix3x3_type           M;
     typedef typename MT::block6x6_type            B6x6;
     typedef typename MT::value_traits             VT;
-    
+
     size_t const N = std::distance(begin,end);
 
     W.resize( N );
-    
+
     size_t index = 0u;
     for(body_iterator body = begin;body!=end;++body, ++index)
     {
@@ -43,7 +43,7 @@ namespace prox
       if( !body->is_fixed() && !body->is_scripted() )
       {
         assert( fabs(body->get_mass()) > VT::zero() || !"get_inverse_mass_matrix(): Divide by zero!");
-        
+
         inv_mass = VT::one() / body->get_mass();
 
         assert(is_number(inv_mass)   || !"get_inverse_mass_matrix(): Nan");
@@ -57,9 +57,9 @@ namespace prox
 
         inv_I = tiny::inverse( inv_I );
       }
-      
+
       B6x6 & b = W( index );
-      
+
       b(0,0) = inv_mass;
       b(1,1) = inv_mass;
       b(2,2) = inv_mass;
@@ -71,9 +71,9 @@ namespace prox
       b(4,5) = inv_I(1,2);
       b(5,3) = inv_I(2,0);
       b(5,4) = inv_I(2,1);
-      b(5,5) = inv_I(2,2);    
+      b(5,5) = inv_I(2,2);
     }
   }
 } // namespace prox
 // PROX_GET_INVERSE_MASS_MATRIX_H
-#endif 
+#endif

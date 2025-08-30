@@ -34,7 +34,7 @@ public:
 class TestCallback : public geometry::ContactsCallback<V>
 {
 public:
-  
+
   void operator()( V const & p, V const & n, V::real_type const & d )
   {
     // Do something?
@@ -98,7 +98,7 @@ void make_geometry( GeometryInfo & info, V const & p )
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Y_in;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Z_in;
   mesh_array::tetgen(surface, sX, sY, sZ, mesh_in, X_in, Y_in, Z_in);
-  
+
   kdop::mesh_reorder( mesh_in, X_in, Y_in, Z_in, info.m_mesh, info.m_X, info.m_Y, info.m_Z );
 
   mesh_array::compute_surface_map( info.m_mesh, info.m_X, info.m_Y, info.m_Z, info.m_surface_map );
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_SUITE(kdop);
 BOOST_AUTO_TEST_CASE(kdop_tandem_traversal)
 {
   using namespace kdop::io;
-  
+
   GeometryInfo A;
   GeometryInfo B;
 

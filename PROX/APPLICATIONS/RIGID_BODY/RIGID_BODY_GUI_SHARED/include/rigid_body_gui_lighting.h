@@ -231,22 +231,22 @@ namespace rigid_body
                             , lights[i].m_Ia_green
                             , lights[i].m_Ia_blue
                             );
-        
+
         program.set_uniform("lights[" +  util::to_string(i) +  "].Id"
                             , lights[i].m_Id_red
                             , lights[i].m_Id_green
                             , lights[i].m_Id_blue
                             );
-        
+
         program.set_uniform("lights[" +  util::to_string(i) +  "].Is"
                             , lights[i].m_Is_red
                             , lights[i].m_Is_green
                             , lights[i].m_Is_blue
                             );
       }
-      
+
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

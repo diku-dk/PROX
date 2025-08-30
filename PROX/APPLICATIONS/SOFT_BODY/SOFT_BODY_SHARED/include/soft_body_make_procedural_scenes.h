@@ -348,9 +348,9 @@ namespace soft_body
                                   , hyper::use_material_coordinates()
                                   );
       }
-      
+
     }
-    
+
   }
 
 } // end of namespace soft_body

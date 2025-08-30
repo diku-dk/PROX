@@ -21,7 +21,7 @@ namespace kdop
     struct mesh_reorder_breadth_first {};
 
     struct mesh_reorder_morton {};
-    
+
     inline bool compare_morton_codes( std::pair<mesh_array::Tetrahedron, unsigned long long> a
                                     , std::pair<mesh_array::Tetrahedron, unsigned long long> b
                                     )
@@ -29,7 +29,7 @@ namespace kdop
       return a.second < b.second;
     }
   }
-  
+
   template<typename T>
   inline void mesh_reorder( mesh_array::T4Mesh const & M_in
                           , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X_in
@@ -43,29 +43,29 @@ namespace kdop
                           )
   {
     using namespace mesh_array;
-    
+
     VertexRing<T4Mesh>    ring(M_in);
     AdjacencyInfo<T4Mesh> A(ring);
-    
+
     M_out.clear();
-    
+
     M_out.set_capacity( M_in.vertex_capacity(), M_in.tetrahedron_capacity());
-    
+
     X_out.bind(M_out);
     Y_out.bind(M_out);
     Z_out.bind(M_out);
-    
+
     t4_tetrahedron_bool_attribute seen(M_in);
     for(size_t i = 0u;i<M_in.tetrahedron_size(); ++i)
       seen(  M_in.tetrahedron(i) ) = false;
-    
+
     std::vector<Vertex> lookup;
     lookup.resize( M_in.vertex_size() );
-    
+
     std::queue<size_t> Q;
     Q.push( 0 );   // 2013-05-19 Kenny: Maybe find tetrahedron with smallest coordinate?
     seen(M_in.tetrahedron(0)) = true;
-    
+
     // 2013-05-24 Sarah: Not sure that this is the right solution,
     //            but without it we 'overfill' the output mesh? with
     //            it it seems to still produce the right mesh (at least
@@ -75,12 +75,12 @@ namespace kdop
     {
       size_t      const idx = Q.front(); Q.pop();
       Tetrahedron const Tet = M_in.tetrahedron(idx);
-      
+
       size_t const idx_adj_i  = A.i(  idx ) ;
       size_t const idx_adj_j  = A.j(  idx ) ;
       size_t const idx_adj_k  = A.k(  idx ) ;
       size_t const idx_adj_m  = A.m(  idx ) ;
-              
+
       if ( idx_adj_i != UNASSIGNED())
       {
         Tetrahedron const Tet_i = M_in.tetrahedron(idx_adj_i);
@@ -90,7 +90,7 @@ namespace kdop
           Q.push(idx_adj_i);
         }
       }
-      
+
       if ( idx_adj_j != UNASSIGNED())
       {
         Tetrahedron const Tet_j = M_in.tetrahedron(idx_adj_j);
@@ -100,7 +100,7 @@ namespace kdop
           Q.push(idx_adj_j);
         }
       }
-      
+
       if ( idx_adj_k != UNASSIGNED())
       {
         Tetrahedron const Tet_k = M_in.tetrahedron(idx_adj_k);
@@ -110,7 +110,7 @@ namespace kdop
           Q.push(idx_adj_k);
         }
       }
-      
+
       if ( idx_adj_m != UNASSIGNED())
       {
         Tetrahedron const Tet_m = M_in.tetrahedron(idx_adj_m);
@@ -120,7 +120,7 @@ namespace kdop
           Q.push(idx_adj_m);
         }
       }
-      
+
       Vertex vi  =   lookup[ Tet.i() ];
       if (vi.idx() == UNASSIGNED())
       {
@@ -131,7 +131,7 @@ namespace kdop
         Y_out[ vi.idx() ]  = Y_in[ Tet.i() ];
         Z_out[ vi.idx() ]  = Z_in[ Tet.i() ];
       }
-      
+
       Vertex vj  =   lookup[ Tet.j() ];
       if (vj.idx() == UNASSIGNED())
       {
@@ -142,7 +142,7 @@ namespace kdop
         Y_out[ vj.idx() ]  = Y_in[ Tet.j() ];
         Z_out[ vj.idx() ]  = Z_in[ Tet.j() ];
       }
-      
+
       Vertex vk  =   lookup[ Tet.k() ];
       if (vk.idx() == UNASSIGNED())
       {
@@ -153,7 +153,7 @@ namespace kdop
         Y_out[ vk.idx() ]  = Y_in[ Tet.k() ];
         Z_out[ vk.idx() ]  = Z_in[ Tet.k() ];
       }
-      
+
       Vertex vm  =   lookup[ Tet.m() ];
       if (vm.idx() == UNASSIGNED())
       {
@@ -164,11 +164,11 @@ namespace kdop
         Y_out[ vm.idx() ]  = Y_in[ Tet.m() ];
         Z_out[ vm.idx() ]  = Z_in[ Tet.m() ];
       }
-      
+
       M_out.push_tetrahedron(vi,vj,vk,vm);
     }
   }
-  
+
   template<typename T>
   inline void mesh_reorder( mesh_array::T4Mesh const & M_in
                           , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X_in
@@ -184,7 +184,7 @@ namespace kdop
     using std::min;
     using std::max;
     using namespace mesh_array;
-    
+
     //--- Collect centroids for all tetrahedra ---------------------------------
     //--- and remember min and max centroid coordinates ------------------------
     TetrahedronAttribute<T, T4Mesh> centroids_X(M_in);
@@ -197,7 +197,7 @@ namespace kdop
     T max_X = std::numeric_limits<T>::min();
     T max_Y = std::numeric_limits<T>::min();
     T max_Z = std::numeric_limits<T>::min();
-    
+
     for(size_t i = 0; i < M_in.tetrahedron_size(); ++i)
     {
       Tetrahedron const tet = M_in.tetrahedron(i);
@@ -267,7 +267,7 @@ namespace kdop
     for(size_t i = 0; i < M_in.tetrahedron_size(); ++i)
     {
       Tetrahedron const tet = M_in.tetrahedron(i);
-      
+
       unsigned long long x = (unsigned long long) centroids_X[ tet ];
       unsigned long long y = (unsigned long long) centroids_Y[ tet ];
       unsigned long long z = (unsigned long long) centroids_Z[ tet ];
@@ -283,21 +283,21 @@ namespace kdop
 
       morton_codes[ i ] = std::make_pair(tet, morton_code);
     }
-            
+
     //--- Sort according to Morton codes ---------------------------------------
     std::sort(
               morton_codes.begin()
               , morton_codes.end()
               , details::compare_morton_codes
               );
-    
+
     //--- Now simply push out tetrahedra and vertices in that order ------------
     M_out.clear();
     M_out.set_capacity(M_in.vertex_capacity(), M_in.tetrahedron_capacity());
     X_out.bind(M_out);
     Y_out.bind(M_out);
     Z_out.bind(M_out);
-    
+
     std::vector<Vertex> lookup(M_in.vertex_size());
 
     for(size_t i = 0; i < morton_codes.size(); ++i)
@@ -314,7 +314,7 @@ namespace kdop
         Y_out[ vi.idx() ] = Y_in[ tet.i() ];
         Z_out[ vi.idx() ] = Z_in[ tet.i() ];
       }
-      
+
       Vertex vj = lookup[ tet.j() ];
 
       if (vj.idx() == UNASSIGNED())
@@ -325,7 +325,7 @@ namespace kdop
         Y_out[ vj.idx() ] = Y_in[ tet.j() ];
         Z_out[ vj.idx() ] = Z_in[ tet.j() ];
       }
-      
+
       Vertex vk = lookup[ tet.k() ];
 
       if (vk.idx() == UNASSIGNED())
@@ -336,7 +336,7 @@ namespace kdop
         Y_out[ vk.idx() ] = Y_in[ tet.k() ];
         Z_out[ vk.idx() ] = Z_in[ tet.k() ];
       }
-      
+
       Vertex vm = lookup[ tet.m() ];
 
       if (vm.idx() == UNASSIGNED())
@@ -347,18 +347,18 @@ namespace kdop
         Y_out[ vm.idx() ]  = Y_in[ tet.m() ];
         Z_out[ vm.idx() ]  = Z_in[ tet.m() ];
       }
-      
+
       M_out.push_tetrahedron(vi, vj, vk, vm);
     }
   }
-  
+
   /**
    *
    * A subset of tetrahedra does not necessarily form a contigous chunk  of memory.... this
    * implies we need to re-order the tetrahedra, the same goes for  vertices.... if
    * not we will be jumping randomly around in memory...
    *
-   * Properly the best is re-order a tetramesh to make it memory friendly, traversing the mesh in 
+   * Properly the best is re-order a tetramesh to make it memory friendly, traversing the mesh in
    * a breadth first manner
    */
   template<typename T>
@@ -385,7 +385,7 @@ namespace kdop
                     , details::mesh_reorder_morton()
                     );
   }
-  
+
 }// namespace kdop
 
 // KDOP_MESH_REORDER_H

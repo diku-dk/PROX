@@ -108,7 +108,7 @@ namespace procedural
           ++obj_count;
         }
   }
-  
+
 } //namespace procedural
 
 // PROCEDURAL_MAKE_OBJ_PACKING_H

@@ -20,16 +20,16 @@ namespace procedural
 	{
     using std::cos;
     using std::sin;
-    
+
     typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
-    
+
 		T      const stone_density  = get_material_density<MT>(mat_info, "Stone");
 		size_t const mid            = get_material_id<MT>(mat_info, "Stone");
 		
 		GeometryHandle<MT> box_handle = create_geometry_handle_box<MT>( engine, width, height, depth );
-    
+
     V const T_b2m = box_handle.Tb2m();
     Q const Q_b2m = box_handle.Qb2m();
 
@@ -38,7 +38,7 @@ namespace procedural
 
     V const T_l2w = position;
     Q const Q_l2w = orientation;
-    
+
     V T_b2w;
     Q Q_b2w;
 
@@ -62,9 +62,9 @@ namespace procedural
                           , stone_density
                           , fixed
                           );
-    
+
 	}
-  
+
   typedef tiny::MathTypes<float>  MTf;
 
   template
@@ -77,5 +77,5 @@ namespace procedural
                 , MTf::real_type const & depth
                 , MaterialInfo<typename MTf::real_type> mat_info
                 , bool const fixed);
-  
+
 } //namespace procedural

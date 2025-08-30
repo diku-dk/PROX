@@ -21,11 +21,11 @@
 
 namespace simulators
 {
-  
+
 	class ProxData
 	{
   public:
-    
+
     typedef prox::MathPolicy< float >          MT;
     typedef MT::tiny_types                     TT;
     typedef TT::vector3_type                   V;
@@ -42,10 +42,10 @@ namespace simulators
     typedef prox::ForceCallback<MT>            force_callback;
 
   public:
-    
+
     typedef broad::System< T >              broad_phase_type;
     typedef narrow::System< TT >            narrow_phase_type;
-    
+
     std::vector< std::string >       m_geometry_names;
     std::vector< std::string >       m_materials;
     std::vector< rigid_body_type  >  m_bodies;
@@ -55,13 +55,13 @@ namespace simulators
     narrow_phase_type                m_narrow;
 
     size_t                           m_property_counter;
-    
+
     std::vector< std::vector< property_type > > m_properties;
 
     bool                             m_exist_property[m_number_of_materials][m_number_of_materials];
     float                            m_time_step;
     float                            m_time;      ///< Simulated time
-    
+
     params_type                      m_params;
     bool                             m_use_only_tetrameshes;
 
@@ -272,11 +272,11 @@ namespace simulators
             tiny::get_axis_angle(q_rel, axis, theta);
 
             T const speed = theta/dt;
-            
+
             w = axis*speed;
             q =  tiny::slerp(q0, q1, t/dt );
           }
-          
+
           body.set_orientation(q);
           body.set_spin(w);
         }
@@ -309,7 +309,7 @@ namespace simulators
         body.set_position(p);
         body.set_velocity(v);
       }
-      
+
     };
 
 
@@ -340,9 +340,9 @@ namespace simulators
 		ProxData();
 		
 		virtual ~ProxData();
-		    
+		
 		void clear();
-    
+
     void step_simulation(float const & dt);
 
     bool compute_raycast(

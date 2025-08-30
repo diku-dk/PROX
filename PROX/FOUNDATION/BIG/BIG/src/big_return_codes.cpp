@@ -2,7 +2,7 @@
 
 namespace big
 {
-  
+
   std::string get_error_message(size_t const & error_code)
   {
     std::string msg;
@@ -22,6 +22,6 @@ namespace big
     };
     return msg;
   }
-  
+
 } // namespace big
 

@@ -185,7 +185,7 @@ namespace geometry
         continue;
 
       bool const inside = inside_triangle( A.center(), triangle[v], false );
-      
+
       if (inside)
       {
         V const n = flip ? plane[v].n() : - plane[v].n();
@@ -193,7 +193,7 @@ namespace geometry
         V const p = closest_point_on_plane(A.center(), plane[v]);
 
         callback( p, n,  d - A.radius() );
-        
+
         return true;
       }
     }

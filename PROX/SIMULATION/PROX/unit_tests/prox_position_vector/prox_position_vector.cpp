@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(get_position_vector_test)
   BOOST_CHECK_EQUAL(q(0)(0), 5);
   BOOST_CHECK_EQUAL(q(0)(1), 7);
   BOOST_CHECK_EQUAL(q(0)(2), 0);
-  
+
   BOOST_CHECK_EQUAL(q(1)(0), 0);
   BOOST_CHECK_EQUAL(q(1)(1), 1);
   BOOST_CHECK_EQUAL(q(1)(2), 0);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(get_position_vector_test)
   BOOST_CHECK_EQUAL(q(3)(1), 5);
   BOOST_CHECK_EQUAL(q(3)(2), 0);
 
-  
+
   bodies[2].set_position( vector3_type::make( 8.0,3.0,0.5) );
 
   prox::get_position_vector(bodies.begin(),bodies.end(),q, math_policy());
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(get_position_vector_test)
   BOOST_CHECK_EQUAL(q(0)(0), 5);
   BOOST_CHECK_EQUAL(q(0)(1), 7);
   BOOST_CHECK_EQUAL(q(0)(2), 0);
-  
+
   BOOST_CHECK_EQUAL(q(1)(0), 0);
   BOOST_CHECK_EQUAL(q(1)(1), 1);
   BOOST_CHECK_EQUAL(q(1)(2), 0);
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(set_position_vector_test)
   BOOST_CHECK_EQUAL(bodies[0].get_position()(0), 0);
   BOOST_CHECK_EQUAL(bodies[0].get_position()(1), 1);
   BOOST_CHECK_EQUAL(bodies[0].get_position()(2), 2);
-  
+
   BOOST_CHECK_EQUAL(bodies[1].get_position()(0), 0);
   BOOST_CHECK_EQUAL(bodies[1].get_position()(1), 1);
   BOOST_CHECK_EQUAL(bodies[1].get_position()(2), 2);
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(set_position_vector_test)
   BOOST_CHECK_EQUAL(bodies[0].get_position()(0), 0);
   BOOST_CHECK_EQUAL(bodies[0].get_position()(1), 1);
   BOOST_CHECK_EQUAL(bodies[0].get_position()(2), 2);
-  
+
   BOOST_CHECK_EQUAL(bodies[1].get_position()(0), 0);
   BOOST_CHECK_EQUAL(bodies[1].get_position()(1), 1);
   BOOST_CHECK_EQUAL(bodies[1].get_position()(2), 2);

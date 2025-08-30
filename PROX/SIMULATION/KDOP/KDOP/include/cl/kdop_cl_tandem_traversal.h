@@ -47,7 +47,7 @@
 
 namespace kdop {
     namespace details {
-        
+
         namespace cl {
 
             template< typename KernelV, typename KernelT, typename KernelI >
@@ -57,7 +57,7 @@ namespace kdop {
                 KernelT d;
                 KernelI tp;
             };
-            
+
             template< typename KernelV >
             int compare_vectors(KernelV *a, KernelV *b) {
                 if(a->s[0] < b->s[0]) {
@@ -77,7 +77,7 @@ namespace kdop {
                 }
                 return 0;
             }
-            
+
             template< typename KernelV, typename KernelT, typename KernelI >
             int compare_kernel_contact_points(const void *_a, const void *_b) {
                 KernelContactPoint<KernelV, KernelT, KernelI> a = *((KernelContactPoint<KernelV, KernelT, KernelI> *) _a);
@@ -110,12 +110,12 @@ namespace kdop {
                 size_t tet;
                 size_t vert;
             };
-            
+
             template< typename KernelI >
             class KernelWorkItemGenerator {
-                
+
             protected:
-                
+
                 struct RootPairs {
                     // root indices for the first object in the test pair
                     std::vector<KernelI> a;
@@ -124,36 +124,36 @@ namespace kdop {
                     // index of the test pair
                     KernelI tp;
                 };
-                
+
                 // all test pairs
                 std::queue< RootPairs > m_q;
                 // the current position in m_q
                 size_t m_a, m_b;
                 // remember the max level currently in the queue
                 KernelI max_level;
-                
+
             public:
-                
+
                 KernelWorkItemGenerator() : m_a(0), m_b(0), max_level(0) {
                 }
-                
+
                 // adds the root indices for two chunks
                 virtual void add_roots(std::vector<KernelI> a, std::vector<KernelI> b, KernelI tp, KernelI level) {
                     m_q.push(RootPairs());
                     m_q.back().a = std::vector<KernelI>(a);
                     m_q.back().b = std::vector<KernelI>(b);
-                    
+
                     assert(level < (1 << 3) || !"add_roots: level is too high");
                     max_level = std::max(max_level, level);
-                    
+
                     // put the level information inside the top 3 bits
                     const size_t bits = sizeof(KernelI) * 8;
                     m_q.back().tp = level << (bits - 3);
-                    
+
                     assert(tp < (1 << (bits - 3)) || !"add_roots: tp is too high");
                     m_q.back().tp |= tp;
                 }
-                
+
                 // generates n out of all kernel work items that it has been provided with before
                 // generates new kernel work items when invoked again
                 // returns 0 if there are no more kernel work items to be processed
@@ -172,16 +172,16 @@ namespace kdop {
                         *out_num_super_chunks = 0;
                         return 0;
                     }
-                    
+
                     // TODO decrease max_level appropriately, e.g. by not having
                     // just one max_level, but a map counting the test pairs per level
-                    
+
                     // reduce maximum number of work items by the amount we might
                     // exceed it by through our way of counting further down
                     size_t possible_exceed = pow(weight_super_chunk_tp, max_level);
                     assert(n > possible_exceed || !"generate_kernel_work_items: n too small");
                     n -= possible_exceed;
-                    
+
                     if(device_type & CL_DEVICE_TYPE_CPU) {
                         size_t size = std::max(
                                 n,
@@ -196,7 +196,7 @@ namespace kdop {
                                 max_bvtt_degree * max_bvtt_height * max_global_work_size)
                         ];
                     }
-                    
+
                     size_t actual = 0;
                     size_t num_super_chunks = 0;
                     // collect work items while we don't have enough
@@ -220,7 +220,7 @@ namespace kdop {
                                 (*out_kernel_work_items)[actual].a = (KernelI) m_q.front().a[m_a];
                                 (*out_kernel_work_items)[actual].b = (KernelI) m_q.front().b[m_b];
                                 (*out_kernel_work_items)[actual].tp = (KernelI) m_q.front().tp;
-                                
+
                                 // do we have a super chunk?
                                 size_t level = (*out_kernel_work_items)[actual].tp >> (sizeof(KernelI) * 8 - 3);
                                 if(level > 0) {
@@ -228,7 +228,7 @@ namespace kdop {
                                     // by expanding the higher levels
                                     num_super_chunks += pow(weight_super_chunk_tp, (level - 1));
                                 }
-                                
+
                                 ++actual;
                             }
                             if((actual + num_super_chunks * weight_super_chunk_tp) < n) {
@@ -249,11 +249,11 @@ namespace kdop {
                             m_q.pop();
                         }
                     }
-                    
+
                     *out_num_super_chunks = num_super_chunks;
                     return actual;
                 }
-                
+
               // frees the memory that was allocated during the generation of work items
               virtual void cleanup_generated_work_items(
                                                         KernelWorkItem<KernelI> *generated_kernel_work_items,
@@ -350,7 +350,7 @@ namespace kdop {
                             }
                         }
                     }
-                    
+
                     max_bvtt_degree = std::max(max_bvtt_degree, max_degrees[0] * max_degrees[1]);
                 }
 
@@ -365,15 +365,15 @@ namespace kdop {
                     size_t size = *out_nodes_size * sizeof(KernelNode<KernelI, KernelT, K>);
                     size += size % global_mem_cacheline_size;
                     *out_nodes = (KernelNode<KernelI, KernelT, K>*) ALIGNED_ALLOC(4096, size);
-                    
+
                     size = *out_tets_size * sizeof(KernelTetrahedron<KernelI>);
                     size += size % global_mem_cacheline_size;
                     *out_tets = (KernelTetrahedron<KernelI>*) ALIGNED_ALLOC(4096, size);
-                    
+
                     size = *out_tets_size * sizeof(KernelTetrahedronSurfaceInfo);
                     size += size % global_mem_cacheline_size;
                     *out_tsi = (KernelTetrahedronSurfaceInfo*) ALIGNED_ALLOC(4096, size);
-                    
+
                     size = *out_verts_size * sizeof(KernelV);
                     size += size % global_mem_cacheline_size;
                     *out_verts = (KernelV*) ALIGNED_ALLOC(4096, size);
@@ -384,7 +384,7 @@ namespace kdop {
                     *out_verts = new KernelV[*out_verts_size];
                 }
                 *out_callbacks = new geometry::ContactsCallback<V>*[test_pairs.size()];
-                
+
                 // keep track of which objects have been copied already
                 std::map < Tree<T, K> const*, bool > objects_copied;
                 for (typename test_pair_container::iterator it = test_pairs.begin(); it != test_pairs.end(); std::advance(it, 1)) {
@@ -451,9 +451,9 @@ namespace kdop {
                             // remember the number of nodes in the branches processed so far
                             node_branch_offset = nodes_processed;
                         }
-                        
+
                         size_t node_previous_level_offset = 0;
-                        
+
                         // repeat for all super chunk layers
                         for(size_t h = trees[t]->number_of_levels() - 1; h >= 1; --h) {
                             size_t node_current_level_offset = nodes_processed;
@@ -496,7 +496,7 @@ namespace kdop {
                                 // remember the number of nodes in the branches processed so far
                                 node_branch_offset = nodes_processed;
                             }
-                            
+
                             // remember the number of nodes at the beginning of this level
                             node_previous_level_offset = node_current_level_offset;
                         }
@@ -537,7 +537,7 @@ namespace kdop {
                             objects_copied.insert(std::pair < Tree<T, K> const*, bool>(trees[t], true));
                         }
                     }
-                    
+
                     // cutoff value for work items
                     const size_t max_work_items = device_type & CL_DEVICE_TYPE_CPU ?
                         KDOP_CL_MAX_ROOT_PAIRS_CPU : KDOP_CL_MAX_ROOT_PAIRS_GPU;
@@ -554,20 +554,20 @@ namespace kdop {
 
                     // in case no level could be found, take the highest
                     level = std::min(level, min_height - 1);
-                    
+
                     // we cannot have a level higher that would result in an amount
                     // of kernel work items that are too many to allocate
                     level = std::min(level, (size_t) floor(log(max_kernel_work_items) / log(pow(max_bvtt_degree, max_bvh_height))));
-                                        
+
                     // remember the root indices for this test pair so work items can be generated later
                     out_kernel_work_item_generator->add_roots(
                         chunk_root_indices[0][trees[0]->number_of_levels() - level - 1],
                         chunk_root_indices[1][trees[1]->number_of_levels() - level - 1],
                         (KernelI) test_pair_index, (KernelI) level);
-                    
+
                 }
             }
-            
+
             template< typename V, size_t K, typename T,
             typename KernelI, typename KernelT, typename KernelV >
             inline void cleanup(
@@ -591,14 +591,14 @@ namespace kdop {
                 }
                 delete[] out_callbacks;
             }
-            
+
             inline void record_kernel_times(  cl_ulong tandem_traversal_time
                                             , cl_ulong exact_test_time)
             {
                 RECORD_TIME("tandem_traversal", (double) tandem_traversal_time / 1000000.0);
                 RECORD_TIME("exact_test", (double) exact_test_time / 1000000.0);
             }
-            
+
             inline void record_kernel_invocations(  size_t tandem_traversal_invocations
                                                   , size_t exact_test_invocations)
             {
@@ -607,7 +607,7 @@ namespace kdop {
             }
 
         } // namespace cl
-    
+
     } // namespace details
 
     template< typename V, size_t K, typename T, typename test_pair_container >
@@ -616,10 +616,10 @@ namespace kdop {
                                  size_t open_cl_platform = 0,
                                  size_t open_cl_device = 0) {
         assert( ! test_pairs.empty() || !"tandem_traversal : test_pairs are empty" );
-        
+
         cl_ulong tandem_traversal_kernel_time = 0;
         cl_ulong exact_tests_kernel_time      = 0;
-        
+
         size_t tandem_traversal_invocations = 0;
         size_t exact_test_invocations       = 0;
 
@@ -1330,7 +1330,7 @@ namespace kdop {
                 }
                 FINISH_QUEUE(queue);
 
-                if (kernel_exact_tests_size > 0) {                    
+                if (kernel_exact_tests_size > 0) {
                     // set exact tests as input to exact tests kernel
                     err = exact_tests_kernel.setArg(3, exact_tests);
                     CHECK_CL_ERR(err);
@@ -1542,7 +1542,7 @@ namespace kdop {
                 kernel_verts,
                 kernel_callbacks,
                 device_type);
-        
+
         details::cl::record_kernel_times(tandem_traversal_kernel_time, exact_tests_kernel_time);
         details::cl::record_kernel_invocations(tandem_traversal_invocations, exact_test_invocations);
     }

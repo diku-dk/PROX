@@ -26,7 +26,7 @@
 
 namespace hyper
 {
-    
+
   template<typename MT>
   inline void update_kdop_bvh(
                               Engine<MT> & engine
@@ -34,29 +34,29 @@ namespace hyper
                               , size_t open_cl_platform = 0
                               , size_t open_cl_device = 0
                               )
-  {    
+  {
     typedef typename MT::real_type     T;
     typedef typename MT::vector3_type  V;
     typedef tiny::ValueTraits<T>      VT;
     const size_t K = 8;
-    
+
     typedef typename std::vector< Body< MT > >::iterator object_iterator;
-    
+
     // Kernel types
     typedef cl_float  KT;
     typedef cl_float3 KV;
     //typedef cl_float4 KQ;
-    
+
     cl_ulong refit_tree_kernel_time = 0;
-    
+
     cl_int err = CL_SUCCESS;
-    
+
     // Specified platform
     ::dikucl::PlatformHandle *platform_handle =
             ::dikucl::PlatformManager::get_instance().get_platform(  &err
                                                                    , open_cl_platform);
     CHECK_CL_ERR(err);
-    
+
     // Specified device
     ::dikucl::DeviceHandle *device_handle =
             ::dikucl::DeviceManager::get_instance().get_device(  &err
@@ -66,19 +66,19 @@ namespace hyper
     CHECK_CL_ERR(err);
     cl_device_type device_type = device_handle->device.getInfo<CL_DEVICE_TYPE>(&err);
     CHECK_CL_ERR(err);
-    
+
     // Cacheline size is needed when we're on the CPU in order to ensure proper
     // memory alignment.
     size_t global_mem_cacheline_size =
             (size_t) device_handle->device.getInfo<CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE>(&err);
     CHECK_CL_ERR(err);
-    
+
     // Default context
     ::dikucl::ContextHandle *context_handle =
             ::dikucl::ContextManager::get_instance().get_context(&err, device_handle);
     CHECK_CL_ERR(err);
     ::cl::Context context = context_handle->context;
-    
+
     // Get command queue for that context
     ::dikucl::CommandQueueHandle *command_queue_handle;
 #ifdef USE_PROFILING
@@ -92,15 +92,15 @@ namespace hyper
             ::dikucl::CommandQueueManager::get_instance().get_command_queue(  &err
                                                                           , context_handle
                                                                           );
-#endif // USE_PROFILING            
+#endif // USE_PROFILING
     CHECK_CL_ERR(err);
     ::cl::CommandQueue queue = command_queue_handle->command_queue;
-    
+
     object_iterator current   = engine.body_begin();
     const object_iterator end = engine.body_end();
-    
+
     /* Gather information for all objects */
-    
+
     // Lookup table for each chunk of each level of each object:
     // i.e. when flattened out (= the levels and chunks are concatenated into one
     // vector, starting with the topmost level/leftmost chunk), what would the
@@ -111,10 +111,10 @@ namespace hyper
     // This information is needed to lay out memory properly on the OpenCL
     // device.
     size_t ***flattened_object_node_offsets = new size_t**[std::distance(current, end)];
-    
+
     // Tracks the overall number of objects
     size_t total_objects = 0;
-    
+
     // Tracks the overall number of vertices, tetrahedrons and nodes.
     // Again, these numbers are needed to lay out memory properly on the OpenCL
     // device.
@@ -124,14 +124,14 @@ namespace hyper
       if(current->empty()) {
         continue;
       }
-      
+
       total_vertices     += current->m_mesh.vertex_size();
       total_tetrahedrons += current->m_mesh.tetrahedron_size();
-      
+
       // Offsets are not global but per-object. I.e. the first chunk in the first
       // level of each object will always have offset 0.
       size_t total_nodes_per_object = 0;
-      
+
       flattened_object_node_offsets[total_objects] = new size_t*[current->m_tree.number_of_levels()];
       for(size_t h = 0; h < current->m_tree.number_of_levels(); ++h)
       {
@@ -152,28 +152,28 @@ namespace hyper
         }
       }
     }
-    
+
     // Make room for kernel data.
-    
+
     // Holds the starting offset of vertices for each object. This is needed
     // because all vertices for all objects will reside in one array.
     cl_uint *vertex_offsets                                     = NULL;
-    
+
     // Repeat for tetrahedrons and BVH nodes.
     cl_uint *tetrahedron_offsets                                = NULL;
     cl_uint *node_offsets                                       = NULL;
-    
+
     // Holds the offsets of the last chunk level (i.e. the first non-
     // superchunk of the object). This is needed later in the kernel to
     // identify whether an encountered leaf is a leaf of a super-chunk pointing
     // to another chunk, or a leaf of a branch pointing to a tetrahedron.
     cl_uint *last_level_offsets                                 = NULL;
-    
+
     // The actual data.
     KV *vertices                                                = NULL;
     kdop::details::cl::KernelTetrahedron<cl_uint> *tetrahedrons = NULL;
     kdop::details::cl::KernelNode<cl_uint, KT, K> *nodes        = NULL;
-    
+
     if (device_type & CL_DEVICE_TYPE_CPU)
     {
       // On the CPU we need to align memory properly so the device can use host
@@ -198,9 +198,9 @@ namespace hyper
       tetrahedrons        = new kdop::details::cl::KernelTetrahedron<cl_uint>[total_tetrahedrons];
       nodes               = new kdop::details::cl::KernelNode<cl_uint, KT, K>[total_nodes];
     }
-    
+
     /* Initialize kernel data. */
-    
+
     // Reset counters because we go through all objects again now.
     current = engine.body_begin();
     total_objects = 0;
@@ -212,12 +212,12 @@ namespace hyper
       if(current->empty()) {
         continue;
       }
-            
+
       size_t N = current->m_mesh.vertex_size();
       for(size_t n = 0u; n < N; ++n)
       {
         mesh_array::Vertex const & v = current->m_mesh.vertex(n);
-        
+
         // Write vertex to appropriate position. Vertex offset for the first
         // object is 0, the other ones are the cumulated counts of vertices of
         // the objects before them (see directly below).
@@ -226,42 +226,42 @@ namespace hyper
         vertices[vertex_offset].s[1] = current->m_Y(v);
         vertices[vertex_offset].s[2] = current->m_Z(v);
       }
-      
+
       // Remember the number of vertices per object (cumulative).
       total_vertices += N;
       vertex_offsets[total_objects] = total_vertices;
-      
+
       // Repeat for tetrahedrons.
       N = current->m_mesh.tetrahedron_size();
       for(size_t n = 0u; n < N; ++n)
       {
         mesh_array::Tetrahedron const & t = current->m_mesh.tetrahedron(n);
-          
+
         const size_t tetrahedron_offset = (total_objects == 0 ? 0 : tetrahedron_offsets[total_objects - 1]) + t.idx();
         tetrahedrons[tetrahedron_offset].vertex_idx[0] = t.i();
         tetrahedrons[tetrahedron_offset].vertex_idx[1] = t.j();
         tetrahedrons[tetrahedron_offset].vertex_idx[2] = t.k();
         tetrahedrons[tetrahedron_offset].vertex_idx[3] = t.m();
       }
-      
+
       total_tetrahedrons += N;
       tetrahedron_offsets[total_objects] = total_tetrahedrons;
-      
+
       // Repeat for BVH nodes.
       size_t total_nodes_per_object = 0;
       for(size_t h = 0; h < current->m_tree.number_of_levels(); ++h)
-      {                
+      {
         for(size_t c = 0; c < current->m_tree.super_chunks(h).size(); ++c)
-        {                    
+        {
           kdop::SubTree<T, K> chunk = current->m_tree.super_chunks(h)[c];
-          
+
           for(size_t n = 0; n < chunk.m_nodes.size(); ++n)
           {
             kdop::Node<T, K> const & node = chunk.m_nodes[n];
-            
+
             if(!node.is_undefined()) {
               const size_t node_offset = (total_objects == 0 ? 0 : node_offsets[total_objects - 1]) + total_nodes_per_object;
-                            
+
               if(node.is_leaf() && h == current->m_tree.number_of_levels() - 1) {
                 // Index into tetrahedrons, no need to offset because the kernel
                 // will use the tetrahedron_offsets.
@@ -278,7 +278,7 @@ namespace hyper
                 nodes[node_offset].start = flattened_object_node_offsets[total_objects][h][c] + node.m_start;
                 nodes[node_offset].end   = flattened_object_node_offsets[total_objects][h][c] + node.m_end;
               }
-              
+
               for(size_t k = 0; k < K / 2; ++k)
               {
                 nodes[node_offset].slabs[k].lower = VT::highest();
@@ -291,15 +291,15 @@ namespace hyper
           }
         }
       }
-      
+
       node_offsets[total_objects] = total_nodes;
-      
+
       // Remember the index of the first chunk in the last level. This is so
       // the kernel can identify what kind of leaf it deals with (i.e. a leaf
       // referencing another chunk or a tetrahedron).
       last_level_offsets[total_objects] = flattened_object_node_offsets[total_objects][current->m_tree.number_of_levels() - 1][0];
     }
-    
+
     // Intermediate cleanup.
     current = engine.body_begin();
     total_objects = 0;
@@ -313,9 +313,9 @@ namespace hyper
         delete[] flattened_object_node_offsets[total_objects];
     }
     delete[] flattened_object_node_offsets;
-    
+
     /* Copy over data and set kernel arguments. */
-    
+
     ::cl::Buffer vertices_buffer;
     if (device_type & CL_DEVICE_TYPE_CPU) {
       size_t size = total_vertices * sizeof(KV);
@@ -337,7 +337,7 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     ::cl::Buffer vertex_offsets_buffer;
     if (device_type & CL_DEVICE_TYPE_CPU) {
       size_t size = total_objects * sizeof(cl_uint);
@@ -359,9 +359,9 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     /* Prepare data and buffers for the refitting kernel. */
-    
+
     ::cl::Buffer tetrahedrons_buffer;
     if (device_type & CL_DEVICE_TYPE_CPU) {
       size_t size = total_tetrahedrons * sizeof(kdop::details::cl::KernelTetrahedron<cl_uint>);
@@ -383,7 +383,7 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     ::cl::Buffer tetrahedron_offsets_buffer;
     if (device_type & CL_DEVICE_TYPE_CPU) {
       size_t size = total_objects * sizeof(cl_uint);
@@ -405,7 +405,7 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     // The nodes_buffer is for input and output as it will receive the updated
     // BVH nodes.
     ::cl::Buffer nodes_buffer;
@@ -429,7 +429,7 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     ::cl::Buffer node_offsets_buffer;
     if (device_type & CL_DEVICE_TYPE_CPU) {
       size_t size = total_objects * sizeof(cl_uint);
@@ -451,7 +451,7 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     ::cl::Buffer last_level_offsets_buffer;
     if (device_type & CL_DEVICE_TYPE_CPU) {
       size_t size = total_objects * sizeof(cl_uint);
@@ -473,7 +473,7 @@ namespace hyper
                                      );
       CHECK_CL_ERR(err);
     }
-    
+
     // Invoke internals of the KDOP module.
     refit_tree_kernel_time +=
         kdop::details::cl::refit_tree<V, K, T>(  context_handle, device_handle, &queue
@@ -482,7 +482,7 @@ namespace hyper
                                                , &nodes_buffer, &node_offsets_buffer, &last_level_offsets_buffer
                                                , total_objects
                                                );
-    
+
     // Queue reading back of refitted BVH nodes.
     if(device_type & CL_DEVICE_TYPE_CPU) {
       kdop::details::cl::KernelNode<cl_uint, KT, K> *mapped_nodes =
@@ -503,20 +503,20 @@ namespace hyper
               );
       CHECK_CL_ERR(err);
     }
-    
+
     // Wait for all pending operations to finish.
     err = queue.finish();
     CHECK_CL_ERR(err);
-    
+
     // Run through all objects again and update them accordingly.
     current = engine.body_begin();
     total_objects = 0;
     for (; current != end; ++current, ++total_objects)
-    {      
+    {
       if(current->empty()) {
           continue;
       }
-      
+
       // Use the same calculations as above for figuring out all offsets.
       size_t total_nodes_per_object = 0;
       for(size_t h = 0; h < current->m_tree.number_of_levels(); ++h)
@@ -530,20 +530,20 @@ namespace hyper
             {
               kdop::Node<T, K> & node = chunk.m_nodes[n];
               const size_t node_offset = (total_objects == 0 ? 0 : node_offsets[total_objects - 1]) + total_nodes_per_object;
-              
+
               for(size_t k = 0; k < K / 2; ++k)
               {
                   node.m_volume(k).lower() = (T) nodes[node_offset].slabs[k].lower;
                   node.m_volume(k).upper() = (T) nodes[node_offset].slabs[k].upper;
               }
-              
+
               ++total_nodes_per_object;
             }
           }
         }
       }
     }
-    
+
     // Cleanup.
     if (device_type & CL_DEVICE_TYPE_CPU)
     {
@@ -563,10 +563,10 @@ namespace hyper
       delete[] tetrahedrons;
       delete[] nodes;
     }
-    
+
     RECORD_TIME("refit_tree", (double) refit_tree_kernel_time / 1000000.0);
   }
-    
+
 } // end of namespace hyper
 
 #endif // HYPER_CL_UPDATE_KDOP_BVH_H

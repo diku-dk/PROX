@@ -10,7 +10,7 @@
 
 namespace big
 {
-  
+
   /**
    * Moore-Penrose Pseudoinverse.
    *
@@ -23,15 +23,15 @@ namespace big
   inline void moore_penrose_pseudoinverse(matrix_type const & A, matrix_type& invA, invert_function const & invert)
   {
     typedef typename matrix_type::size_type                size_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("moore_penrose_pseudoinverse(): A was empty");
-    
+
     size_type m = A.size1();  ///< number of rows
     size_type n = A.size2();  ///< number of columns
-    
+
     invA.resize(n,m,false);
-    
+
     if(m>n)
     {
       // over-determined case, more rows than columns => possible full column rank of A (if not pseudoinverse will not exist)
@@ -42,13 +42,13 @@ namespace big
       //
       //  x = ((A^T A)^{-1} A^T) b
       //
-      
+
       matrix_type M;
       matrix_type invM;
-      
+
       M.resize(n,n,false);
       invM.resize(n,n,false);
-      
+
       ublas::noalias(M) = ublas::prec_prod(ublas::trans(A),A);
       invert(M,invM);
       ublas::noalias(invA) =ublas::prec_prod(invM,ublas::trans(A)) ;
@@ -60,13 +60,13 @@ namespace big
       //  x = A^T (A A^T)^{-1} b
       //
       //
-      
+
       matrix_type M;
       matrix_type invM;
-      
+
       M.resize(m,m,false);
       invM.resize(m,m,false);
-      
+
       ublas::noalias(M) = ublas::prec_prod(A,ublas::trans(A));
       invert(M,invM);
       ublas::noalias(invA) = ublas::prec_prod(ublas::trans(A),invM);
@@ -77,7 +77,7 @@ namespace big
       invert(A,invA);
     }
   }
-  
+
   /**
    * Pseudoinverse using LU decompostion.
    *
@@ -89,7 +89,7 @@ namespace big
   {
     moore_penrose_pseudoinverse( A, invA, &lu_invert<matrix_type> );
   }
-  
+
   /**
    * Pseudoinverse using SVD decompostion.
    *
@@ -101,7 +101,7 @@ namespace big
   {
     moore_penrose_pseudoinverse( A, invA, &svd_invert<matrix_type> );
   }
-  
+
 } // namespace big
 
 // BIG_MOORE_PENROSE_PSEUDOINVERSE_H

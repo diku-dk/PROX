@@ -195,22 +195,22 @@ namespace rigid_body
         bool const left  = (event->buttons() & Qt::LeftButton);
         bool const right = (event->buttons() & Qt::RightButton);
         bool const midle = (event->buttons() & Qt::MiddleButton);
-        
+
         Instance::app().mouse_up(cur_x,cur_y,shift,ctrl,alt,left,midle,right);
         update();
       }
-      
+
       void Widget::keyPressEvent(QKeyEvent *e)
       {
         if (! e->text().toStdString().empty() )
         {
           util::Log logging;
-          
+
           logging << "Widget::keyPressEvent(): key = " << e->text().toStdString() << util::Log::newline();
         }
-        
+
         unsigned char key = e->text().toStdString()[0];
-        
+
         if (e->key() == Qt::Key_Space)
         {
           if(m_timer.isActive())
@@ -222,7 +222,7 @@ namespace rigid_body
           close();
         else
           Instance::app().key_down( key );
-        
+
         update();
       }
 
@@ -231,7 +231,7 @@ namespace rigid_body
         this->grabFrameBuffer().save(filename);
       }
 
-      
+
     }// end namespace chalk
   }// end namespace gui
 }// end namespace rigid_body

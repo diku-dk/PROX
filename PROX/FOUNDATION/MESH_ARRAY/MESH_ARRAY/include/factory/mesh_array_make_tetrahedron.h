@@ -18,8 +18,8 @@ namespace mesh_array
                         , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                         , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                         );
-  
+
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_TETRAHEDRON_H
-#endif 
+#endif

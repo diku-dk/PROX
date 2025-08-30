@@ -56,7 +56,7 @@ __kernel void do_balance_work(
         n_splits_left -= __BALANCE_THREADS;
     }
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
-    
+
     for(int r = __BALANCE_THREADS / 2; r != 0; r /= 2) {
         if(local_id < r) {
             local_sum[local_id] = local_sum[local_id] + local_sum[local_id + r];

@@ -107,7 +107,7 @@ namespace kdop
       }
 
       assert(false || !"call_algorithm(): unrecognized algorithm choice");
-      
+
       return false;
     }
 

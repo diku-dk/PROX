@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(overlap_tri_tri_test)
 
       }
     }
-    
-    
+
+
   }
 
   // Separated by face cases

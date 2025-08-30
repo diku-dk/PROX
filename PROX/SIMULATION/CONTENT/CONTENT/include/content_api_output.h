@@ -5,16 +5,16 @@
 
 namespace content
 {
-  
+
   class Output
     {
     public:
-      
+
       Output(){}
       virtual ~Output(){}
-      
+
     public:
-      
+
       // Getters
       /**
        * Get the size of the collision envelope.
@@ -22,7 +22,7 @@ namespace content
        * @return   The value of the collision envelope.
        */
       virtual float get_collision_envelope() = 0;
-      
+
       /**
        * Get the simulation time-step size.
        * A simulator may use an internal time step size which is much smaller
@@ -34,14 +34,14 @@ namespace content
        * @return      The value of the time step.
        */
       virtual float get_time_step() = 0;
-      
+
       /**
        * Get total simulated time.
        *
        * @return simulated time.
        */
       virtual float get_time() = 0;
-      
+
       /**
        * Get gravity up direction parameters.
        *
@@ -73,14 +73,14 @@ namespace content
        * @return                A human readable name for the material or the empty string if no such name is known.
        */
       virtual std::string get_material_name(size_t const & material_index) = 0;
-      
+
       /**
        * Get the number of materials.
        *
        * @return   The number of materials.
        */
       virtual size_t get_number_of_materials() = 0;
-      
+
       /**
        * Get Material Indices.
        *
@@ -89,17 +89,17 @@ namespace content
        *                        and must contain at least 'get_number_of_materials()' entries.
        */
       virtual void get_material_indices( size_t * index_array ) = 0;
-      
+
       /**
        * Get Number of Material Properties.
        *
        * @return    The number of defined material properties.
        */
       virtual size_t get_number_of_properties() = 0;
-      
+
       /**
        * Get Material Property Indices.
-       * A material property is defined uniquely by a pair of un-ordered material indices. 
+       * A material property is defined uniquely by a pair of un-ordered material indices.
        *
        * @param first_index_array     Upon return this array will hold the indices of all
        *                            the first materials. The array must be pre-allocated by the caller
@@ -109,9 +109,9 @@ namespace content
        *                            and must contain at least 'get_number_of_properties()' entries.
        */
       virtual void get_material_property_indices(  size_t * first_index_array
-                                                 , size_t * second_index_array 
+                                                 , size_t * second_index_array
                                                  ) = 0;
-      
+
       /**
        * Get Master Material.
        *
@@ -120,9 +120,9 @@ namespace content
        * @return             The master material index.
        */
       virtual size_t get_master( size_t const & first_index
-                                , size_t const & second_index 
+                                , size_t const & second_index
                                 ) = 0;
-      
+
       /**
        * Get Friction Coefficients.
        *
@@ -136,9 +136,9 @@ namespace content
                                 , size_t const & second_index
                                 , float & x
                                 , float & y
-                                , float & z 
+                                , float & z
                                 ) = 0;
-      
+
       /**
        * Get Master Direction.
        *
@@ -152,9 +152,9 @@ namespace content
                                         , size_t const & second_index
                                         , float & x
                                         , float & y
-                                        , float & z 
+                                        , float & z
                                         ) = 0;
-      
+
       /**
        * Get Restitution Coefficient.
        *
@@ -163,16 +163,16 @@ namespace content
        * @return             The resitution coefficient.
        */
       virtual float get_restitution( size_t const & first_index
-                                    , size_t const & second_index 
+                                    , size_t const & second_index
                                     ) = 0;
-      
+
       /**
        * Get the number of geometries.
        *
        * @return    The number of geometries.
        */
       virtual size_t get_number_of_geometries() = 0;
-      
+
       /**
        * Get geometry indices.
        *
@@ -181,7 +181,7 @@ namespace content
        *                        and contain at least 'get_number_of_geometries()' entries.
        */
       virtual void get_geometry_indices( size_t * index_array ) = 0;
-      
+
       /**
        * Get Geometry Name.
        *
@@ -190,7 +190,7 @@ namespace content
        *                          the empty string if the name is unknown.
        */
       virtual std::string get_geometry_name(size_t const & geometry_index) = 0;
-      
+
       /**
        * Get number of boxes in the geometry.
        *
@@ -198,7 +198,7 @@ namespace content
        * @return                  The number of boxes in the geometry.
        */
       virtual size_t get_number_of_boxes( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Box Shape Parameters.
        *
@@ -214,10 +214,10 @@ namespace content
                                  , float & height
                                  , float & depth
                                  ) = 0;
-      
+
       /**
        * Get Box Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param box_number         The number of the box.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -230,10 +230,10 @@ namespace content
                                     , float & y
                                     , float & z
                                     ) = 0;
-      
+
       /**
        * Get Box Shape Orientation.
-       * 
+       *
        * @param geoemtry_index      The index of the geometry.
        * @param box_number          The number of the box.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -248,7 +248,7 @@ namespace content
                                        , float & Qy
                                        , float & Qz
                                        ) = 0;
-      
+
       /**
        * Get number of cones in the geometry.
        *
@@ -256,7 +256,7 @@ namespace content
        * @return                  The number of cones in the geometry.
        */
       virtual size_t get_number_of_cones( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Cone Shape Parameters.
        *
@@ -270,10 +270,10 @@ namespace content
                                   , float & radius
                                   , float & height
                                   ) = 0;
-      
+
       /**
        * Get Cone Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param cone_number        The number of the cone.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -286,10 +286,10 @@ namespace content
                                      , float & y
                                      , float & z
                                      ) = 0;
-      
+
       /**
        * Get Cone Shape Orientation.
-       * 
+       *
        * @param geoemtry_index    The index of the geometry.
        * @param cone_number     The number of the cone.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -303,8 +303,8 @@ namespace content
                                         , float & Qx
                                         , float & Qy
                                         , float & Qz
-                                        ) = 0;     
-      
+                                        ) = 0;
+
       /**
        * Get number of capsules in the geometry.
        *
@@ -312,7 +312,7 @@ namespace content
        * @return                  The number of capsules in the geometry.
        */
       virtual size_t get_number_of_capsules( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Capsule Shape Parameters.
        *
@@ -326,10 +326,10 @@ namespace content
                                      , float & radius
                                      , float & height
                                      ) = 0;
-      
+
       /**
        * Get Capsule Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param capsule_number     The number of the capsule.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -342,10 +342,10 @@ namespace content
                                         , float & y
                                         , float & z
                                         ) = 0;
-      
+
       /**
        * Get Capsule Shape Orientation.
-       * 
+       *
        * @param geoemtry_index    The index of the geometry.
        * @param capsule_number  The number of the capsule.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -359,9 +359,9 @@ namespace content
                                            , float & Qx
                                            , float & Qy
                                            , float & Qz
-                                           ) = 0;       
-      
-      
+                                           ) = 0;
+
+
       /**
        * Get number of cylinders in the geometry.
        *
@@ -369,7 +369,7 @@ namespace content
        * @return                  The number of cylinders in the geometry.
        */
       virtual size_t get_number_of_cylinders( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Cylinder Shape Parameters.
        *
@@ -383,10 +383,10 @@ namespace content
                                       , float & radius
                                       , float & height
                                       ) = 0;
-      
+
       /**
        * Get Cylinder Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param cylinder_number    The number of the cylinder.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -399,10 +399,10 @@ namespace content
                                          , float & y
                                          , float & z
                                          ) = 0;
-      
+
       /**
        * Get Cylinder Shape Orientation.
-       * 
+       *
        * @param geoemtry_index    The index of the geometry.
        * @param cylinder_number The number of the cylinder.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -416,7 +416,7 @@ namespace content
                                             , float & Qx
                                             , float & Qy
                                             , float & Qz
-                                            ) = 0;   
+                                            ) = 0;
       /**
        * Get number of ellipsoids in the geometry.
        *
@@ -424,7 +424,7 @@ namespace content
        * @return                  The number of ellipsoids in the geometry.
        */
       virtual size_t get_number_of_ellipsoids( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Ellipsoid Shape Parameters.
        *
@@ -440,10 +440,10 @@ namespace content
                                        , float & scale_y
                                        , float & scale_z
                                        ) = 0;
-      
+
       /**
        * Get Ellipsoid Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param ellipsoid_number   The number of the ellipsoid.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -456,10 +456,10 @@ namespace content
                                           , float & y
                                           , float & z
                                           ) = 0;
-      
+
       /**
        * Get Ellipsoid Shape Orientation.
-       * 
+       *
        * @param geoemtry_index     The index of the geometry.
        * @param ellipsoid_number The number of the ellipsoid.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -473,8 +473,8 @@ namespace content
                                              , float & Qx
                                              , float & Qy
                                              , float & Qz
-                                             ) = 0; 
-      
+                                             ) = 0;
+
       /**
        * Get number of spheres in the geometry.
        *
@@ -482,7 +482,7 @@ namespace content
        * @return                  The number of spheres in the geometry.
        */
       virtual size_t get_number_of_spheres( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Sphere Shape Parameters.
        *
@@ -494,10 +494,10 @@ namespace content
                                     , size_t const & sphere_number
                                     , float & radius
                                     ) = 0;
-      
+
       /**
        * Get Sphere Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param sphere_number      The number of the sphere.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -510,10 +510,10 @@ namespace content
                                        , float & y
                                        , float & z
                                        ) = 0;
-      
+
       /**
        * Get Sphere Shape Orientation.
-       * 
+       *
        * @param geoemtry_index    The index of the geometry.
        * @param sphere_number   The number of the sphere.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -527,9 +527,9 @@ namespace content
                                           , float & Qx
                                           , float & Qy
                                           , float & Qz
-                                          ) = 0; 
-      
-      
+                                          ) = 0;
+
+
       /**
        * Get number of convexes in the geometry.
        *
@@ -537,34 +537,34 @@ namespace content
        * @return                  The number of convexes in the geometry.
        */
       virtual size_t get_number_of_convexes( size_t const & geometry_index ) = 0;
-      
+
       /**
        * Get Convex Shape Parameters.
        *
        * @param geoemtry_index       The index of the geometry.
        * @param convex_number      The number of the convex.
        * @param no_points          The number of points in the convex hull.
-       */      
+       */
       virtual void get_convex_shape( size_t const & geometry_index
                                     , size_t const & convex_number
                                     , size_t & no_points
                                     ) = 0;
-      
+
       /**
        * Get Convex Shape Parameters.
        *
        * @param geoemtry_index       The index of the geometry.
        * @param convex_number      The number of the convex.
        * @param coordinates        Upon return this argument holds the coordinates of all the points. The array must be preallocated by the caller and contain atleast 3 times the 'get_convex_shape(...,no_points)' entries.
-       */      
+       */
       virtual void get_convex_shape( size_t const & geometry_index
                                     , size_t const & convex_number
                                     , float * coordinates
                                     ) = 0;
-      
+
       /**
        * Get Convex Shape Position.
-       * 
+       *
        * @param geoemtry_index       The index of the geometry.
        * @param convex_number      The number of the convex.
        * @param x                  Upon return this argument holds the x-coordinate.
@@ -577,10 +577,10 @@ namespace content
                                        , float & y
                                        , float & z
                                        ) = 0;
-      
+
       /**
        * Get Convex Shape Orientation.
-       * 
+       *
        * @param geoemtry_index    The index of the geometry.
        * @param convex_number   The number of the convex.
        * @param Qs                  Upon return this argument holds the real part of the rotation quaternion.
@@ -594,7 +594,7 @@ namespace content
                                           , float & Qx
                                           , float & Qy
                                           , float & Qz
-                                          ) = 0;         
+                                          ) = 0;
 
 
       /**
@@ -638,14 +638,14 @@ namespace content
                                        , size_t * tetrahedra
                                        , float  * coordinates
                                        ) = 0;
-      
+
       /**
        * Get Number of Rigid Bodies.
        *
        * @return The number of bodies.
        */
       virtual size_t get_number_of_rigid_bodies() = 0;
-      
+
       /**
        * Get Object Indices of Rigid Bodies.
        *
@@ -655,7 +655,7 @@ namespace content
        *                       entries.
        */
       virtual void get_rigid_body_indices( size_t * index_array ) = 0;
-      
+
       /**
        * Get Rigid Body Name.
        *
@@ -663,7 +663,7 @@ namespace content
        * @return            A human readable name for the rigid body or the empty string if the name is unknown.
        */
       virtual std::string get_rigid_body_name( size_t const & body_index ) = 0;
-      
+
       /**
        * Get Rigid Body Position.
        * @param body_index    The rigid body object index.
@@ -674,10 +674,10 @@ namespace content
       virtual void get_rigid_body_position( size_t const & body_index
                                            , float & x
                                            , float & y
-                                           , float & z 
-                                           ) = 0; 
-      
-      
+                                           , float & z
+                                           ) = 0;
+
+
       /**
        * Get Rigid Body Orientation.
        * @param body_index  The rigid body object index.
@@ -689,10 +689,10 @@ namespace content
       virtual void get_rigid_body_orientation( size_t const & body_index
                                               , float & qs
                                               , float & qx
-                                              , float & qy 
-                                              , float & qz 
-                                              ) = 0; 
-      
+                                              , float & qy
+                                              , float & qz
+                                              ) = 0;
+
       /**
        * Get Rigid Body Velocity.
        * @param body_index    The rigid body object index.
@@ -703,9 +703,9 @@ namespace content
       virtual void get_rigid_body_velocity( size_t const & body_index
                                            , float & x
                                            , float & y
-                                           , float & z 
-                                           ) = 0; 
-      
+                                           , float & z
+                                           ) = 0;
+
       /**
        * Get Rigid Body Spin.
        * @param body_index    The rigid body object index.
@@ -716,9 +716,9 @@ namespace content
       virtual void get_rigid_body_spin( size_t const & body_index
                                        , float & x
                                        , float & y
-                                       , float & z 
-                                       ) = 0; 
-      
+                                       , float & z
+                                       ) = 0;
+
       /**
        * Get Rigid Body Inertia Tensor (in the body frame).
        * @param body_index    The rigid body object index.
@@ -729,52 +729,52 @@ namespace content
       virtual void get_rigid_body_inertia( size_t const & body_index
                                           , float & xx
                                           , float & yy
-                                          , float & zz 
-                                          ) = 0; 
-      
+                                          , float & zz
+                                          ) = 0;
+
       /**
        * Get Mass of Rigid Body.
        * @param     The rigid body object index.
        * @return    The mass of the rigid body.
        */
       virtual float get_rigid_body_mass( size_t const & body_index ) = 0;
-      
+
       /**
        * Get fixed state of Rigid Body.
        * @param     The rigid body object index.
        * @return    Boolean flag indicating whether the rigid body is fixed.
        */
       virtual bool get_rigid_body_fixed( size_t const & body_index ) = 0;
-      
+
       /**
        * Get active state of Rigid Body.
        * @param     The rigid body object index.
        * @return    Boolean flag indicating whether the rigid body is active.
        */
       virtual bool get_rigid_body_active( size_t const & body_index ) = 0;
-      
-      
+
+
       /**
        * Get Material of Rigid Body.
        * @param body_index     The rigid body object index.
        * @return             The material index of the rigid body.
        */
       virtual size_t get_rigid_body_material( size_t const & body_index ) = 0;
-      
+
       /**
        * Get Collision Geometry of Rigid Body.
        * @param body_index    The rigid body object index.
        * @return            The index value of the collsion geometry of the rigid body.
        */
       virtual size_t get_rigid_body_collision_geometry(size_t const & body_index) = 0;
-      
+
       /**
        * Get Number of connected external forces.
        * @param body_index    The rigid body object index.
        * @return            The number of external forces.
        */
       virtual size_t get_number_of_connected_forces(size_t const & body_index) = 0;
-      
+
       /**
        * Get indices of connected forces..
        * @param body_index     The rigid body object index.
@@ -784,7 +784,7 @@ namespace content
        *                     least 'get_number_of_connected_forces()' entries.
        */
       virtual void get_connected_force_indices(  size_t const & body_index
-                                               , size_t * index_array 
+                                               , size_t * index_array
                                                ) = 0;
 
       /**
@@ -981,7 +981,7 @@ namespace content
                                               ) = 0;
 
     };
-  
+
 }// namespace content
 
 // CONTENT_API_OUTPUT_H

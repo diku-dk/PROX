@@ -5,7 +5,7 @@
 
 namespace tiny
 {
-  
+
   /**
    * Eigen System Decomposition.
    *
@@ -29,24 +29,24 @@ namespace tiny
   {
     typedef typename vector3_type::real_type     real_type;
     typedef typename vector3_type::value_traits   value_traits;
-    
+
     using std::sqrt;
     using std::fabs;
-    
+
     vector3_type sub_diag;
-    
+
     sub_diag.clear();
     diag.clear();
-    
+
     V = A;
-    
+
     real_type const & fM00 = V(0,0);
     real_type fM01 = V(0,1);
     real_type fM02 = V(0,2);
     real_type const & fM11 = V(1,1);
     real_type const & fM12 = V(1,2);
     real_type const & fM22 = V(2,2);
-    
+
     diag(0) = fM00;
     sub_diag(2) = value_traits::zero();
     if ( fM02 != value_traits::zero() )
@@ -86,7 +86,7 @@ namespace tiny
       V(2,1) = value_traits::zero();
       V(2,2) = value_traits::one();
     }
-    
+
     const int max_iterations = 32;
     const int dim = 3;
     for (int i0 = 0; i0 < dim; ++i0)
@@ -109,11 +109,11 @@ namespace tiny
           fG = diag(i2)-diag(i0)+sub_diag(i0)/(fG-fR);
         else
           fG = diag(i2)-diag(i0)+sub_diag(i0)/(fG+fR);
-        
+
         real_type fSin = value_traits::one();
         real_type fCos = value_traits::one();
         real_type fP   = value_traits::zero();
-        
+
         for (int i3 = i2-1; i3 >= i0; --i3)
         {
           real_type fF = fSin*sub_diag(i3);
@@ -154,7 +154,7 @@ namespace tiny
         break;
     }
   }
-  
+
 } // namespace tiny
 
 // TINY_EIGEN3x3_H

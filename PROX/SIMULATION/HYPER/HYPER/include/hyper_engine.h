@@ -485,8 +485,8 @@ namespace hyper
     }
 
   };
-  
+
 } // namespace hyper
 
 // HYPER_ENGINE_H
-#endif 
+#endif

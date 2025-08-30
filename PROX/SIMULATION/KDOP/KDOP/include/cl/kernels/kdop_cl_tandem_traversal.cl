@@ -69,11 +69,11 @@ __kernel void do_tandem_traversal(
     // work item ID
     const int local_id = (int) get_local_id(0); // int so we can compare against negative values
     const uint global_id = (uint) get_global_id(0);
-            
+
     // sizes
     const int local_size = (int) get_local_size(0);
     const uint global_size = (uint) get_global_size(0);
-        
+
     // cache until either the backlog is full or there is no more work
     int backlog_pos = local_id;
     uint work_pos = global_id;
@@ -88,9 +88,9 @@ __kernel void do_tandem_traversal(
     // loop step has been executed once too often
     //   and we want backlog_pos to point to the top of the stack
     backlog_pos -= local_size;
-    
+
     // work_pos now points to the next un-cached element
-                
+
     // run until empty or no more children can be pushed
     //  (keeping in mind we reuse the current position)
     bool out_of_space = false;
@@ -98,16 +98,16 @@ __kernel void do_tandem_traversal(
         GUARD(backlog_pos, backlog_size, error_codes, error_size);
         WorkItem current = backlog[backlog_pos];
         backlog_pos -= local_size;
-        
+
         GUARD(current.a, nodes_size, error_codes, error_size);
         Node a = nodes[current.a];
         GUARD(current.b, nodes_size, error_codes, error_size);
         Node b = nodes[current.b];
-        
+
         bool overlap = node_overlap(a, b);
         bool a_is_leaf = node_is_leaf(a);
         bool b_is_leaf = node_is_leaf(b);
-        
+
         if(overlap && a_is_leaf && b_is_leaf) {
             // extract level from test pair
             uchar level = current.tp >> (sizeof(index_type) * 8 - 3);
@@ -127,10 +127,10 @@ __kernel void do_tandem_traversal(
             } else {
                 // extract proper test pair
                 index_type tp = (current.tp << 3) >> 3;
-                
+
                 // decrement level
                 tp |= (level - 1) << (sizeof(index_type) * 8 - 3);
-                
+
                 // declare as leftover work
                 uint global_backlog_pos = atomic_inc(global_backlog_size);
                 GUARD(global_backlog_pos, max_global_backlog_size, error_codes, error_size);
@@ -145,33 +145,33 @@ __kernel void do_tandem_traversal(
                     * (b.end - b.start + 1) // number of children of b (or 1 if b is a leaf)
                     * local_size) // step size
                     >= backlog_size;
-            
+
             if(!out_of_space) {
                 // unroll for binary BVHs
                 // 2 or 4 of the following blocks must be executed since
                 //   at most one of a or b is a leaf
-                
+
                 // increment backlog position once
                 backlog_pos += local_size;
                 GUARD(backlog_pos, backlog_size, error_codes, error_size);
                 backlog[backlog_pos].a = a_is_leaf * current.a + (!a_is_leaf) * a.start;
                 backlog[backlog_pos].b = b_is_leaf * current.b + (!b_is_leaf) * b.start + 1;
                 backlog[backlog_pos].tp = current.tp;
-                
+
                 // don't overwrite if the previous block was correct
                 backlog_pos += (b.start + 1 <= b.end) * local_size;
                 GUARD(backlog_pos, backlog_size, error_codes, error_size);
                 backlog[backlog_pos].a = a_is_leaf * current.a + (!a_is_leaf) * a.start + 1;
                 backlog[backlog_pos].b = b_is_leaf * current.b + (!b_is_leaf) * b.start;
                 backlog[backlog_pos].tp = current.tp;
-                
+
                 // don't overwrite if the previous block was correct
                 backlog_pos += (a.start + 1 <= a.end) * local_size;
                 GUARD(backlog_pos, backlog_size, error_codes, error_size);
                 backlog[backlog_pos].a = a_is_leaf * current.a + (!a_is_leaf) * a.start + 1;
                 backlog[backlog_pos].b = b_is_leaf * current.b + (!b_is_leaf) * b.start + 1;
                 backlog[backlog_pos].tp = current.tp;
-                
+
                 // don't overwrite if the previous block was correct
                 // this block will always be written and one or three of the above,
                 //   depending on whether one node is a leaf or not
@@ -232,7 +232,7 @@ __kernel void do_tandem_traversal(
 #endif // __MAX_BVTT_DEGREE > 4
             }
         }
-        
+
         if(backlog_pos < local_id && work_pos < work_size) {
             backlog_pos += local_size;
             GUARD(backlog_pos, backlog_size, error_codes, error_size);
@@ -241,7 +241,7 @@ __kernel void do_tandem_traversal(
             work_pos += global_size;
         }
     }
-    
+
     // calculate remaining work size
     uint global_backlog_pos = atomic_add(
             global_backlog_size,
@@ -275,7 +275,7 @@ __kernel void do_tandem_traversal_cpu(
     , __global volatile uint     *restrict exact_tests_size
     ,          const    uint               max_exact_tests
     , __global          WorkItem *restrict global_backlog
-    , __global volatile uint     *restrict global_backlog_size    
+    , __global volatile uint     *restrict global_backlog_size
     , __global          WorkItem *restrict backlog       // guaranteed to have enough
                                                          // space if we access it properly
     ,          const    uint               backlog_size
@@ -286,9 +286,9 @@ __kernel void do_tandem_traversal_cpu(
     , __global volatile uint     *restrict error_size          // must be initialized to 0
 #endif // __NDEBUG_DIKUCL
     )
-{    
+{
     const int global_id = (int) get_global_id(0);
-    
+
     // In order to not be wasteful with global memory here (plus not exceed it),
     // set the step size to the number of work items that can actually work.
     // Imagine get_global_size(0) = 1000 but work_size = 1,
@@ -296,7 +296,7 @@ __kernel void do_tandem_traversal_cpu(
     // of 1000 since it only has room for at most all BVTT leaves which are
     // less than 1000 * 4 times the height h of the single BVTT tree we have.
     const int stride = min(work_size, (uint) get_global_size(0));
-    
+
     // Since each work item uses at most 4 * h entries in the backlog at a time
     // and each BVTT tree's h is sufficiently smaller than its last level's size,
     // (which is the amount of memory we have allocated in the backlog)
@@ -310,7 +310,7 @@ __kernel void do_tandem_traversal_cpu(
     // Obviously the above discussion is relevant only when there are mor work
     // items than actual work.
     // See also Robert's thesis for additional information.
-        
+
     uint work_pos = global_id;
     int backlog_pos = global_id;
     if(work_pos < work_size) {
@@ -321,7 +321,7 @@ __kernel void do_tandem_traversal_cpu(
         backlog_pos += stride;
     }
     backlog_pos -= stride;
-    
+
     bool out_of_space = false;
     while(backlog_pos >= global_id && !out_of_space) {
         GUARD(backlog_pos, backlog_size, error_codes, error_size);
@@ -332,7 +332,7 @@ __kernel void do_tandem_traversal_cpu(
         Node a = nodes[current.a];
         GUARD(current.b, nodes_size, error_codes, error_size);
         Node b = nodes[current.b];
-                
+
         bool overlap = node_overlap(a, b);
         bool a_is_leaf = node_is_leaf(a);
         bool b_is_leaf = node_is_leaf(b);
@@ -395,7 +395,7 @@ __kernel void do_tandem_traversal_cpu(
             }
 #endif // __MAX_BVTT_DEGREE > 4
         }
-                
+
         if(backlog_pos < global_id && work_pos < work_size) {
             backlog_pos += stride;
             GUARD(backlog_pos, backlog_size, error_codes, error_size);
@@ -404,7 +404,7 @@ __kernel void do_tandem_traversal_cpu(
             work_pos += stride;
         }
     }
-        
+
     uint global_backlog_pos = atomic_add(
             global_backlog_size,
             (backlog_pos >= global_id) * ((backlog_pos - global_id) / stride + 1) +

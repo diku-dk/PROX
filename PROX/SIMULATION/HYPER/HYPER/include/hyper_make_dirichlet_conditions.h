@@ -73,4 +73,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_MAKE_DIRICHLET_CONDITIONS_H
-#endif 
+#endif

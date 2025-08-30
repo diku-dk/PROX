@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
     bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
 
     BOOST_CHECK( !hit );
-    
+
   }
 
   // ray shooting pass sphere

@@ -5,7 +5,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Conservative Advancement.
    * This function tries to determine whether two objects have impacted
@@ -62,7 +62,7 @@ namespace convex
     typedef typename M::vector3_type  V;
     typedef typename M::coordsys_type C;
     typedef typename M::real_type     T;
-    
+
     assert( r_max_A > VT::zero()              || !"conservative_advancement(): maximum distance of object A must be positive");
     assert( r_max_B > VT::zero()              || !"conservative_advancement(): maximum distance of object B must be positive");
     assert( max_tau > VT::zero()              || !"conservative_advancement(): maximum time-step must be positive");
@@ -71,19 +71,19 @@ namespace convex
     assert(epsilon >= VT::numeric_cast(1e-2)  || !"conservative_advancement(): Too aggressive setting of epsilon, compute_closest_points uses tolerance 10e4");
 
     T tau = VT::zero();
-    
+
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
       // Compute the coordinate transformations corresponding to the current tau value
       C T_A = integrate_motion<M>( X_A, tau, v_A, w_A );
       C T_B = integrate_motion<M>( X_B, tau, v_B, w_B );
-      
+
       // Compute the closest points at the time tau
       compute_closest_points<M>( T_A, A, T_B, B, p_A, p_B );
-      
+
       // Estimate normal direction and current minimum distance between A and B
       V v = p_A - p_B;
-      
+
       // 2015-11-19 Kenny: If GJK did not converge completely then p_A and p_B will
       //                   be slightly off... this means the distance we compute here
       //                   is in fact a little larger than the "true" minimum distance. We
@@ -98,7 +98,7 @@ namespace convex
         time_of_impact = tau;
         return true;
       }
-      
+
       // 2015-11-19 Kenny: If GJK did not converge completely then p_A and p_B will
       //                   be slightly off... this means the "n" direction can be off. The
       //                   problem is worsen as objects come close, as n will be determined
@@ -114,22 +114,22 @@ namespace convex
       //
 
       V n = tiny::unit( v );
-      
+
       // Estimate maximum relative normal velocity between any two points from A and B
-      
+
       T max_velocity = tiny::inner_prod(v_B - v_A, n) + tiny::norm(w_A)*r_max_A + tiny::norm(w_B)*r_max_B;
 
       if (max_velocity <= VT::zero() )
         return false;
-      
+
       // Compute conservative lower bound for when A and B could impact
       T delta_tau = min_distance / max_velocity;
       tau += delta_tau;
-      
+
       if ( tau > max_tau )
         return false;
     }
-    
+
     // not enough iterations to determine what goes on! We give up
     return false;
   }

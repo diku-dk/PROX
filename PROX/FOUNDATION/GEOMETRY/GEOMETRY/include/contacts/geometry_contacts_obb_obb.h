@@ -355,15 +355,15 @@ namespace geometry
           break;
         }
       }
-      
+
       if(unique)
         callback( (*p), n, depth);
     }
-    
+
     return true;
   }
-  
+
 } //namespace geometry
 
 // GEOMETRY_CONTACTS_OBB_OBB_H
-#endif 
+#endif

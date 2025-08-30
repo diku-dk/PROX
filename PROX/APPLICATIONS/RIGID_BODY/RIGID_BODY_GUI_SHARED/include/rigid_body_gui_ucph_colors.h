@@ -35,7 +35,7 @@ namespace rigid_body
       static float blue()  { return 165.0f/255.0f; }
 
     };
-    
+
   } // namespace gui
 } // namespace rigid_body
 

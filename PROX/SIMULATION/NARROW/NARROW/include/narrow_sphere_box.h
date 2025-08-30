@@ -7,7 +7,7 @@
 
 namespace narrow
 {
-  
+
   namespace detail
   {
 
@@ -39,36 +39,36 @@ namespace narrow
                            )
     {
       using std::min;
-      
+
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
       typedef typename M::vector3_type    V;
 
       typedef typename Geometry<M>::sphere_container::const_iterator    sphere_iterator;
       typedef typename Geometry<M>::box_container::const_iterator       box_iterator;
-      
+
       assert( envelope > VT::zero() || !"sphere_box(): collision envelope must be positive");
-      
+
       if( A.empty() || B.empty())
         return;
-      
+
       C bodyAtoWCS = C(tA, qA);
       C bodyBtoWCS = C(tB, qB);
-      
+
       for( sphere_iterator a = A.begin(); a!=A.end(); ++a )
       {
         for( box_iterator b = B.begin(); b!=B.end(); ++b )
         {
-          
+
           C shapeAtobodyA = C(a->transform().T(), a->transform().Q());
           C shapeBtobodyB = C(b->transform().T(), b->transform().Q());
           C shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
           C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
-          
+
           // compute contact point
           geometry::Sphere<V>  const A = geometry::make_sphere( shapeAtoWCS.T(), a->radius());
           geometry::OBB<M >    const B = geometry::make_obb<M>( shapeBtoWCS.T(), shapeBtoWCS.Q(), b->half_extent());
-          
+
           geometry::contacts_obb_sphere(
                                         B
                                         , A
@@ -78,9 +78,9 @@ namespace narrow
                                         );
         }
       }
-      
+
     }
-        
+
   } // namespace detail
 
 } //namespace narrow

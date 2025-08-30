@@ -25,4 +25,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_SCRIPTED_MOTION_H
-#endif 
+#endif

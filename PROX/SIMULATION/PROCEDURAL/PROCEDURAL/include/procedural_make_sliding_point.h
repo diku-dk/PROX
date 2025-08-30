@@ -133,13 +133,13 @@ namespace procedural
                                                , mid
                                                , stone_density
                                                );
-      
+
       engine->set_rigid_body_velocity(rid, H, 0.0, 0.0);
-      
+
     }
-    
+
   }
-  
+
 } //namespace procedural
 
 // PROCEDURAL_MAKE_SLIDING_POINT_H

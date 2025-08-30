@@ -75,7 +75,7 @@ namespace procedural
                   , typename MT::real_type const & pi_frac
                   , MaterialInfo<typename MT::real_type> mat_info
                   );
-  
+
   template<typename MT>
 	void make_temple(  content::API * engine
                    , typename MT::vector3_type const & position
@@ -157,7 +157,7 @@ namespace procedural
                          , MaterialInfo<typename MT::real_type> mat_info
                          , mesh_array::TetGenSettings tetset  = mesh_array::tetgen_default_settings()
                          );
-  
+
   template<typename MT>
 	void make_sphere_cube(  content::API *  engine
                         , typename MT::vector3_type const & position
@@ -166,7 +166,7 @@ namespace procedural
                         , size_t const & spheres
                         , MaterialInfo<typename MT::real_type> mat_info
                         );
-  
+
   template<typename MT>
 	void make_tetrahedral_stack(  content::API *  engine
                               , typename MT::vector3_type const & position
@@ -186,7 +186,7 @@ namespace procedural
                   , size_t const & layers
                   , MaterialInfo<typename MT::real_type> mat_info
                   );
-  
+
   template<typename MT>
   void make_heavy_sphere_light_sphere(
                                       content::API *  engine
@@ -196,7 +196,7 @@ namespace procedural
                                       , size_t const & scale
                                       , MaterialInfo<typename MT::real_type> mat_info
                                       );
-  
+
   template<typename MT>
   void make_dropping_spheres(
                              content::API *  engine
@@ -208,7 +208,7 @@ namespace procedural
                              , size_t const & d
                              , MaterialInfo<typename MT::real_type> mat_info
                              );
-  
+
   template<typename MT>
 	void make_spheres(
                     content::API * engine
@@ -217,7 +217,7 @@ namespace procedural
                     , typename MT::real_type const & radius
                     , MaterialInfo<typename MT::real_type> mat_info
                     );
-  
+
   template<typename MT>
   void make_tetrahedron(
                 content::API * engine
@@ -230,7 +230,7 @@ namespace procedural
                 , MaterialInfo<typename MT::real_type> mat_info
                 , bool const fixed
                 );
-  
+
   template<typename MT>
 	void make_tetrahedron(
                         content::API * engine
@@ -239,7 +239,7 @@ namespace procedural
                         , MaterialInfo<typename MT::real_type> mat_info
                         , bool const fixed = false
                         );
-  
+
   template<typename MT>
 	void make_obj(
                 content::API * engine
@@ -253,7 +253,7 @@ namespace procedural
                 , std::string const & material = "Stone"
                 , mesh_array::TetGenSettings = mesh_array::tetgen_default_settings()
                 );
-  
+
   template<typename MT>
   void make_box(
                 content::API *  engine
@@ -265,7 +265,7 @@ namespace procedural
                 , MaterialInfo<typename MT::real_type> mat_info
                 , bool const fixed = false
                 );
-  
+
   template<typename MT>
   void make_twisted_stack(
                           content::API * engine
@@ -369,8 +369,8 @@ namespace procedural
 
   template<typename MT>
   MaterialInfo<typename MT::real_type> create_material_info( content::API * engine );
-  
-  
+
+
 } //namespace procedural
 
 #include <procedural_make_scene.h>

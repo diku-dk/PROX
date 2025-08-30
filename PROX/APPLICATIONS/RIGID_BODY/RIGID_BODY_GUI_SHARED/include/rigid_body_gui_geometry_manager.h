@@ -77,14 +77,14 @@ namespace rigid_body
           m_named_geometries[ name ] = geometry;
         }
       }
-      
+
       Geometry const & get(std::string const & name) const
       {
         return m_named_geometries.at(name);
       }
-      
+
     };
-    
+
   }//namespace gui
 }//namespace rigid_body
 

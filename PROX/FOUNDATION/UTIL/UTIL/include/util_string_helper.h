@@ -9,7 +9,7 @@ namespace util
 {
   template<typename T>
   T to_value(std::string const & txt);
-  
+
   template<typename T>
   std::string to_string(T const & value);
 
@@ -20,7 +20,7 @@ namespace util
   {
     return text.find(subtext) != std::string::npos;
   }
-  
+
 } // namespace util
 
 // UTIL_STRING_HELPER_H

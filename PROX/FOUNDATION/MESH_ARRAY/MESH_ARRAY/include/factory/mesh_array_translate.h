@@ -7,7 +7,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   inline void translate(
                  typename MT::vector3_type const & d
@@ -59,4 +59,4 @@ namespace mesh_array
 } //namespace mesh_array
 
 // MESH_ARRAY_TRANSLATE_H
-#endif 
+#endif

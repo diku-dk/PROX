@@ -13,12 +13,12 @@ namespace big
                                  )
   {
     size_t const n = bitmask.size();
-    
+
     old2new.resize(n);
     new2old.resize(n);
-    
+
     size_t r = 0u;
-    
+
     for (size_t i = 0u; i < n; ++ i)
     {
       if(bitmask(i) == IN_ACTIVE)
@@ -28,7 +28,7 @@ namespace big
         ++r;
       }
     }
-    
+
     for (size_t i = 0u; i < n; ++ i)
     {
       if(bitmask(i) == IN_NON_ACTIVE)
@@ -38,8 +38,8 @@ namespace big
         ++r;
       }
     }
-    
+
     assert( r==n || !"compute_index_reordering(): something went wrong");
   }
-    
+
 } // namespace big

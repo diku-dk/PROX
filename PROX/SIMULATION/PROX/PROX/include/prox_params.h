@@ -8,7 +8,7 @@
 #include <tiny_is_finite.h>
 
 namespace prox
-{    
+{
   /**
    * Paramters for controlling time steppers, prox solvers and
    * collision detection system.
@@ -19,12 +19,12 @@ namespace prox
   class Params
   {
   public:
-    
+
     typedef SolverParams<MT>            solver_params_type;
     typedef StepperParams<MT>           stepper_params_type;
 
   protected:
-    
+
     solver_params_type  m_solver_params;     ///< Parameters used for prox solvers.
     stepper_params_type m_stepper_params;    ///< Parameters used for prox steppers.
 
@@ -32,12 +32,12 @@ namespace prox
                                              ///< all-pair or grid algorithm should
                                              ///< be used for broad phase collision
                                              ///< detetection. Default is false (=off).
-    
+
   public:
 
     solver_params_type const & solver_params() const { return this->m_solver_params; }
     solver_params_type       & solver_params()       { return this->m_solver_params; }
-    
+
     stepper_params_type const & stepper_params() const { return this->m_stepper_params; }
     stepper_params_type       & stepper_params()       { return this->m_stepper_params; }
 
@@ -45,7 +45,7 @@ namespace prox
     bool       & use_all_pair()       { return this->m_use_all_pair; }
 
   public:
-    
+
     Params()
     : m_solver_params()
     , m_stepper_params()
@@ -56,4 +56,4 @@ namespace prox
 } // namespace prox
 
 // PROX_PARAMS_H
-#endif 
+#endif

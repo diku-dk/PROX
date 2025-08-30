@@ -58,7 +58,7 @@ namespace hyper
     }
 
   }
-  
+
 }// namespace hyper
 
 // HYPER_ASSEMBLE_DIAGONAL_H

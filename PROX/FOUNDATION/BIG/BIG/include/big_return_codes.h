@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * @file
    * This file contains declarations of some readable constants that is
@@ -16,19 +16,19 @@ namespace big
    *
    * @author Kenny Erleben
    */
-  
+
   /**
    * No error occured.
    */
   size_t const OK = 0;
-  
+
   /**
    * A non descent direction was encountered. This may occur
    * during a line-search method. In which case one expects
    * to perform a line-search along a descent direction.
    */
   size_t const NON_DESCENT_DIRECTION = 1;
-  
+
   /**
    * A back-tracking operation failure was detected during some
    * line-search method. This often indicates that the step-length
@@ -36,7 +36,7 @@ namespace big
    * value was obtained.
    */
   size_t const BACKTRACKING_FAILED = 2;
-  
+
   /**
    * Stagnation occured.
    * Stagnation means that the maximum difference between the
@@ -46,7 +46,7 @@ namespace big
    * have been made by the numerical method used.
    */
   size_t const STAGNATION = 3;
-  
+
   /**
    * Relative Convergence Test Succeded.
    * This means that the relative improvement in function value has dropped below
@@ -58,7 +58,7 @@ namespace big
    *where \f$\varepsilon \eq 0\f$ is a user specified test-threshold.
    */
   size_t const RELATIVE_CONVERGENCE = 4;
-  
+
   /**
    * Absolute Convergence Test Succeded.
    * This means that the absolute function value has dropped below
@@ -74,7 +74,7 @@ namespace big
    *
    */
   size_t const ABSOLUTE_CONVERGENCE = 5;
-  
+
   /**
    * Halted while iterating.
    * This means that somehow for whatever unknown reason the method/function has
@@ -86,7 +86,7 @@ namespace big
    * some given maximum number of iterations.
    */
   size_t const ITERATING  = 6;
-  
+
   /**
    * Descend Direction is in Normal Cone.
    * This means that the current iterate must be placed on the boundary of
@@ -100,17 +100,17 @@ namespace big
    */
   size_t const DESCEND_DIRECTION_IN_NORMAL_CONE  = 7;
 
-  
+
   /**
    *
    */
   size_t const LOCAL_MINIMA  = 8;
-  
+
   /**
    *
    */
   size_t const MAX_LIMIT  = 9;
-  
+
   /**
    * Get Error Message.
    * This function decodes an given error code value
@@ -123,18 +123,18 @@ namespace big
    * @return             A textual and human readable error message string.
    */
   std::string get_error_message(size_t const & error_code);
-  
+
   /**
    * In Non-Active Constraint Set Bitmask.
    */
   size_t const IN_NON_ACTIVE = 0u;
-  
+
   /**
    * In Active Constraint Set Bitmask.
    */
   size_t const IN_ACTIVE = 1u;
-  
-  
+
+
 } // namespace big
 
 // BIG_RETURN_CODES_H

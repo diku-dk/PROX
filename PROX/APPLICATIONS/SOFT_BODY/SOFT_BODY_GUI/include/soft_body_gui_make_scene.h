@@ -87,13 +87,13 @@ namespace soft_body
         object.m_vbo       = gl3::make_vbo(mesh, X, Y, Z, gl3::DYNAMIC_VBO() );
         object.m_solid_vao = gl3::make_vao(object.m_vbo, solid_program, "position", "normal");
         object.m_wire_vao  = gl3::make_vao(object.m_vbo, wire_program, "position", "normal");
-        
+
         scene_manager.add( object );
       }
-      
+
       update_scene( scene_manager, engine );
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

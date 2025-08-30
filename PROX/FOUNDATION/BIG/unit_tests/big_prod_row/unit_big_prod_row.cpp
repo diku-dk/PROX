@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(random_test_case)
       for(size_t j=0;j<A.size2();++j)
         A(i,j) = value();
     }
-    ublas::noalias(tst) = ublas::prod(A,x);  
+    ublas::noalias(tst) = ublas::prod(A,x);
     double tol = 0.01;
     for(size_t i=0;i<A.size1();++i)
     {

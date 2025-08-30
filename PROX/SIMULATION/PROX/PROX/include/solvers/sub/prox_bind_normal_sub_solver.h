@@ -24,40 +24,40 @@ namespace prox
   : public NormalSubSolver<T>
   {
   public:
-    
+
     typedef void func_type(T const &, T &);
-    
+
     func_type * m_solver;
-    
+
   public:
-    
+
     NormalSubSolverBinder()
     : m_solver(0)
     {
     }
-    
+
     NormalSubSolverBinder(func_type * solver)
     : m_solver(solver)
     {
     }
-    
+
   public:
-    
+
     void operator()(
                     T const & z_n
                     , T & lambda_n
                     ) const
     {
       assert( this->m_solver || !"NormalSubSolverBinder(): sub solver was null");
-      
+
       this->m_solver(z_n,lambda_n);
     }
-    
+
   };
-    
+
   /**
    *
-   */     
+   */
   template<typename T>
   inline NormalSubSolverBinder<T> bind_normal_solver( normal_sub_solver_type const & type )
   {
@@ -81,10 +81,10 @@ namespace prox
         assert(!"bind_normal_solver(): unknown normal solver type");
         break;
     };
-    
+
     return NormalSubSolverBinder<T>();
   }
-    
+
 } //namespace prox
 
 // PROX_BIND_NORMAL_SUB_SOLVER_H

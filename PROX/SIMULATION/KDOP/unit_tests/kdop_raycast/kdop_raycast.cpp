@@ -46,7 +46,7 @@ void make_geometry( GeometryInfo & info )
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Z_in;
 
   mesh_array::tetgen(surface, sX, sY, sZ, mesh_in, X_in, Y_in, Z_in);
-  
+
   kdop::mesh_reorder( mesh_in, X_in, Y_in, Z_in, info.m_mesh, info.m_X, info.m_Y, info.m_Z );
 
   mesh_array::compute_surface_map( info.m_mesh, info.m_X, info.m_Y, info.m_Z, info.m_surface_map );

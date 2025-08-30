@@ -11,7 +11,7 @@
 
 namespace tiny
 {
-  
+
   /**
    * Computes Euler Angles.
    * The resulting order is: xyz, i.e. first x, then y and finally z
@@ -36,10 +36,10 @@ namespace tiny
   {
     using std::atan2;
     using std::asin;
-    
+
     typedef typename tiny::Matrix<3u,3u,TT>::real_type     T;
     typedef typename tiny::Matrix<3u,3u,TT>::value_traits  VT;
-    
+
 
     //
     // We know
@@ -155,7 +155,7 @@ namespace tiny
 
     return gimbal_lock;
   }
-  
+
   /**
    * Computes ZYZ Euler Angles.
    *
@@ -183,11 +183,11 @@ namespace tiny
     typedef typename tiny::Quaternion<TT>::vector3_type    V;
     typedef typename tiny::Quaternion<TT>::value_traits    VT;
     typedef typename tiny::Quaternion<TT>::real_type       T;
-    
+
     phi   = VT::zero();
     psi   = VT::zero();
     theta = VT::zero();
-    
+
     // Here phi, psi and theta defines the relative rotation, Q, such that
     //
     // Q ~ Rz( phi )*Ry( psi )*Rz(theta);
@@ -216,15 +216,15 @@ namespace tiny
     //
     // Multipling once
     //
-    //  | u_x |   |  cos(phi) -sin(phi) 0 | |  sin(psi) |  
-    //  | u_y | = |  sin(phi)  cos(phi) 0 | |   0       | 
-    //  | u_z |   |  0         0        1 | |  cos(psi) |  
+    //  | u_x |   |  cos(phi) -sin(phi) 0 | |  sin(psi) |
+    //  | u_y | = |  sin(phi)  cos(phi) 0 | |   0       |
+    //  | u_z |   |  0         0        1 | |  cos(psi) |
     //
     // Multipling twice
     //
-    //  | u_x |   |  cos(phi)  sin(psi) |  
-    //  | u_y | = |  sin(phi)  sin(psi) | 
-    //  | u_z |   |  cos(psi)           |  
+    //  | u_x |   |  cos(phi)  sin(psi) |
+    //  | u_y | = |  sin(phi)  sin(psi) |
+    //  | u_z |   |  cos(psi)           |
     //
     // From the third equation we solve
     //
@@ -236,7 +236,7 @@ namespace tiny
     assert(is_number(u_z)               || !"ZYZ_euler_angles(): not an number encountered" );
     assert(u_z <= VT::one()             || !"ZYZ_euler_angles(): u_z was too big"           );
     assert(u_z >= -VT::one()            || !"ZYZ_euler_angles(): u_z was too small"         );
-    
+
     psi = VT::numeric_cast( acos(u_z)   );
     assert(is_number(psi)               || !"ZYZ_euler_angles(): psi was not an number encountered");
     assert(psi <= VT::pi()              || !"ZYZ_euler_angles(): psi was too big"                  );
@@ -265,10 +265,10 @@ namespace tiny
     if(psi<too_small)
     {
       //
-      // Our solution is to use another clever test vector 
+      // Our solution is to use another clever test vector
       //
       V const w = rotate( Q, V::i());
-      
+
       T const w_x = w(0);
       T const w_y = w(1);
 
@@ -280,7 +280,7 @@ namespace tiny
       assert(is_number(phi)   || !"ZYZ_euler_angles(): phi was not an number encountered");
       assert(phi <=  VT::pi() || !"ZYZ_euler_angles(): phi was too big");
       assert(phi >= -VT::pi() || !"ZYZ_euler_angles(): phi was too small");
-      
+
       //
       // psi was too close to zero so we are in a gimbal lock, we simply keep theta zero
       //
@@ -301,10 +301,10 @@ namespace tiny
       assert(phi <=  VT::pi() || !"ZYZ_euler_angles(): phi was too big");
       assert(phi >= -VT::pi() || !"ZYZ_euler_angles(): phi was too small");
     }
-    
-    
+
+
     //
-    // So now we have 
+    // So now we have
     //
     //   Qzy =~ Rz( phi )*Ry( psi );
     //
@@ -338,9 +338,9 @@ namespace tiny
     Qy = QT::Ry(psi);
     Qz = QT::Rz(phi);
     H = prod( conj( prod( Qz , Qy ) ), Q );
-    
+
     V const w = rotate(H,V::i());
-    
+
     T const w_x = w(0);
     T const w_y = w(1);
 
@@ -352,16 +352,16 @@ namespace tiny
     assert(is_number(theta)   || !"ZYZ_euler_angles(): phi was not an number encountered");
     assert(theta <=  VT::pi() || !"ZYZ_euler_angles(): phi was too big"                  );
     assert(theta >= -VT::pi() || !"ZYZ_euler_angles(): phi was too small"                );
-    
+
     //T ct2 = Q.s();       //---   cos(theta/2)
     //T st2 = norm( v ); //---  |sin(theta/2)|
-    
+
     //// First try positive choice of sin(theta/2)
     //theta = value_traits::two()* atan2(st2,ct2);
-    
+
     return;
   }
-  
+
 } // namespace tiny
 
 //TINY_EULER_ANGLES_H

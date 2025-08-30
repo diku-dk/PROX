@@ -3,7 +3,7 @@
 
 namespace prox
 {
-  
+
   namespace detail
   {
     /**
@@ -20,11 +20,11 @@ namespace prox
       size_t idx = 0u;
       for(body_iterator body = begin;body!=end;++body)
         body->set_idx( idx++ );
-    } 
-    
+    }
+
   }// end namespace detail
-  
+
 } //namespace prox
 
-// PROX_UPDATE_BODY_INDICES_H 
+// PROX_UPDATE_BODY_INDICES_H
 #endif

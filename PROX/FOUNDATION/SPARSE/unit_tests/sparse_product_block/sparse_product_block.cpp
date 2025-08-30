@@ -11,15 +11,15 @@
 BOOST_AUTO_TEST_SUITE(SPARSE);
 
 BOOST_AUTO_TEST_CASE(product_block_test)
-{  
+{
   // scalar case
   typedef sparse::Block<1,1,float> block_type1;
-  
+
   block_type1 s1(5), s2(2), s3(0);
-  
+
   sparse::prod(s1,s2,s3);
   BOOST_CHECK(s3[0] == 5*2);
-  
+
   // block case
   sparse::Block<4,3,float> a;
   sparse::Block<3,3,float> b;
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(product_block_test)
   sparse::fill(a, 1);
   sparse::fill(b, 1);
   sparse::prod(a,b,c);
-  
+
   BOOST_CHECK( c[0] ==  30 );
   BOOST_CHECK( c[1] ==  36 );
   BOOST_CHECK( c[2] ==  42 );
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(product_block_test)
   BOOST_CHECK( c[9] == 138 );
   BOOST_CHECK( c[10] == 171 );
   BOOST_CHECK( c[11] == 204 );
-  
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();

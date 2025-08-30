@@ -17,14 +17,14 @@ BOOST_AUTO_TEST_CASE(plane)
   typedef tiny::MathTypes<float> MT;
   typedef MT::vector3_type       V;
   typedef MT::real_type          T;
-  
+
   {
     V const p0 = V::make(1,0,2);
     V const p1 = V::make(1,1,2);
     V const p2 = V::make(0,1,2);
-    
+
     geometry::Plane<V> P = geometry::make_plane( p0, p1, p2);
-    
+
     BOOST_CHECK_CLOSE( P.n()(0), 0.0f, 0.01f );
     BOOST_CHECK_CLOSE( P.n()(1), 0.0f, 0.01f );
     BOOST_CHECK_CLOSE( P.n()(2), 1.0f, 0.01f );

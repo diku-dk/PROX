@@ -24,7 +24,7 @@ namespace hyper
 
   namespace details
   {
-    
+
     /**
      * Computes:  b = M*v + dt*(Fext - f - C*v)
      */
@@ -176,7 +176,7 @@ namespace hyper
     sparse::prod(dt, v, tmp);
     sparse::add(tmp, x);
   }
-  
+
 }// namespace hyper
 
 // HYPER_SEMI_IMPLICIT_TIME_STEP_H

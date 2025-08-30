@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute index sets.
    *
@@ -23,7 +23,7 @@ namespace big
                           , size_t  & cnt_active
                           , size_t  & cnt_inactive
                           );
-  
+
 } // namespace big
 
 // BIG_COMPUTE_INDEX_SETS_H

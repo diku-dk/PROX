@@ -9,13 +9,13 @@
 #include <dikucl_context_manager.hpp>
 
 namespace dikucl {
-    
+
     class CommandQueueHandle {
     public:
-        
+
         ContextHandle context_handle;
         cl::CommandQueue command_queue;
-                
+
         CommandQueueHandle(
             ContextHandle context_handle,
             cl::CommandQueue command_queue) :
@@ -23,7 +23,7 @@ namespace dikucl {
             command_queue(command_queue)
         {
         }
-        
+
     };
 
     class CommandQueueManager {
@@ -36,7 +36,7 @@ namespace dikucl {
 
         CommandQueueManager(CommandQueueManager const&);
         void operator=(CommandQueueManager const&);
-        
+
     public:
 
         static CommandQueueManager& get_instance() {
@@ -49,11 +49,11 @@ namespace dikucl {
                 ContextHandle *context_handle = ContextManager::get_instance().get_context(),
                 cl_command_queue_properties properties = 0) {
             cl_int error = CL_SUCCESS;
-            
+
             if(context_handle == NULL) {
                 return NULL;
             }
-            
+
             if(command_queues.count(*context_handle) == 0) {
                 cl::CommandQueue command_queue(
                         context_handle->context,
@@ -71,14 +71,14 @@ namespace dikucl {
                     return NULL;
                 }
             }
-            
+
             std::map< ContextHandle, CommandQueueHandle >::iterator it = command_queues.find(*context_handle);
             if(it != command_queues.end()) {
                 return &(it->second);
             }
             return NULL;
         }
-        
+
         void reset() {
             command_queues.clear();
         }

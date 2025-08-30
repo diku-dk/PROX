@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     simplex_type S;
 
     convex::add_point_to_simplex( v1, v1, v1, S);
-    
+
     vector3_type v;
     vector3_type a;
     vector3_type b;
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
     BOOST_CHECK( convex::dimension( S ) == 1u );
 
-    BOOST_CHECK( v == zero ); 
+    BOOST_CHECK( v == zero );
     BOOST_CHECK( a == v1 );
     BOOST_CHECK( b == v1 );
   }
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
     convex::add_point_to_simplex( v1, v1, v1, S);
     convex::add_point_to_simplex( v2, v2, v2, S);
-    
+
     vector3_type v;
     vector3_type a;
     vector3_type b;
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
     convex::add_point_to_simplex( v1, v1, v1, S);
     convex::add_point_to_simplex( v2, v2, v2, S);
-    
+
     vector3_type v;
     vector3_type a;
     vector3_type b;
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::add_point_to_simplex( v1, v1, v1, S);
     convex::add_point_to_simplex( v2, v2, v2, S);
     convex::add_point_to_simplex( v3, v3, v3, S);
-    
+
     vector3_type v;
     vector3_type a;
     vector3_type b;
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     BOOST_CHECK_CLOSE( a(2), 0.33333333333333331, 0.01);
     BOOST_CHECK_CLOSE( b(0), 0.33333333333333331, 0.01);
     BOOST_CHECK_CLOSE( b(1), 0.33333333333333331, 0.01);
-    BOOST_CHECK_CLOSE( b(2), 0.33333333333333331, 0.01);    
+    BOOST_CHECK_CLOSE( b(2), 0.33333333333333331, 0.01);
   }
   // Simplex is a triangle that can be reduced to an edge
   {
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::add_point_to_simplex( v1, v1, v1, S);
     convex::add_point_to_simplex( v2, v2, v2, S);
     convex::add_point_to_simplex( v3, v3, v3, S);
-    
+
     vector3_type v;
     vector3_type a;
     vector3_type b;
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     convex::add_point_to_simplex( v1, v1, v1, S);
     convex::add_point_to_simplex( v2, v2, v2, S);
     convex::add_point_to_simplex( v3, v3, v3, S);
-    
+
     vector3_type v;
     vector3_type a;
     vector3_type b;
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     BOOST_CHECK_CLOSE( a(2), 0.33333333333333331, 0.01);
     BOOST_CHECK_CLOSE( b(0), 0.33333333333333331, 0.01);
     BOOST_CHECK_CLOSE( b(1), 0.33333333333333331, 0.01);
-    BOOST_CHECK_CLOSE( b(2), 0.33333333333333331, 0.01);    
+    BOOST_CHECK_CLOSE( b(2), 0.33333333333333331, 0.01);
   }
   // Simplex is a tetrahedron that can be reduced to a point
   {

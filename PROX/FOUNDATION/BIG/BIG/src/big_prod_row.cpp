@@ -6,7 +6,7 @@
 
 namespace big
 {
-  
+
   template<typename T>
   T prod_row(
              boost::numeric::ublas::compressed_matrix<T> const & A
@@ -17,14 +17,14 @@ namespace big
     typedef boost::numeric::ublas::vector<T> vector_type;
     typedef typename vector_type::size_type  size_type;
     typedef typename vector_type::value_type real_type;
-    
+
     assert(A.size1()>0            || !"prod_row(): A was empty"            );
     assert(A.size2()>0            || !"prod_row(): A was empty"            );
     assert(A.size2() ==  x.size() || !"prod_row(): incompatible dimensions");
     assert(i < A.size1()          || !"prod_row(): incompatible dimensions");
-    
+
     real_type value = real_type();
-    
+
     //
     //  Example of compressed matrix format:
     //
@@ -47,33 +47,33 @@ namespace big
     //    Note this array have the same dimension as value_data. Each element in index2_data
     //    stores the corresponind column index of the matching element in value_data.
     //
-    
+
     size_type const row_end = A.filled1 () - 1;
     if(i>=row_end)
       return value;
-    
+
     size_type const begin = A.index1_data () [i];
     size_type const end   = A.index1_data()[i + 1];
     for (size_type j = begin; j < end; ++j)
       value += A.value_data()[j] * x(  A.index2_data()[j]  );
-    
+
     assert(is_number(value) || !"prod_row(): not a number encountered");
-    
+
     return value;
   }
-  
+
   template
   float prod_row<float>(
                         boost::numeric::ublas::compressed_matrix<float> const & A
                         , boost::numeric::ublas::vector<float> const & x
                         , boost::numeric::ublas::vector<float>::size_type i
                         );
-  
+
   template
   double prod_row<double>(
                           boost::numeric::ublas::compressed_matrix<double> const & A
                           , boost::numeric::ublas::vector<double> const & x
                           , boost::numeric::ublas::vector<double>::size_type i
                           );
-  
+
 } // end namespace big

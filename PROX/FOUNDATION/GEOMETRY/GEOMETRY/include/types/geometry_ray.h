@@ -3,7 +3,7 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Ray
   {

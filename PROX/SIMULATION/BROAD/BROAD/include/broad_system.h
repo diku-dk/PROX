@@ -13,46 +13,46 @@
 
 namespace broad
 {
-  
+
   template<typename T>
   class System
     {
     public:
-      
+
       friend class detail::Accessor<T>;
-      
+
       typedef detail::Accessor<T>                   accessor;
       typedef Object<T>                             object_type;
       typedef std::vector<object_type*>             object_ptr_container;
       typedef std::pair<object_type*,object_type*>  overlap_type;
-      
+
     protected:
-      
+
       typedef detail::Grid<T>                       grid_type;
-      
+
     protected:
-      
+
       object_ptr_container      m_object_ptrs;
       grid_type                 m_grid;
-      
+
       T m_min_span_x;        ///< Minimum span of object bounding boxes
       T m_min_span_y;
       T m_min_span_z;
-            
+
     protected:
-      
+
       System( System const & sys);
       System& operator=( System const & sys);
-      
+
     public:
-      
+
       System()
       : m_object_ptrs()
       , m_min_span_x( std::numeric_limits<T>::max()  )
       , m_min_span_y( std::numeric_limits<T>::max()  )
       , m_min_span_z( std::numeric_limits<T>::max()  )
       {}
-      
+
       ~System()
       {
         this->clear();
@@ -170,10 +170,10 @@ namespace broad
       {
         using std::min;
         using std::max;
-        
+
         assert(obj || !"connect() obj was null");
         assert( std::find( this->m_object_ptrs.begin(), this->m_object_ptrs.end(), obj) == this->m_object_ptrs.end() || !"connect() obj already connected");
-        
+
         // Compute some statistics in order to pick a "good" cell spacing of the grid
         // Here we just do something simple, we pick two times the average box size as the cell size!
         {
@@ -185,42 +185,42 @@ namespace broad
           T max_y;
           T max_z;
           obj->get_box( min_x, min_y, min_z, max_x, max_y, max_z);
-          
+
           // Compute span of bounding box
           T const span_x  = max_x - min_x;
           T const span_y  = max_y - min_y;
           T const span_z  = max_z - min_z;
-          
+
           // Find minimum spans. Determine simple first order statistics about all boxes that have been added to the system so far.
           this->m_min_span_x = min( this->m_min_span_x, span_x );
           this->m_min_span_y = min( this->m_min_span_y, span_y );
           this->m_min_span_z = min( this->m_min_span_z, span_z );
-          
+
           // Now we use the statistics to set a cell size of the grid.
           T const new_spacing = max( this->m_min_span_x, max( this->m_min_span_y, this->m_min_span_z ) ) * 2;
-          
+
           this->m_grid.set_spacing( new_spacing );
         }
-        
+
         this->m_object_ptrs.push_back( obj );
         this->m_grid.resize ( this->m_object_ptrs.size() );  // Remember to resize grid so it got space for the objects.
       }
-      
+
       void disconnect( object_type * obj )
       {
-        assert(obj || !"disconnect() obj was null");        
+        assert(obj || !"disconnect() obj was null");
         assert( std::find( this->m_object_ptrs.begin(), this->m_object_ptrs.end(), obj) != this->m_object_ptrs.end() || !"disconnect() obj was not connected");
-        
+
         this->m_object_ptrs.remove( obj );
       }
-      
+
       void clear()
       {
         this->m_object_ptrs.clear();
       }
-      
+
     };
-  
+
   /**
    *
    * Factory function for creating a broad phase collision detection system.
@@ -230,13 +230,13 @@ namespace broad
   {
     // Cleanup any leftovers
     sys.clear();
-    
+
     // Initialize scene by filling it with the boxes of the objects
     for( typename configuration_type::iterator obj = data.begin(); obj!=data.end();++obj)
       sys.connect( &(*obj) );
   }
-  
+
 } //namespace broad
 
 // BROAD_SYSTEM_H
-#endif 
+#endif

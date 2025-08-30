@@ -84,12 +84,12 @@ namespace hyper
 
       return (lambda * tiny::trace(e)) * M::identity() + (VT::two()*mu) * e;
     }
-    
+
     std::string name() const
     {
       return "Neo Hookean";
     }
-    
+
   };
 
 }// namespace hyper

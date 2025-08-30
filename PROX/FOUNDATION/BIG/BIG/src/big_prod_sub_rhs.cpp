@@ -15,15 +15,15 @@ namespace big
     typedef boost::numeric::ublas::vector<T> vector_type;
     typedef typename vector_type::size_type  size_type;
     typedef typename vector_type::value_type real_type;
-    
+
     assert(A.size1()>0            || !"prod_sub_rhs(): A was empty"            );
     assert(A.size2()>0            || !"prod_sub_rhs(): A was empty"            );
     assert(A.size2() ==  x.size() || !"prod_sub_rhs(): incompatible dimensions");
     assert(A.size1() ==  b.size() || !"prod_sub_rhs(): incompatible dimensions");
-    
+
     if(y.size() != b.size())
       y.resize(b.size(), false );
-    
+
     //
     //  Example of compressed matrix format:
     //

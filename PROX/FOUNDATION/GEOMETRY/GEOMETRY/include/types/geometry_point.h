@@ -3,7 +3,7 @@
 
 #include <types/geometry_support_mapping.h>
 
-namespace geometry 
+namespace geometry
 {
 
   template<typename V>

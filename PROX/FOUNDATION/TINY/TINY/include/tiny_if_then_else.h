@@ -5,7 +5,7 @@ namespace tiny
 {
   namespace detail
   {
-    
+
     /**
      * Meta Programming construct for making if-then-else selections at compile time.
      *
@@ -15,23 +15,23 @@ namespace tiny
      */
     template <bool B, typename T, typename F>
     class if_then_else;
-    
+
     template <typename T, typename F>
     class if_then_else<true, T, F>
     {
     public:
       typedef T result;
     };
-    
+
     template <typename T, typename F>
     class if_then_else<false, T, F>
     {
     public:
       typedef F result;
     };
-    
+
   } // namespace detail
 } // namespace tiny
 
 // TINY_IF_THEN_ELSE_H
-#endif 
+#endif

@@ -105,16 +105,16 @@ namespace rigid_body
         vao.unbind();
 
       }
-      
+
       for(int i=0u; i < number_of_shadows; ++i)
       {
         ShadowmapObject const & shadow = shadowmap_manager.m_objects[i];
         shadow.m_depth_texture.unbind();
       }
-      
+
       program.stop();
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

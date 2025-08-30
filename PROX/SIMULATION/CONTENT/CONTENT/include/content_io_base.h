@@ -7,7 +7,7 @@ namespace content
 {
     namespace details
     {
-        
+
         /**
          * descr
          *
@@ -15,13 +15,13 @@ namespace content
          * @param  attrib_name
          * @param  mandatory
          *
-         * @return                  
+         * @return
          */
         std::string read_string(  TiXmlElement const * element
                                 , std::string const & attrib_name
                                 , bool const & mandatory = false
                                 );
-        
+
         /**
          * descr
          *
@@ -30,14 +30,14 @@ namespace content
          * @param  default_value
          * @param  mandatory
          *
-         * @return                  
-         */        
+         * @return
+         */
         float read_float(  TiXmlElement const * element
                          , std::string const & attrib_name
                          , float const & default_value= 0.0f
                          , bool const & mandatory = false
                          );
-        
+
         /**
          * descr
          *
@@ -46,14 +46,14 @@ namespace content
          * @param  default_value
          * @param  mandatory
          *
-         * @return                  
+         * @return
          */
         int read_integer(  TiXmlElement const * element
                          , std::string const & attrib_name
                          , int const & default_value= 0
                          , bool const & mandatory = false
                          );
-        
+
         /**
          * descr
          *
@@ -61,16 +61,16 @@ namespace content
          * @param  name
          * @param  mandatory
          *
-         * @return                  
+         * @return
          */
         TiXmlElement const * get_singleton_child(  TiXmlNode const * parent
                                                  , std::string const & name
                                                  , bool const & mandatory = false
                                                  );
-        
+
     } // namespace details
 
-    
+
 }// namespace content
 // CONTENT_IO_BASE_H
 #endif

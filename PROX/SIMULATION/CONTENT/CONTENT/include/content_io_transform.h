@@ -4,7 +4,7 @@
 namespace content
 {
     namespace details
-    {    
+    {
         /**
          * A coordinate transform data structure.
          * This is used for bundling arguments so code becomes more readable.
@@ -18,7 +18,7 @@ namespace content
             float m_qx;    ///< Second Euler angle, second rotation around Y
             float m_qy;    ///< Third Euler angle,  third rotation around Z
             float m_qz;    ///< Third Euler angle,  third rotation around Z
-            
+
             Transform()
             : m_x(0.0f)
             , m_y(0.0f)
@@ -28,10 +28,10 @@ namespace content
             , m_qy(0.0f)
             , m_qz(0.0f)
             {}
-            
+
         };
-        
-    }// namespace details  
+
+    }// namespace details
 }// namespace content
 
 // CONTENT_IO_TRANSFORM_H

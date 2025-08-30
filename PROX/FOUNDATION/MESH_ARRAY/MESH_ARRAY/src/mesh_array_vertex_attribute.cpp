@@ -2,7 +2,7 @@
 
 #include <tiny.h>
 
-namespace mesh_array 
+namespace mesh_array
 {
   template class VertexAttribute<float, T3Mesh>;
   template class VertexAttribute<double, T3Mesh>;
@@ -21,5 +21,5 @@ namespace mesh_array
 
   template class VertexAttribute< tiny::Vector<3,tiny::float_traits>,  T4Mesh>;
   template class VertexAttribute< tiny::Vector<3,tiny::double_traits>, T4Mesh>;
-  
-} // end namespace mesh_array 
+
+} // end namespace mesh_array

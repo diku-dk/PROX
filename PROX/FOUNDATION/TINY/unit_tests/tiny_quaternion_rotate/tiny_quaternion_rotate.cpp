@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
   BOOST_CHECK(  Q::accessor::padding()    == 0);
   BOOST_CHECK(  Q::accessor::J_padded()   == 4);
   BOOST_CHECK(  Q::accessor::allocsize()  == 4);
-  
+
   {
     // Set up a test rotation
     Q q;

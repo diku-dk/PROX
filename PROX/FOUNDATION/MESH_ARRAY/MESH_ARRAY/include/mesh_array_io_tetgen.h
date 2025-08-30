@@ -8,7 +8,7 @@
 #include <string>
 
 
-namespace mesh_array 
+namespace mesh_array
 {
   template<typename T>
   void read_tetgen(
@@ -18,7 +18,7 @@ namespace mesh_array
                    , VertexAttribute<T,T3Mesh> & Y
                    , VertexAttribute<T,T3Mesh> & Z
                    );
-  
+
   template<typename T>
   void read_tetgen(
                    std::string const & filename
@@ -27,7 +27,7 @@ namespace mesh_array
                    , VertexAttribute<T,T4Mesh> & Y
                    , VertexAttribute<T,T4Mesh> & Z
                    );
-  
+
   template<typename T>
   void write_tetgen(
                     std::string const & filename
@@ -36,7 +36,7 @@ namespace mesh_array
                     , VertexAttribute<T,T3Mesh> const & Y
                     , VertexAttribute<T,T3Mesh> const & Z
                     );
-  
+
   template<typename T>
   void write_tetgen(
                     std::string const & filename
@@ -45,8 +45,8 @@ namespace mesh_array
                     , VertexAttribute<T,T4Mesh> const & Y
                     , VertexAttribute<T,T4Mesh> const & Z
                     );
-  
+
 } // end namespace mesh_array
 
 // MESH_ARRAY_IO_TETGEN_H
-#endif 
+#endif

@@ -9,17 +9,17 @@
 
 #include <vector>
 
-namespace mesh_array 
+namespace mesh_array
 {
-  
+
   /**
    * Vertex Attribute Class.
    *
    * @tparam T    The attribute type to be stored for each vertex
    * @tparam M    The mesh type of the vertices.
    */
-  template<typename T, typename M> 
-  class VertexAttribute 
+  template<typename T, typename M>
+  class VertexAttribute
   {
   public:
 
@@ -123,4 +123,4 @@ namespace mesh_array
 } // end namespace mesh_array
 
 // MESH_ARRAY_VERTEX_ATTRIBUTE_H
-#endif 
+#endif

@@ -13,21 +13,21 @@ BOOST_AUTO_TEST_SUITE(tiny_polynomial_roots);
 BOOST_AUTO_TEST_CASE(simple_test)
 {
   unsigned int count = 0u;
-  
+
   double roots[4] = {0.0, 0.0, 0.0, 0.0};
-  
+
   // Case of one root
   {
     //  0 = c1 x + c0    <=> 0 = (x - r1)
     double r1 = 4.0;
     double C0 = -r1;
     double C1 = 1.0;
-    bool success = tiny::compute_polynomial_roots( C0, C1, count, roots );    
+    bool success = tiny::compute_polynomial_roots( C0, C1, count, roots );
     BOOST_CHECK( success );
     BOOST_CHECK( count == 1 );
     BOOST_CHECK_CLOSE( roots[0] , r1, 0.01 );
   }
-  
+
   // Case of two roots
   {
     //  0 = c2 x^2 + c1 x + c0    <=> 0 = (x - r1)*(x - r2)
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     double r2 = 2.0;
     double r3 = 4.0;
     double r4 = 8.0;
-    
+
     double C0 = r1*r2*r3*r4;
     double C1 = -r1*r2*r3 -r1*r2*r4 -r1*r3*r4 -r2*r3*r4;
     double C2 = r1*r2 + r1*r3 + r1*r4 + r2*r3 + r2*r4 + r3*r4;
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(simple_test)
     BOOST_CHECK_CLOSE( roots[2] , r3, 0.01 );
     BOOST_CHECK_CLOSE( roots[3] , r4, 0.01 );
   }
-  
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();

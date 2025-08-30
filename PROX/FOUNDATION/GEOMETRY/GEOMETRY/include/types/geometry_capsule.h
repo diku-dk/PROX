@@ -3,23 +3,23 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Capsule
   {
   public:
-    
+
     typedef typename V::real_type       T;
     typedef typename V::value_traits    VT;
-    
+
   protected:
-    
+
     T m_radius;
     V m_point0;
     V m_point1;
 
   public:
-    
+
     T const & radius() const { return this->m_radius; }
     V const & point0() const { return this->m_point0; }
     V const & point1() const { return this->m_point1; }
@@ -35,7 +35,7 @@ namespace geometry
 
 
   public:
-    
+
     Capsule()
     : m_radius( VT::one() )
     , m_point0( V::zero() )
@@ -66,7 +66,7 @@ namespace geometry
       return *this;
     }
   };
-  
+
   template<typename V>
   Capsule<V> make_capsule(
                             typename V::real_type const & radius
@@ -80,4 +80,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_CAPSULE_H
-#endif 
+#endif

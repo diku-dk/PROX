@@ -642,20 +642,20 @@ namespace kdop
                                           0, sizeof (details::cl::KernelContactPoint<KV, KT, KI>) * (size_t) kernel_contact_points_size,
                                           contact_point_container + (size_t) contact_point_container_size);
             CHECK_CL_ERR(err);
-            contact_point_container_size += (size_t) kernel_contact_points_size;                        
+            contact_point_container_size += (size_t) kernel_contact_points_size;
           }
-          
+
         }
-        
+
       }
-      
+
       kernel_work_item_generator.cleanup_generated_work_items(
                                                               kernel_work);
     }
-    
+
     err = queue.finish();
     CHECK_CL_ERR(err);
-    
+
     if(contact_point_container != NULL) {
       qsort(  contact_point_container,
             contact_point_container_size,
@@ -670,7 +670,7 @@ namespace kdop
       }
       free(contact_point_container);
     }
-    
+
     details::cl::cleanup<V, K, T, KI, KT, KV>(
                                               kernel_nodes,
                                               kernel_tets,
@@ -678,13 +678,13 @@ namespace kdop
                                               kernel_verts,
                                               kernel_callbacks,
                                               CL_DEVICE_TYPE_GPU);
-    
+
     details::cl::record_kernel_times(  tandem_traversal_kernel_time + balance_work_kernel_time
                                      , exact_tests_kernel_time);
     details::cl::record_kernel_invocations(  tandem_traversal_invocations
                                            , exact_test_invocations);
   }
-  
+
 } // namespace kdop
 
 // KDOP_CL_GPROXIMITY_TANDEM_TRAVERSAL_H

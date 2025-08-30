@@ -28,20 +28,20 @@ BOOST_AUTO_TEST_CASE(mesh_array_compute_surface_map_sphere)
   size_t const slices   = 12u;
   size_t const segments = 24u;
   T      const radius   = 12.0f;
-  
+
   mesh_array::make_sphere<MT>(radius, slices, segments, surf, sX, sY, sZ);
-  
+
   mesh_array::T4Mesh mesh;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> X;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Y;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Z;
 
   mesh_array::tetgen(surf, sX, sY, sZ, mesh, X, Y, Z );
-  
+
   mesh_array::TetrahedronAttribute< mesh_array::TetrahedronSurfaceInfo ,mesh_array::T4Mesh> surface_map;
-  
+
   mesh_array::compute_surface_map( mesh, X, Y, Z, surface_map );
-  
+
   for (size_t idx = 0u; idx < mesh.tetrahedron_size(); ++idx)
   {
     mesh_array::Tetrahedron const tetrahedron = mesh.tetrahedron(idx);

@@ -6,10 +6,10 @@
 #include <cmath>
 #include <cassert>
 
-namespace prox 
+namespace prox
 {
-  
-  namespace detail   
+
+  namespace detail
   {
     /**
     *
@@ -20,11 +20,11 @@ namespace prox
     * computing the proximal point.
     *
     */
-    template <typename T> 
+    template <typename T>
     inline static void numerical_ellipsoid(
-      T const & z_s     
+      T const & z_s
       , T const & z_t
-      , T const & z_tau    
+      , T const & z_tau
       , T const & mu_s
       , T const & mu_t
       , T const & mu_tau
@@ -40,7 +40,7 @@ namespace prox
 
       typedef tiny::ValueTraits<T> value_traits;
 
-      lambda_s = value_traits::zero();            
+      lambda_s = value_traits::zero();
       lambda_t = value_traits::zero();
       lambda_tau = value_traits::zero();
 
@@ -143,7 +143,7 @@ namespace prox
 
       T const f0 = (xx/aa) + (yy/bb) + (zz/cc) - value_traits::one();
 
-      if ( f0 < tol ) 
+      if ( f0 < tol )
       {
         lambda_s   = z_s;
         lambda_t   = z_t;
@@ -177,7 +177,7 @@ namespace prox
       //T const bbyy = bb*yy;
       //T const cczz = cc*zz;
       //
-      //for( size_t k = 0; k < max_k; ++k ) 
+      //for( size_t k = 0; k < max_k; ++k )
       //{
       //  T const aat = aa + t_k;
       //  T const bbt = bb + t_k;
@@ -239,9 +239,9 @@ namespace prox
 
       //
       // Perform binary search for root
-      //    
+      //
       T t_k = (t0+t1)*value_traits::half();
-      for( size_t k = 0; k < max_k; ++k ) 
+      for( size_t k = 0; k < max_k; ++k )
       {
         if(  fabs(t1-t0) < tol ) //stagnation test
         {

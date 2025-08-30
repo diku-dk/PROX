@@ -213,7 +213,7 @@ namespace util
     }
 
   };
-  
+
 }//namespace util
 
 // UTIL_CONFIG_FILE_H

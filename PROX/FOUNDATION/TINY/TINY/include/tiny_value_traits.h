@@ -13,9 +13,6 @@ namespace tiny
       static T zero()                   { return detail::zero<T>();      }
       static T one()                    { return detail::one<T>();       }
       static T two()                    { return detail::two<T>();       }
-      //static T three()                  { return detail::three<T>();     }
-      //static T four()                   { return detail::four<T>();      }
-      //static T eight()                  { return detail::eight<T>();     }
       static T infinity()               { return detail::infinity<T>();  }
       static T half()                   { return detail::half<T>();      }
       static T pi()                     { return detail::pi<T>();        }

@@ -12,7 +12,7 @@ namespace narrow
     typedef typename M::value_traits VT;
 
   protected:
-    
+
     bool   m_use_open_cl;
     size_t m_open_cl_platform;
     size_t m_open_cl_device;
@@ -22,7 +22,7 @@ namespace narrow
     size_t m_chunk_bytes;
 
   public:
-    
+
     bool   const & use_open_cl()       const { return this->m_use_open_cl;        }
     size_t const & open_cl_platform()  const { return this->m_open_cl_platform;   }
     size_t const & open_cl_device()    const { return this->m_open_cl_device;     }
@@ -32,8 +32,8 @@ namespace narrow
     size_t const & get_chunk_bytes()   const { return this->m_chunk_bytes;        }
 
 
-  public:      
-    
+  public:
+
     void set_use_open_cl(bool const & value)        { this->m_use_open_cl    = value;   }
     void set_open_cl_platform(size_t const & value) { this->m_open_cl_platform = value; }
     void set_open_cl_device(size_t const & value)   { this->m_open_cl_device = value;   }
@@ -43,7 +43,7 @@ namespace narrow
     void set_chunk_bytes(size_t const & value)      { this->m_chunk_bytes    = value;   }
 
   public:
-    
+
     Params()
     : m_use_open_cl( false )
     , m_open_cl_platform( 0 )
@@ -54,8 +54,8 @@ namespace narrow
     , m_chunk_bytes(8000)
     {}
   };
-  
+
 } // namespace narrow
 
 // NARROW_PARAMS_H
-#endif 
+#endif

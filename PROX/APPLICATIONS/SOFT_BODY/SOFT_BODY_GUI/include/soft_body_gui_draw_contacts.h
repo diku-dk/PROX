@@ -119,17 +119,17 @@ namespace soft_body
         glm::mat4 const rotation_matrix = glm::rotate( glm::mat4(1.0), radians, axis);
         glm::mat4 const translation_matrix = glm::translate( glm::mat4(1.0), p);
         glm::mat4 const model_view_matrix =  view_matrix * translation_matrix * rotation_matrix * scale_matrix;
-        
+
         program.set_uniform( "model_view_matrix", model_view_matrix);
-        
+
         contact_geometry.m_solid_vao.bind();
         contact_geometry.m_vbo.draw();
         contact_geometry.m_solid_vao.unbind();
       }
-      
+
       program.stop();
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

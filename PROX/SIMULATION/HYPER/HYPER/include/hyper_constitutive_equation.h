@@ -23,7 +23,7 @@ namespace hyper
     typedef typename MT::matrix3x3_type       M;
 
     typedef          MaterialParameters<T>    material_type;
-    
+
   protected:
 
     material_type  m_material;

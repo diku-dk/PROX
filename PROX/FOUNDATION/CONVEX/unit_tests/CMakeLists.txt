@@ -1,7 +1,7 @@
 ADD_SUBDIRECTORY( convex_constants                )
 ADD_SUBDIRECTORY( convex_simplex_reduce           )
 ADD_SUBDIRECTORY( convex_motion_utils             )
-ADD_SUBDIRECTORY( convex_shapes                   ) 
+ADD_SUBDIRECTORY( convex_shapes                   )
 ADD_SUBDIRECTORY( convex_simplex                  )
 ADD_SUBDIRECTORY( convex_sign_dist2tri            )
 ADD_SUBDIRECTORY( convex_sign_dist2edge_face_vp   )

@@ -81,10 +81,10 @@ namespace rigid_body
         geometry.m_vbo.draw();
         geometry.m_solid_vao.unbind();
       }
-      
+
       program.stop();
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

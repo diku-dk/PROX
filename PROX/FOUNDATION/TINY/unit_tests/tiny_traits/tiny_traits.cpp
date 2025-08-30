@@ -15,7 +15,7 @@ void Verify (op_type _result, real_type value)
 	real_type tol = real_type(0.1); // 1/10 percent
 	for (size_t i=0; i<stride;++i)
 	  {	
-	    BOOST_CHECK_CLOSE(result[i],value,tol); 
+	    BOOST_CHECK_CLOSE(result[i],value,tol);
 	  }
 }
 
@@ -24,7 +24,7 @@ template <typename type_traits>
 void test_traits()
 {	
   using namespace tiny;
-  
+
 	typedef typename type_traits::real_type	real_type;
 	typedef typename type_traits::op_type 	op_type;
 	enum {stride = type_traits::stride};
@@ -43,8 +43,8 @@ void test_traits()
 	real_type const _true  	= detail::one<real_type>();
 	real_type const _false 	= detail::zero<real_type>();
 	
-	op_type const _zero 	= type_traits::set_op_type(zero); 
-	op_type const _one  	= type_traits::set_op_type(one); 
+	op_type const _zero 	= type_traits::set_op_type(zero);
+	op_type const _one  	= type_traits::set_op_type(one);
 	op_type const _two  	= type_traits::set_op_type(two);
 	op_type const _four 	= type_traits::set_op_type(four);
 	op_type const _quarter 	= type_traits::set_op_type(quarter);
@@ -60,7 +60,7 @@ void test_traits()
 	Verify<stride,type_traits>(_one,one);
 	
 	// Verify correctness of assign
-	op_type a = _one; 
+	op_type a = _one;
 	Verify<stride,type_traits>(a,one);
 
   op_type x;
@@ -191,11 +191,11 @@ void test_traits()
 	// Verify correctness of horizontal sum
 	switch (stride)
 	{
-//	case 4:  // 2009-07-14 Kenny:  warning: case label value exceeds maximum value for type (for ScalarTrait) 
-//	  BOOST_CHECK_CLOSE(type_traits::sum(_one),four,tol); 
+//	case 4:  // 2009-07-14 Kenny:  warning: case label value exceeds maximum value for type (for ScalarTrait)
+//	  BOOST_CHECK_CLOSE(type_traits::sum(_one),four,tol);
 //	  break;
 	case 1:
-	  BOOST_CHECK_CLOSE(type_traits::sum(_one),one,tol); 
+	  BOOST_CHECK_CLOSE(type_traits::sum(_one),one,tol);
 	  break;
 	default: break;
 	}
@@ -203,10 +203,10 @@ void test_traits()
 	switch (stride)
 	{
 //	case 4:
-//	  BOOST_CHECK_CLOSE(type_traits::mul(_two),sixteen,tol); 
+//	  BOOST_CHECK_CLOSE(type_traits::mul(_two),sixteen,tol);
 //	  break;
 	case 1:
-	  BOOST_CHECK_CLOSE(type_traits::mul(_two),two,tol); 
+	  BOOST_CHECK_CLOSE(type_traits::mul(_two),two,tol);
 	  break;
 	default: break;
 	}
@@ -217,7 +217,7 @@ void test_traits()
 	size_t const size = stride;
 	real_type scalars[size];
 	for (size_t i = 0 ; i<size;++i)
-	{ 
+	{
 		scalars[i]=tiny::detail::numeric_cast<real_type>(i+1);
 	}
 		

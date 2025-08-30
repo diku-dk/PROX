@@ -91,16 +91,16 @@ namespace soft_body
           glm::mat4 const model_view_matrix =  view_matrix * translation_matrix * scale_matrix;
 
           program.set_uniform( "model_view_matrix", model_view_matrix);
-          
+
           dirichlet_geometry.m_solid_vao.bind();
           dirichlet_geometry.m_vbo.draw();
           dirichlet_geometry.m_solid_vao.unbind();
         }
       }
-      
+
       program.stop();
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

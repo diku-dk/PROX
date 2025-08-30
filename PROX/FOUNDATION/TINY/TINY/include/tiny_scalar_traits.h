@@ -9,17 +9,17 @@
 
 namespace tiny
 {
-  
+
   template<typename T>
   class ScalarTraits
     {
     public:
-      
+
       typedef T  real_type;
       typedef T  op_type;
-      
+
       enum { stride = 1 };
-      
+
       /**
        * op_type Creation
        *
@@ -27,31 +27,31 @@ namespace tiny
        *  \param[in] scalar The Scalar to be copied into the op_type.
        *  \return op_type with all elements set to scalar value.
        */
-      static op_type set_op_type(real_type const & scalar) 
-      { 
+      static op_type set_op_type(real_type const & scalar)
+      {
         return scalar;
       }
-      
-      static op_type load_op_type(real_type const * scalars) 
-      { 
+
+      static op_type load_op_type(real_type const * scalars)
+      {
         return scalars[0];
       }
-      
-      
-      static real_type* store_op_type(real_type * const rt, op_type const & ot) 
-      { 
+
+
+      static real_type* store_op_type(real_type * const rt, op_type const & ot)
+      {
         *rt = ot;
         return rt;
       }
-      
+
       template<size_t N>
       static op_type& set_pad_value(op_type & ot, real_type /*value*/)
       {
         return ot;
       }
-      
+
       // Boolean operations ---------------------------------------------------------------------------
-      
+
       /*! Equality Test
        *
        *   Performs elementwise equality test on the two provided op_type arguments,
@@ -65,7 +65,7 @@ namespace tiny
         return fabs(lhs-rhs)<real_type(1.0/8192.0); // Reimplement with ulps
         //return lhs==rhs;  // reimplement with threshold
       }
-      
+
       /*! Non-Equality Test
        *
        *   Performs elementwise not-equal tests on the two provided op_type arguments,
@@ -78,7 +78,7 @@ namespace tiny
       {
         return !(lhs==rhs); // reimplement with threshold
       }
-      
+
       /*! Less-Than Test
        *
        *   Performs elementwise less-than tests on the two provided op_type arguments,
@@ -91,7 +91,7 @@ namespace tiny
       {
         return lhs<rhs;
       }
-      
+
       /*! Greater-Than Test
        *
        *   Performs elementwise less-than tests on the two provided op_type arguments,
@@ -101,7 +101,7 @@ namespace tiny
        *   \return op_type with result of each comparions.
        */
       static op_type greater_than(op_type const & lhs, op_type const & rhs) 			{ return lhs>rhs; }
-      
+
       /*! Less-Than-Or-Equal Test
        *
        *   Performs elementwise less-than-or-equal tests on the two provided op_type arguments,
@@ -111,8 +111,8 @@ namespace tiny
        *   \return op_type with result of each comparions.
        */
       static op_type less_than_or_equal(op_type const & lhs, op_type const & rhs) 	{ return lhs<=rhs; }
-      
-      
+
+
       /*! Greater-Than-Or-Equal Test
        *
        *   Performs elementwise greater-than-or-equal tests on the two provided op_type arguments,
@@ -122,7 +122,7 @@ namespace tiny
        *   \return op_type with result of each comparions.
        */
       static op_type greater_than_or_equal(op_type const & lhs, op_type const & rhs)	{ return lhs>=rhs; }
-      
+
       // Basic Arithmetics -----------------------------------------------------------
       /*! Addition Operation
        *
@@ -139,7 +139,7 @@ namespace tiny
         //op_type tmp(lhs);
         //return ScalarTraits::template add_assign<1>(op_type(lhs),rhs);
       }
-      
+
       /*! Subtraction Operation
        *
        *  Subtracts element-wise the second parameter from the first parameter and a new op_type with the
@@ -153,7 +153,7 @@ namespace tiny
         op_type tmp = lhs;
         return ScalarTraits::sub_assign(tmp,rhs);
       }
-      
+
       /*! Multiplication Operation
        *
        *  Multiplies the two provided op_type parameters elements-wise and returns a new op_type with the
@@ -167,7 +167,7 @@ namespace tiny
         op_type tmp = lhs;
         return ScalarTraits::mul_assign(tmp,rhs);
       }
-      
+
       /*! Division Operation
        *
        *  Divides element-wise the first parameter by the second parameter and a new op_type with the
@@ -181,7 +181,7 @@ namespace tiny
         op_type tmp = lhs;
         return ScalarTraits::div_assign(tmp,rhs);
       }
-      
+
       /*! Addition And Assignment Operation
        *
        *  Adds element-wise the rhs parameter from the lhs parameter and stores the result in the lhs parameter.
@@ -193,7 +193,7 @@ namespace tiny
       {
         return lhs+=rhs;
       }
-      
+
       /*! Subtraction And Assignment Operation
        *
        *  Subtracts element-wise the rhs parameter from the lhs parameter and stores the result in the lhs parameter.
@@ -205,7 +205,7 @@ namespace tiny
       {
         return (lhs-=rhs);
       }
-      
+
       /*! Multiplication And Assignment Operation
        *
        *  Multiplies element-wise the rhs parameter with the lhs parameter and stores the result in the lhs parameter.
@@ -214,10 +214,10 @@ namespace tiny
        *  \return reference to the lhs parameter.
        */
       static op_type& mul_assign(op_type & lhs, op_type const & rhs)	
-      { 
-        return lhs*=rhs; 
+      {
+        return lhs*=rhs;
       }
-      
+
       /*! Division And Assignment Operation
        *
        *  Divides element-wise the lhs parameter by the rhs parameter and stores the result in the lhs parameter.
@@ -229,7 +229,7 @@ namespace tiny
       {
         return lhs/=rhs;
       }
-      
+
       /*! Negation Operation
        *
        *  Negates all elements in the ot parameter and stores the result a new op_type.
@@ -240,7 +240,7 @@ namespace tiny
       {
         return -rhs;
       }
-      
+
       // Various functions ----------------------------------------------------------------------
       /*! Sign Evaluation
        *
@@ -255,7 +255,7 @@ namespace tiny
       {
         return sgn(ot);
       }
-      
+
       /*! Random Operation
        *
        *  Replaces provided parameters elements with random values.
@@ -266,7 +266,7 @@ namespace tiny
        {
        return ot = drand48(); // Replcae with something crossplatform
        }*/
-      
+
       /*! Round Operation
        *
        *  Rounds each element of provided parameter to nearest integer, away from zero
@@ -284,7 +284,7 @@ namespace tiny
         return ot>tiny::detail::zero<op_type>() ?  floor( ot+tiny::detail::half<op_type>()) :  ceil( ot-tiny::detail::half<op_type>());
 #endif
       }
-      
+
       /*! Max Test
        *
        *   Performs elementwise max tests on the two provided op_type arguments,
@@ -297,13 +297,13 @@ namespace tiny
       {
         return lhs>=rhs?lhs:rhs;
       }
-      
+
       static op_type& max_assign (op_type & lhs, op_type const & rhs)
       {
         return lhs = (lhs>=rhs?lhs:rhs);
       }
-      
-      
+
+
       /*! Min Test
        *
        *   Performs elementwise max tests on the two provided op_type arguments,
@@ -316,13 +316,13 @@ namespace tiny
       {
         return lhs<=rhs?lhs:rhs;
       }
-      
+
       static op_type& min_assign (op_type & lhs, op_type const & rhs)
       {
         return lhs = (lhs<=rhs?lhs:rhs);
       }
-      
-      
+
+
       /*! Absolute Value Evaluation
        *
        *  Evaluates the absolute value of each element of provided parameter to nearest integer.
@@ -333,7 +333,7 @@ namespace tiny
       {
         return fabs(ot); // TODO: verify
       }
-      
+
       /*! Floor Operation
        *
        *  Rounds down each element of provided parameter to nearest integral value.
@@ -344,7 +344,7 @@ namespace tiny
       {
         return ::floor(ot);
       } // TODO: reimplement
-      
+
       /*! Ceil Operation
        *
        *  Rounds up each element of provided parameter to smallest integral value greater than
@@ -356,7 +356,7 @@ namespace tiny
       {
         return ::ceil(ot);
       } // TODO: reimplement
-      
+
       /*! Square Root Operation
        *
        *  Calculates the square root of each element of provided parameter.
@@ -367,7 +367,7 @@ namespace tiny
       {
         return ::sqrt(ot);
       } // TODO: reimplement
-      
+
       /*! Reciprocal Square Root Operation
        *
        *  Calculates the reciprocal square root (1/sqrt) of each element of provided parameter.
@@ -378,20 +378,20 @@ namespace tiny
       {
         return real_type(1)/sqrt(ot);
       } // TODO: reimplement
-      
+
       // Horizontal functions -------------------------------------------------------------
-      
+
       /*! Horizontal Summation Operation
        *
        * Calculates the sum of all elements in provided op_type parameter
        * \param[in] ot op_type to be summed.
        * \return real_type sum of operation.
        */
-      static real_type sum (op_type const & ot) 
-      { 
-        return ot; 
+      static real_type sum (op_type const & ot)
+      {
+        return ot;
       }
-      
+
       /*! Horizontal Multiplication Operation
        *
        * Calculates the product of all elements in provided op_type parameter
@@ -399,10 +399,10 @@ namespace tiny
        * \return real_type product of operation.
        */
       static real_type mul (op_type const & ot)
-      { 
+      {
         return ot;
       }
-      
+
       /*! Horizontal Min Operation
        *
        * Evaluates the min value of all elements in provided op_type parameter
@@ -410,10 +410,10 @@ namespace tiny
        * \return real_type min value of operation.
        */
       static real_type min (op_type const & ot) 						
-      { 
+      {
         return ot;
       }
-      
+
       /*! Horizontal Max Operation
        *
        * Evaluates the max value of all elements in provided op_type parameter
@@ -421,11 +421,11 @@ namespace tiny
        * \return real_type max value of operation.
        */
       static real_type max (op_type const & ot)
-      { 
-        return ot; 
+      {
+        return ot;
       }
     };
-  
+
 } // namespace tiny
 
 //TINY_SCALAR_TRAITS_H

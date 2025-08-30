@@ -21,7 +21,7 @@ namespace sparse
   * in Matlab sparse format or an easy readable string for debugging.
   */
 	namespace io
-	{ 
+	{
     /**
     * This writes the contents of a block to a string. Comma is used to separate elements in
     * the same row, and semicolon to separate rows. "[" and "]" act as delimiters of the block.
@@ -48,7 +48,7 @@ namespace sparse
 
     /**
     * This writes the contents of a CompressedRowMatrix to a string in verbose or compressed format.
-    * The verbose format starts by "Block at row i, column j => " and then list the content of that 
+    * The verbose format starts by "Block at row i, column j => " and then list the content of that
     * block. The compressed format write "(i,j): " followed by the content of the block.
     * @param A The CompressedRowMatrix to write to a string
     * @param compress_output boolean flag that allows the user to compress the output
@@ -78,7 +78,7 @@ namespace sparse
 
     /**
     * This writes the contents of a DiagonalMatrix to a string in verbose or compressed format.
-    * The verbose format starts by "Block at row i, column j => " and then list the content of that 
+    * The verbose format starts by "Block at row i, column j => " and then list the content of that
     * block. The compressed format write "(i,j): " followed by the content of the block.
     * @param A The DiagonalMatrix to write to a string
     * @param compress_output boolean flag that allows the user to compress the output
@@ -108,7 +108,7 @@ namespace sparse
 
     /**
     * This writes the contents of a Vector to a string in verbose or compressed format.
-    * The verbose format starts by "Block at row i => " and then list the content of that 
+    * The verbose format starts by "Block at row i => " and then list the content of that
     * block. The compressed format write "i: " followed by the content of the block.
     * @param v The Vector to write to a string
     * @param compress_output boolean flag that allows the user to compress the output
@@ -131,7 +131,7 @@ namespace sparse
 
     /**
     * This writes the contents of a CompressedVector to a string in verbose or compressed format.
-    * The verbose format starts by "Block at row i => " and then list the content of that 
+    * The verbose format starts by "Block at row i => " and then list the content of that
     * block. The compressed format write "i: " followed by the content of the block.
     * @param v The CompressedVector to write to a string
     * @param compress_output boolean flag that allows the user to compress the output

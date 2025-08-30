@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Symmetric Testing.
    * This function is intended for debugging purposes it has
@@ -22,19 +22,19 @@ namespace big
   inline bool is_symmetric(  matrix_type const & A  )
   {
     using std::fabs;
-    
+
     typedef typename matrix_type::value_type                     value_type;
     typedef typename matrix_type::size_type                      size_type;
-    
+
     size_type  const & m       = A.size1();
     size_type  const & n       = A.size2();
-    
+
     assert( m>0         || !"is_symmetric(): m was out of range");
     assert( n>0         || !"is_symmetric(): n was out of range");
     assert( m==n        || !"is_symmetric(): m and n was not equal");
-    
+
     value_type const precision = ::boost::numeric_cast<value_type>(10e-6);
-    
+
     for ( size_type i = 0; i < n; ++i )
       for ( size_type j = i+1; j < n; ++j )
       {
@@ -44,8 +44,8 @@ namespace big
       }
     return true;
   }
-  
-  
+
+
 } // end of namespace big
 
 // BIG_IS_SYMMETRIC_H

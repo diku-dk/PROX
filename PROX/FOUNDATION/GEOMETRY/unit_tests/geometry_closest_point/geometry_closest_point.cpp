@@ -19,9 +19,9 @@ BOOST_AUTO_TEST_CASE(closest_point_test)
 
   {
     geometry::Line<V> const L = geometry::Line<V>( V::make(0,0,0), V::make(1,0,0));  // x-axis line
-    
+
     V const q = geometry::closest_point_on_line( V::make(10,4,5), L );
-    
+
     BOOST_CHECK_CLOSE( q(0), 10.0f, 0.01f );
     BOOST_CHECK_CLOSE( q(1), 0.0f, 0.01f );
     BOOST_CHECK_CLOSE( q(2), 0.0f, 0.01f );
@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(closest_point_test)
     geometry::Plane<V> const P = geometry::make_plane( V::make(1,0,0), 0);  // y-z plane
 
     V const q = geometry::closest_point_on_plane( V::make(10,4,5), P );
-    
+
     BOOST_CHECK_CLOSE( q(0), 0.0f, 0.01f );
     BOOST_CHECK_CLOSE( q(1), 4.0f, 0.01f );
     BOOST_CHECK_CLOSE( q(2), 5.0f, 0.01f );

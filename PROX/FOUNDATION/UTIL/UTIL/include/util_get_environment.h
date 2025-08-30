@@ -8,7 +8,7 @@
 
 namespace util
 {
-    
+
   template<typename T>
   inline T get_environment(std::string const & key, T const & default_value)
   {
@@ -16,7 +16,7 @@ namespace util
 
     return value ? to_value<T>(std::string(value)) : default_value;
   }
-    
+
 } // namespace util
 
 // UTIL_GET_ENVIRONMENT_H

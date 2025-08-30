@@ -91,4 +91,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_IMPLICIT_SURFACES_H
-#endif 
+#endif

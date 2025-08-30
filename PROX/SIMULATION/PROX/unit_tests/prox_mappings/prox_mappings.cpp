@@ -12,32 +12,32 @@
 BOOST_AUTO_TEST_SUITE(prox_mappings);
 
 BOOST_AUTO_TEST_CASE(analytical_ellipsoid_test_case)
-{  
+{
   float lambda_s   = 0.0f;
   float lambda_t   = 0.0f;
   float lambda_tau = 0.0f;
-  
+
   prox::detail::analytical_ellipsoid( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
+
   prox::detail::analytical_ellipsoid( 0.0f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 1.0f, 0.1f);
-  
+
   prox::detail::analytical_ellipsoid( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
+
   prox::detail::analytical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 1.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::analytical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::analytical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
@@ -48,28 +48,28 @@ BOOST_AUTO_TEST_CASE(analytical_sphere_test_case)
   float lambda_s   = 0.0f;
   float lambda_t   = 0.0f;
   float lambda_tau = 0.0f;
-    
-  prox::detail::analytical_sphere( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::analytical_sphere( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::analytical_sphere( 0.0f, 0.0f, 2.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::analytical_sphere( 0.0f, 0.0f, 2.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 1.0f, 0.1f);
-  
-  prox::detail::analytical_sphere( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::analytical_sphere( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::analytical_sphere( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::analytical_sphere( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 1.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::analytical_sphere( 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::analytical_sphere( 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
@@ -80,31 +80,31 @@ BOOST_AUTO_TEST_CASE(gjk_test_case)
   float lambda_s   = 0.0f;
   float lambda_t   = 0.0f;
   float lambda_tau = 0.0f;
-  
-  prox::detail::gjk_ellipsoid( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::gjk_ellipsoid( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::gjk_ellipsoid( 0.0f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::gjk_ellipsoid( 0.0f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK( fabs( lambda_s ) < 0.001); // 2011-03-02 Kenny: why is it so loose?
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 1.0f);
   BOOST_CHECK_CLOSE(lambda_tau, 1.0f, 1.0f);
-  
-  prox::detail::gjk_ellipsoid( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::gjk_ellipsoid( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::gjk_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::gjk_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 1.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
+
   prox::detail::gjk_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
-  BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);  
+  BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
 }
 
 BOOST_AUTO_TEST_CASE(numerical_test_case)
@@ -112,31 +112,31 @@ BOOST_AUTO_TEST_CASE(numerical_test_case)
   float lambda_s   = 0.0f;
   float lambda_t   = 0.0f;
   float lambda_tau = 0.0f;
-  
-  prox::detail::numerical_ellipsoid( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::numerical_ellipsoid( 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::numerical_ellipsoid( 0.0f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::numerical_ellipsoid( 0.0f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 1.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::numerical_ellipsoid( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::numerical_ellipsoid( 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.707106769f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::numerical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::numerical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 1.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
-  
-  prox::detail::numerical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );  
+
+  prox::detail::numerical_ellipsoid( 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, lambda_s, lambda_t, lambda_tau );
   BOOST_CHECK_CLOSE(lambda_s, 0.0f, 0.1f);
   BOOST_CHECK_CLOSE(lambda_t, 0.0f, 0.1f);
-  BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);  
-}  
+  BOOST_CHECK_CLOSE(lambda_tau, 0.0f, 0.1f);
+}
 
 BOOST_AUTO_TEST_SUITE_END();

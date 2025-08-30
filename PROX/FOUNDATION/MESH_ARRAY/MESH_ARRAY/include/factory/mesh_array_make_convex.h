@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_convex(
                    std::vector< typename MT::vector3_type> const & vertices
@@ -15,8 +15,8 @@ namespace mesh_array
                    , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                    , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                    );
-  
+
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_CONVEX_H
-#endif 
+#endif

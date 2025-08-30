@@ -12,17 +12,17 @@ BOOST_AUTO_TEST_CASE(sphere)
 {
   double const rho = 1.0;
   double const R   = 1.0;
-   
+
   mass::Properties<double> P = mass::compute_sphere(rho,R);
-  
-  BOOST_CHECK( P.m_m   > 0.0 ); 
-  BOOST_CHECK( P.m_Ixx > 0.0 ); 
-  BOOST_CHECK( P.m_Iyy > 0.0 ); 
-  BOOST_CHECK( P.m_Izz > 0.0 ); 
+
+  BOOST_CHECK( P.m_m   > 0.0 );
+  BOOST_CHECK( P.m_Ixx > 0.0 );
+  BOOST_CHECK( P.m_Iyy > 0.0 );
+  BOOST_CHECK( P.m_Izz > 0.0 );
   BOOST_CHECK_CLOSE( P.m_Ixx, P.m_Iyy, 0.01 );
   BOOST_CHECK_CLOSE( P.m_Iyy, P.m_Izz, 0.01 );
-  
-  BOOST_CHECK(  P.is_body_space() );  
+
+  BOOST_CHECK(  P.is_body_space() );
   BOOST_CHECK( !P.is_model_space() );
 }
 

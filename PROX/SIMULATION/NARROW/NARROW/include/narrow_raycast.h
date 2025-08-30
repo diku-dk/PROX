@@ -119,6 +119,6 @@ namespace narrow
   }
 
 } //namespace narrow
-  
+
 // NARROW_RAYCAST_H
 #endif

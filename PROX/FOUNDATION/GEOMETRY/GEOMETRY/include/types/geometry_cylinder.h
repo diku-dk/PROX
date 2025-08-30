@@ -3,24 +3,24 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Cylinder
   {
   public:
-    
+
     typedef typename V::real_type       T;
     typedef typename V::value_traits    VT;
-    
+
   protected:
-    
+
     T m_radius;
     T m_height;
     V m_axis;
     V m_center;
 
   public:
-    
+
     T const & radius()      const { return this->m_radius;            }
     T const & height()      const { return this->m_height;            }
     T         half_height() const { return this->m_height*VT::half(); }
@@ -54,7 +54,7 @@ namespace geometry
     }
 
   public:
-    
+
     Cylinder()
     : m_radius( VT::one() )
     , m_height( VT::one() )
@@ -90,7 +90,7 @@ namespace geometry
       return *this;
     }
   };
-  
+
   template<typename V>
   Cylinder<V> make_cylinder(
                             typename V::real_type const & radius
@@ -105,4 +105,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_CYLINDER_H
-#endif 
+#endif

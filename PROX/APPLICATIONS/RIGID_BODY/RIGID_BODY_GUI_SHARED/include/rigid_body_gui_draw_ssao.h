@@ -544,31 +544,31 @@ namespace rigid_body
 
             ShadowmapObject const & shadow = shadowmap_manager.m_objects[i];
             glm::mat4 light_matrix = bias_matrix * shadow.m_projection_matrix * shadow.m_view_matrix;
-            
+
             program.set_uniform( "light_matrix[" + util::to_string(i) + "]", light_matrix);
           }
         }
-        
+
         gl3::VBO     vbo     = gl3::make_quad_vbo();
         gl3::VAO     vao     = gl3::make_vao( vbo, program, "position");
-        
+
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         vao.bind();
         vbo.draw();
         vao.unbind();
-        
+
         buffer.m_position.unbind();
         buffer.m_normal.unbind();
         buffer.m_diffuse.unbind();
         buffer.m_blurred_occlusion.unbind();
         for(int i=0u; i < lights.size(); ++i)
           shadowmap_manager.m_objects[i].m_depth_texture.unbind();
-        
+
         program.stop();
         program.clear();
       }
-      
+
       //--- Restore the old openGL context ---------------------------------------
       {
         if( cull_param)
@@ -579,26 +579,26 @@ namespace rigid_body
         {
           glDisable(GL_CULL_FACE);
         }
-        
+
         if (depth_param)
           glEnable(GL_DEPTH_TEST);
         else
           glDisable(GL_DEPTH_TEST);
-        
+
         if (blend_param)
           glEnable(GL_BLEND);
         else
           glDisable(GL_BLEND);
-        
+
         glCullFace(cull_mode_param);
         glDepthFunc(depth_func_param);
-        
+
         glViewport(viewport_params[0], viewport_params[1], viewport_params[2], viewport_params[3]);
       }
-      
+
       gl3::check_errors("draw_ssao() exit");
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

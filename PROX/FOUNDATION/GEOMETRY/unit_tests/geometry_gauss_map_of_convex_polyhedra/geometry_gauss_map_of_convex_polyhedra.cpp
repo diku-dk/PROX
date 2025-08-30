@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
       BOOST_CHECK_CLOSE(n[0],  s[0], 0.01);
       BOOST_CHECK_CLOSE(n[1],  s[1], 0.01);
       BOOST_CHECK_CLOSE(n[2],  s[2], 0.01);
-      
+
     }
     {
       V const s = tiny::unit( V::make(0.0 , 1.0, 0.0) );
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
       BOOST_CHECK_CLOSE(n[0],  s[0], 0.01);
       BOOST_CHECK_CLOSE(n[1],  s[1], 0.01);
       BOOST_CHECK_CLOSE(n[2],  s[2], 0.01);
-      
+
     }
     {
       V const s = tiny::unit( V::make(1.0 , 0.0, 0.0) );
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
       BOOST_CHECK_CLOSE(n[0],  s[0], 0.01);
       BOOST_CHECK_CLOSE(n[1],  s[1], 0.01);
       BOOST_CHECK_CLOSE(n[2],  s[2], 0.01);
-      
+
     }
     {
       V const s = tiny::unit( V::make(-1.0 , -1.0, -1.0) );
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
       BOOST_CHECK_CLOSE(n[0],  s[0], 0.01);
       BOOST_CHECK_CLOSE(n[1],  s[1], 0.01);
       BOOST_CHECK_CLOSE(n[2],  s[2], 0.01);
-      
+
     }
     {
       V const s = tiny::unit( V::make(0.0 , -1.0,  -1.0) );

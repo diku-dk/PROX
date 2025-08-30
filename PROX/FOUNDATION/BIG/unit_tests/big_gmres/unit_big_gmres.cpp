@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(singular_test)
     unsigned int R = 4;
     double eps = 1.000000e-002;
     unsigned int M = 4;
-    BOOST_CHECK_THROW( big::gmres(A,x,b,M,R,eps)        , std::logic_error );  
+    BOOST_CHECK_THROW( big::gmres(A,x,b,M,R,eps)        , std::logic_error );
   }
 }
 

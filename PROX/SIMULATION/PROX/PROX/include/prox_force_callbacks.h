@@ -121,7 +121,7 @@ namespace prox
       force = - (body.get_velocity() * m_linear);
       torque = - (body.get_spin()     * m_angular);
     }
-    
+
   };
 
   template<typename M>
@@ -187,4 +187,4 @@ namespace prox
 } //namespace prox
 
 // PROX_FORCE_CALLBACKS_H
-#endif 
+#endif

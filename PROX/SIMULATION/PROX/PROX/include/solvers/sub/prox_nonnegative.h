@@ -12,11 +12,11 @@ namespace prox
     inline static void nonnegative( T const & z_n, T & lambda_n )
     {
       typedef tiny::ValueTraits<T> value_traits;
-      
+
       using std::max;
       lambda_n = max( value_traits::zero(), z_n );
     }
-    
+
   } // namespace detail
 } // namespace prox
 

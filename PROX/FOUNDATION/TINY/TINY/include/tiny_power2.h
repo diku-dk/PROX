@@ -3,7 +3,7 @@
 
 namespace tiny
 {
-  
+
   /**
    * This method test whether there exist some positive integer, n, such that
    *
@@ -23,7 +23,7 @@ namespace tiny
     }
     return false;
   }
-  
+
   /**
    * This function finds the smallest positive integer, n, such that
    *
@@ -55,7 +55,7 @@ namespace tiny
   inline T lower_power2( T val )
   {
     // 2009-07-05 Kenny: Used to be  31u. However, for signed types the last bit is used for the sign, so the mehtod would fails for int but succede for unsigned int.
-    T next = 1u << 30u;  
+    T next = 1u << 30u;
     for ( unsigned int i = 0u; i < 32u; ++i )
     {
       if ( next <= val )
@@ -64,8 +64,8 @@ namespace tiny
     }
     return 0u;
   }
-  
-  
+
+
 } // namespace tiny
 
 //TINY_POWER2_H

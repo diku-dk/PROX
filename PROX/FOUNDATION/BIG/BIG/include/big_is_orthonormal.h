@@ -7,7 +7,7 @@
 
 namespace big
 {
-  
+
   /**
    * Orthonormal Testing.
    * This function is intended for debugging purposes it has
@@ -24,22 +24,22 @@ namespace big
   inline bool is_orthonormal(  matrix_type const & A  )
   {
     using namespace ublas;
-    
+
     using std::fabs;
-    
+
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
     typedef typename matrix_type::size_type         size_type;
-    
+
     size_type  const & m       = A.size1();
     size_type  const & n       = A.size2();
-    
+
     assert( m>0         || !"is_orthonormal(): m was out of range");
     assert( n>0         || !"is_orthonormal(): n was out of range");
     assert( m==n        || !"is_orthonormal(): m and n was not equal");
-    
+
     value_type const precision = ::boost::numeric_cast<value_type>(10e-6);
-    
+
     for ( size_type i = 0; i < n; ++i )
     {
       value_type tmp = inner_prod( column(A,i), column(A,i) );
@@ -55,8 +55,8 @@ namespace big
       }
     return true;
   }
-  
-  
+
+
 } // end of namespace big
 
 // BIG_IS_ORTHONORMAL_H

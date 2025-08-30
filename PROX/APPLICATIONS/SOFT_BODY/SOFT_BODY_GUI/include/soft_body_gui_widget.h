@@ -45,11 +45,11 @@ namespace soft_body
       void mouseMoveEvent(QMouseEvent *event);
       void mouseReleaseEvent(QMouseEvent *event);
       void keyPressEvent(QKeyEvent *e);
-      
+
     };
-    
+
   }// end namespace gui
-  
+
 }// end namespace soft_body
 
 // SOFT_BODY_GUI_WIDGET

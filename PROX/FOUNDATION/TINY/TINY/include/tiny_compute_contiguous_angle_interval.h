@@ -9,7 +9,7 @@
 
 namespace tiny
 {
-  
+
   /**
    * Compute Contiguous Angle Interval.
    * This function tries to find a contiguous interval of angle values. As
@@ -33,7 +33,7 @@ namespace tiny
    *
    * The supplied angles can be given in any sort of interval as long as
    * the width of the interval is no longer than 2 pi ( one full rotation). Typically
-   * one would supply values from either -pi..pi or 0..2pi intervals. 
+   * one would supply values from either -pi..pi or 0..2pi intervals.
    *
    * @param begin      An iterator to the first angle value
    * @param end        An iterator to one past the last angle value
@@ -41,7 +41,7 @@ namespace tiny
    * @param theta_max  Upon return this value holds the ending value of the contiguous angle interval.
    */
   template<typename iterator_type>
-  inline void compute_contiguous_angle_interval( 
+  inline void compute_contiguous_angle_interval(
                                                 iterator_type const & begin
                                                 , iterator_type const & end
                                                 , typename iterator_type::value_type & theta_min
@@ -50,24 +50,24 @@ namespace tiny
   {
     typedef typename iterator_type::value_type         T;
     typedef          ValueTraits<T>                    value_traits;
-    
+
     T const two_pi = value_traits::pi()*value_traits::two();
-    
+
     // Determine the number of samples
     size_t const N = std::distance( begin, end);
-    
+
     // Make a copy of the samples and sort them in ascending order
     std::vector<T> storage;
     storage.resize( N );
-    
+
     std::copy( begin, end, storage.begin() );
     std::sort( storage.begin(), storage.end() );
-    
+
     // Find the two theta values with the largest gap inbetween. That
     // is the largest angle difference as measured in a counter-clock-wise manner.
     T      max_delta_theta = value_traits::zero();
     size_t max_i           = N;
-    
+
     for(size_t i = 0u;i<N;++i)
     {
       T const & theta_i = storage[i];
@@ -81,17 +81,17 @@ namespace tiny
         theta_max = theta_i;
       }
     }
-    
-    while(theta_min < value_traits::zero()) 
+
+    while(theta_min < value_traits::zero())
       theta_min += two_pi;
-    
-    while(theta_max < theta_min) 
+
+    while(theta_max < theta_min)
       theta_max += two_pi;
-    
+
     assert( theta_min <= theta_max || !"compute_contiguous_angle_interval(): invalid interval");
   }
-  
-  
+
+
 } // namespace tiny
 
 //TINY_COMPUTE_CONTIGUOUS_ANGLE_INTERVAL_H

@@ -10,16 +10,16 @@ namespace sparse
 {
   /**
   * @file
-  * The point of these functions are to compute a column-block product, using information on how 
+  * The point of these functions are to compute a column-block product, using information on how
   * the columns are distributed.
   */
-  
+
   /**
-   * Column product between the ith column of lhs with the rhs block where a 
-   * matrix that has the same form of the transposed of the compressed row 
+   * Column product between the ith column of lhs with the rhs block where a
+   * matrix that has the same form of the transposed of the compressed row
    * matrix is known.
    * res += lhs_column * rhs
-   */  
+   */
   template <typename B1, typename B2, typename B3, typename B4>
   inline void column_prod(
                      CompressedRowMatrix<B1> const& lhs
@@ -31,10 +31,10 @@ namespace sparse
   {
     assert( ( (lhs.ncols() == lhsT.nrows()) && (lhs.nrows() == lhsT.ncols()) ) || !"lhsT must have the same form as lhs transposed");
 
-    // The kth column in lhs is the kth row in lhsT. We wish to find the columns 
+    // The kth column in lhs is the kth row in lhsT. We wish to find the columns
     // in lhsT that are the rows in lhs
     typedef typename CompressedRowMatrix<B2>::const_row_iterator const_row_iterator;
-    
+
     const_row_iterator iter = lhsT.row_begin(column);
     const_row_iterator last = lhsT.row_end(column);
     for (; iter != last; ++iter)
@@ -45,12 +45,12 @@ namespace sparse
   }
 
   /**
-   * Column product between the ith column of lhs with the rhs block where a 
-   * matrix that has the same form of the transposed of the compressed row 
+   * Column product between the ith column of lhs with the rhs block where a
+   * matrix that has the same form of the transposed of the compressed row
    * matrix is known. The result is a CompressedVector, and it is assumed
    * that it is initialized with the correct size.
    * res += lhs_column * rhs
-   */ 
+   */
   template <typename B1, typename B2, typename B3, typename B4, typename VC>
   inline void column_prod(
     CompressedRowMatrix<B1> const& lhs
@@ -62,7 +62,7 @@ namespace sparse
   {
     assert( ( (lhs.ncols() == lhsT.nrows()) && (lhs.nrows() == lhsT.ncols()) ) || !"lhsT must have the same form as lhs transposed");
 
-    // The kth column in lhs is the kth row in lhsT. We wish to find the columns 
+    // The kth column in lhs is the kth row in lhsT. We wish to find the columns
     // in lhsT that are the rows in lhs
     typedef typename CompressedRowMatrix<B2>::const_row_iterator const_row_iterator;
     const_row_iterator iter = lhsT.row_begin(column);
@@ -77,4 +77,4 @@ namespace sparse
 } // namespace sparse
 
 // SPARSE_COLUMN_PROD_BLAS2_H
-#endif 
+#endif

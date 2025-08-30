@@ -152,7 +152,7 @@ namespace kdop
 
     return length < VT::infinity();
   }
-  
+
 }// namespace kdop
 
 // KDOP_RAYCAST_H

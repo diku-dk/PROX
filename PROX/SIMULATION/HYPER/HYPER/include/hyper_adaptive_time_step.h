@@ -206,7 +206,7 @@ namespace hyper
           // Impossible to schrink more, we have to give up and accept the accuracy
           if( body.m_adaptive_dt == params.adaptive_min_dt())
             break;
-          
+
         }while( accuracy(A,B) > params.adaptive_halving_tolerance() );
 
         copy(A,body);
@@ -216,7 +216,7 @@ namespace hyper
 
       util::Log logging;
       logging << "hyper::adaptive_time_step(): " << "Adaptive: accepted dt = " << body.m_adaptive_dt << util::Log::newline();
-      
+
       dt_left -= body.m_adaptive_dt;
     }
   }

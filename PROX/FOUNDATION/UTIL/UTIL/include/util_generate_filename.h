@@ -26,7 +26,7 @@ namespace util
     return filename.str();
   }
 
-  
+
 } // namespace util
 
 // UTIL_GENERATE_FILENAME_H

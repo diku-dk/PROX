@@ -4,7 +4,7 @@
 
 namespace big
 {
-  
+
   template<typename T>
   void  compute_jacobian(
                          ublas::compressed_matrix<T> const & A
@@ -13,14 +13,14 @@ namespace big
                          )
   {
     using std::min;
-    
+
     size_t const m = A.size1();
     size_t const n = A.size2();
-    
+
     J.resize(m,n,false);
-    
+
     size_t const row_end = A.filled1() - 1;
-    
+
     for (size_t i = 0u; i < row_end; ++ i)
     {
       if(bitmask(i) == IN_NON_ACTIVE)
@@ -40,20 +40,20 @@ namespace big
       }
     }
   }
-  
+
   template
   void  compute_jacobian<float>(
                                 ublas::compressed_matrix<float> const & A
                                 , ublas::vector<size_t> const & bitmask
                                 , ublas::compressed_matrix<float>  & J
                                 );
-  
+
   template
   void  compute_jacobian<double>(
                                  ublas::compressed_matrix<double> const & A
                                  , ublas::vector<size_t> const & bitmask
                                  , ublas::compressed_matrix<double>  & J
                                  );
-  
-  
+
+
 } // namespace big

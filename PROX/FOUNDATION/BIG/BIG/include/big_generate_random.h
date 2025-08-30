@@ -8,7 +8,7 @@
 
 namespace big
 {
-  
+
   /**
    * Generate Random Matrix.
    * This function is a convenience function that is usefull
@@ -25,15 +25,15 @@ namespace big
   {
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
-    
+
     Random<value_type> value(value_traits::zero(),value_traits::one());
-    
+
     assert( m>0         || !"generate_random(): m was out of range");
     assert( n>0         || !"generate_random(): n was out of range");
-    
+
     A.resize(m,n,false);
     A.clear();
-    
+
     for(size_t i=0;i<A.size1();++i)
     {
       for(size_t j=0;j<A.size2();++j)
@@ -45,8 +45,8 @@ namespace big
       }
     }
   }
-  
-  
+
+
   /**
    * Generate Random Vector.
    * This function is a convenience function that is usefull
@@ -61,22 +61,22 @@ namespace big
   inline void generate_random( size_t const & n,  ublas::vector<value_type> & v  )
   {
     typedef big::ValueTraits<value_type> value_traits;
-    
+
     Random<value_type> value(value_traits::zero(),value_traits::one());
-    
+
     assert( n>0         || !"generate_random(): n was out of range");
-    
+
     v.resize(n,false);
     v.clear();
-    
+
     for(size_t i=0;i<n;++i)
     {
       v(i) = value();
       assert( is_number( v(i) ) || !"generate_random(): not a number encountered");
     }
   }
-  
-  
+
+
 } // end of namespace big
 
 // BIG_GENERATE_RANDOM_H

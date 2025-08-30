@@ -333,7 +333,7 @@ namespace gl3
         default:
         {
           util::Log logging;
-          
+
           logging << "FramebufferObject::unattach(): Unknown attached resource type" << util::Log::newline();
         }
 
@@ -531,7 +531,7 @@ namespace gl3
       glGetIntegerv( GL_MAX_COLOR_ATTACHMENTS, &max_attach );
       return max_attach;
     }
-    
+
     /**
      * Disable FBO.
      * Disable all FBO rendering and return to traditional, windowing-system controlled framebuffer.
@@ -541,9 +541,9 @@ namespace gl3
     {
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-    
+
   };
-  
+
 }//namespace gl3
 
 //GL3_FRAME_BUFFER_OBJECT_H

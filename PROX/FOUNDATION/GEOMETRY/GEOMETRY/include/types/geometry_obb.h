@@ -5,7 +5,7 @@
 
 #include <cassert>
 
-namespace geometry 
+namespace geometry
 {
 
   /**
@@ -16,21 +16,21 @@ namespace geometry
   class OBB
   {
   public:
-    
+
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;
     typedef typename MT::matrix3x3_type  M;
     typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
-    
+
   protected:
-    
+
     V m_center;
     Q m_orientation;
     V m_half_extent;
-    
+
   public:
-    
+
     V const & center()      const   { return this->m_center; }
     Q const & orientation() const   { return this->m_orientation; }
     V const & half_extent() const   { return this->m_half_extent; }
@@ -39,7 +39,7 @@ namespace geometry
     V       & half_extent()         { return this->m_half_extent; }
 
   public:
-    
+
     OBB()
     : m_center( V::zero() )
     , m_orientation( Q::identity() )
@@ -69,7 +69,7 @@ namespace geometry
     }
 
   };
-  
+
   template<typename MT>
   inline OBB<MT> make_obb(
                typename MT::vector3_type const & center

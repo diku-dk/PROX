@@ -24,4 +24,4 @@
 #include <sparse_conjugate_gradient.h>
 
 // SPARSE_SPARSE_H
-#endif 
+#endif

@@ -12,7 +12,7 @@ namespace big
 {
   namespace detail
   {
-    
+
     /**
      * Hypotenuse.
      *
@@ -26,20 +26,20 @@ namespace big
     {
       using std::fabs;
       using std::sqrt;
-      
+
       T const zero = boost::numeric_cast<T>( 0.0 );
       T const one  = boost::numeric_cast<T>( 1.0 );
-      
+
       if (a == zero)
         return fabs(b);
       else
       {
         T const c = b/a;
-        
+
         return fabs(a) * sqrt(one + c*c);
       }
     }
-    
+
     /**
      * Compute Singular Value Decomposition of a matrix.
      *
@@ -76,59 +76,59 @@ namespace big
       using std::min;
       using std::pow;
       using std::sqrt;
-      
+
       typedef typename ME::value_type                        value_type;
       typedef ublas::matrix<value_type>                      matrix_type;
       typedef ublas::vector<typename ME::value_type>         vector_type;
-      
+
       value_type const zero = boost::numeric_cast< value_type >( 0.0 );
       value_type const one  = boost::numeric_cast< value_type >( 1.0 );
       value_type const two  = boost::numeric_cast< value_type >( 2.0 );
       value_type const eps  = boost::numeric_cast<value_type>( pow( 2.0, -52.0 ) );
-      
+
       //--- SVD decomposition  : A = U S VT : Dimensions: mxn =  mxn  nxn   nxn
       int const m = static_cast<int>( AE().size1() );
       int const n = static_cast<int>( AE().size2() );
-      
+
       if(m<1)
         throw std::invalid_argument("svd(): A did not have any rows?");
       if(n<1)
         throw std::invalid_argument("svd(): A did not have any columns?");
-      
+
       matrix_type A;
       vector_type e;
       vector_type work;
-      
+
       int const nu = min(m,n);
-      
+
       e.resize(n);
       work.resize( m );
       A.resize( m, n );
       U.resize(  m, nu );
       s.resize(  min(m+1,n) );
       V.resize( n,n);
-      
+
       A = AE();
       U.clear();
       s.clear();
       V.clear();
       e.clear();
       work.clear();
-      
+
       int const wantu = 1;  					/* boolean */
       int const wantv = 1;  					/* boolean */
-      
+
       // Reduce A to bidiagonal form, storing the diagonal elements
       // in s and the super-diagonal elements in e.
-      
+
       int const nct = min( m-1, n);
       int const nrt = max( 0, min( n-2, m ) );
-      
+
       for (int k = 0; k < max(nct,nrt); ++k)
       {
         if (k < nct)
         {
-          
+
           // Compute the transformation for the k-th column and
           // place the k-th diagonal in s(k).
           // Compute 2-norm of k-th column without under/overflow.
@@ -137,7 +137,7 @@ namespace big
           {
             s(k) = detail::hypot(  s(k), A(i,k) );
           }
-          
+
           if (s(k) != zero)
           {
             if (A(k,k) < zero)
@@ -150,36 +150,36 @@ namespace big
             }
             A(k,k) += one;
           }
-          
+
           s(k) = -s(k);
         }
-        
+
         for (int j = k+1; j < n; ++j)
         {
           if ( (k < nct) && (s(k) != zero) )
           {
             // Apply the transformation.
             value_type t = zero;
-            
+
             for (int i = k; i < m; ++i)
             {
               t += A(i,k) * A(i,j);
             }
-            
+
             t = - t / A(k,k);
-            
+
             for (int i = k; i < m; ++i)
             {
               A(i,j) += t * A(i,k);
             }
           }
-          
+
           // Place the k-th row of A into e for the
           // subsequent calculation of the row transformation.
           e(j) = A(k,j);
         }
-        
-        
+
+
         if ( wantu & (k < nct) )
         {
           // Place the transformation in U for subsequent back
@@ -189,47 +189,47 @@ namespace big
             U(i,k) = A(i,k);
           }
         }
-        
-        
+
+
         if (k < nrt)
         {
           // Compute the k-th row transformation and place the
           // k-th super-diagonal in e(k).
           // Compute 2-norm without under/overflow.
-          
+
           e(k) = zero;
-          
+
           for (int i = k+1; i < n; ++i)
           {
             e(k) = detail::hypot( e(k), e(i) );
           }
-          
+
           if ( e(k) != zero )
           {
             if ( e(k+1) < zero )
             {
               e(k) = -e(k);
             }
-            
+
             for (int i = k+1; i < n; ++i)
             {
               e(i) /= e(k);
             }
-            
+
             e(k+1) += one;
           }
-          
+
           e(k) = -e(k);
-          
+
           if ( (k+1 < m) & (e(k) != zero))
           {
             // Apply the transformation.
-            
+
             for (int i = k+1; i < m; ++i)
             {
               work(i) = zero;
             }
-            
+
             for (int j = k+1; j < n; ++j)
             {
               for (int i = k+1; i < m; ++i)
@@ -237,7 +237,7 @@ namespace big
                 work(i) += e(j) * A(i,j);
               }
             }
-            
+
             for (int j = k+1; j < n; ++j)
             {
               value_type  t = - e(j) / e(k+1);
@@ -251,7 +251,7 @@ namespace big
           {
             // Place the transformation in V for subsequent
             // back multiplication.
-            
+
             for (int i = k+1; i < n; ++i)
             {
               V(i,k) = e(i);
@@ -259,30 +259,30 @@ namespace big
           }
         }
       }
-      
+
       // Set up the final bidiagonal matrix or order p.
-      
+
       int p = min( n, m+1 );
-      
+
       if (nct < n)
       {
         s(nct) = A(nct,nct);
       }
-      
+
       if (m < p)
       {
         s(p-1) = zero;
       }
-      
+
       if (nrt+1 < p)
       {
         e(nrt) = A(nrt,p-1);
       }
-      
+
       e(p-1) = zero;
-      
+
       // If required, generate U.
-      
+
       if (wantu)
       {
         for (int j = nct; j < nu; ++j)
@@ -293,7 +293,7 @@ namespace big
           }
           U(j,j) = one;
         }
-        
+
         for (int k = nct-1; k >= 0; --k)
         {
           if (s(k) != zero)
@@ -301,32 +301,32 @@ namespace big
             for (int j = k+1; j < nu; ++j)
             {
               value_type t = zero;
-              
+
               for (int i = k; i < m; ++i)
               {
                 t += U(i,k) * U(i,j);
               }
-              
+
               t = -t / U(k,k);
-              
+
               for (int i = k; i < m; ++i)
               {
                 U(i,j) += t * U(i,k);
               }
             }
-            
+
             for (int i = k; i < m; ++i )
             {
               U(i,k) = -U(i,k);
             }
-            
+
             U(k,k) = one + U(k,k);
-            
+
             for (int i = 0; i < k-1; ++i)
             {
               U(i,k) = zero;
             }
-            
+
           }
           else
           {
@@ -338,9 +338,9 @@ namespace big
           }
         }
       }
-      
+
       // If required, generate V.
-      
+
       if (wantv)
       {
         for (int k = n-1; k >= 0; --k)
@@ -350,21 +350,21 @@ namespace big
             for (int j = k+1; j < nu; ++j)
             {
               value_type t = zero;
-              
+
               for (int i = k+1; i < n; ++i)
               {
                 t += V(i,k) * V(i,j);
               }
-              
+
               t = - t / V(k+1,k);
-              
+
               for (int i = k+1; i < n; ++i)
               {
                 V(i,j) += t * V(i,k);
               }
             }
           }
-          
+
           for (int i = 0; i < n; ++i)
           {
             V(i,k) = zero;
@@ -372,28 +372,28 @@ namespace big
           V(k,k) = one;
         }
       }
-      
+
       // Main iteration loop for the singular values.
       int const pp        = p - 1;
       int       iteration = 0;
-      
+
       while (p > 0)
       {
         int k    = 0;
         int kase = 0;
-        
+
         // Here is where a test for too many iterations would go.
-        
+
         // This section of the program inspects for
         // negligible elements in the s and e arrays.  On
         // completion the variables kase and k are set as follows.
-        
+
         // kase = 1     if s(p) and e(k-1) are negligible and k<p
         // kase = 2     if s(k) is negligible and k<p
         // kase = 3     if e(k-1) is negligible, k<p, and
         //              s(k), ..., s(p) are not negligible (qr step).
         // kase = 4     if e(p-1) is negligible (convergence).
-        
+
         for (k = p-2; k >= -1; --k)
         {
           if (k == -1)
@@ -419,17 +419,17 @@ namespace big
             {
               break;
             }
-            
+
             value_type t =  (ks != p ? fabs( e(ks) ) : zero )  + (ks != k+1 ? fabs( e(ks-1) ) : zero);
-            
+
             if (fabs( s(ks)  ) <= eps*t)
             {
               s(ks) = zero;
               break;
             }
-            
+
           }
-          
+
           if (ks == k)
           {
             kase = 3;
@@ -445,26 +445,26 @@ namespace big
           }
         }
         ++k;
-        
+
         // Perform the task indicated by kase.
         switch (kase)
         {
-            
+
             // Deflate negligible s(p).
           case 1:
           {
             value_type f = e(p-2);
-            
+
             e(p-2) = zero;
-            
+
             for (int j = p-2; j >= k; --j)
             {
               value_type t  = hypot(  s(j), f);
               value_type cs = s(j) / t;
               value_type sn = f / t;
-              
+
               s(j) = t;
-              
+
               if (j != k)
               {
                 f      = -sn*e(j-1);
@@ -482,7 +482,7 @@ namespace big
             }
           }
             break;
-            
+
             // Split at negligible s(k).
           case 2:
           {
@@ -508,13 +508,13 @@ namespace big
             }
           }
             break;
-            
+
             // Perform one qr step.
           case 3:
           {
             // Calculate the shift.
             value_type scale = max(max(max(max(   fabs(s(p-1)),fabs(s(p-2))),fabs(e(p-2))), fabs(s(k))), fabs(e(k)));
-            
+
             value_type sp    = s(p-1) / scale;
             value_type spm1  = s(p-2) / scale;
             value_type epm1  = e(p-2) / scale;
@@ -534,7 +534,7 @@ namespace big
             }
             value_type f = (sk + sp)*(sk - sp) + shift;
             value_type g = sk*ek;
-            
+
             // Chase zeros.
             for (int j = k; j < p-1; ++j)
             {
@@ -566,7 +566,7 @@ namespace big
               s(j+1) = -sn*e(j) + cs*s(j+1);
               g      = sn*e(j+1);
               e(j+1) = cs*e(j+1);
-              if (wantu && (j < m-1)) 
+              if (wantu && (j < m-1))
               {
                 for (int i = 0; i < m; ++i)
                 {
@@ -580,42 +580,42 @@ namespace big
             iteration = iteration + 1;
           }
             break;
-            
+
             // Convergence.
-          case 4: 
+          case 4:
           {
             // Make the singular values positive.
-            if (s(k) <= zero) 
+            if (s(k) <= zero)
             {
               s(k) = (s(k) < zero ? -s(k) : zero);
-              if (wantv) 
+              if (wantv)
               {
-                for (int i = 0; i <= pp; ++i) 
+                for (int i = 0; i <= pp; ++i)
                 {
                   V(i,k) = -V(i,k);
                 }
               }
             }
             // Order the singular values.
-            while (k < pp) 
+            while (k < pp)
             {
-              if (s(k) >= s(k+1)) 
+              if (s(k) >= s(k+1))
               {
                 break;
               }
               value_type t = s(k);
               s(k)   = s(k+1);
               s(k+1) = t;
-              if (wantv && (k < n-1)) 
+              if (wantv && (k < n-1))
               {
-                for (int i = 0; i < n; ++i) 
+                for (int i = 0; i < n; ++i)
                 {
                   t        = V(i,k+1);
                   V(i,k+1) = V(i,k);
                   V(i,k)   = t;
                 }
               }
-              if (wantu && (k < m-1)) 
+              if (wantu && (k < m-1))
               {
                 for (int i = 0; i < m; ++i)
                 {
@@ -633,10 +633,10 @@ namespace big
         }
       }
     }
-    
+
   } // namespace detail
-  
-  
+
+
 } // namespace big
 
 // BIG_SVD_IMPL1_H

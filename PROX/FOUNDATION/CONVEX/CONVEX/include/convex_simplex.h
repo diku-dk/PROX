@@ -173,7 +173,7 @@ namespace convex
     assert( ((bit_A & bit_C) == 0) || !"get_used_indices(): Bit A and Bit C was the same");
     assert( ((bit_B & bit_C) == 0) || !"get_used_indices(): Bit B and Bit C was the same");
     assert(  idx_B < idx_C         || !"get_used_indices(): idx B should be smaller than idx C");
-    
+
   }
 
   /**
@@ -401,69 +401,69 @@ namespace convex
   inline bool is_degenerate_point( V const & p, Simplex<V> const & S)
   {
     typedef typename V::real_type T;
-    
+
     T const precision = tiny::machine_precision<T>();
     int used_bit = 1;
-    
+
     for(size_t i = 0u; i < 4u; ++i)
     {
-      
+
       // 2011-11-12 Kenny: Just an idea, but points should be at least collision envelope apart otherwise this will just result in sliver and thin tetrahedra lying inside the collision envelope?
-      
+
       //check point versus point
       if( (S.m_bitmask & used_bit) && (tiny::inner_prod(p-S.m_v[i],p-S.m_v[i]) < precision) )
         return true;
       used_bit <<= 1;
     }
-    
+
     T dist;
     V normal;
     V p1,p2,p3,pp1,pp2,p2p1,p3p1;
-    
+
     int bit_A = 0;
     int bit_B = 0;
     int bit_C = 0;
     size_t idx_A = 0u;
     size_t idx_B = 0u;
     size_t idx_C = 0u;
-    
+
     switch (dimension(S))
     {///use bitmask
       case 2://simplex is a line
-        
+
         get_used_indices(S.m_bitmask, idx_A, bit_A, idx_B, bit_B);
-        
+
         p1 = S.m_v[idx_A];
         p2 = S.m_v[idx_B];
-        
+
         pp1  = p - p1;
         pp2  = p - p2;
         dist = tiny::norm(tiny::cross(pp1,pp2))/tiny::norm(p2p1); // according to http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-        
+
         if (dist < precision) // 2011-11-16 Sarah: maybe make collision envelope the threshold instead
           return true;
-        
+
         break;
       case 3://simplex is a triangle, check if new point lies in the plane of the triangle
-        
+
         get_used_indices(S.m_bitmask, idx_A, bit_A, idx_B, bit_B, idx_C, bit_C);
-        
+
         p1 = S.m_v[idx_A];
         p2 = S.m_v[idx_B];
         p3 = S.m_v[idx_C];
-        
+
         p2p1   = p2 - p1;
         p3p1   = p3 - p1;
         pp1    = p  - p1;
         normal = tiny::cross(p2p1, p3p1);// 2011-11-15 Sarah: double check that this is the right order...
         dist   = fabs(tiny::inner_prod(tiny::unit(normal), pp1));
-        
+
         if (dist < precision) // 2011-11-16 Sarah: maybe make collision envelope the threshold instead
           return true;
       default:
         break;
     }
-    
+
     return false;
   }
 
@@ -485,25 +485,25 @@ namespace convex
   inline void add_point_to_simplex( V const & p, V const & p_a, V const & p_b , Simplex<V> & S)
   {
     typedef typename V::value_traits   VT;
-    
+
     size_t free_idx  = 0u;
     int free_bit = 1;
-    
+
     // Loop until we find a free bit, that is a bit in the simplex bitmask that is set low.
     while(S.m_bitmask & free_bit)
     {
       ++free_idx;
       free_bit <<= 1;
     }
-    
+
     if( free_idx >= 4u )
       throw std::logic_error("Simplex did not have any empty entries");
-    
+
     S.m_a[free_idx] = p_a;
     S.m_b[free_idx] = p_b;
     S.m_v[free_idx] = p;
     S.m_w[free_idx] = VT::zero();
-    
+
     // Update bitmask to reflect that the free bit is no longer free
     S.m_bitmask |= free_bit;
   }
@@ -520,7 +520,7 @@ namespace convex
   inline size_t dimension(Simplex<V> const & S)
   {
     size_t size = 0u;
-    
+
     if( S.m_bitmask & 1 )
       ++size;
     if( S.m_bitmask & 2 )

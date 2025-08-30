@@ -3,7 +3,7 @@
 
 namespace big
 {
-  
+
   /**
    * Absolute Convergence Test Function.
    *
@@ -19,7 +19,7 @@ namespace big
                             T const & f
                             , T const & tolerance
                             );
-  
+
 } // namespace big
 
 // BIG_ABSOLUTE_CONVERGENCE_H

@@ -191,25 +191,25 @@ namespace rigid_body
 
       gl3::Shader  vs = gl3::make_shader_from_file(vertex_shader_filename, gl3::Shader::vertex_shader);
       gl3::Shader  fs = gl3::make_shader_from_file(fragment_shader_filename, gl3::Shader::fragment_shader);
-      
+
       gl3::Program program = gl3::make_program(vs,fs);
-      
+
       program.use();
-      
+
       program.set_uniform("min_x", min_x);
       program.set_uniform("min_y", min_y);
       program.set_uniform("min_z", min_z);
       program.set_uniform("max_x", max_x);
       program.set_uniform("max_y", max_y);
       program.set_uniform("max_z", max_z);
-      
+
       draw_texture(program, texture, x, y, width, height);
-      
+
       vs.clear();
       fs.clear();
       program.clear();
     }
-    
+
   }//namespace gui
 }//namespace rigid_body
 

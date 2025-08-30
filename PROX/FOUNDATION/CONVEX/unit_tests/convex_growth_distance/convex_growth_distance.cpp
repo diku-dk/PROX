@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(growth_distance_capsule_and_sphere)
   BOOST_CHECK_CLOSE(p_B(1), 0.0, 0.01);
   BOOST_CHECK_CLOSE(p_B(2), 1.75, 1.0);
 
-  
+
   //--- sphere is separated along y-axis at bottom-shere cap of capsule --------
   X_B.T() = V::make(.5,2,0);
 
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(growth_distance_cylinders)
   BOOST_CHECK_CLOSE(p_A(0), 1.5, 1.0);
   BOOST_CHECK_SMALL(p_A(1), 0.001);
   BOOST_CHECK_CLOSE(p_A(2), 2.0, 0.01);
-  
+
   BOOST_CHECK_CLOSE(p_B(0), 1.5, 1.0);
   BOOST_CHECK_SMALL(p_B(1), 0.01);
   BOOST_CHECK_CLOSE(p_B(2), 2.0, 0.01);
@@ -446,7 +446,7 @@ BOOST_AUTO_TEST_CASE(growth_distance_box_box_compile_test)
 
   X_A.T() = V::make(0,-1.0,0);
   X_B.T() = V::make(0,2,0);
-  
+
   convex::growth_distance<M>(
                              X_A
                              , & A
@@ -459,11 +459,11 @@ BOOST_AUTO_TEST_CASE(growth_distance_box_box_compile_test)
                              , epsilon
                              , 100u
                              );
-  
-  
+
+
   X_A.T() = V::make(0,-1.0,0);
   X_B.T() = V::make(0,0.9,0);
-  
+
   convex::growth_distance<M>(
                              X_A
                              , & A

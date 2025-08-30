@@ -72,15 +72,15 @@ namespace soft_body
 
         program.set_uniform( "color", object->m_red, object->m_green, object->m_blue );
         program.set_uniform( "model_view_matrix", model_view_matrix);
-        
+
         aabb_geometry.m_solid_vao.bind();
         aabb_geometry.m_vbo.draw();
         aabb_geometry.m_solid_vao.unbind();
       }
-      
+
       program.stop();
     }
-    
+
   }//namespace gui
 }//namespace soft_body
 

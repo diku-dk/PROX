@@ -19,17 +19,17 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
 		T      const stone_density	= get_material_density<MT>(mat_info, "Stone");
 		size_t const mid		      	= get_material_id<MT>(mat_info, "Stone");
-    
+
     GeometryHandle<MT> sphere_handle = create_geometry_handle_sphere<MT>( engine, sphere_radius );
-    
+
     T x = VT::one();
     T y = VT::one();
     T z = VT::one();
     T const offset = sphere_radius * (spheres - 1);
-    
+
     for (size_t i = 0; i < spheres; ++i)
     {
       x = VT::two()*i*sphere_radius - offset;
@@ -42,13 +42,13 @@ namespace procedural
 
           V const T_b2m = sphere_handle.Tb2m();
           Q const Q_b2m = sphere_handle.Qb2m();
-          
+
           V const T_m2l = V::make( x, y, z );
           Q const Q_m2l = Q::Ru( - VT::pi_half(), V::i() );
-          
+
           V const T_l2w = position;
           Q const Q_l2w = orientation;
-          
+
           V T_b2w;
           Q Q_b2w;
 
@@ -74,9 +74,9 @@ namespace procedural
       }
     }
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_sphere_cube<MTf>(
                              content::API *  engine

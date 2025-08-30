@@ -311,7 +311,7 @@ namespace util
     }
 
   public:
-    
+
     static Monitor * get_monitor(std::string const & name)
     {
       std::string const decorated_name = prefix() + name;
@@ -321,7 +321,7 @@ namespace util
       return &(*Profiling::get_monitors_instance())[decorated_name];
     }
 
-    
+
     static TimerMonitor * get_timer_monitor(std::string const & name)
     {
       std::string const decorated_name = prefix() + name;
@@ -357,9 +357,9 @@ namespace util
 
       counters().clear();
     }
-    
+
   };
-  
+
 }//namespace util
 
 // UTIL_PROFILING_H

@@ -33,7 +33,7 @@ namespace mesh_array
       m_V2T.clear();
       m_offset.clear();
     }
-    
+
   };
 
   namespace details
@@ -166,23 +166,23 @@ namespace mesh_array
 
 
     info.m_V2T.resize( N );
-    
+
     for ( size_t idx = 0u; idx < T; ++idx)
     {
       size_t const i  = mesh.edge(idx).i();
       size_t const j  = mesh.edge(idx).j();
-      
+
       info.m_V2T[ idx*3     ].first = i;
       info.m_V2T[ idx*3 + 1 ].first = j;
-      
+
       info.m_V2T[ idx*3     ].second = idx;
       info.m_V2T[ idx*3 + 1 ].second = idx;
     }
-    
+
     std::sort( info.m_V2T.begin(), info.m_V2T.end() );
     details::scan_for_start_offset(V,info);
     details::skip_isolated_nodes(V,info);
-    
+
   }
 
 }// namespace mesh_array

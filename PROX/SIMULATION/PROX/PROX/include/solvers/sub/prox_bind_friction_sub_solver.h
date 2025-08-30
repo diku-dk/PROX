@@ -21,31 +21,31 @@ namespace prox
 {
   /**
    * A friction sub solver function pointer binder.
-   */  
+   */
   template<typename T>
   class FrictionSubSolverBinder
   : public FrictionSubSolver<T>
   {
   public:
-    
+
     typedef void func_type(T const &,T const &,T const &,T const &,T const &,T const &,T const &,T &,T &,T &);
-    
+
     func_type * m_solver;
-    
+
   public:
-    
+
     FrictionSubSolverBinder()
     : m_solver(0)
     {
     }
-    
+
     FrictionSubSolverBinder(func_type * solver)
     : m_solver(solver)
     {
     }
-    
+
   public:
-    
+
     void operator()(
                     T const & z_s
                     , T const & z_t
@@ -60,15 +60,15 @@ namespace prox
                     ) const
     {
       assert( this->m_solver || !"FrictonSubSolverBinder(): sub solver was null");
-      
+
       this->m_solver(z_s,z_t,z_tau,mu_s,mu_t,mu_tau,lambda_n,lambda_s,lambda_t,lambda_tau);
     }
-    
+
   };
-    
+
   /**
    *
-   */     
+   */
   template<typename T>
   inline FrictionSubSolverBinder<T> bind_friction_solver( friction_sub_solver_type const & type )
   {
@@ -108,10 +108,10 @@ namespace prox
         assert(!"bind_friction_solver(): unknown friction solver type");
         break;
     };
-    
+
     return FrictionSubSolverBinder<T>();
   }
-  
+
 } //namespace prox
 
 // PROX_BIND_FRICTION_SUB_SOLVER_H

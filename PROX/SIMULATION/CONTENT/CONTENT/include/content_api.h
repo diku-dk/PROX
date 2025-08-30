@@ -9,12 +9,12 @@
 
 namespace content
 {
-  
+
   /**
    * This unique default value that is used as a return value whenever something is not specified.
    */
   size_t const UNDEFINED = 0xFFFFFFFFu;
-  
+
   /**
    * Physics API Interface Class.
    * The interface defines a generic protocol for communicating
@@ -26,12 +26,12 @@ namespace content
   , public Profiling
     {
     public:
-      
+
       API(){}
       virtual ~API(){}
-      
+
     public:
-      
+
       /**
        * Simualte forward until requested specified simulated time has been simulated.
        *
@@ -77,9 +77,9 @@ namespace content
                             , float & hit_z
                             , float & distance
                             ) = 0;
-      
+
     };
-  
+
 }// namespace content
 
 // CONTENT_API_H

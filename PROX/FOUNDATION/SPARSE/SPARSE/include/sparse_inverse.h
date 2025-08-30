@@ -18,8 +18,8 @@ namespace sparse
     for( ; b != end; ++b)
       inverse( (*b) );
 	}
-  
+
 } // namespace sparse
 
 // SPARSE_INV_H
-#endif 
+#endif

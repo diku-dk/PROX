@@ -3,29 +3,29 @@
 
 namespace geometry
 {
-  
+
   template<typename V>
   class Line
   {
   protected:
-    
+
     V m_point;
     V m_direction;
-    
+
   public:
-    
+
     V       & point()           { return this->m_point;      }
     V       & direction()       { return this->m_direction;  }
     V const & point()     const { return this->m_point;      }
     V const & direction() const { return this->m_direction;  }
-    
+
   public:
-    
+
     Line()
     : m_point()
     , m_direction()
     {}
-    
+
     Line(V const & point, V const & direction)
     : m_point(point)
     , m_direction( unit( direction) )
@@ -45,7 +45,7 @@ namespace geometry
       }
       return *this;
     }
-  
+
   };
 
   struct FROM_POINTS {};

@@ -1,11 +1,11 @@
-INCLUDE_DIRECTORIES( 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include 
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include 
+INCLUDE_DIRECTORIES(
+  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/GEOMETRY/GEOMETRY/include
+  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
   ${Boost_INCLUDE_DIRS}
   )
 
 ADD_EXECUTABLE(
-  unit_geometry_interval 
+  unit_geometry_interval
   geometry_interval.cpp
   )
 
@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES(
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
 
-ADD_TEST( 
+ADD_TEST(
   unit_geometry_interval
   unit_geometry_interval
   )

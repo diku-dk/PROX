@@ -12,7 +12,7 @@ namespace content
       if( name.size() == 0)
       {
         name = "geometry" + util::to_string(idx);
-      }            
+      }
       return name;
     }
 
@@ -22,17 +22,17 @@ namespace content
       if( name.size() == 0)
       {
         name = "body" + util::to_string(idx);
-      }            
+      }
       return name;
     }
-    
+
     std::string get_material_name(size_t const & idx, Cache & data)
     {
       std::string name = data.output()->get_material_name( idx );
       if( name.size() == 0)
       {
         name = "material" + util::to_string(idx);
-      }            
+      }
       return name;
     }
 
@@ -70,7 +70,7 @@ namespace content
      *     some_element->SetAttribute( name , value );
      *   }
      * }
-     * 
+     *
      * TiXmlDocument doc;
      * content::make_doc(doc, data);
      * embed_extra_xml( ... , doc);
@@ -79,7 +79,7 @@ namespace content
      * @endcode
      */
     bool make_doc(TiXmlDocument & doc, Cache & data)
-    {      
+    {
       TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
       TiXmlElement * physics  = new TiXmlElement( "physics" );
       doc.LinkEndChild(decl);
@@ -87,7 +87,7 @@ namespace content
       TiXmlElement * params        = new TiXmlElement( "params" );
       TiXmlElement * materials     = new TiXmlElement( "materials" );
       TiXmlElement * configuration = new TiXmlElement( "configuration" );
-      TiXmlElement * channels      = new TiXmlElement( "channels" );        
+      TiXmlElement * channels      = new TiXmlElement( "channels" );
       physics->LinkEndChild(params);
       physics->LinkEndChild(materials);
       physics->LinkEndChild(configuration);
@@ -118,35 +118,35 @@ namespace content
           TiXmlElement * material = new TiXmlElement( "material" );
           material->SetAttribute( "name", name );
           materials->LinkEndChild(material);
-          
+
         }
       }
       // add properties to materials
       {
-        TiXmlElement * properties      = new TiXmlElement( "properties" );        
+        TiXmlElement * properties      = new TiXmlElement( "properties" );
         materials->LinkEndChild(properties);
-        
+
         size_t N = data.output()->get_number_of_properties();
         std::vector<size_t> first_indices;
         std::vector<size_t> second_indices;
         first_indices.resize( N );
         second_indices.resize( N );
-        data.output()->get_material_property_indices( &first_indices[0], &second_indices[0] ); 
-        
+        data.output()->get_material_property_indices( &first_indices[0], &second_indices[0] );
+
         for(size_t i = 0;i<N;++i)
         {
           size_t      const first_idx   = first_indices[i];
           size_t      const second_idx  = second_indices[i];
           std::string const first_name  = get_material_name(  first_idx, data);
           std::string const second_name = get_material_name( second_idx, data);
-          
+
           TiXmlElement * property = new TiXmlElement( "property" );
           property->SetAttribute( "materials", "("+ first_name+","+second_name+")" );
-          
+
           float e     = data.output()->get_restitution( first_idx, second_idx );
           property->SetDoubleAttribute( "restitution", e );
           properties->LinkEndChild(property);
-          
+
           TiXmlElement * friction = new TiXmlElement( "friction" );
           float mux   = 0.0f;
           float muy   = 0.0f;
@@ -156,7 +156,7 @@ namespace content
           friction->SetDoubleAttribute( "y", muy );
           friction->SetDoubleAttribute( "z", muz );
           property->LinkEndChild(friction);
-          
+
           size_t master_idx = data.output()->get_master(first_idx, second_idx);
 
           if(master_idx!=first_idx && master_idx!=second_idx)
@@ -169,7 +169,7 @@ namespace content
 
           std::string master_name = get_material_name( master_idx, data);
           property->SetAttribute( "master", master_name );
-            
+
           TiXmlElement * direction = new TiXmlElement( "direction" );
           float dirx   = 0.0f;
           float diry   = 0.0f;
@@ -181,13 +181,13 @@ namespace content
           property->LinkEndChild(direction);
 
         }
-        
+
       }
       // add geometries to configuration
       {
-        TiXmlElement * geometries = new TiXmlElement( "geometries" );        
+        TiXmlElement * geometries = new TiXmlElement( "geometries" );
         configuration->LinkEndChild(geometries);
-        
+
         size_t N = data.output()->get_number_of_geometries();
         std::vector<size_t> indices;
         indices.resize(N);
@@ -200,7 +200,7 @@ namespace content
           geometry->SetAttribute( "name", name );
           geometry->SetAttribute( "type", "collection" );   // 2009-12-29 kenny: currently only collections are supported!
           geometries->LinkEndChild(geometry);
-          
+
           size_t M = data.output()->get_number_of_boxes( geometry_idx );
           for(size_t box_no = 0; box_no <M; ++box_no)
           {
@@ -209,30 +209,30 @@ namespace content
             float depth  = 1.0f;
             data.output()->get_box_shape(geometry_idx, box_no, width,height, depth);
             TiXmlElement * box = new TiXmlElement( "box" );
-            box->SetDoubleAttribute( "width", width ); 
-            box->SetDoubleAttribute( "height", height ); 
-            box->SetDoubleAttribute( "depth", depth ); 
+            box->SetDoubleAttribute( "width", width );
+            box->SetDoubleAttribute( "height", height );
+            box->SetDoubleAttribute( "depth", depth );
             geometry->LinkEndChild(box);
             TiXmlElement * transform = new TiXmlElement( "transform" );
             float x  = 0.0f;
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_box_position(geometry_idx, box_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_box_orientation(geometry_idx, box_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
-            transform->SetDoubleAttribute( "qz", qz ); 
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
+            transform->SetDoubleAttribute( "qz", qz );
             box->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_capsules( geometry_idx );
           for(size_t cap_no = 0; cap_no <M; ++cap_no)
           {
@@ -240,30 +240,30 @@ namespace content
             float height = 1.0f;
             data.output()->get_capsule_shape(geometry_idx, cap_no, radius, height);
             TiXmlElement * capsule = new TiXmlElement( "capsule" );
-            capsule->SetDoubleAttribute( "radius", radius ); 
-            capsule->SetDoubleAttribute( "height", height ); 
+            capsule->SetDoubleAttribute( "radius", radius );
+            capsule->SetDoubleAttribute( "height", height );
             geometry->LinkEndChild(capsule);
             TiXmlElement * transform = new TiXmlElement( "transform" );
             float x  = 0.0f;
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_capsule_position(geometry_idx, cap_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
-            
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
+
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_capsule_orientation(geometry_idx, cap_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
-            transform->SetDoubleAttribute( "qz", qz );  
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
+            transform->SetDoubleAttribute( "qz", qz );
             capsule->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_cones( geometry_idx );
           for(size_t cone_no = 0; cone_no <M; ++cone_no)
           {
@@ -271,30 +271,30 @@ namespace content
             float height = 1.0f;
             data.output()->get_cone_shape(geometry_idx, cone_no, radius, height);
             TiXmlElement * cone = new TiXmlElement( "cone" );
-            cone->SetDoubleAttribute( "radius", radius ); 
-            cone->SetDoubleAttribute( "height", height ); 
+            cone->SetDoubleAttribute( "radius", radius );
+            cone->SetDoubleAttribute( "height", height );
             geometry->LinkEndChild(cone);
             TiXmlElement * transform = new TiXmlElement( "transform" );
             float x  = 0.0f;
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_cone_position(geometry_idx, cone_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
-            
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
+
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_cone_orientation(geometry_idx, cone_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
             transform->SetDoubleAttribute( "qz", qz );
             cone->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_convexes( geometry_idx );
           for(size_t convex_no = 0; convex_no <M; ++convex_no)
           {
@@ -318,22 +318,22 @@ namespace content
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_convex_position(geometry_idx, convex_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
-            
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
+
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_convex_orientation(geometry_idx, convex_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
             transform->SetDoubleAttribute( "qz", qz );
             convex->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_cylinders( geometry_idx );
           for(size_t cyl_no = 0; cyl_no <M; ++cyl_no)
           {
@@ -341,30 +341,30 @@ namespace content
             float height = 1.0f;
             data.output()->get_cylinder_shape(geometry_idx, cyl_no, radius, height);
             TiXmlElement * cylinder = new TiXmlElement( "cylinder" );
-            cylinder->SetDoubleAttribute( "radius", radius ); 
-            cylinder->SetDoubleAttribute( "height", height ); 
+            cylinder->SetDoubleAttribute( "radius", radius );
+            cylinder->SetDoubleAttribute( "height", height );
             geometry->LinkEndChild(cylinder);
             TiXmlElement * transform = new TiXmlElement( "transform" );
             float x  = 0.0f;
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_cylinder_position(geometry_idx, cyl_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
-            
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
+
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_cylinder_orientation(geometry_idx, cyl_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
             transform->SetDoubleAttribute( "qz", qz );
             cylinder->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_ellipsoids( geometry_idx );
           for(size_t ellip_no = 0; ellip_no <M; ++ellip_no)
           {
@@ -379,57 +379,57 @@ namespace content
             scale->SetDoubleAttribute("y", scaling_y);
             scale->SetDoubleAttribute("z", scaling_z);
             ellipsoid->LinkEndChild(scale);
-            
+
             TiXmlElement * transform = new TiXmlElement( "transform" );
             float x  = 0.0f;
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_ellipsoid_position(geometry_idx, ellip_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_ellipsoid_orientation(geometry_idx, ellip_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
             transform->SetDoubleAttribute( "qz", qz );
             ellipsoid->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_spheres( geometry_idx );
           for(size_t sphere_no = 0; sphere_no <M; ++sphere_no)
           {
             TiXmlElement * sphere = new TiXmlElement( "sphere" );
             float radius  = 1.0f;
-            data.output()->get_sphere_shape(geometry_idx, sphere_no, radius);            
+            data.output()->get_sphere_shape(geometry_idx, sphere_no, radius);
             sphere->SetDoubleAttribute("radius", radius);
             geometry->LinkEndChild(sphere);
-            
+
             TiXmlElement * transform = new TiXmlElement( "transform" );
             float x  = 0.0f;
             float y  = 0.0f;
             float z  = 0.0f;
             data.output()->get_sphere_position(geometry_idx, sphere_no, x, y, z);
-            transform->SetDoubleAttribute( "x", x ); 
-            transform->SetDoubleAttribute( "y", y ); 
-            transform->SetDoubleAttribute( "z", z ); 
-            
+            transform->SetDoubleAttribute( "x", x );
+            transform->SetDoubleAttribute( "y", y );
+            transform->SetDoubleAttribute( "z", z );
+
             float qs  = 0.0f;
             float qx  = 0.0f;
             float qy  = 0.0f;
             float qz  = 0.0f;
             data.output()->get_sphere_orientation(geometry_idx, sphere_no, qs, qx, qy, qz);
-            transform->SetDoubleAttribute( "qs", qs ); 
-            transform->SetDoubleAttribute( "qx", qx ); 
-            transform->SetDoubleAttribute( "qy", qy ); 
+            transform->SetDoubleAttribute( "qs", qs );
+            transform->SetDoubleAttribute( "qx", qx );
+            transform->SetDoubleAttribute( "qy", qy );
             transform->SetDoubleAttribute( "qz", qz );
             sphere->LinkEndChild(transform);
           }
-          
+
           M = data.output()->get_number_of_tetrameshes( geometry_idx );
           for(size_t tetramesh_no = 0; tetramesh_no <M; ++tetramesh_no)
           {
@@ -453,7 +453,7 @@ namespace content
             coordinates.resize(3*N);
 
             data.output()->get_tetramesh_shape(geometry_idx, &vertices[0], &tetrahedra[0], &coordinates[0] );
-            
+
             for(size_t n =0u ; n < N ; ++n)
             {
               TiXmlElement * vertex = new TiXmlElement( "vertex" );
@@ -491,9 +491,9 @@ namespace content
       }
       // add forces to configuration
       {
-        TiXmlElement * forces = new TiXmlElement( "forces" );        
+        TiXmlElement * forces = new TiXmlElement( "forces" );
         configuration->LinkEndChild(forces);
-        
+
         // Add gravity
         TiXmlElement * gravity = new TiXmlElement( "gravity" );
         float x = 0.0f;
@@ -707,9 +707,9 @@ namespace content
       }
       // Add objects to configuration
       {
-        TiXmlElement * objects = new TiXmlElement( "objects" );        
+        TiXmlElement * objects = new TiXmlElement( "objects" );
         configuration->LinkEndChild(objects);
-        
+
         size_t N = data.output()->get_number_of_rigid_bodies();
         std::vector<size_t> indices;
         indices.resize(N);
@@ -722,7 +722,7 @@ namespace content
           object->SetAttribute( "name", name );
           object->SetAttribute( "type", "rigid" );   // 2009-12-29 kenny: currently only rigid objects are supported!
           objects->LinkEndChild(object);
-          
+
           // add state element
           TiXmlElement * state = new TiXmlElement( "state" );
 
@@ -730,7 +730,7 @@ namespace content
           if(material_idx != content::UNDEFINED)
           {
             std::string material_name = get_material_name( material_idx, data);
-            state->SetAttribute("material", material_name);            
+            state->SetAttribute("material", material_name);
           }
           bool active   = data.output()->get_rigid_body_active(object_idx);
           bool fixed    = data.output()->get_rigid_body_fixed(object_idx);
@@ -750,7 +750,7 @@ namespace content
           }
 
           object->LinkEndChild(state);
-          
+
           TiXmlElement * transform = new TiXmlElement( "transform" );
           float x = 0.0f;
           float y = 0.0f;
@@ -760,7 +760,7 @@ namespace content
           float qx = 0.0f;
           float qy = 0.0f;
           float qz = 0.0f;
-          data.output()->get_rigid_body_orientation(object_idx, qs, qx, qy, qz);          
+          data.output()->get_rigid_body_orientation(object_idx, qs, qx, qy, qz);
           transform->SetDoubleAttribute("x", x);
           transform->SetDoubleAttribute("y", y);
           transform->SetDoubleAttribute("z", z);
@@ -769,7 +769,7 @@ namespace content
           transform->SetDoubleAttribute("qy", qy);
           transform->SetDoubleAttribute("qz", qz);
           state->LinkEndChild(transform);
-          
+
           TiXmlElement * motion = new TiXmlElement( "motion" );
           float vx = 0.0f;
           float vy = 0.0f;
@@ -786,12 +786,12 @@ namespace content
           motion->SetDoubleAttribute("wy", wy);
           motion->SetDoubleAttribute("wz", wz);
           state->LinkEndChild(motion);
-          
+
           TiXmlElement * mass = new TiXmlElement( "mass" );
           float M = data.output()->get_rigid_body_mass(object_idx);
           mass->SetDoubleAttribute("value", M);
           state->LinkEndChild(mass);
-          
+
           TiXmlElement * inertia = new TiXmlElement( "inertia" );
           float Ixx = 0.0f;
           float Iyy = 0.0f;
@@ -801,11 +801,11 @@ namespace content
           inertia->SetDoubleAttribute("yy", Iyy);
           inertia->SetDoubleAttribute("zz", Izz);
           state->LinkEndChild(inertia);
-          
+
           // add collision shape element
           size_t geometry_idx = data.output()->get_rigid_body_collision_geometry( object_idx );
           std::string geometry_name = get_geometry_name( geometry_idx, data);
-          TiXmlElement * shape = new TiXmlElement( "shape" );        
+          TiXmlElement * shape = new TiXmlElement( "shape" );
           shape->SetAttribute( "ref", geometry_name );
           object->LinkEndChild(shape);
 
@@ -833,31 +833,31 @@ namespace content
               forces->LinkEndChild(apply);
             }
           }
-                    
+
         }
       }
       return true;
     }
-    
+
   }// namespace details
-  
+
   bool xml_write( std::string const & filename, content::Output * output )
   {
     // build document
     TiXmlDocument doc;
     details::Cache data( output );
-    
+
     if (! content::details::make_doc(doc, data) )
       return false;
-    
+
     // write the document
 #ifdef TIXML_USE_STL
     doc.SaveFile(filename);
 #else
     doc.SaveFile(filename.c_str());
 #endif
-    
+
     return true;
   }
-  
+
 }// namespace content

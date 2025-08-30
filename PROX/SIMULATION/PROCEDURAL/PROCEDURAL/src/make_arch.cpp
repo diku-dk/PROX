@@ -23,12 +23,12 @@ namespace procedural
 	{
     using std::cos;
     using std::sin;
-    
+
     typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
 		T      const delta_theta         = VT::pi()/arch_slices;
 		T      const pillar_stone_width  = pillar_height / pillar_segments;
 		T      const pillar_stone_height = r_outer - r_inner;
@@ -37,7 +37,7 @@ namespace procedural
 		size_t const mid                 = get_material_id<MT>(mat_info, "Stone");
 		
 		std::vector<V>  arch_vertices(8u);
-    
+
 		compute_arch_stone_vertices<MT>(
                                       delta_theta
                                     , stone_depth
@@ -152,9 +152,9 @@ namespace procedural
                         );
 		}
 	}
-  
+
   typedef tiny::MathTypes<float>  MTf;
-  
+
   template
 	void make_arch<MTf>(
                         content::API *  engine
@@ -168,6 +168,6 @@ namespace procedural
                         , size_t const & pillar_segments
                         , MaterialInfo<MTf::real_type> mat_info
                         );
-  
-  
+
+
 } //namespace procedural

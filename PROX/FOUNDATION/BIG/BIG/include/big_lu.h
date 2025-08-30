@@ -20,9 +20,9 @@ namespace atlas = boost::numeric::bindings::atlas;
 
 namespace big
 {
-  
+
 #ifdef USE_ATLAS
-  
+
   /**
    * Solve Linear System using LU decomposition.
    *
@@ -37,29 +37,29 @@ namespace big
   {
     typedef typename matrix_type::value_type value_type;
     typedef typename matrix_type::size_type  size_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("A was empty");
-    
+
     if(b.size() != A.size1())
       throw std::invalid_argument("The size of b must be the same as the number of rows in A");
-    
+
     if(x.size() != A.size2())
       throw std::invalid_argument("The size of x must be the same as the number of columns in A");
-    
+
     size_type m = A.size1();
     size_type n = A.size2();
-    
+
     ublas::matrix<value_type, ublas::column_major> Acpy( m, n );
     Acpy.assign(A);
     ublas::matrix<value_type, ublas::column_major> B( n, 1 );
     ublas::column( B, 0 ) = b;
     atlas::gesv( Acpy, B );
     x = ublas::column( B, 0 );
-    
+
     return true;
   }
-  
+
   /**
    * Invert Matrix using LU factorization.
    *
@@ -78,19 +78,19 @@ namespace big
   inline bool lu_atlas_invert( ublas::matrix<T>  const & A, ublas::matrix<T> & invA)
   {
     typedef typename ublas::matrix<T>::size_type  size_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("A was empty");
-    
+
     size_type m = A.size1();
     size_type n = A.size2();
-    
+
     invA.resize(m,n,false);
     invA.assign( A );
-    
+
     std::vector<int> ipiv (n);   // pivot vector
     int rc = atlas::lu_factor (invA, ipiv);  // alias for getrf()
-    
+
     // FRom http://www.netlib.org/lapack/single/sgetrf.f
     //
     // INFO    (output) INTEGER
@@ -103,13 +103,13 @@ namespace big
     //
     if(rc!=0)
       return false;
-    
+
     atlas::lu_invert (invA, ipiv);  // alias for getri()
     return true;
   }
-  
+
 #else
-  
+
   /**
    * Solve Linear System using LU decomposition.
    *
@@ -123,16 +123,16 @@ namespace big
   inline bool lu(matrix_type const & A, vector_type & x, vector_type const & b)
   {
     typedef typename boost::numeric::ublas::permutation_matrix<size_t>		pmatrix_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("A was empty");
-    
+
     if(b.size() != A.size1())
       throw std::invalid_argument("The size of b must be the same as the number of rows in A");
-    
+
     if(x.size() != A.size2())
       throw std::invalid_argument("The size of x must be the same as the number of columns in A");
-    
+
     matrix_type tmp(A);
     pmatrix_type pm(tmp.size1());
     typename matrix_type::size_type const res = lu_factorize(tmp,pm);
@@ -142,7 +142,7 @@ namespace big
     lu_substitute(tmp, pm, x);
     return true;
   }
-  
+
   /**
    * LU matrix inversion.
    * This is a modified version of
@@ -161,16 +161,16 @@ namespace big
     typedef typename matrix_type::value_type real_type;
     typedef typename boost::numeric::ublas::permutation_matrix<size_t>		pmatrix_type;
     typedef typename boost::numeric::ublas::identity_matrix<real_type>	  identity_matrix_type;
-    
+
     if(A.size1() <= 0 || A.size2() <= 0)
       throw std::invalid_argument("A was empty");
-    
+
     size_type const m = A.size1();
     size_type const n = A.size2();
     invA.resize(m,n,false);
-    
+
     matrix_type tmp(A);
-    
+
     pmatrix_type pm(tmp.size1());
     typename matrix_type::size_type const res = lu_factorize(tmp,pm);
     if( res != 0 )
@@ -179,9 +179,9 @@ namespace big
     lu_substitute(tmp, pm, invA);
     return true;
   }
-  
+
 #endif
-  
+
 } // namespace big
 
 // BIG_LU_H

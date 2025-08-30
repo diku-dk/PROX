@@ -21,7 +21,7 @@ namespace narrow
     inline void dispatch_tetramesh_tetramesh( System<M> const & system, std::vector< TestPair<M> > & test_pairs )
     {
       assert( ! test_pairs.empty() || !"dispatch_tetramesh_tetramesh : test_pairs are empty" );
-             
+
       typedef typename M::vector3_type                     V;
       typedef typename M::real_type                        T;
       typedef typename std::vector<TestPair<M> >::iterator pair_iterator;
@@ -69,7 +69,7 @@ namespace narrow
                                           , kdop::dikucl::gproximity()
                                           , system.params().open_cl_platform()
                                           , system.params().open_cl_device());
-          
+
         } else {
 
           kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
@@ -80,20 +80,20 @@ namespace narrow
         }
       } else {
 #endif // HAS_DIKUCL
-          
+
         // use regular tandem traversal if DIKUCL is not available or should not be used
         kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
                                         , kdop::sequential()
                                         );
-        
+
 #ifdef HAS_DIKUCL
       }
 #endif // HAS_DIKUCL
-      
+
     }
 
   } // namespace details
-  
+
 } //namespace narrow
 
 // NARROW_TETRAMESH_TETRAMESH_H

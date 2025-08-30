@@ -1,7 +1,7 @@
 #include <content_channels.h>
 
 namespace content
-{  
+{
   //--------------------------------------------------------------------------------		
   void ChannelStorage::clear()
   {
@@ -11,10 +11,10 @@ namespace content
   size_t ChannelStorage::create_channel( size_t const & id, std::string const & name )
   {
     Channel C;
-    
+
     C.m_id   = id;
     C.m_name = name;
-    
+
     m_channels.push_back(C);
     return m_channels.size()-1u;
   }
@@ -71,7 +71,7 @@ namespace content
                                         , size_t const & key_index
                                         , float & x
                                         , float & y
-                                        , float & z 
+                                        , float & z
                                         ) const
   {
     x = m_channels[channel_index].m_keys[key_index].m_x;
@@ -83,8 +83,8 @@ namespace content
                                            , size_t const & key_index
                                            , float & qs
                                            , float & qx
-                                           , float & qy 
-                                           , float & qz 
+                                           , float & qy
+                                           , float & qz
                                            ) const
   {
     qs = m_channels[channel_index].m_keys[key_index].m_qs;
@@ -93,5 +93,5 @@ namespace content
     qz = m_channels[channel_index].m_keys[key_index].m_qz;
   }
   //--------------------------------------------------------------------------------		
-  
+
 }// namespace content

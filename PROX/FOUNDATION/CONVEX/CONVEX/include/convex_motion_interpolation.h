@@ -5,7 +5,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Motion Interpolation.
    * This function tries to determine whether two objects have impacted
@@ -58,15 +58,15 @@ namespace convex
   {
     typedef typename M::vector3_type   V;
     typedef typename M::value_traits   VT;
-    
+
     V v_A;
     V w_A;
     V v_B;
     V w_B;
-    
+
     compute_velocities<M>( X_A_from, X_A_to, VT::one(), v_A, w_A );
     compute_velocities<M>( X_B_from, X_B_to, VT::one(), v_B, w_B );
-    
+
     return conservative_advancement<M>(
                                        X_A_from
                                        , v_A

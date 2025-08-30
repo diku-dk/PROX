@@ -68,7 +68,7 @@ namespace procedural
         util::Log logging;
 
         logging << "parese_grain_data_file(): could not open file = " << filename << util::Log::newline();
-        
+
         return;
       }
 

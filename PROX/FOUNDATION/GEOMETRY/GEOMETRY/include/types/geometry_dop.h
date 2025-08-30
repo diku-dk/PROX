@@ -12,34 +12,34 @@
 
 namespace geometry
 {
-  
+
   template<typename T, size_t K>
   class DOP
   {
   protected:
-    
+
     Interval<T> m_slabs[K/2];
-    
+
   public:
-    
+
     Interval<T> const & operator()(size_t const & idx) const
     {
       assert( idx < (K/2) || !"DOP::operator(): idx was out of range");
-      
+
       return this->m_slabs[idx];
     }
-    
+
     Interval<T>       & operator()(size_t const & idx)
     {
       assert( idx < (K/2) || !"DOP::operator(): idx was out of range");
-      
+
       return this->m_slabs[idx];
     }
-    
+
     size_t size() const { return K; }
 
   public:
-    
+
     DOP()
     {}
 
@@ -54,22 +54,22 @@ namespace geometry
   {
     using std::min;
     using std::max;
-    
+
     typedef typename V::real_type T;
-    
+
     DOP<T,N*2> kdop;
-    
+
     for(size_t k =  0u; k < N; ++k)
     {
       for(iterator p = begin; p!=end; ++p)
       {
         T const projection = inner_prod( D(k), (*p) );
-        
+
         kdop(k).lower() = min( kdop(k).lower(), projection );
         kdop(k).upper() = max( kdop(k).upper(), projection );
       }
     }
-    
+
     return kdop;
   }
 

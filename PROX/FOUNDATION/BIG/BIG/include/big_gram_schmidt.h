@@ -30,27 +30,27 @@ namespace big
   inline void gram_schmidt(  matrix_type & A  )
   {
     using namespace ublas;
-    
+
     using std::fabs;
-    
+
     typedef typename matrix_type::value_type        value_type;
     typedef typename matrix_type::size_type         size_type;
     typedef          big::ValueTraits<value_type>   value_traits;
-    
+
     size_type  const & m       = A.size1();
     size_type  const & n       = A.size2();
-    
+
     assert( m>0         || !"gram_schmidt(): m was out of range");
     assert( n>0         || !"gram_schmidt(): n was out of range");
     //        assert( m==n        || !"gram_schmidt(): A was not square");
-    
+
     for (size_type k = 0; k < n; ++k )
     {
       value_type lgth = ublas::norm_2( column(A,k) );
-      
+
       if( ! (fabs(lgth)> value_traits::zero()) )
         return;
-      
+
       column(A,k) = column(A,k) / lgth;
       for (size_type  j = k+1; j < n; ++j )
       {
@@ -58,9 +58,9 @@ namespace big
         column(A,j) -= dot*column(A,k);
       }
     }
-    
+
   }
-  
+
 } // end of namespace big
 
 // BIG_GRAM_SCHMIDT_H

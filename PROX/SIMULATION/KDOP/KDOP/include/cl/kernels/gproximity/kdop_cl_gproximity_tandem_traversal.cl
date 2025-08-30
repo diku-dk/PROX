@@ -49,7 +49,7 @@ __kernel void do_tandem_traversal(
                                     global_work_queue_size);
         global_work_queue_size -= local_work_queue_size;
     }
-    
+
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
     if(local_work_queue_size == 0) {
@@ -69,7 +69,7 @@ __kernel void do_tandem_traversal(
     }
 
     barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
-    
+
     while(local_work_queue_size > 0) {
         WorkItem work_item;
         int n_active = min(__TRAVERSAL_THREADS, local_work_queue_size);
@@ -84,7 +84,7 @@ __kernel void do_tandem_traversal(
             local_work_queue_size -= n_active;
         }
         barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
-        
+
         if(can_work) {
             Node node_a = nodes[work_item.a];
             Node node_b = nodes[work_item.b];
@@ -169,7 +169,7 @@ __kernel void do_tandem_traversal(
                 }
             }
         }
-        
+
         barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
 
         if(local_work_queue_size >= __LOCAL_WORK_QUEUE_CAPACITY - __TRAVERSAL_THREADS ||
@@ -195,7 +195,7 @@ __kernel void do_tandem_traversal(
             break;
         }
     }
-    
+
     if(local_id == 0) {
         local_work_queue_size = min(local_work_queue_size, __LOCAL_WORK_QUEUE_CAPACITY);
         global_work_queues_counts[group_id] = local_work_queue_size + global_work_queue_size;

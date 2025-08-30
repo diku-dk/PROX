@@ -1,8 +1,8 @@
 #ifndef SPARSE_PROD_BLAS3_H
 #define SPARSE_PROD_BLAS3_H
 
-#include <sparsefwd.h>          
-#include <sparse_ambi_vector.h> 
+#include <sparsefwd.h>
+#include <sparse_ambi_vector.h>
 
 #include <cstring>  // for memset
 #include <cassert>
@@ -32,39 +32,39 @@ namespace sparse
     float const ratio_res           = std::min(ratio_lhs * avg_nnz_per_rhs_col, 1.f);
 
     res.resize(lhs.nrows(), rhs.ncols(), ratio_res*lhs.nrows()*rhs.ncols());
-    
+
     // tmp_row holds the currently computed row of C in sorted order
     detail::Ambi_vector<Block<M, N, T> > tmp_row(res.ncols());
-    
+
     tmp_row.init(ratio_res);
 
     const_row_iter_lhs lhs_row_iter;
     const_row_iter_lhs lhs_row_last;
     const_row_iter_rhs rhs_row_iter;
     const_row_iter_rhs rhs_row_last;
-    
+
     for (size_t i = 0; i < lhs.top_non_zero_row(); ++i)
     {
       tmp_row.zero_out();
-    
+
       lhs_row_iter = lhs.row_begin(i);
       lhs_row_last = lhs.row_end(i);
-      
+
       for (; lhs_row_iter != lhs_row_last; ++lhs_row_iter)
       {
         tmp_row.restart(); // set internal current pointer to start
 
         size_t const j = col(lhs_row_iter);
-        
+
         rhs_row_iter = rhs.row_begin(j);
         rhs_row_last = rhs.row_end(j);
-        
+
         for (; rhs_row_iter != rhs_row_last; ++rhs_row_iter)
         {
           prod(*lhs_row_iter, *rhs_row_iter, tmp_row(col(rhs_row_iter)));
         }
       }
-      
+
       typename detail::Ambi_vector<Block<M, N, T> >::Iterator it(tmp_row);
       for (; it; ++it)
       {
@@ -72,7 +72,7 @@ namespace sparse
       }
     }
 	}
-  
+
   template <typename B>
   inline void prod(
                      DiagonalMatrix<B> const & lhs
@@ -95,7 +95,7 @@ namespace sparse
     typename DiagonalMatrix<B>::const_iterator lhs_last = lhs.end();
     typename DiagonalMatrix<B>::const_iterator rhs_iter = rhs.begin();
     typename DiagonalMatrix<B>::iterator       res_iter = res.begin();
-    
+
     for (; lhs_iter != lhs_last; ++lhs_iter, ++rhs_iter, ++res_iter)
     {
       prod(*lhs_iter, *rhs_iter, *res_iter);
@@ -125,7 +125,7 @@ namespace sparse
       prod(*rhs_iter, temp, *res_iter);
     }
   }
-  
+
   /**
    * @warning not tested
    */
@@ -160,7 +160,7 @@ namespace sparse
     typename Crs_lhs::const_row_iterator lhs_iter;
     typename Crs_lhs::const_row_iterator lhs_last;
     typename Crs_res::row_iterator       res_iter;
-    
+
     for (size_t i = 0; i < lhs.top_non_zero_row(); ++i)
     {
       lhs_iter = lhs.row_begin(i);
@@ -182,10 +182,10 @@ namespace sparse
                    )
   {
     assert(lhs.ncols() == rhs.nrows() || !"number of lhs columns must be the same as number of right hand side rows");
-   
+
     typedef typename CompressedRowMatrix<B2>::accessor A;
     typedef CompressedRowMatrix<B2> BCR;
-  
+
     if (init)
     {
       memset(&res[0], 0, sizeof(B2)*res.size());
@@ -201,7 +201,7 @@ namespace sparse
     typename BCR::const_row_iterator rhs_iter;
     typename BCR::const_row_iterator rhs_last;
     typename BCR::row_iterator       res_iter;
-    
+
     for (size_t i = 0; i < rhs.top_non_zero_row(); ++i)
     {
       B1 const& b = lhs[i];
@@ -214,8 +214,8 @@ namespace sparse
       }
     }
   }
-  
+
 } // namespace sparse
 
 // SPARSE_PROD_BLAS3_H
-#endif 
+#endif

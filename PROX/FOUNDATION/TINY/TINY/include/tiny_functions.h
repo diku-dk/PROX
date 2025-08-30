@@ -77,7 +77,7 @@ namespace tiny
     template<typename T>
     inline T fac(unsigned long n)
     {
-      // TODO what about implicit type conversions? This could have been done more elegangtly using partial specialization  
+      // TODO what about implicit type conversions? This could have been done more elegangtly using partial specialization
       unsigned long val = 1;
       for(; n > 0; val *= n--);
       return T(val);

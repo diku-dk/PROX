@@ -95,12 +95,12 @@ namespace hyper
       //return (VT::one()/j)* tiny::prod(F, tiny::prod( this->S(F), tiny::trans(F) ) );
       return (VT::one()/j)* tiny::prod( this->P(F), tiny::trans(F) );
     }
-    
+
     std::string name() const
     {
       return "Corotational Elasticity";
     }
-    
+
   };
 
 }// namespace hyper

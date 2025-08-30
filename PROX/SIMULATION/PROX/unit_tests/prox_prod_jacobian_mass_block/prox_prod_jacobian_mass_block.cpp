@@ -25,28 +25,28 @@ BOOST_AUTO_TEST_CASE(mass_4x6_block_prod_test_case)
   prox::prod(jb,mb,jb_result);
 
   BOOST_CHECK_EQUAL( jb_result[0]  , -2  );
-  BOOST_CHECK_EQUAL( jb_result[6]  , -14 ); 
-  BOOST_CHECK_EQUAL( jb_result[12] , -26 ); 
+  BOOST_CHECK_EQUAL( jb_result[6]  , -14 );
+  BOOST_CHECK_EQUAL( jb_result[12] , -26 );
   BOOST_CHECK_EQUAL( jb_result[18] , -38 );
   BOOST_CHECK_EQUAL( jb_result[1]  , -4  );
-  BOOST_CHECK_EQUAL( jb_result[7]  , -16 ); 
-  BOOST_CHECK_EQUAL( jb_result[13] , -28 ); 
+  BOOST_CHECK_EQUAL( jb_result[7]  , -16 );
+  BOOST_CHECK_EQUAL( jb_result[13] , -28 );
   BOOST_CHECK_EQUAL( jb_result[19] , -40 );
   BOOST_CHECK_EQUAL( jb_result[2]  , -6  );
-  BOOST_CHECK_EQUAL( jb_result[8]  , -18 ); 
-  BOOST_CHECK_EQUAL( jb_result[14] , -30 ); 
+  BOOST_CHECK_EQUAL( jb_result[8]  , -18 );
+  BOOST_CHECK_EQUAL( jb_result[14] , -30 );
   BOOST_CHECK_EQUAL( jb_result[20] , -42 );
   BOOST_CHECK_EQUAL( jb_result[3]  , 32  );
-  BOOST_CHECK_EQUAL( jb_result[9]  , 68  ); 
-  BOOST_CHECK_EQUAL( jb_result[15] , 104 ); 
+  BOOST_CHECK_EQUAL( jb_result[9]  , 68  );
+  BOOST_CHECK_EQUAL( jb_result[15] , 104 );
   BOOST_CHECK_EQUAL( jb_result[21] , 140 );
   BOOST_CHECK_EQUAL( jb_result[4]  , 58  );
-  BOOST_CHECK_EQUAL( jb_result[10] , 124 ); 
-  BOOST_CHECK_EQUAL( jb_result[16] , 190 ); 
+  BOOST_CHECK_EQUAL( jb_result[10] , 124 );
+  BOOST_CHECK_EQUAL( jb_result[16] , 190 );
   BOOST_CHECK_EQUAL( jb_result[22] , 256 );
   BOOST_CHECK_EQUAL( jb_result[5]  , 73  );
-  BOOST_CHECK_EQUAL( jb_result[11] , 157 ); 
-  BOOST_CHECK_EQUAL( jb_result[17] , 241 ); 
+  BOOST_CHECK_EQUAL( jb_result[11] , 157 );
+  BOOST_CHECK_EQUAL( jb_result[17] , 241 );
   BOOST_CHECK_EQUAL( jb_result[23] , 325 );
 
 }

@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(interval)
   typedef tiny::MathTypes<float> MT;
   typedef MT::value_traits       VT;
   typedef MT::real_type          T;
-  
+
   {
     geometry::Interval<T> I;
 
@@ -27,20 +27,20 @@ BOOST_AUTO_TEST_CASE(interval)
   {
     geometry::Interval<T> A;
     geometry::Interval<T> B;
-    
+
     A.lower() = -2.0f;
     A.upper() = -1.0f;
     B.lower() =  1.0f;
     B.upper() =  2.0f;
-    
+
     BOOST_CHECK_EQUAL( A.lower(), -2.0f );
     BOOST_CHECK_EQUAL( A.upper(), -1.0f );
     BOOST_CHECK_EQUAL( B.lower(),  1.0f );
     BOOST_CHECK_EQUAL( B.upper(),  2.0f );
-    
+
     BOOST_CHECK( geometry::is_valid(A) == true );
     BOOST_CHECK( geometry::is_valid(B) == true );
-    
+
     BOOST_CHECK( geometry::overlap_interval_interval(A,B) == false);
     BOOST_CHECK( geometry::overlap_interval_interval(B,A) == false);
   }
@@ -49,17 +49,17 @@ BOOST_AUTO_TEST_CASE(interval)
   {
     geometry::Interval<T> A;
     geometry::Interval<T> B;
-    
+
     A.lower() = -2.0f;
     A.upper() =  1.0f;
     B.lower() = -1.0f;
     B.upper() =  2.0f;
-    
+
     BOOST_CHECK_EQUAL( A.lower(), -2.0f );
     BOOST_CHECK_EQUAL( A.upper(),  1.0f );
     BOOST_CHECK_EQUAL( B.lower(), -1.0f );
     BOOST_CHECK_EQUAL( B.upper(),  2.0f );
-    
+
     BOOST_CHECK( geometry::overlap_interval_interval(A,B) == true);
     BOOST_CHECK( geometry::overlap_interval_interval(B,A) == true);
   }
@@ -68,17 +68,17 @@ BOOST_AUTO_TEST_CASE(interval)
   {
     geometry::Interval<T> A;
     geometry::Interval<T> B;
-    
+
     A.lower() = -2.0f;
     A.upper() =  0.0f;
     B.lower() =  0.0f;
     B.upper() =  2.0f;
-    
+
     BOOST_CHECK_EQUAL( A.lower(), -2.0f );
     BOOST_CHECK_EQUAL( A.upper(),  0.0f );
     BOOST_CHECK_EQUAL( B.lower(),  0.0f );
     BOOST_CHECK_EQUAL( B.upper(),  2.0f );
-    
+
     BOOST_CHECK( geometry::overlap_interval_interval(A,B) == true);
     BOOST_CHECK( geometry::overlap_interval_interval(B,A) == true);
   }
@@ -87,17 +87,17 @@ BOOST_AUTO_TEST_CASE(interval)
   {
     geometry::Interval<T> A;
     geometry::Interval<T> B;
-    
+
     A.lower() = -2.0f;
     A.upper() =  0.0f;
     B.lower() = -2.0f;
     B.upper() =  0.0f;
-    
+
     BOOST_CHECK_EQUAL( A.lower(), -2.0f );
     BOOST_CHECK_EQUAL( A.upper(),  0.0f );
     BOOST_CHECK_EQUAL( B.lower(), -2.0f );
     BOOST_CHECK_EQUAL( B.upper(),  0.0f );
-    
+
     BOOST_CHECK( geometry::overlap_interval_interval(A,B) == true);
     BOOST_CHECK( geometry::overlap_interval_interval(B,A) == true);
   }
@@ -106,24 +106,24 @@ BOOST_AUTO_TEST_CASE(interval)
   {
     geometry::Interval<T> A;
     geometry::Interval<T> B;
-    
+
     A.lower() = -2.0f;
     A.upper() = -2.0f;
     B.lower() = -2.0f;
     B.upper() =  0.0f;
-    
+
     BOOST_CHECK_EQUAL( A.lower(), -2.0f );
     BOOST_CHECK_EQUAL( A.upper(), -2.0f );
     BOOST_CHECK_EQUAL( B.lower(), -2.0f );
     BOOST_CHECK_EQUAL( B.upper(),  0.0f );
-    
+
     BOOST_CHECK( geometry::overlap_interval_interval(A,B) == true);
     BOOST_CHECK( geometry::overlap_interval_interval(B,A) == true);
-    
+
     BOOST_CHECK( geometry::is_valid(A) == true );
-    
+
   }
-  
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();

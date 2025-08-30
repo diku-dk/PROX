@@ -178,4 +178,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_UPDATE_BOUNDING_VOLUMES_H
-#endif 
+#endif

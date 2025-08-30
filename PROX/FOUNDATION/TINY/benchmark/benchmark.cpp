@@ -4,7 +4,7 @@
 int main()
 {
   vector_benchmark::run<8>();
-  matrix_benchmark::run<6,6>();  
+  matrix_benchmark::run<6,6>();
   return 0;
 }
 

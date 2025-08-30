@@ -22,21 +22,21 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
   {
     vector3_type p = vector3_type::make(0.33, 0.33,  1.0);
-    real_type sign_p = 0.0; 
+    real_type sign_p = 0.0;
     sign_p = convex::signed_distance_to_triangle(p, a, b, c, q );
     BOOST_CHECK_CLOSE( sign_p, 1.0, 0.01 );
   }
 
   {
     vector3_type p = vector3_type::make(0.1, 0.1,  -1.0);
-    real_type sign_p = 0.0; 
+    real_type sign_p = 0.0;
     sign_p = convex::signed_distance_to_triangle(p, a, b, c, q );
     BOOST_CHECK_CLOSE( sign_p, -1.0, 0.01 );
   }
 
   {
     vector3_type p = vector3_type::make(0.1, 0.1,  0.0);
-    real_type sign_p = 10.0; 
+    real_type sign_p = 10.0;
     sign_p = convex::signed_distance_to_triangle(p, a, b, c, q );
     BOOST_CHECK_CLOSE( sign_p, 0.0, 0.01 );
   }

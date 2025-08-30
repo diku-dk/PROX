@@ -11,7 +11,7 @@ namespace sparse
     static B z(typename B::value_type(0));
     return z;
   }
-  
+
   template <typename B>
   inline B & volatile_zero_block()
   {
@@ -20,8 +20,8 @@ namespace sparse
     static B z(typename B::value_type(0));
     return z;
   }
-  
+
 } // namespace sparse
 
 // SPARSE_TRAITS_H
-#endif 
+#endif

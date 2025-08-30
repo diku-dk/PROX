@@ -13,8 +13,8 @@ namespace content
       size_t m_idx; ///< Index of the vertex
       float m_x;    ///< Coordinates of the vertex
       float m_y;
-      float m_z; 
-      
+      float m_z;
+
       Vertex()
       : m_idx(0u)
       , m_x(0.0f)
@@ -22,8 +22,8 @@ namespace content
       , m_z(0.0f)
       {}
     };
-        
-  }// namespace details  
+
+  }// namespace details
 }// namespace content
 
 // CONTENT_IO_VERTEX_H

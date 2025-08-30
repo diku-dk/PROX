@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(cylinder_test)
 
   {
     geometry::Cylinder<V> const A;
-    
+
     BOOST_CHECK( geometry::is_valid(A) == true );
 
     BOOST_CHECK_CLOSE(A.center()(0), 0.0, 0.01);

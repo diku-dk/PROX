@@ -184,14 +184,14 @@ namespace rigid_body
       int run()
       {
         using std::min;
-        
+
         T const frame_time = 1.0 / m_fps;   // The time between two frames
-        
-        
+
+
         while (m_time < m_total_time)
         {
           T const time_left = m_total_time - m_time;
-          
+
           {
             util::Log logging;
 
@@ -202,15 +202,15 @@ namespace rigid_body
 
           T const time_to_next_frame    = min(time_left, frame_time);
           T       time_left_to_simulate = time_to_next_frame;
-          
+
           while(time_left_to_simulate > VT::zero())
           {
             T const safe_time_step = min(m_time_step, time_left_to_simulate);
-            
+
             m_engine.simulate(safe_time_step);
             time_left_to_simulate = time_left_to_simulate - safe_time_step;
           }
-          
+
           m_time += time_to_next_frame;
 
           if (m_xml_record)
@@ -279,29 +279,29 @@ namespace rigid_body
       Application()
       {
       }
-      
+
       virtual ~Application()
       {
         clear();
       }
-      
+
     };
-    
+
   }// end of namespace cmd
 }// end of namespace rigid_body
 
 int main(int argc, char **argv)
 {
   rigid_body::cmd::Application app;
-  
+
   std::string cfg_file = "";
-  
+
   if (argv[1])
     cfg_file = argv[1];
   else
     cfg_file = "default.cfg";
-  
+
   app.load_config_file(cfg_file);
-  
+
   return app.run();
 }

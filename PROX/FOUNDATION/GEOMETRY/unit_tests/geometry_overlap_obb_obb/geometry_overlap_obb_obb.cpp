@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
 
     bool const test1 = geometry::overlap_obb_obb(obbA,obbB);
     bool const test2 = geometry::overlap_obb_obb(obbB,obbA);
-    
+
     BOOST_CHECK(!test1);
     BOOST_CHECK(!test2);
   }

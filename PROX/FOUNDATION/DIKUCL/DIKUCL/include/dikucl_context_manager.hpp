@@ -10,12 +10,12 @@
 #include <dikucl_device_manager.hpp>
 
 namespace dikucl {
-    
+
     namespace details {
-        
+
         /**
          * Callback for errors in a context, simply prints the error string.
-         * 
+         *
          * @param error_info error string
          * @param private_info implementation dependent binary data
          * @param cb size of private_info
@@ -28,15 +28,15 @@ namespace dikucl {
         {
             std::cerr << "OpenCL Error Information: " << error_info << std::endl;
         }
-        
+
     } // namespace details
-    
+
     class ContextHandle {
     public:
-        
+
         DeviceHandle device_handle;
         cl::Context context;
-                
+
         ContextHandle(
             DeviceHandle device_handle,
             cl::Context context) :
@@ -44,24 +44,24 @@ namespace dikucl {
             context(context)
         {
         }
-        
+
         friend bool operator<(const ContextHandle& ch1, const ContextHandle& ch2) {
             return ch1.device_handle < ch2.device_handle;
         }
-        
+
         friend bool operator>(const ContextHandle& ch1, const ContextHandle& ch2) {
             return ch1.device_handle > ch2.device_handle;
         }
-        
+
         friend bool operator==(const ContextHandle& ch1, const ContextHandle& ch2) {
             return ch1.device_handle == ch2.device_handle;
         }
-        
+
     };
 
     class ContextManager {
     private:
-        
+
         std::map< DeviceHandle, ContextHandle > contexts;
 
         ContextManager() {
@@ -69,7 +69,7 @@ namespace dikucl {
 
         ContextManager(ContextManager const&);
         void operator=(ContextManager const&);
-        
+
     public:
 
         static ContextManager& get_instance() {
@@ -84,11 +84,11 @@ namespace dikucl {
                 void (CL_CALLBACK * notifyFptr)(const char*, const void*, size_t, void*) = details::opencl_notify,
                 void* data = NULL) {
             cl_int error = CL_SUCCESS;
-            
+
             if(device_handle == NULL) {
                 return NULL;
             }
-            
+
             if(contexts.count(*device_handle) == 0) {
                 std::vector< cl::Device > device_vector(1, device_handle->device);
                 cl::Context context(device_vector, properties, notifyFptr, data, &error);
@@ -103,14 +103,14 @@ namespace dikucl {
                     return NULL;
                 }
             }
-            
+
             std::map< DeviceHandle, ContextHandle >::iterator it = contexts.find(*device_handle);
             if(it != contexts.end()) {
                 return &(it->second);
             }
             return NULL;
         }
-        
+
         void reset() {
             contexts.clear();
         }

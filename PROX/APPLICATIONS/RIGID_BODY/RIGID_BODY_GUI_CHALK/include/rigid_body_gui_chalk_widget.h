@@ -52,7 +52,7 @@ namespace rigid_body
 
         void save_screen(QString const & filename);
       };
-      
+
     }// end namespace chalk
   }// end namespace gui
 }// end namespace rigid_body

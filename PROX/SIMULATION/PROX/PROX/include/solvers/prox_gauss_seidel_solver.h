@@ -42,51 +42,51 @@ namespace prox
     typedef typename M::diagonal4x4_type    D4x4;
     typedef typename M::real_type           T;
     typedef typename M::value_traits        VT;
-    
+
     START_TIMER("solver");
-    
+
     size_t const K = J.nrows( ); // Number of blocks
 
     size_t abs_conv_in_iteration = 0u; //used for profiling, to record in what iteration we found absolute convergence
     size_t rel_conv_in_iteration = 0u; //used for profiling, to record in what iteration we found relative convergence
     size_t count_divergence      = 0u; //used for profiling, to record how many times we have discovered divergence
-    
+
     if( !params.use_warm_starting() )
     {
       lambda.resize( K );
     }
-    
+
     if( K == 0u )
       return;
-    
+
     V4 x;           // Solution iterates, separate from lambda to be able to roll back
-    
+
     x.resize( K );  // 2012-07-14 Sarah code review: x only gets initialized
                     // when using warm starting? but x(k) is used in either case
-    
+
     if( params.use_warm_starting() )
     {
       x = lambda;   // Only in case of warm-starting
     }
-    
+
     V4 residual;
     residual.resize( K );
-    
+
     T last_residual_norm = VT::infinity();    // Used to detect divergence.
-    
+
     D4x4 R;
     D4x4 nu;
-    
+
     strategy(J, WJT, R, nu );
-    
+
     V6 w;
     w.resize( J.ncols() );// what is in w???
-    
+
     T residual_norm;
-    
+
     B4x1 z_k(     VT::zero() );
     B4x1 delta_x( VT::zero() );
-        
+
     //--- Gauss--Seidel loops
     for(size_t iteration = 0u; iteration < params.max_iterations(); ++iteration )
     {
@@ -99,31 +99,31 @@ namespace prox
         B4x1       &  x_k     = x(k);
         delta_x               = x(k); // save old value
 
-        
+
         M::compute_z_k( x_k, w, R(k), J, b(k), z_k, k );
-        
+
         size_t const n   = 0u;
         size_t const s   = 1u;
         size_t const t   = 2u;
         size_t const tau = 3u;
-        
+
         //--- Solve lambda_n = prox_{R^+}( lambda_n - r (A lambda_n + b))
         normal_solver( z_k(n), x_k(n) );
-        
+
         //--- Solve lambda_f = prox_C( lambda_f - r (A lambda_f + b))
         friction_solver(z_k(s), z_k(t), z_k(tau), mu_k(s), mu_k(t), mu_k(tau), x_k(n), x_k(s), x_k(t), x_k(tau));
-        
+
         //--- delta_x = x_k_new - x_k_old (saved in delta_x)
         sparse::sub(x_k, delta_x, delta_x);
-        
+
         //--- Updating w, math_policy::update_w(WJT, J, delta_x, k, w);
         sparse::column_prod( WJT, J, delta_x, w, k);
       }
-      
+
       //--- compute the residual, residual = lambda^k - lambda^(k+1)
       sparse::sub(lambda, x, residual);
       residual_norm = M::compute_norm_inf( residual );
-      
+
       RECORD_VECTOR_PUSH("convergence", residual_norm );
 
       if( residual_norm < params.absolute_tolerance() )
@@ -140,7 +140,7 @@ namespace prox
 
         break;
       }
-      
+
       if( fabs(residual_norm-last_residual_norm) < params.relative_tolerance()*last_residual_norm )
       {
         util::Log logging;
@@ -154,7 +154,7 @@ namespace prox
 
         break;
       }
-      
+
       if( residual_norm > last_residual_norm)
       {
         util::Log logging;
@@ -178,13 +178,13 @@ namespace prox
       }
     }
     lambda = x;
- 
+
     RECORD("abs_conv",   abs_conv_in_iteration);
     RECORD("rel_conv",   rel_conv_in_iteration);
     RECORD("div_count",  count_divergence     );
     STOP_TIMER("solver");
   }
-  
+
 } //namespace prox
 
 // PROX_GAUSS_SEIDEL_SOLVER_H

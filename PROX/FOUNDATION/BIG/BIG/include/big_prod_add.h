@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Compute y += prod(A,x)
    *
@@ -21,7 +21,7 @@ namespace big
                 , boost::numeric::ublas::vector<T> const & x
                 , boost::numeric::ublas::vector<T>       & y
                 );
-  
+
   /**
    * Compute y += prod(A,x)*s
    *
@@ -39,7 +39,7 @@ namespace big
                 , T const & s
                 , boost::numeric::ublas::vector<T>       & y
                 );
-  
+
 } // end namespace big
 // BIG_PROD_ADD_H
 #endif

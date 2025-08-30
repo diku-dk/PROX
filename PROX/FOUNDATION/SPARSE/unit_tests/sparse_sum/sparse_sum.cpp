@@ -10,19 +10,19 @@
 BOOST_AUTO_TEST_SUITE(SPARSE);
 
 BOOST_AUTO_TEST_CASE(sum_test)
-{    
-  
+{
+
   typedef sparse::Block<4,1,float>             block_type;
   typedef sparse::Vector<block_type>           vector_type;
-  
-  vector_type a; 
-  vector_type b; 
-  vector_type c; 
-  
+
+  vector_type a;
+  vector_type b;
+  vector_type c;
+
   a.resize(2);
   b.resize(2);
   c.resize(2);
-  
+
   a(0)(0) = 1.0f;
   a(0)(1) = 1.0f;
   a(0)(2) = 1.0f;
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(sum_test)
   a(1)(1) = 1.0f;
   a(1)(2) = 1.0f;
   a(1)(3) = 1.0f;
-  
+
   b(0)(0) = 0.0f;
   b(0)(1) = 1.0f;
   b(0)(2) = 2.0f;
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(sum_test)
   b(1)(1) = 5.0f;
   b(1)(2) = 6.0f;
   b(1)(3) = 7.0f;
-  
+
   c(0)(0) = 0.0f;
   c(0)(1) = 0.0f;
   c(0)(2) = 0.0f;
@@ -49,9 +49,9 @@ BOOST_AUTO_TEST_CASE(sum_test)
   c(1)(1) = 0.0f;
   c(1)(2) = 0.0f;
   c(1)(3) = 0.0f;
-  
+
   sparse::add(a,b,c);
-  
+
   BOOST_CHECK( c(0)(0) == 1.0f );
   BOOST_CHECK( c(0)(1) == 2.0f );
   BOOST_CHECK( c(0)(2) == 3.0f );
@@ -63,13 +63,13 @@ BOOST_AUTO_TEST_CASE(sum_test)
 }
 
 BOOST_AUTO_TEST_CASE(compressed_vector_sum_test)
-{    
-  
+{
+
   typedef sparse::Block<4,1,float>             block_type;
   typedef sparse::CompressedVector<block_type> compressed_vector_type;
   typedef sparse::Vector<block_type>           vector_type;
-  
-  vector_type c; 
+
+  vector_type c;
 
   c.resize(2);
   c(0)(0) = 1.0f;
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(compressed_vector_sum_test)
   u(1)(1) = 8.0f;
   u(1)(2) = 7.0f;
   u(1)(3) = 6.0f;
-  
+
   sparse::add_same_dimension(v,u);
   BOOST_CHECK( u.size() == 1u );
   BOOST_CHECK( u.nrows() == 2u );
@@ -139,13 +139,13 @@ BOOST_AUTO_TEST_CASE(compressed_vector_sum_test)
 }
 
 BOOST_AUTO_TEST_CASE(fast_compressed_vector_sum_test)
-{    
-  
+{
+
   typedef sparse::Block<4,1,float>             block_type;
   typedef sparse::CompressedVector<block_type,sparse::detail::FastVectorCompressor> fast_compressed_vector_type;
   typedef sparse::Vector<block_type>           vector_type;
-  
-  vector_type c; 
+
+  vector_type c;
 
   c.resize(2);
   c(0)(0) = 1.0f;
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(fast_compressed_vector_sum_test)
   u(1)(1) = 8.0f;
   u(1)(2) = 7.0f;
   u(1)(3) = 6.0f;
-  
+
   sparse::add_same_dimension(v,u);
   BOOST_CHECK( u.size() == 1u );
   BOOST_CHECK( u.nrows() == 2u );

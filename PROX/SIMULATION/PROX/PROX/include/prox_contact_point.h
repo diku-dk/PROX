@@ -10,25 +10,25 @@
 
 namespace prox
 {
-  
+
   template< typename M >
   class ContactPoint
   {
   public:
-    
+
     typedef typename M::real_type       real_type;
     typedef typename M::vector3_type    vector3_type;
     typedef          RigidBody<M>       body_type;
-    
+
   protected:
-    
+
     vector3_type     m_position;
     vector3_type     m_normal;
     real_type        m_depth;
-    
+
     body_type *      m_body_i;
     body_type *      m_body_j;
-    
+
   public:
 
     ContactPoint()
@@ -38,14 +38,14 @@ namespace prox
     , m_body_i(0)
     , m_body_j(0)
     {}
-    
+
     virtual ~ContactPoint(){}
-    
+
     ContactPoint (ContactPoint const & point)
     {
       *this = point;
     }
-    
+
     ContactPoint & operator= (ContactPoint const & point)
     {
       assert(point.m_body_i  || !"ContactPoint::operator=(): body i pointer was null ");
@@ -61,13 +61,13 @@ namespace prox
       }
       return *this;
     }
-    
+
     vector3_type const & get_position() const  {  return this->m_position; }
     vector3_type const & get_normal()   const  {  return this->m_normal;   }
     real_type    const & get_depth()    const  {  return this->m_depth;    }
     body_type    const * get_body_i()    const {  return this->m_body_i;   }
     body_type    const * get_body_j()    const {  return this->m_body_j;   }
-    
+
     void set_position(vector3_type const & p)  {  this->m_position = p;    }
     void set_normal(vector3_type const & n)    {  this->m_normal = n;      }
     void set_depth(real_type const & d)        {  this->m_depth = d;       }
@@ -192,4 +192,4 @@ namespace prox
 }// namespace prox
 
 // PROX_CONTACT_POINT_H
-#endif 
+#endif

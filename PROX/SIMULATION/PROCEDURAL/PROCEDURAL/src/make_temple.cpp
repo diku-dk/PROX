@@ -5,7 +5,7 @@
 
 namespace procedural
 {
-  
+
   template<typename MT>
 	void make_temple(  content::API * engine
                    , typename MT::vector3_type const & position
@@ -21,7 +21,7 @@ namespace procedural
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
-    
+
 		using std::tan;
 		using std::atan;
     using std::floor;
@@ -34,7 +34,7 @@ namespace procedural
 		
 		T const temple_width	= (VT::two()*num_pillars_x-VT::one())*pillar_width;
 		T const temple_depth	= (VT::two()*num_pillars_z-VT::one())*pillar_width;
-    
+
 		T const beam_spacing_ratio = VT::numeric_cast( 0.7f );
 		T const spacing            = (temple_depth - 4*pillar_width) / floor(beam_spacing_ratio*num_pillars_z);
 		T const pillar_height	     = temple_height*pillar_ratio;
@@ -102,7 +102,7 @@ namespace procedural
                             , mid
                             , stone_density
                             );
-      
+
 			if ((num_pillars_z >= 4 ) && (num_pillars_x>2))
       {
 				/// foundation for inner pillars
@@ -125,7 +125,7 @@ namespace procedural
 		} /// bottom planes
 		
 		{ /// outer pillars
-      
+
 			/// front and back pillar row
 			for (size_t i = 0u; i < num_pillars_x; ++i)
 			{
@@ -139,7 +139,7 @@ namespace procedural
 				P          = rotate( orientation , V::make( xb, outer_pillar_y, zb)) + position;
 				make_greek_pillar<MT>(engine, P, orientation, pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 			}
-      
+
 			/// side row pillars
 			for (size_t i = 1u; i < (num_pillars_z-1); ++i)
 			{
@@ -186,7 +186,7 @@ namespace procedural
 						
 						make_greek_pillar<MT>(engine, P, orientation ,pillar_width, pillar_height, pillar_width, pillar_segments, 12u, mat_info );
 					}
-          
+
 					T const xstart	= -VT::half()*temple_width + VT::half()*pillar_width;
 					T y				= gable_y;
 					T bricks = gable_num_brick;
@@ -194,9 +194,9 @@ namespace procedural
 					for (size_t i = 0; i<gable_num_layers; ++i)
           {
             //layer no.
-            
+
 						T x = xstart + VT::half()*i*gable_brick_w;
-            
+
 						for (size_t j = 0; j<bricks; ++j)
             {
               //brick placement
@@ -512,7 +512,7 @@ namespace procedural
 			vertices[1] = V::make(VT::numeric_cast(1.1f)*pillar_width, VT::zero()				, VT::zero());
 			vertices[2] = V::make(VT::numeric_cast(1.1f)*pillar_width, gable_brick_h	  , VT::zero());
 			vertices[3] = V::make(pillar_width		                   , gable_brick_h	  , VT::zero());
-      
+
 			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
 			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
 			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), pillar_width*VT::numeric_cast(0.7f));
@@ -522,7 +522,7 @@ namespace procedural
 			
 			/// gable bricks
 			GeometryHandle<MT> gable_brick = create_geometry_handle_box<MT>(  engine, gable_brick_w, gable_brick_h, pillar_width*0.7f );
-      
+
 			for (size_t i = 0; i<gable_num_layers-1; ++i)
       {
 				
@@ -622,7 +622,7 @@ namespace procedural
 			vertices[1] = V::make(VT::numeric_cast(0.4f)*pillar_width	, VT::zero()	  , VT::zero());
 			vertices[2] = V::make(VT::numeric_cast(1.4f)*pillar_width	, gable_brick_h	, VT::zero());
 			vertices[3] = V::make(pillar_width		                    , gable_brick_h	, VT::zero());
-      
+
 			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
 			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
 			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), VT::half()*(temple_depth -(floor(beam_spacing_ratio*num_pillars_z)-VT::one())*spacing));
@@ -774,7 +774,7 @@ namespace procedural
 			vertices[1] = V::make(pillar_width		                     , VT::zero()              , VT::zero() );
 			vertices[2] = V::make(VT::numeric_cast(0.51f)*pillar_width , VT::half()*gable_brick_h, VT::zero() );
 			vertices[3] = V::make(VT::numeric_cast(0.49f)*pillar_width , VT::half()*gable_brick_h, VT::zero() );
-      
+
 			vertices[4] = vertices[0] - V::make(VT::zero(), VT::zero(), pillar_width);
 			vertices[5] = vertices[1] - V::make(VT::zero(), VT::zero(), pillar_width);
 			vertices[6] = vertices[2] - V::make(VT::zero(), VT::zero(), pillar_width);
@@ -809,7 +809,7 @@ namespace procedural
 	}
 	
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	void make_temple<MTf>(  content::API * engine
                         , MTf::vector3_type const & position

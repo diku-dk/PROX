@@ -12,7 +12,7 @@ namespace content
 {
   namespace details
   {
-    
+
     /**
      * Read a collection of XML elements.
      * This is a convenience function which makes it easier to write code for parsing
@@ -26,19 +26,19 @@ namespace content
      * @return           If succesfull then the return value is true otherwise it is false.
      */
     bool read_collection (TiXmlElement const * tag, std::string const & item, bool (*dispatch)(TiXmlElement const *, Cache &), Cache & data );
-    
+
    /**
      * Read boolean value from XML element.
      *
      * @param element         A pointer to the XML element from which the boolean attribute should be read.
      * @param attrib_name     The name of the attribute holding the boolean value.
      * @param default_value   The default value if data can not be found.
-     * @param mandatory       Boolean flag indicating whether the data is mandatory.  
+     * @param mandatory       Boolean flag indicating whether the data is mandatory.
      *
      * @return                The resulting boolean value.
-     */    
+     */
     bool read_bool(TiXmlElement const * element, std::string const & attrib_name, bool const & default_value = true, bool const & mandatory = false);
-    
+
     /**
     * Read Transform data from XML element.
     *
@@ -60,7 +60,7 @@ namespace content
      * @return                The resulting motion data.
      */
     Motion read_motion(TiXmlElement const * element, Cache & data, Motion const & default_value = Motion());
-    
+
   } // namespace details
 }// namespace content
 

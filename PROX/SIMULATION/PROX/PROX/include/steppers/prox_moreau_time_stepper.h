@@ -65,11 +65,11 @@ namespace prox
     typedef typename M::diagonal6x6_type           D6x6;
     typedef typename M::compressed4x6_type         CSR4x6;
     typedef typename M::compressed6x4_type         CSR6x4;
-    
+
     util::Log logging;
-    
+
     START_TIMER("stepper");
-    
+
     SolverBinder<M>            prox_solver     = bind_solver<M>( params.solver_params().solver() );
     RStrategyBinder<M>         strategy        = bind_strategy<M>( params.solver_params().r_factor_strategy() );
     NormalSubSolverBinder<T>   normal_solver   = bind_normal_solver<T>( params.solver_params().normal_sub_solver() );
@@ -94,7 +94,7 @@ namespace prox
     V4        w;      // Current contact velocities
 
     T const half_dt = dt*VT::half();
-    
+
     detail::update_body_indices(
                                 bodies.begin()
                                 , bodies.end()
@@ -102,11 +102,11 @@ namespace prox
 
     get_position_vector( bodies.begin(), bodies.end(), q, tag );
     get_velocity_vector( bodies.begin(), bodies.end(), u, tag );
-    
+
     position_update( q, u, half_dt, qM, tag );
-    
+
     set_position_vector( bodies.begin(), bodies.end(), qM, tag );
-    
+
     collision_detection(
                         bodies
                         , broad_system
@@ -115,18 +115,18 @@ namespace prox
                         , params
                         , tag
                         );
-    
+
     unsigned int const number_of_contacts = contacts.size();
 
     logging << "moreau_time_stepper(): Number of contacts = " << number_of_contacts << util::Log::newline();
-    
+
     get_inverse_mass_matrix(
                             bodies.begin()
                             , bodies.end()
                             , W
                             , tag
                             );
-    
+
     get_external_forces_vector(
                                bodies.begin()
                                , bodies.end()
@@ -195,7 +195,7 @@ namespace prox
                                       , tag
                                       , number_of_contacts
                                       );
-      
+
       M::compute_WJT( W, J, WJT );            // WJT = M^{-1} J^T
 
       M::compute_b( J, Wdth, u, e, g, b );    // b   = (I+E)J u + J W (dt h)
@@ -212,9 +212,9 @@ namespace prox
                   , params.solver_params()
                   , tag
                   );
-      
+
       fc.resize( WJT.nrows() );
-      
+
       sparse::prod(WJT, lambda, fc, true);     // fc = M^{-1}*J^T*lambda
 
       velocity_update( u, Wdth, fc, u, tag );  // u = u + dt M^{-1} h + fc
@@ -223,12 +223,12 @@ namespace prox
     {
       velocity_update( u, Wdth, u, tag );      // u = u + dt M^{-1} h
     }
-    
+
     position_update( qM, u, half_dt, q, tag );
-    
+
     set_position_vector( bodies.begin(), bodies.end(), q, tag );
     set_velocity_vector( bodies.begin(), bodies.end(), u, tag );
-    
+
     STOP_TIMER("stepper");
 
     if(params.stepper_params().post_stabilization())
@@ -267,16 +267,16 @@ namespace prox
         sparse::prod(WJT, lambda, fc, true);
 
         position_update( q, fc, VT::one(), q, tag );
-        
+
         set_position_vector( bodies.begin(), bodies.end(), q, tag );
       }
-      
+
       STOP_TIMER("stabilization");
     }
 
 
   }
-  
+
 } //namespace prox
 
 // PROX_MOREAU_TIME_STEPPER_H

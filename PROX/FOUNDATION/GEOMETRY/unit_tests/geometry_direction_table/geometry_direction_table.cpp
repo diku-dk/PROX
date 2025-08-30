@@ -12,21 +12,21 @@ template<typename V, size_t N>
 void test_direction_table(geometry::DirectionTable<V,N> const & DT )
 {
   BOOST_CHECK_EQUAL(DT.size(), N);
-  
+
   for(size_t i=0u; i < N; ++i)
   {
     V const di = DT(i);
-    
+
     BOOST_CHECK_CLOSE( inner_prod(di,di), 1.0f, 0.01f);
-    
+
     for(size_t j=i+1u; j < N; ++j)
     {
       V const dj = DT(j);
 
       V diff = di-dj;
-      
+
       BOOST_CHECK_GT( inner_prod(diff,diff) , 0.01f );
-      
+
     }
   }
 }
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(make_direction_tables)
 {
   typedef tiny::MathTypes<float> MT;
   typedef MT::vector3_type       V;
-  
+
   {
     geometry::DirectionTable<V,3> A = geometry::make3<V>();
     test_direction_table(A);

@@ -116,10 +116,10 @@ BOOST_AUTO_TEST_CASE(get_scale)
     hull.add_point( V::make( 5.0,  7.0,  8.0 ) );
     hull.add_point( V::make( 5.0,  8.0,  6.0 ) );
     BOOST_CHECK(hull.get_scale() == 4.0f);
-    
+
     hull.add_point( V::make( 10.0, 10.0, 10.0 ) );
     BOOST_CHECK(hull.get_scale() == 6.0f);
-    
+
     hull.add_point( V::make( 1.0,  4.0,  4.0 ) );
     BOOST_CHECK(hull.get_scale() == 6.0f);
   }

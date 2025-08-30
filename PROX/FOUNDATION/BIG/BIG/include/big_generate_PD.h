@@ -8,7 +8,7 @@
 
 namespace big
 {
-  
+
   /**
    * Generate Symmetric Positive Definite (PD) Matrix.
    * This function is a convenience function that is usefull
@@ -22,10 +22,10 @@ namespace big
   {
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
-    
+
     generate_PSD(n, A, value_traits::zero() );
   }
-  
+
   /**
    * Generate Symmetric Positive Definite (PD) Matrix.
    * This function is a convenience function that is usefull
@@ -39,12 +39,12 @@ namespace big
   {
     typedef typename matrix_type::value_type        value_type;
     typedef          big::ValueTraits<value_type>   value_traits;
-    
+
     Random<value_type> value(value_traits::zero(),value_traits::one());
-    
+
     matrix_type R;
     R.resize(n,n,false);
-    
+
     for(size_t i=0;i<n;++i)
     {
       for(size_t j=0;j<n;++j)
@@ -56,7 +56,7 @@ namespace big
     for(size_t i=0;i<n;++i)
       A(i,i) += value();
   }
-  
+
 } // end of namespace big
 
 // BIG_GENERATE_PD_H

@@ -14,7 +14,7 @@
 
 namespace big
 {
-  
+
   /**
    * Jacobi Iteration Method.
    * This function computes the result of a single iteration using the Jacobi method.
@@ -32,18 +32,18 @@ namespace big
                      )
   {
     using std::fabs;
-    
+
     typedef ublas::vector<T>                vector_type;
     typedef typename vector_type::size_type size_type;
     typedef big::ValueTraits<T>             value_traits;
-    
+
     if(A.size1() <= 0u || A.size2() <= 0u)
       throw std::invalid_argument("jacobi(): A was empty");
     if(b.size() != A.size1())
       throw std::invalid_argument("jacobi(): The size of b must be the same as the number of rows in A");
     if(x.size() != A.size2())
       throw std::invalid_argument("jacobi(): The size of x must be the same as the number of columns in A");
-    
+
     size_type const n = x.size();
     vector_type x_old = x;
     for ( size_type i = 0u; i < n; ++i )
@@ -63,19 +63,19 @@ namespace big
       //
       // However, knowing we work on a compressed matrix
       // we can do a lot better
-      
+
       T const & Aii  = A(i,i);
 
       assert( is_number( x(i) )                || !"jacobi(): sum value was not a number?");
       assert( is_number( Aii )                 || !"jacobi(): diag value was not a number?");
       assert( fabs(Aii) > value_traits::zero() || !"jacobi(): Diagonal were zero");
-      
+
       x(i) = ( b(i) - prod_row(A,x_old,i)) / Aii + x_old(i);
 
       assert( is_number( x(i) )              || !"backward_gauss_seidel(): updated value was not a number?");
     }
   }
-  
+
   /**
    * Jacobi Method.
    * This function is capable of running several iterations of the Jacobi method.
@@ -99,7 +99,7 @@ namespace big
   {
     if(max_iterations < 1u)
       throw std::invalid_argument("jacobi(): max_iterations must be a positive number");
-    
+
     iterations = 0u;
     while ( iterations < max_iterations )
     {
@@ -107,7 +107,7 @@ namespace big
       ++iterations;
     }
   }
-  
+
   /**
    * Jacobi Method.
    * This function is capable of running several iterations of the Jacobi method.
@@ -131,10 +131,10 @@ namespace big
   {
     size_t const max_iterations = 15u;
     T      const epsilon        = boost::numeric_cast<T>( 10e-4 );
-    
+
     jacobi(A,x,b,max_iterations, epsilon, iterations);
   }
-    
+
 } // namespace big
 
 // BIG_JACOBI_H

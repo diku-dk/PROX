@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_box(
                 typename MT::real_type const & width
@@ -17,7 +17,7 @@ namespace mesh_array
                 , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                 , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                 );
-  
+
   template<typename MT>
   void make_box(
                 typename MT::real_type const & width
@@ -26,8 +26,8 @@ namespace mesh_array
                 , T3Mesh & mesh
                 , VertexAttribute<typename MT::vector3_type,T3Mesh> & coords
                 );
-    
+
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_BOX_H
-#endif 
+#endif

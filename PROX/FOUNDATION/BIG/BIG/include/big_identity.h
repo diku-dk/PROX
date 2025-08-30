@@ -3,7 +3,7 @@
 
 namespace big
 {
-  
+
   /**
    * An identity preconditioner.
    * This preconditioner does not do anything.

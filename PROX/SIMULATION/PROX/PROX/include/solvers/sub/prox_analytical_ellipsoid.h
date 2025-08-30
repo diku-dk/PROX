@@ -17,21 +17,21 @@ namespace prox
     */
     template <typename T>
     inline static void analytical_ellipsoid(
-                                                 T const & z_s     
+                                                 T const & z_s
                                                  , T const & z_t
-                                                 , T const & z_tau    
+                                                 , T const & z_tau
                                                  , T const & mu
                                                  , T const & mu_tau
                                                  , T const & lambda_n
                                                  , T & lambda_s
                                                  , T & lambda_t
                                                  , T & lambda_tau
-                                                 
+
       )
     {
       typedef tiny::ValueTraits<T>   value_traits;
 
-      if(lambda_n <= value_traits::zero())  
+      if(lambda_n <= value_traits::zero())
       {
         lambda_s   = value_traits::zero();
         lambda_t   = value_traits::zero();
@@ -70,7 +70,7 @@ namespace prox
       //
       //    lambda + alpha nabla f(lambda) = z  (*1)
       //
-      // where alpha >= 0 and the outward gradient is given by 
+      // where alpha >= 0 and the outward gradient is given by
       //
       //                  | 2 z_s /a^2   |
       //    nabla f(z) =  | 2 z_t /b^2   |
@@ -86,7 +86,7 @@ namespace prox
       //    lambda_s   =   a^2 z_s / (a^2 + 2 alpha)
       //    lambda_t   =   a^2 z_t / (a^2 + 2 alpha)
       //    lambda_tau =  c^2 z_tau / (c^2 + 2 alpha)
-      //     
+      //
       //   f(lambda) = a^2 (z_s^2+z_t^2) / (a^2 + 2 alpha)^2 + c^2 (z_tau^2) / (c^2 + 2 alpha)^2 - 1= 0
       //
       // making the subsitution t = 2 alpha we have
@@ -113,7 +113,7 @@ namespace prox
       T const y2 = z_t*z_t;
       T const z2 = z_tau*z_tau;
 
-      T const coef4 = value_traits::one(); 
+      T const coef4 = value_traits::one();
       T const coef3 = value_traits::two()*(c2+a2);
       T const coef2 = c4 + a4 + 4*a2*c2 - c2*z2 - a2*(x2 + y2);
       T const coef1 = value_traits::two()*(a4*c2 + c4*a2 - c2*a2*(x2+y2+z2));
@@ -121,14 +121,14 @@ namespace prox
 
       // We will have two imaginary roots, one negative and one positive
       // root. Only the positive root is of interest.
-      T t = value_traits::zero(); 
+      T t = value_traits::zero();
       {
         unsigned int count = 0u;
 
         T roots[4] = {value_traits::zero(), value_traits::zero(), value_traits::zero(), value_traits::zero()};
 
         tiny::compute_polynomial_roots(coef0,coef1,coef2,coef3,coef4,count, roots );
-        
+
         for(size_t i =0;i < count;++i)
           t = ( roots[i] > t ) ? roots[i] : t;
       }
@@ -139,17 +139,17 @@ namespace prox
       lambda_tau =  z_tau / (value_traits::one() + t/(c*c));
     }
 
-    
+
     /**
      *
      * Overloaded version. The only purpose of this version is
      * such that all sub solvers have the same function signature.
      */
-    template <typename T> 
-    inline static void analytical_ellipsoid(      
-                                              T const & z_s     
+    template <typename T>
+    inline static void analytical_ellipsoid(
+                                              T const & z_s
                                               , T const & z_t
-                                              , T const & z_tau    
+                                              , T const & z_tau
                                               , T const & mu_s
                                               , T const & /*mu_t*/
                                               , T const & mu_tau
@@ -161,7 +161,7 @@ namespace prox
     {
       analytical_ellipsoid(z_s, z_t, z_tau, mu_s, mu_tau,lambda_n,lambda_s,lambda_t, lambda_tau);
     }
-    
+
 
   } // namespace detail
 } // namespace prox

@@ -11,17 +11,17 @@
 #include <algorithm>  // needed for std::pair and std::sort
 
 namespace hyper
-{  
+{
 
     template<typename MT>
     inline std::pair<Body<MT>*,Body<MT>*>  make_overlap( Body<MT> const * A, Body<MT> const * B )
-    {          
+    {
       assert( A || !"make_overlap(): A object pointer was null");
       assert( B || !"make_overlap(): B object pointer was null");
-      
+
       Body<MT> * bodyA = const_cast<Body<MT> *> ( A < B ? A : B );
       Body<MT> * bodyB = const_cast<Body<MT> *> ( A < B ? B : A );
-      
+
       return std::make_pair( bodyA, bodyB );
     }
 
@@ -44,15 +44,15 @@ namespace hyper
 
     // Clean up any potential old left over information
     overlaps.clear();
-    
+
     // Determine box overlaps
     const_body_iterator end   = engine.body_end();
     const_body_iterator iterA = engine.body_begin();
-    
+
     size_t tests = 0u;
-    
+
     for(;iterA!=end;)
-    {     
+    {
       body_type const & A = (*iterA);
 
       const_body_iterator iterB = ++iterA;
@@ -74,12 +74,12 @@ namespace hyper
     std::sort( overlaps.begin(), overlaps.end() );
 
     efficiency = 1.0f*overlaps.size() / tests;
-    
+
     // Return a status flag indicating whether we have seen an overlap or not
     return (overlaps.size()>0);
-  }    
+  }
 
 } //namespace hyper
 
 // HYPER_BROAD_PHASE_H
-#endif 
+#endif

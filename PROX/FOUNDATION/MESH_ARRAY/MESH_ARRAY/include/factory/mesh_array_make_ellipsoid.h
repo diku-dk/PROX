@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_ellipsoid(
                       typename MT::real_type const & a
@@ -19,8 +19,8 @@ namespace mesh_array
                       , VertexAttribute<typename MT::real_type,T3Mesh> & Y
                       , VertexAttribute<typename MT::real_type,T3Mesh> & Z
                       );
-  
+
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_ELLIPSOID_H
-#endif 
+#endif

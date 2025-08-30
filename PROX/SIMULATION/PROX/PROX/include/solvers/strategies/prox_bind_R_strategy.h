@@ -14,38 +14,38 @@
 
 namespace prox
 {
-  
+
   /**
    * R-factor strategy function pointer binder.
-   */  
+   */
   template<typename M>
   class RStrategyBinder
   : public RStrategy<M>
   {
   public:
-    
+
     typedef void func_type(  typename M::compressed4x6_type const & J
                                  , typename M::compressed6x4_type const & WJT
                                  , typename M::diagonal4x4_type & R
                                  , typename M::diagonal4x4_type & nu
                                  , M const & tag );
-    
+
     func_type * m_strategy;
-    
+
   public:
-    
+
     RStrategyBinder()
     : m_strategy(0)
     {
     }
-    
+
     RStrategyBinder(func_type * strategy)
     : m_strategy(strategy)
     {
     }
-    
+
   public:
-    
+
     void operator()(
                     typename M::compressed4x6_type const & J
                     , typename M::compressed6x4_type const & WJT
@@ -54,15 +54,15 @@ namespace prox
                     ) const
     {
       assert( this->m_strategy || !"RStrategyBinder(): strategy was null");
-      
+
       this->m_strategy( J, WJT, R, nu, M() );
     }
-    
+
   };
-    
+
   /**
    *
-   */     
+   */
   template<typename M>
   inline RStrategyBinder<M> bind_strategy( strategy_type const & type )
   {
@@ -86,10 +86,10 @@ namespace prox
         assert(!"bind_strategy(): unknown strategy type");
         break;
     };
-    
+
     return RStrategyBinder<M>();
   }
-  
+
 } //namespace prox
 
 // PROX_BIND_R_STRATEGY_H

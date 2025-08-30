@@ -7,7 +7,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_capsule(
                     typename MT::real_type const & radius
@@ -24,13 +24,13 @@ namespace mesh_array
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;
-    
+
 		std::vector<V> profile;
 		
 		profile.resize(segments);
 		
 		T const dtheta = VT::pi() / (segments-1);
-    
+
 		for(size_t i=0;i < segments; ++i )
 		{
 			T const theta = dtheta*i;
@@ -43,10 +43,10 @@ namespace mesh_array
 		
 		profile_sweep<MT>( profile, slices, mesh, X, Y, Z );
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
   typedef tiny::MathTypes<double> MTd;
-  
+
   template
   void make_capsule<MTf>(
                          MTf::real_type const & radius
@@ -70,5 +70,5 @@ namespace mesh_array
                          , VertexAttribute<MTd::real_type,T3Mesh> & Y
                          , VertexAttribute<MTd::real_type,T3Mesh> & Z
                          );
-  
+
 } //namespace mesh_array

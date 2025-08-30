@@ -16,7 +16,7 @@ namespace big
 {
   namespace detail
   {
-    
+
     /**
      * Compute Singular Value Decomposition of a matrix.
      *
@@ -39,26 +39,26 @@ namespace big
       typedef typename ME::size_type                         size_type;
       typedef typename ME::value_type                        value_type;
       typedef ublas::matrix<value_type, ublas::column_major> column_major_matrix_type;
-      
+
       //--- SVD decomposition  : A = U S VT : Dimensions: mxn =  mxn  nxn   nxn
       size_type m = A().size1();
       size_type n = A().size2();
-      
+
       if(m<1)
         throw std::invalid_argument("svd(): A did not have any rows?");
       if(n<1)
         throw std::invalid_argument("svd(): A did not have any columns?");
-      
+
       column_major_matrix_type Acpy( m, n );
       Acpy = A();
-      
+
       U.resize(m,n,false);
       s.resize(n,false);
       VT.resize(n,n,false);
-      
+
       lapack::gesvd( Acpy, s, U, VT );
     }
-    
+
   } // namespace detail
 } // namespace big
 

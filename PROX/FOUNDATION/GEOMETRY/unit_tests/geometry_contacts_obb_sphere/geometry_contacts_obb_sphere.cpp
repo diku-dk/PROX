@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal[2], 0.0, 0.01);
 
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.5, 0.01);
-    
+
   }
   // Penetration rigth side flipped-case
   {
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal[2], 0.0, 0.01);
 
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.5, 0.01);
-    
+
   }
 
   // Touching left side
@@ -265,9 +265,9 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal[0], 1.0, 0.01);
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal[1], 0.0, 0.01);
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_normal[2], 0.0, 0.01);
-    
+
     BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.5, 0.01);
-    
+
   }
 
 }

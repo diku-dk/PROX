@@ -7,7 +7,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Test if point is outside a Triangle.
    *
@@ -31,19 +31,19 @@ namespace convex
   {
     typedef typename V::value_traits    value_traits;
     typedef typename V::real_type       T;
-    
+
     V const n = tiny::cross( A-B, C-B );
-    
+
     assert( tiny::inner_prod( n, n ) > value_traits::zero() || !"outside_triangle(): Degenerate triangle encountered");
-    
+
     T const sign_p = tiny::inner_prod( n, p-B );
     T const sign_q = tiny::inner_prod( n, q-B );
-    
+
     assert( is_number( sign_p ) || !"outside_triangle(): Not a Number encountered");
     assert( is_number( sign_q ) || !"outside_triangle(): Not a Number encountered");
-    
+
     assert( sign_q < value_traits::zero() || sign_q > value_traits::zero() || !"outside_triangle(): q was in plane, can  not be used to determine sign");
-    
+
     return (sign_p*sign_q) <= value_traits::zero();
   }
 

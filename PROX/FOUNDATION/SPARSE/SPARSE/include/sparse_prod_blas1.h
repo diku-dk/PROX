@@ -29,13 +29,13 @@ namespace sparse
     const_vector_iterator lhs_iter = lhs.begin();
     const_vector_iterator lhs_last = lhs.end();
     const_vector_iterator rhs_iter = rhs.begin();
-    
+
     const_block_iterator lhs_block_iter;
     const_block_iterator lhs_block_last;
     const_block_iterator rhs_block_iter;
 
     // 2009-07-01 Kenny: Use value traits?
-    res = 0; 
+    res = 0;
     for (; lhs_iter != lhs_last; ++lhs_iter, ++rhs_iter)
     {
       lhs_block_iter = lhs_iter->begin();
@@ -61,22 +61,22 @@ namespace sparse
   {
     assert(lhs.size() == rhs.size() || !"vectors must be of same size");
     assert(rhs.size() == res.size() || !"vectors must be of same size");
-    
+
     typedef typename Vector<B>::const_iterator     const_vector_iterator;
     typedef typename B::const_iterator             const_block_iterator;
     typedef typename Vector<B>::iterator           vector_iterator;
     typedef typename B::iterator                   block_iterator;
-    
+
     const_vector_iterator lhs_iter = lhs.begin();
     const_vector_iterator lhs_last = lhs.end();
     const_vector_iterator rhs_iter = rhs.begin();
     vector_iterator       res_iter = res.begin();
-    
+
     const_block_iterator lhs_block_iter;
     const_block_iterator lhs_block_last;
     const_block_iterator rhs_block_iter;
     block_iterator       res_block_iter;
-    
+
     for (; lhs_iter != lhs_last; ++lhs_iter, ++rhs_iter,++res_iter)
     {
       res_block_iter = res_iter->begin();
@@ -90,7 +90,7 @@ namespace sparse
       }
     }
   }
-  
+
   /**
    *
    * y += alpha * x
@@ -110,17 +110,17 @@ namespace sparse
     {
       memset(&y[0], 0, sizeof(B)*y.size());
     }
-    
+
     if(y.size() != x.size())
     {
       y.resize(x.size());
     }
-    
+
     // 2009-07-01 Kenny: Documentation, how to use this?
 #ifdef SPARSE_LAPACK
     cblas_saxpy(rhs.size()*B::ncols(), alpha, &x[0][0], 1, &y[0][0], 1);
 #else
-    
+
     typedef typename Vector<B>::iterator        vector_iterator;
     typedef typename Vector<B>::const_iterator  const_vector_iterator;
     typedef typename B::iterator                block_iterator;
@@ -129,11 +129,11 @@ namespace sparse
     const_vector_iterator x_iter = x.begin();
     const_vector_iterator x_last = x.end();
     vector_iterator       y_iter = y.begin();
-    
+
     const_block_iterator  x_block_iter;
     const_block_iterator  x_block_last;
     block_iterator        y_block_iter;
-    
+
     for(; x_iter != x_last; ++x_iter, ++y_iter)
     {
       x_block_iter = x_iter->begin();
@@ -143,13 +143,13 @@ namespace sparse
       for(; x_block_iter != x_block_last;
           ++x_block_iter, ++y_block_iter)
       {
-        *y_block_iter = alpha * *x_block_iter+ *y_block_iter;      
+        *y_block_iter = alpha * *x_block_iter+ *y_block_iter;
       }
     }
 #endif // SPARSE_LAPACK
   }
 
-  
+
   /**
    * scale: alpha*x
    */
@@ -157,12 +157,12 @@ namespace sparse
   template <typename B>
   inline void prod( typename B::value_type const& alpha, Vector<B>& x)
   {
-    
+
     // 2009-07-01 Kenny: Documentation, how to use this?
 #ifdef SPARSE_LAPACK
     cblas_sscal(x.size()*B::ncols(), alpha, &x[0][0], 1);
 #else
-    
+
     typedef typename Vector<B>::iterator        vector_iterator;
     //typedef typename Vector<B>::const_iterator  const_vector_iterator;
     typedef typename B::iterator                block_iterator;
@@ -170,10 +170,10 @@ namespace sparse
 
     vector_iterator x_iter = x.begin();
     vector_iterator x_last = x.end();
-    
+
     block_iterator x_block_iter;
     block_iterator x_block_last;
-    
+
     for(; x_iter != x_last; ++x_iter)
     {
       x_block_iter = x_iter->begin();
@@ -186,8 +186,8 @@ namespace sparse
     }
 #endif // SPARSE_LAPACK
   }
-  
+
 } // namespace sparse
 
 // SPARSE_PROD_BLAS1_H
-#endif 
+#endif

@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(outside_dop_test)
     bool const test = geometry::outside_dop(p, dop);
     BOOST_CHECK( test );
   }
-  
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();

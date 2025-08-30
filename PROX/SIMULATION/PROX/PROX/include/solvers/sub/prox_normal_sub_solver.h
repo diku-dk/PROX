@@ -10,14 +10,14 @@ namespace prox
   class NormalSubSolver
   {
   public:
-    
+
     virtual void operator()(
                     T const & z_n
                     , T & lambda_n
                             ) const = 0;
-    
+
   };
-    
+
 } //namespace prox
 
 // PROX_NORMAL_SUB_SOLVER_H

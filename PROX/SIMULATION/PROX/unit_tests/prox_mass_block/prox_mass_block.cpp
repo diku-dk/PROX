@@ -13,11 +13,11 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
     typedef math_policy::mass_block_type	 Mass_block;
     typedef math_policy::value_traits     value_traits;
     typedef math_policy::real_type        real_type;
-        
+
     Mass_block b(0); // zero-init
     // size checks
     BOOST_CHECK_EQUAL( b.nrows() , 6u);
-    BOOST_CHECK_EQUAL( b.ncols() , 6u); 
+    BOOST_CHECK_EQUAL( b.ncols() , 6u);
     BOOST_CHECK_EQUAL( b.size()  , 7u);
 
     // is data initialised to float(0)
@@ -49,11 +49,11 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
     b_copy(5,5) = value_traits::numeric_cast(7.5);
 
     BOOST_CHECK_EQUAL(b_copy(4,3), b_copy(3,4));// by symmetry
-    BOOST_CHECK_EQUAL(b_copy(4,3), value_traits::numeric_cast(4.5)); 
+    BOOST_CHECK_EQUAL(b_copy(4,3), value_traits::numeric_cast(4.5));
     BOOST_CHECK_EQUAL(b_copy(4,5), b_copy(5,4)); // by symmetry
-    BOOST_CHECK_EQUAL(b_copy(4,5), value_traits::numeric_cast(5.5)); 
+    BOOST_CHECK_EQUAL(b_copy(4,5), value_traits::numeric_cast(5.5));
     BOOST_CHECK_EQUAL(b_copy(5,3), b_copy(3,5)); // by symmetry
-    BOOST_CHECK_EQUAL(b_copy(3,5), value_traits::numeric_cast(6.5)); 
+    BOOST_CHECK_EQUAL(b_copy(3,5), value_traits::numeric_cast(6.5));
 
     b = b_copy;
 
@@ -64,6 +64,6 @@ BOOST_AUTO_TEST_CASE(mass_block_test_case)
     BOOST_CHECK_EQUAL(b[4] , value_traits::numeric_cast(2.5));
     BOOST_CHECK_EQUAL(b[5] , value_traits::numeric_cast(5.5));
     BOOST_CHECK_EQUAL(b[6] , value_traits::numeric_cast(7.5));
- 
+
 }
 BOOST_AUTO_TEST_SUITE_END();

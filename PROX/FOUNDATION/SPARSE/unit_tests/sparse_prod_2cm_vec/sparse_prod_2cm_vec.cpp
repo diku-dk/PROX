@@ -10,20 +10,20 @@
 BOOST_AUTO_TEST_SUITE(SPARSE);
 
 BOOST_AUTO_TEST_CASE(product_2cm_vector_test)
-{    
-  
-  typedef sparse::Block<4,1,float> block4_type; 
+{
+
+  typedef sparse::Block<4,1,float> block4_type;
   typedef sparse::Block<6,1,float> block6_type;
   typedef sparse::Block<4,6,float> block4x6_type;
-    
+
   typedef sparse::TwoColumnMatrix<block4x6_type> matrix_type;
 	typedef sparse::Vector<block6_type> vector6_type;
 	typedef sparse::Vector<block4_type> vector4_type;
-  
+
 	matrix_type J(1,2,2);
   sparse::fill(J(0,0), 1.0f);
 	sparse::fill(J(0,1), 2.0f);
-  
+
 	vector6_type u(2);
 	sparse::fill(u(0), 0.5f);
 	sparse::fill(u(1), 6.5f);
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(product_2cm_vector_test)
   BOOST_CHECK( r(0)(1) == 773  );
   BOOST_CHECK( r(0)(2) == 1205 );
   BOOST_CHECK( r(0)(3) == 1637 );
-  
+
 	J.resize(2,4,4);
   sparse::fill(J(1,1), 3.0f);
 	sparse::fill(J(1,2), 4.0f);

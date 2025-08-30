@@ -12,9 +12,9 @@ namespace procedural
 	{
 		return create_geometry_handle_sphere<MT>( engine, radius );
 	}
-  
+
   typedef tiny::MathTypes<float> MTf;
-  
+
   template
 	GeometryHandle<MTf> make_cannonball_geometry<MTf>(
                                                     content::API * engine

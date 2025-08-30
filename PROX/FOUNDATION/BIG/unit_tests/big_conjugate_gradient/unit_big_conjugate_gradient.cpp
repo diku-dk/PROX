@@ -131,10 +131,10 @@ BOOST_AUTO_TEST_CASE(random_test_case)
 
     matrix_type A;
     A.resize(N,N,false);
-    
+
     vector_type x;
     x.resize(N,false);
-    
+
     vector_type b;
     b.resize(N,false);
 
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(random_test_case)
 
     big::Random<double> value(0.0,1.0);
     for(size_t i=0;i<R.size1();++i)
-    { 
+    {
       b(i) = value();
       x(i) = value();
       y(i) = value();

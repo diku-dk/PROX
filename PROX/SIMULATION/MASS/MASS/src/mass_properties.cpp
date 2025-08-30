@@ -5,12 +5,12 @@
 #include <tiny_value_traits.h>
 
 #include <cassert>
-#include <ostream>   
+#include <ostream>
 
 namespace mass
 {
   //-------------------------------------------------------------------------
-  template<typename T>  
+  template<typename T>
   Properties<T>::Properties()
   : m_m( tiny::ValueTraits<T>::zero())
   , m_Ixx( tiny::ValueTraits<T>::zero())
@@ -27,14 +27,14 @@ namespace mass
   , m_Qy( tiny::ValueTraits<T>::zero())
   , m_Qz( tiny::ValueTraits<T>::zero())
   {}
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
   Properties<T>::~Properties(){}
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
   Properties<T>::Properties( Properties<T> const & cpy ) { (*this) = cpy; }
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
   Properties<T> & Properties<T>::operator=( Properties<T> const & lhs )
   {
     if (this != &lhs)
@@ -56,8 +56,8 @@ namespace mass
     }
     return *this;
   }
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
   bool Properties<T>::operator==( Properties<T> const & lhs ) const
   {
     if( this->m_m   != lhs.m_m   ) return false;
@@ -74,19 +74,19 @@ namespace mass
     if( this->m_Qx  != lhs.m_Qx  ) return false;
     if( this->m_Qy  != lhs.m_Qy  ) return false;
     if( this->m_Qz  != lhs.m_Qz  ) return false;
-    
+
     return true;
   }
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
   bool Properties<T>::is_body_space() const { return !(this->is_model_space()); }
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
 	bool Properties<T>::is_model_space() const
   {
-    using namespace tiny;    
+    using namespace tiny;
     typedef ValueTraits<T> VT;
-    
+
     assert( this->m_m    >= VT::zero() || !"Internal error");
     assert( this->m_Ixx  >= VT::zero() || !"Internal error");
     assert( this->m_Iyy  >= VT::zero() || !"Internal error");
@@ -121,7 +121,7 @@ namespace mass
     assert( is_finite( this->m_Qx )    || !"Internal error");
     assert( is_finite( this->m_Qy )    || !"Internal error");
     assert( is_finite( this->m_Qz )    || !"Internal error");
-    
+
     if( this->m_Ixy != VT::zero() ) return true;
     if( this->m_Ixz != VT::zero() ) return true;
     if( this->m_Iyz != VT::zero() ) return true;
@@ -132,16 +132,16 @@ namespace mass
     if( this->m_Qx  != VT::zero() ) return true;
     if( this->m_Qy  != VT::zero() ) return true;
     if( this->m_Qz  != VT::zero() ) return true;
-    
+
     return false;
   }
-  //-------------------------------------------------------------------------  
-  template<typename T>  
+  //-------------------------------------------------------------------------
+  template<typename T>
   void Properties<T>::clear()
   {
-    using namespace tiny;    
+    using namespace tiny;
     typedef ValueTraits<T> VT;
-    
+
     this->m_m   = VT::zero();
     this->m_Ixx = VT::zero();
     this->m_Iyy = VT::zero();
@@ -158,7 +158,7 @@ namespace mass
     this->m_Qz  = VT::zero();
   }
   //-------------------------------------------------------------------------
-   
+
   template<typename T>
   std::ostream & operator<< (std::ostream & o, Properties<T> const & P)
   {
@@ -179,10 +179,10 @@ namespace mass
     return o;
   }
   //-------------------------------------------------------------------------
-  
+
   template class Properties<float>;
   template class Properties<double>;
-  
+
   template
   std::ostream & operator<< (std::ostream & o, Properties<float> const & P);
 

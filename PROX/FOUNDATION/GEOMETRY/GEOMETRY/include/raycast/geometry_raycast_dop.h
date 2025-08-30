@@ -12,7 +12,7 @@
 #include <cmath>
 #include <cassert>
 
-namespace geometry 
+namespace geometry
 {
 
   template<typename V, size_t K>
@@ -93,7 +93,7 @@ namespace geometry
       assert(is_finite(point(1)) || !"compute_raycast_dop() Inf");
       assert(is_number(point(2)) || !"compute_raycast_dop() NaN");
       assert(is_finite(point(2)) || !"compute_raycast_dop() Inf");
-      
+
       return true;
     }
 
@@ -119,4 +119,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_COMPUTE_RAYCAST_DOP_H
-#endif 
+#endif

@@ -38,7 +38,7 @@ namespace prox
     util::Log logging;
 
     START_TIMER("stepper");
-        
+
     collision_detection(
                         bodies
                         , broad_system
@@ -47,14 +47,14 @@ namespace prox
                         , params
                         , tag
                         );
-    
+
     unsigned int const number_of_contacts = contacts.size();
 
     logging << "empty_stepper(): Number of contacts = " << number_of_contacts << util::Log::newline();
 
     STOP_TIMER("stepper");
   }
-  
+
 } //namespace prox
 
 // PROX_EMPTY_TIME_STEPPER_H

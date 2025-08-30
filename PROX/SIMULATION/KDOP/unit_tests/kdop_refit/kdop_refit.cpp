@@ -25,26 +25,26 @@ BOOST_AUTO_TEST_CASE(kdop_refit)
   mesh_array::VertexAttribute<T,mesh_array::T3Mesh> sX;
   mesh_array::VertexAttribute<T,mesh_array::T3Mesh> sY;
   mesh_array::VertexAttribute<T,mesh_array::T3Mesh> sZ;
-  
+
   T      const width   = 1.0f;
   T      const height   = 1.0f;
   T      const depth   = 2.0f;
-  mesh_array::make_box<MT>( width, height, depth, surface, sX, sY, sZ); 
-  
-  mesh_array::T4Mesh mesh_in;  
+  mesh_array::make_box<MT>( width, height, depth, surface, sX, sY, sZ);
+
+  mesh_array::T4Mesh mesh_in;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> X_in;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Y_in;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Z_in;
   mesh_array::tetgen(surface, sX, sY, sZ, mesh_in, X_in, Y_in, Z_in);
-  
+
   mesh_array::T4Mesh mesh_out;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> X_out;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Y_out;
   mesh_array::VertexAttribute<T,mesh_array::T4Mesh> Z_out;
   kdop::mesh_reorder( mesh_in, X_in, Y_in, Z_in, mesh_out, X_out, Y_out, Z_out );
-  
+
   kdop::Tree<T,8> tree = kdop::make_tree<V,8,T>( 32000, mesh_out, X_out, Y_out, Z_out, kdop::sequential() );
-    
+
   kdop::refit_tree<V,8,T>(tree, mesh_out, X_out, Y_out, Z_out, kdop::sequential() );
 }
 

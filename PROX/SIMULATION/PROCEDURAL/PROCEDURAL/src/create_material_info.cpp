@@ -11,15 +11,15 @@
 
 namespace procedural
 {
-  
+
   template<typename MT>
   MaterialInfo<typename MT::real_type> create_material_info( content::API * engine )
   {
     typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
-    
+
     MaterialInfo<T> mat_info;
-    
+
     //--- Dummy values till we get more 'correct' ones, drilling is not actually implemented
     T const drilling_dummy    = VT::numeric_cast(0.01f); // set dummy different from zero, as prox_numerical_ellipsoid requires nonzero coefficents
 
@@ -27,11 +27,11 @@ namespace procedural
     mat_info.m_stone_mid      = engine->create_material("Stone");
     mat_info.m_ground_mid     = engine->create_material("Ground");
     mat_info.m_cannonball_mid = engine->create_material("Cannonball");
-    
+
     mat_info.m_stone_density      = mass::get_density<double>(mass::BRICK); // 2011-01-27 Kenny: Bogus double to float conversion, argh!
     mat_info.m_ground_density     = mass::get_density<double>(mass::EARTH);
     mat_info.m_cannonball_density = mass::get_density<double>(mass::IRON);
-    
+
     //--- Coupling pairs of materials, dry sliding friction
     //--- Coefficients taken from http://www.supercivilcd.com/FRICTION.htm
 
@@ -54,7 +54,7 @@ namespace procedural
                             , mat_info.m_ground_mid
                             , 0.3f
                             );
-    
+
     // 2015_01_19 Kenny: code review: Missing master information and direction
 
     //--- Concrete to steel = 0.45
@@ -76,7 +76,7 @@ namespace procedural
                             , mat_info.m_cannonball_mid
                             , 0.8f
                             );
-    
+
     // 2015_01_19 Kenny: code review: Missing master information and direction
 
     //--- Brick on brick = 0.65
@@ -98,10 +98,10 @@ namespace procedural
                             , mat_info.m_stone_mid
                             , 0.7f
                             );
-    
+
     // 2015_01_19 Kenny: code review: Missing master information and direction
 
-    
+
     //--- Concrete to steel = 0.45
     engine->create_material_property(
                                      mat_info.m_cannonball_mid
@@ -121,8 +121,8 @@ namespace procedural
                             , mat_info.m_ground_mid
                             , 0.3f
                             );
-    
-    
+
+
     // 2015_01_19 Kenny: code review: Missing master information and direction
 
     //--- Steel to steel = 0.3
@@ -146,10 +146,10 @@ namespace procedural
                             );
 
     // 2015_01_19 Kenny: code review: Missing master information and direction
-    
+
     return mat_info;
   }
-  
+
   typedef tiny::MathTypes<float> MTf;
 
   template

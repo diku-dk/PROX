@@ -10,7 +10,7 @@
 #include <cmath>
 #include <vector>
 
-namespace geometry 
+namespace geometry
 {
 
   template<typename M>
@@ -54,4 +54,4 @@ namespace geometry
 } //namespace geometry
 
 // GEOMETRY_COMPUTE_RAYCAST_OBB_H
-#endif 
+#endif

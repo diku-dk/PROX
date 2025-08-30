@@ -9,7 +9,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Signed Distance between a point and a Triangle.
    *
@@ -33,28 +33,28 @@ namespace convex
                                                     )
   {
     using std::fabs;
-    
+
     typedef typename V::value_traits    VT;
     typedef typename V::real_type       T;
-    
+
     V m = tiny::cross( A-B, C-B );
-    
+
     assert( tiny::inner_prod( m, m ) > VT::zero() || !"signed_distance_to_triangle(): Degenerate triangle encountered");
-    
+
     V n = tiny::unit( m );
-    
+
     T sign_p = tiny::inner_prod( n, p-B );
     T sign_q = tiny::inner_prod( n, q-B );
     T abs_p  = fabs( sign_p );
-    
+
     assert( sign_q < VT::zero() || sign_q > VT::zero() || !"signed_distance_to_triangle(): q was in plane, can  not be used to determine sign");
-    
+
     assert( is_number( sign_p ) || !"signed_distance_to_triangle(): Not a Number encountered");
     assert( is_number( sign_q ) || !"signed_distance_to_triangle(): Not a Number encountered");
     assert( is_number( abs_p )  || !"signed_distance_to_triangle(): Not a Number encountered");
-    
+
     bool in_front = ( (sign_p*sign_q) <= VT::zero() );
-    
+
     return  in_front ? abs_p : - abs_p;
   }
 

@@ -5,7 +5,7 @@
 
 namespace big
 {
-  
+
   /**
    * Transfer partitioned vector back to the global un-partitioned system.
    *
@@ -24,7 +24,7 @@ namespace big
                           , ublas::vector<size_t> const & new2old
                           , ublas::vector<T> & x
                           );
-  
+
 } // namespace big
 
 // BIG_AGGLOMERATE_VECTOR_H

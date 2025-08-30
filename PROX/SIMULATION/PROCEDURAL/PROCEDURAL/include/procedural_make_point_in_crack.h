@@ -153,7 +153,7 @@ namespace procedural
                                                  , mid
                                                  , stone_density
                                                  );
-        
+
         engine->set_rigid_body_fixed(rid, true);
       }
     }
@@ -299,13 +299,13 @@ namespace procedural
                                                  , mid
                                                  , stone_density
                                                  );
-        
+
         engine->set_rigid_body_fixed(rid, true);
       }
     }
-    
+
   }
-  
+
 } //namespace procedural
 
 // PROCEDURAL_POINT_IN_CRACK_H

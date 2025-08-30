@@ -91,9 +91,9 @@ namespace hyper
 
       Ce[idx] = NN * (vol * c );
     }
-    
+
   }
-  
+
 }// namespace hyper
 
 // HYPER_COMPUTE_DAMPING_MATRIX_H

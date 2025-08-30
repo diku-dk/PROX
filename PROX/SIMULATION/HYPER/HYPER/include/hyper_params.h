@@ -11,7 +11,7 @@
 #include <cassert>
 
 namespace hyper
-{    
+{
   /**
    * Paramters for controlling hyper simulation.
    *
@@ -27,7 +27,7 @@ namespace hyper
       , adaptive_type
       , implicit_type
     } time_step_method_type;
-    
+
   protected:
 
     typedef typename MT::real_type    T;
@@ -267,4 +267,4 @@ namespace hyper
 } // namespace hyper
 
 // HYPER_PARAMS_H
-#endif 
+#endif

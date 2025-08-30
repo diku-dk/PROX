@@ -365,29 +365,29 @@ namespace content
                                   , &tetrahedra[0]
                                   , &coordinates[0]
                                   );
-      
-      
+
+
       // Convert from raw data to a T4Mesh
       mesh_array::T4Mesh tetmesh;
       mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetX;
       mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetY;
       mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetZ;
-      
+
       mesh_array::convert(N, K, &vertices[0], &tetrahedra[0], &coordinates[0], tetmesh, tetX, tetY, tetZ);
-      
+
       // Extract T3Mesh surface of T4Mesh
       mesh_array::T3Mesh submesh;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subX;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
-      
+
       mesh_array::make_t3mesh( tetmesh, tetX, tetY, tetZ, submesh, subX, subY,subZ );
-      
+
       mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
-    
+
   }
-  
+
 }//namespace content
 
 // CONTENT_ADD_VISUAL_MESH_H

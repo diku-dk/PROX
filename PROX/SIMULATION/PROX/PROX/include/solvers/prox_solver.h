@@ -9,15 +9,15 @@
 
 namespace prox
 {
-  
+
   /**
    * A solver functor.
-   */  
+   */
   template<typename M>
   class Solver
-  {    
+  {
   public:
-    
+
     virtual void operator()(
                             typename M::compressed4x6_type const &
                             , typename M::compressed6x4_type const &
@@ -28,11 +28,11 @@ namespace prox
                             , NormalSubSolver<typename M::real_type> const &
                             , FrictionSubSolver<typename M::real_type> const &
                             , SolverParams<M> const &
-                            , M const & 
+                            , M const &
                             ) const = 0;
-    
+
   };
-  
+
 } //namespace prox
 
 // PROX_SOLVER_H

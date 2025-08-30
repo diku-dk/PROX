@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
       continue;
 
     BOOST_CHECK_CLOSE( (w1+w2+w3),  1.0, 0.01);
-    
+
     BOOST_CHECK( w1 >= 0.0);
     BOOST_CHECK( w2 >= 0.0);
     BOOST_CHECK( w3 >= 0.0);

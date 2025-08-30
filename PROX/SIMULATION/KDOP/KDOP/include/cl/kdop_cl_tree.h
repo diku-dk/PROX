@@ -9,7 +9,7 @@ namespace kdop
     {
         namespace cl
         {
-            
+
             template< typename KernelT >
             struct KernelInterval {
                 KernelT lower;
@@ -38,11 +38,11 @@ namespace kdop
             struct KernelTetrahedronSurfaceInfo {
                 cl_uchar vertex_on_surface[4];
             };
-            
+
         } // namespace cl
-        
+
     } // namespace details
-    
+
 } // namespace kdop
 
 #endif // KDOP_CL_TREE_H

@@ -35,7 +35,7 @@ namespace procedural
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;
-    
+
     mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings();
     tetset.m_quality_ratio      = util::to_value<double>(params.get_value("tetgen_quality_ratio", "2.0"));
     tetset.m_maximum_volume     = util::to_value<double>(params.get_value("tetgen_maximum_volume", "0.0"));
@@ -178,7 +178,7 @@ namespace procedural
                                 , layers
                                 , span
                                 , mat_info);
-      
+
     }
     if (scene.compare("tower") == 0)
     {
@@ -508,7 +508,7 @@ namespace procedural
                                        , mat_info
                                        , tetset
                                        );
-      
+
     }
     if (scene.compare("earthquake") == 0)
     {
@@ -669,7 +669,7 @@ namespace procedural
                                        , mat_info
                                        , tetset
                                        );
-      
+
     }
     if (scene.compare("glass_dims") == 0)
     {
@@ -763,7 +763,7 @@ namespace procedural
                                   , 1.0f
                                   , ground_width
                                   );
-      
+
     }
     if (scene.compare("wall_pins") == 0)
     {
@@ -1227,7 +1227,7 @@ namespace procedural
     if (scene.compare("internal_edge") == 0)
     {
       float const scene_size = util::to_value<float>( params.get_value("procedural_param_1", "20.0")  );
-      
+
       procedural::make_internal_edge<MT>(
                                          engine
                                          , V::make( 0.0, 0.0, 0.0 )

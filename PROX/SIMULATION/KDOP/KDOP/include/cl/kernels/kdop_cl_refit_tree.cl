@@ -27,23 +27,23 @@ __kernel void do_refit_tree(
     const size_t group_id   = get_group_id(0);
     const size_t local_id   = get_local_id(0);
     const size_t local_size = get_local_size(0);
-    
+
     // Hold the offsets of BVH nodes for this object in vertices.
     __local uint nodes_start;
     __local uint nodes_end;
-    
+
     // Repeat for tetrahedrons and vertices.
     __local uint tetrahedrons_start;
     __local uint vertices_start;
-    
+
     // Holds the offset of the first chunk in the last level of this object.
     // Needed to identify the type of leaf: either it references a chunk in a
     // lower level, or it references a tetrahedron.
     __local uint last_level_offset;
-    
+
     // Number of threads that sit idle during updating.
     __local uint idle_count;
-    
+
     if(local_id == 0) {
         nodes_start        = group_id == 0 ? 0 : node_offsets[group_id - 1];
         nodes_end          = node_offsets[group_id];
@@ -53,30 +53,30 @@ __kernel void do_refit_tree(
         idle_count         = 0;
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    
+
     /* Walk through all nodes from the back. */
-    
+
     // In case a child KDOP was not computed, a thread needs to try again.
     bool try_again = false;
-    
+
     // Indicates whether this thread cannot do any more work.
     bool idle = false;
-    
+
     // Helper variable to identify the first iteration.
     bool first_run = true;
-    
+
     size_t offset = nodes_end - local_id - 1;
     while(true)
     {
         // Make all threads have a consistent view on global and local memory.
         // This barrier needs to be encountered by all threads.
         barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
-        
+
         // If all threads are idle, make them all exit at the same time.
         if(idle_count == local_size) {
             break;
         }
-        
+
         // Compute new offset if possible.
         bool abort = (!first_run) && // do not abort on the first run
                 (local_size > offset) && // abort if offset would overflow
@@ -86,7 +86,7 @@ __kernel void do_refit_tree(
                 (local_size <= offset) * // advance if offset does not overflow
                 (!try_again); // do not advance when retrying same offset
         first_run = false;
-        
+
         if(idle || abort || offset < nodes_start || offset >= nodes_end) {
             // Thread cannot do more work, so increment the number of idle
             // threads exactly once and don't continue working.
@@ -96,17 +96,17 @@ __kernel void do_refit_tree(
             idle = true;
             continue;
         }
-        
+
         // Reset retrying state.
         try_again = false;
-        
+
         Node node = nodes[offset];
         if(node_is_leaf(node)) {
             if(offset >= nodes_start + last_level_offset) {
                 // Regular leaf because the offset is larger than/equal to the
                 // offset of the first chunk in the last level.
                 Tetrahedron tetrahedron = tetrahedrons[tetrahedrons_start + node.start];
-                
+
                 // Update each slab with projection for each of the 4 points
                 // of a tetrahedron.
                 for(uchar n = 0; n < 4; ++n) {
@@ -118,7 +118,7 @@ __kernel void do_refit_tree(
                         node.slabs[k].upper = fmax(node.slabs[k].upper, projection);
                     }
                 }
-                
+
                 // Copy back the volume.
                 for(uchar k = 0; k < __K / 2; ++k) {
                     nodes[offset].slabs[k].lower = node.slabs[k].lower;

@@ -20,13 +20,13 @@ BOOST_AUTO_TEST_CASE(default_types_testing)
   container_test::run<8,8>();
   container_test::run<8,1>();
   container_test::run<1,8>();
-  
+
   vector_test::run<1>();
   vector_test::run<2>();
   vector_test::run<3>();
   vector_test::run<4>();
   vector_test::run<6>();
-  
+
   matrix_test::run<1,1>();
   matrix_test::run<2,2>();
   matrix_test::run<3,3>();
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(default_types_testing)
   matrix_test::run<6,6>();
   matrix_test::run<3,4>();
   matrix_test::run<4,3>();
-  
+
   quaternion_test::run();
 }
 

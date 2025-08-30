@@ -31,16 +31,16 @@ namespace content
     class Cache
       {
       protected:
-        
-        content::Input              * m_input;    ///< A pointer to the physics engine manager      
-        content::Output             * m_output;   ///< A pointer to the physics engine manager      
-        
+
+        content::Input              * m_input;    ///< A pointer to the physics engine manager
+        content::Output             * m_output;   ///< A pointer to the physics engine manager
+
         size_t                        m_index;        ///< A  cached index value.
         std::map<std::string, size_t> m_name_to_idx;  ///< Internal data structure used to map names to indices
-        
+
         std::map<std::string, Motion >        m_motions;            ///< Internal data structure used to keep a collection of motions.
         std::map<std::string, Transform >     m_transforms;         ///< Internal data structure used to keep a collection of transforms.
-        std::map<std::string, RigidBodyState> m_rigid_body_states;  ///< Internal data structure used to keep a collection of rigid body states 
+        std::map<std::string, RigidBodyState> m_rigid_body_states;  ///< Internal data structure used to keep a collection of rigid body states
         std::vector<Point>                    m_points;             ///< Temporary storage for points.
         std::vector<Vertex>                    m_vertices;          ///< Temporary storage for vertices.
         std::vector<Tetrahedron>               m_tetrahedra;        ///< Temporary storage for tetrahedra.
@@ -48,7 +48,7 @@ namespace content
       public:
 
         std::map<size_t,size_t>  m_force_index_lut;
-        
+
         /**
          * Get a pointer to the current physics manager.
          *
@@ -58,10 +58,10 @@ namespace content
         content::Input        * input()        { return m_input; }
         content::Output const * output() const { return m_output; }
         content::Output       * output()       { return m_output; }
-        
+
         size_t const & get_idx()  {  return m_index;  }
         void set_idx(size_t const & value) { m_index = value; }
-        
+
         /**
          * Get index for name.
          *
@@ -73,10 +73,10 @@ namespace content
         {
           std::map<std::string, size_t>::const_iterator iter = m_name_to_idx.find( name );
           if(iter==m_name_to_idx.end())
-            throw std::runtime_error("no entry existed for " + name);          
+            throw std::runtime_error("no entry existed for " + name);
           return iter->second;
         }
-        
+
         /**
          * Set index for name.
          *
@@ -87,10 +87,10 @@ namespace content
         {
           std::map<std::string, size_t>::const_iterator iter = m_name_to_idx.find( name );
           if(iter!=m_name_to_idx.end())
-            throw std::runtime_error("entry already existed for " + name);          
+            throw std::runtime_error("entry already existed for " + name);
           m_name_to_idx[ name ] = idx;
         }
-        
+
         /**
          * Name to Transform mapping.
          *
@@ -102,18 +102,18 @@ namespace content
         {
           std::map<std::string, Transform>::const_iterator iter = m_transforms.find( name );
           if(iter==m_transforms.end())
-            throw std::runtime_error("no entry existed for " + name);          
+            throw std::runtime_error("no entry existed for " + name);
           return iter->second;
         }
-        
+
         void set_transform_for_name( std::string const & name, Transform const & T )
         {
           std::map<std::string, Transform>::const_iterator iter = m_transforms.find( name );
           if(iter!=m_transforms.end())
-            throw std::runtime_error("entry already existed for " + name);          
+            throw std::runtime_error("entry already existed for " + name);
           m_transforms[ name ] = T;
         }
-        
+
         /**
          * Name to Motion mapping.
          *
@@ -125,18 +125,18 @@ namespace content
         {
           std::map<std::string, Motion>::const_iterator iter = m_motions.find( name );
           if(iter==m_motions.end())
-            throw std::runtime_error("no entry existed for " + name);          
+            throw std::runtime_error("no entry existed for " + name);
           return iter->second;
         }
-        
+
         void set_motion_for_name( std::string const & name, Motion const & M )
         {
           std::map<std::string, Motion>::const_iterator iter = m_motions.find( name );
           if(iter!=m_motions.end())
-            throw std::runtime_error("entry already existed for " + name);          
+            throw std::runtime_error("entry already existed for " + name);
           m_motions[ name ] = M;
         }
-        
+
         /**
          * Name to rigid body state mapping.
          *
@@ -148,15 +148,15 @@ namespace content
         {
           std::map<std::string, RigidBodyState>::const_iterator iter = m_rigid_body_states.find( name );
           if(iter==m_rigid_body_states.end())
-            throw std::runtime_error("no entry existed for " + name);          
+            throw std::runtime_error("no entry existed for " + name);
           return iter->second;
         }
-        
+
         void set_state_for_name( std::string const & name, RigidBodyState const & S )
         {
           std::map<std::string, RigidBodyState>::const_iterator iter = m_rigid_body_states.find( name );
           if(iter!=m_rigid_body_states.end())
-            throw std::runtime_error("entry already existed for " + name);          
+            throw std::runtime_error("entry already existed for " + name);
           m_rigid_body_states[ name ] = S;
         }
 
@@ -166,21 +166,21 @@ namespace content
          * Clear all points currently saved.
          */
         void clear_points() { m_points.clear(); }
-        
+
         /**
          * Add new point to internal storage.
          *
          * @param P     The new point data to be added.
          */
         void add_point( Point const & p ) {  m_points.push_back(p); }
-        
+
         /**
          * Get pointer to array of points in internal storage.
          *
          * @return   A pointer to the first element in an array of points
          */
         Point const * get_points() const { return m_points.empty() ? 0 : &m_points[0]; }
-        
+
         /**
          * Get Number of Points in Internal Storage.
          *
@@ -203,11 +203,11 @@ namespace content
         size_t size_tetrahedra() const { return m_tetrahedra.size(); }
 
       protected:
-        
+
         Cache(){}
-        
+
       public:
-        
+
         Cache(content::Input * input)
         : m_input( input )
         , m_output(0)
@@ -233,13 +233,13 @@ namespace content
         {
           assert( output || !"output manager was null");
         }
-        
+
         ~Cache(){}
-        
+
       };
-    
+
   }// namespace details
-  
+
 }// namespace content
 
 // CONTENT_IO_CACHE_H

@@ -6,7 +6,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename MT>
   void make_ellipsoid(
                      typename MT::real_type const & a
@@ -21,7 +21,7 @@ namespace mesh_array
                      )
   {
     typedef typename MT::value_traits    VT;
-    
+
 		make_sphere<MT>(VT::one(), slices, segments, mesh, X, Y, Z);
 		scale<MT>(a,b,c, mesh, X, Y, Z);
 	}

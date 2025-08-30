@@ -272,11 +272,11 @@ namespace geometry
             n = axes[i];
           }
         }
-        
+
         if(b_min[i] <= a_min[i] &&  a_min[i] <= b_max[i])
         {
           T const overlap = a_min[i] - b_max[i];
-          
+
           if(overlap > min_overlap)
           {
             min_overlap = overlap;
@@ -284,7 +284,7 @@ namespace geometry
           }
         }
       }
-      
+
       return (min_overlap <= VT::zero());
     }
 
@@ -447,7 +447,7 @@ namespace geometry
         if(b_min[i] <= a_min[i] &&  a_min[i] <= b_max[i])
         {
           T const overlap = a_min[i] - b_max[i];
-          
+
           if(overlap > min_overlap)
           {
             min_overlap = overlap;
@@ -455,12 +455,12 @@ namespace geometry
           }
         }
       }
-      
+
       return (min_overlap <= VT::zero());
     }
 
     /**
-     * This method determines the contact normal to be the normal-direction 
+     * This method determines the contact normal to be the normal-direction
      * that are defined by the two most opposing surfaces.
      */
     template< typename V>
@@ -535,7 +535,7 @@ namespace geometry
      * This sub-routine just generates all possible intersection points
      * between the two tetrahedra and then projects them onto the contact
      * plane using the contact normal information. Finally, it computes
-     * penetration depth based on the given normal direction and filters 
+     * penetration depth based on the given normal direction and filters
      * away any redundant contact points before reporting them with the
      * callback function.
      */
@@ -659,7 +659,7 @@ namespace geometry
       for(; p!= contacts.end(); ++p)
       {
         bool unique = true;
-        
+
         typename std::vector<V>::iterator q = contacts.begin();
         for(; q != p; ++q)
         {
@@ -669,13 +669,13 @@ namespace geometry
             break;
           }
         }
-        
+
         if(unique)
         {
           callback( (*p), n, depth);
         }
       }
-      
+
       return true;
     }
 
@@ -963,20 +963,20 @@ namespace geometry
               callback( p, n, depth);
               ++count;
             }
-            
+
             if(b_min <= a_min &&  a_min <= b_max)
             {
               T const depth = a_min - b_max;
               callback( p, -n, depth);
               ++count;
             }
-            
-            
+
+
           }
         }
       }
     }
-    
+
     return count > 0u;
   }
 
@@ -1236,7 +1236,7 @@ namespace geometry
           ++count;
         }
       }
-      
+
     }
 
     return count > 0u;

@@ -12,7 +12,7 @@
 
 namespace prox
 {
-  
+
   /**
    *
    * @param drift_reduction     The procentage of numerical drift reduction that should
@@ -36,11 +36,11 @@ namespace prox
                                            )
   {
     using std::max;
-    
+
     typedef typename M::real_type        T;
     typedef typename M::block4x1_type    B4x1;
     typedef typename M::value_traits     VT;
-    
+
     assert( time_step > VT::zero()  || !"get_pre_stabilization_vector(): time_step should be positive");
 
     util::Log logging;
@@ -52,11 +52,11 @@ namespace prox
     if( ! params.pre_stabilization() )
       return;
 
-    
+
     T const & reduction = params.gap_reduction();
     T const & min_gap   = params.min_gap();
     T const & max_gap   = params.max_gap();
-    
+
     assert( reduction >= VT::zero() || !"get_pre_stabilization_vector(): gap reduction parameter should be positive");
     assert( reduction <= VT::one()  || !"get_pre_stabilization_vector(): gap reduction parameter should be less than or equal to one");
     assert( min_gap >= VT::zero()   || !"get_pre_stabilization_vector(): min gap correction should be non negative");
@@ -65,7 +65,7 @@ namespace prox
     T const k       =   reduction / time_step;
     T const limit   = - max_gap / time_step;
     T const yield   = - min_gap;
-    
+
     size_t index = 0u;
     for(contact_iterator contact = begin;contact!=end; ++contact, ++index)
     {
@@ -79,10 +79,10 @@ namespace prox
       b(1) = VT::zero();
       b(2) = VT::zero();
       b(3) = VT::zero();
-      
-      assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");      
+
+      assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");
     }
   }
 } //namespace prox
 // PROX_GET_PRE_STABILIZATION_VECTOR_H
-#endif 
+#endif

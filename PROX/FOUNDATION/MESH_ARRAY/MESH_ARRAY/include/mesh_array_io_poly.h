@@ -8,7 +8,7 @@
 
 namespace mesh_array
 {
-  
+
   template<typename T>
   void write_poly(
                   std::string const & filename
@@ -17,7 +17,7 @@ namespace mesh_array
                   , VertexAttribute<T,T3Mesh> const & Y
                   , VertexAttribute<T,T3Mesh> const & Z
                   );
-  
+
 } // namespace mesh_array
 
 //MESH_ARRAY_IO_POLY_H

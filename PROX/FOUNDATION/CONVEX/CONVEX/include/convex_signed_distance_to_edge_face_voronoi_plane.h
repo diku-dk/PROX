@@ -9,7 +9,7 @@
 
 namespace convex
 {
-  
+
   /**
    * Signed Distance between a point and a Edge Face Voronoi Plane.
    *
@@ -33,27 +33,27 @@ namespace convex
                                                                    )
   {
     using std::fabs;
-    
+
     typedef typename V::value_traits    VT;
     typedef typename V::real_type       T;
-    
+
     V m      = tiny::cross( A-C, B-C );
-    
+
     assert( tiny::inner_prod( m, m ) > VT::zero() || !"signed_distance_to_edge_face_voronoi_plane(): Degenerate triangle encountered");
-    
+
     V l      = tiny::cross( B-A, m );
     V n      = tiny::unit( l );
-    
+
     T sign_p = tiny::inner_prod( n, p-B );
     T sign_C = tiny::inner_prod( n, C-B );
     T abs_p  = fabs( sign_p );
-    
+
     assert( is_number( sign_p ) || !"signed_distance_to_edge_face_voronoi_plane(): Not a Number encountered");
     assert( is_number( sign_C ) || !"signed_distance_to_edge_face_voronoi_plane(): Not a Number encountered");
     assert( is_number( abs_p )  || !"signed_distance_to_edge_face_voronoi_plane(): Not a Number encountered");
-    
+
     bool in_front = ( (sign_p*sign_C) <= VT::zero() );
-    
+
     return in_front ? abs_p : -abs_p;
   }
 

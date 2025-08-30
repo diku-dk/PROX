@@ -242,7 +242,7 @@ namespace geometry
 
     if (  fabs( VT::one() - norm(obb.orientation() ) ) > tiny::working_precision<T>() )
       return false;
-    
+
     return true;
   }
 

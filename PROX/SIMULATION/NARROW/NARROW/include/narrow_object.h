@@ -44,7 +44,7 @@ namespace narrow
     kdop::Tree<T,8> m_tree;                                     ///< kDOP BVH tree used for collision detection of deformed (spatial) mesh
 
   protected:
-    
+
     size_t           m_geometry_idx;  ///< A geometry index.
 
   public:
@@ -110,14 +110,14 @@ namespace narrow
         mem_bytes = std::numeric_limits<std::size_t>::max();
       } else {
 #endif // HAS_DIKUCL
-        
+
         // 8000 bytes if gProximity cannot/should not be used
         mem_bytes = params.get_chunk_bytes();
-        
+
 #ifdef HAS_DIKUCL
       }
 #endif // HAS_DIKUCL
-      
+
       object.m_tree = kdop::make_tree<V,8,T>(
                                              mem_bytes
                                              , geometry.m_tetramesh.m_mesh
@@ -132,7 +132,7 @@ namespace narrow
       object.m_Z.bind(geometry.m_tetramesh.m_mesh);
     }
   }
-  
+
 } //namespace narrow
 
 // NARROW_OBJECT_H

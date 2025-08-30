@@ -20,14 +20,14 @@ namespace kdop
 {
     namespace details
     {
-        
+
         namespace cl
         {
-    
+
             /**
              * Starts the refitting BVH kernel, assuming all data is scheduled
              * to be copied to the device in queue. Does not finish the queue.
-             * 
+             *
              * @param context_handle
              * @param device_handle
              * @param queue
@@ -55,7 +55,7 @@ namespace kdop
                                    )
             {
                 cl_int err = CL_SUCCESS;
-                
+
                 // Get the BVH refitting kernel.
                 ::dikucl::KernelInfo refit_tree_kernel_info(  details::cl::kernels_path
                                                           , "kdop_cl_refit_tree.cl"
@@ -71,7 +71,7 @@ namespace kdop
                                                                          , &err, context_handle);
                 CHECK_CL_ERR(err);
                 ::cl::Kernel refit_tree_kernel = refit_tree_kernel_handle->kernel;
-                
+
                 // Simply set all arguments.
                 err = refit_tree_kernel.setArg(0, *vertices);
                 CHECK_CL_ERR(err);
@@ -87,13 +87,13 @@ namespace kdop
                 CHECK_CL_ERR(err);
                 err = refit_tree_kernel.setArg(6, *last_level_offsets);
                 CHECK_CL_ERR(err);
-                
+
                 // Use system suggested local work size.
                 const size_t rt_local_work_size =
                         refit_tree_kernel.getWorkGroupInfo<CL_KERNEL_WORK_GROUP_SIZE>(  device_handle->device
                                                                                       , &err);
                 CHECK_CL_ERR(err);
-                
+
                 // Start the kernel.
                 cl_ulong duration = 0;
 #ifdef USE_PROFILING
@@ -125,11 +125,11 @@ namespace kdop
 #endif // USE_PROFILING
                 return duration;
             }
-            
+
         } // namespace cl
-        
+
     } // namespace details
-    
+
     template<typename V, size_t K, typename T>
     inline void refit_tree(  Tree<T,K> & tree
                              , mesh_array::T4Mesh const & mesh
@@ -140,11 +140,11 @@ namespace kdop
                              )
     {
         assert( 0 || !"refit_tree using DIKUCL is not yet implemented.");
-        
+
         // TODO Batch refitting of trees, copy to device, call above routine
         // and copy back from device.
     }
-    
+
 } // namespace kdop
 
 #endif // KDOP_CL_REFIT_TREE_H

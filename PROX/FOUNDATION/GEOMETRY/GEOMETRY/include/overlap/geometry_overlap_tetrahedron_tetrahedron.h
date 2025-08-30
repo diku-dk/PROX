@@ -285,10 +285,10 @@ namespace geometry
     V const ae5be5 = tiny::cross(A3-A2, B3-B2);
     if (detail::SAT_line(A0, A1, A2, B0, B1, B2, ae5be5))
       return false;
-    
+
     return true;
   }
-  
+
 }// namespace geometry
 
 // GEOMETRY_OVERLAP_TETRAHEDRON_TETRAHEDRON_H
