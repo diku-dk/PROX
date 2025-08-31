@@ -5,6 +5,8 @@
 
 #include <cmath>  // for std::sqrt
 #include <iostream>
+#include <convex_motion_interpolation.h>
+#include <numbers>
 
 void gjk_demo()
 {
@@ -79,13 +81,14 @@ void continuous_demo()
   std::cout << "CONTINUOUS Demo" << std::endl;
 
   // Create some math types
-  typedef tiny::MathTypes<double> M;
+/*  typedef tiny::MathTypes<double> M;
 
   typedef M::quaternion_type                      Q;
   typedef M::vector3_type                         V;
   typedef M::real_type                            T;
   typedef M::coordsys_type                        X;
-  typedef M::value_traits                         VT;
+  typedef M::value_traits                         VT;*/
+  using T = double;
 
   // Create some geometries
   convex::Cylinder<T> A;
@@ -96,19 +99,19 @@ void continuous_demo()
   B.radius()      =  1.0;
 
   // Create from and to positions of the geometries
-  X A_from, A_to;
-  X B_from, B_to;
+  CoordSysEigen<T> A_from, A_to;
+  CoordSysEigen<T> B_from, B_to;
 
-  A_from.T() = V::make(0.0, 0.0, 2.0);
-  A_from.Q() = Q::identity();
-  A_to.T()   = V::make(0.0, 0.0, 2.0);
-  A_to.Q()   = Q::Rx( -VT::pi() );
+  A_from.T() = {0.0, 0.0, 2.0};
+  A_from.Q() = EigenQuaternion<T>::Identity();
+  A_to.T()   = {0.0, 0.0, 2.0};
+  A_to.Q()   = Rotatex( -std::numbers::pi_v<T> );
   T r_max_a = sqrt( A.half_height()*A.half_height() + A.radius()*A.radius() );
 
-  B_from.T() = V::make( 0.0, 10.0, 0.0);
-  B_from.Q() = Q::identity();
-  B_to.T()   = V::make( 0.0, 10.0, 0.0);
-  B_to.Q()   = Q::identity();
+  B_from.T() = { 0.0, 10.0, 0.0};
+  B_from.Q() = EigenQuaternion<T>::Identity();
+  B_to.T()   = {0.0, 10.0, 0.0};
+  B_to.Q()   = EigenQuaternion<T>::Identity();
   T r_max_b  = B.radius();
 
   // Set up parameters and create variables for results
@@ -116,11 +119,11 @@ void continuous_demo()
   T      const epsilon        = 0.0001;
   T            toi            = 0.0;
   size_t iterations;
-  V p_a;
-  V p_b;
+  EigenVector3<T> p_a;
+  EigenVector3<T> p_b;
 
   // Call the motion interpolate function to find out if there is an impact and get the estimate of time-of-impact (toi)
-  bool impact = convex::motion_interpolation<M>(
+  bool impact = convex::motion_interpolation<T>(
                                                  A_from
                                                  , A_to
                                                  , &A
@@ -139,7 +142,7 @@ void continuous_demo()
 
   std::cout << "\timpact = " << impact << std::endl;
   std::cout << "\ttoi = " << toi << std::endl;
-  std::cout << "\tdistance at toi = " << norm(p_a-p_b) << std::endl;
+  std::cout << "\tdistance at toi = " << (p_a-p_b).norm() << std::endl;
 
   std::cout << "Goodbye..." << std::endl;
 }

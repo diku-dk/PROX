@@ -203,6 +203,51 @@ inline EigenVector3<Number> rotate(const EigenQuaternion<Number>& Quat, const Ei
     return Quat*rVec;
 }
 
+template<typename Number>
+static EigenQuaternion<Number> Rotateu (const Number rad, const EigenVector3<Number>& axis )
+{
+    using std::cos;
+    using std::sin;
+    const Number theta = rad/2;
+    const Number ctheta = ( cos(theta) );
+    const Number stheta = ( sin(theta) );
+    EigenVector3<Number> vec = (axis).normalized() * stheta;
+    return EigenQuaternion<Number>( ctheta, vec.x(), vec.y(), vec.z());
+}
+
+template<typename Number>
+static EigenQuaternion<Number> Rotatex ( const Number rad)
+{
+    using std::cos;
+    using std::sin;
+    const Number theta = rad/2;
+    const Number ctheta = ( cos(theta) );
+    const Number stheta = ( sin(theta) );
+    return EigenQuaternion<Number>(ctheta, stheta, 0, 0);
+}
+
+template<typename Number>
+static EigenQuaternion<Number> Rotatey ( const Number rad)
+{
+    using std::cos;
+    using std::sin;
+    const Number theta = rad/2;
+    const Number ctheta =( cos(theta) );
+    const Number stheta = ( sin(theta) );
+    return EigenQuaternion<Number>(ctheta, 0, stheta, 0);
+}
+
+template<typename Number>
+static EigenQuaternion<Number> Rotatez ( const Number rad)
+{
+    using std::cos;
+    using std::sin;
+    const Number theta = rad/2;
+    const Number ctheta = numeric_cast( cos(theta) );
+    const Number stheta = numeric_cast( sin(theta) );
+    return EigenQuaternion<Number>(ctheta, 0, 0, stheta);
+}
+
 /*template<typename Number>
 inline EigenVector3<Number> rotate(const EigenQuaternion<Number>& Quat, const Eigen::Matrix<Number, 3,1>::NeagtiveReturnType& rVec)
 {
@@ -217,6 +262,110 @@ inline auto coordSysToEigen(const tiny::CoordSys<TypeParameter>& input)
     return CoordSysEigen<Number>{toEigen(input.T()), toEigen(input.Q())};
 }
 
+
+template<typename T>
+inline void getAxisAngle(const EigenQuaternion<T>& Q,EigenVector3<T>& axis, T& theta)
+{
+    using std::atan2;
+
+    //
+    // By definition a unit quaternion Q can be written as
+    //
+    //    Q = [s,v] = [cos(theta/2), n sin(theta/2)]
+    //
+    // where n is a unit vector. This is the same as a rotation of
+    // theta radian around the axis n.
+    //
+    //
+    // Rotations are difficult to work with for several reasons.
+    //
+    // Firstly both Q and -Q represent the same rotation. This is
+    // easily proven, rotate a arbitary vector r by Q then we have
+    //
+    //   r^\prime = Q r Q^*
+    //
+    // Now rotate the same vector by -Q
+    //
+    //   r^\prime = (-Q) r (-Q)^* = Q r Q^*
+    //
+    // because -Q = [-s,-v] and (-Q)^* = [-s , v] = - [s,-v]^* = - Q^*.
+    //
+    // Thus the quaternion representation of a single rotation is not unique.
+    //
+    // Secondly the rotation it self is not well-posed. A rotation of theta
+    // radians around the unit axis n could equally well be done as a rotation
+    // of -theta radians around the negative unit axis n.
+    //
+    // This is seen by straightforward substitution
+    //
+    //  [ cos(-theta/2), sin(-theta/2) (-n) ] = [ cos(theta/2), sin(theta/2) n ]
+    //
+    // Thus we get the same quaternion regardless of whether we
+    // use (+theta,+n) or (-theta,-n).
+    //
+    //
+    // From the Quaternion we see that
+    //
+    //   \frac{v}{\norm{v}}  = \frac{ sin(theta/2) n }{| sin(theta/2) | } = sign(sin(theta/2)) n
+    //
+    // Thus we can easily get the rotation axis. However, we can not immediately
+    // determine the positive rotation axis direction. The problem boils down to the
+    // fact that we can not see the sign of the sinus-factor.
+    //
+    // Let us proceed by setting
+    //
+    //   x =    cos(theta/2)   =  s
+    //   y =  | sin(theta/2) | =  \norm{v}
+    //
+    // Then we basically have two possibilities for finding theta
+    //
+    //  theta_1 = 2 atan2( y, x)        equivalent to      sign(sin(theta/2)) = 1
+    //
+    // or
+    //
+    //  theta_2 = 2 atan2( -y, x)       equivalent to      sign(sin(theta/2)) = -1
+    //
+    // If theta_1 is the solution we have
+    //
+    //  n = \frac{v}{\norm{v}}
+    //
+    // If theta_2 is the solution we must have
+    //
+    //  n = - \frac{v}{\norm{v}}
+    //
+    // Observe that we always have theta_2 = 2 pi - theta_1. Therefore theta_1 < theta_2.
+    //
+    // Let us imagine that we always choose $theta_1$ as the solution then
+    // the correspoding quaternion for that solution would be
+    //
+    //         Q_1 = [cos(theta_1/2),  sin(theta_1/2)   \frac{v}{\norm{v}}]
+    //             = [s ,  \norm{v}   \frac{v}{\norm{v}}]
+    //             = Q
+    //
+    // Now if we choose theta_2 as the solution we would have
+    //
+    //         Q_2 = [cos(theta_2/2),  sin(theta_2/2)   -\frac{v}{\norm{v}}]
+    //             = [s ,  -\norm{v}   -\frac{v}{\norm{v}}]
+    //             = [s ,  \norm{v}   \frac{v}{\norm{v}}]
+    //             = Q
+    //
+    // Thus we observe that regardless of which solution we pick we always have Q = Q_1 = Q_2.
+    //
+    // At this point one may be confused. However, it should be clear that theta_2 is equivalent
+    // to the theta_1 rotation. The difference is simply that theta_2 corresponds to flipping the
+    // rotation axis of the theta_1 case.
+    //
+    const T ct2   = Q.w();           //---   cos(theta/2)
+    const T st2   = ( EigenVector3<T>(Q.x(), Q.y(), Q.z()) ).norm();   //---  |sin(theta/2)|
+
+    theta = 2* atan2(st2,ct2);
+
+    assert( st2 >= 0   || !"get_axis_angle(): |sin(theta/2)| must be non-negative");
+    assert( theta >= 0 || !"get_axis_angle(): theta must be non-negative");
+    assert( is_number(theta)              || !"get_axis_angle(): NaN encountered");
+
+    axis = st2 > 0 ? EigenVector3<T>(Q.x(), Q.y(), Q.z()) / st2 : EigenVector3<T>( 0,0,0 );
+}
 
 //TINY_MATH_TYPES_H
 #endif

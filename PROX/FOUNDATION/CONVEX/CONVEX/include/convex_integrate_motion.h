@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cassert>
 
+#include <tiny_math_types.h>
+
 namespace convex
 {
 
@@ -17,39 +19,36 @@ namespace convex
    *
    * @return       Upon return this argument holds the coordinate transformation of the object at time tau.
    */
-  template< typename M>
-  inline typename M::coordsys_type integrate_motion(
-                                             typename M::coordsys_type const & X
-                                             , typename M::real_type const & tau
-                                             , typename M::vector3_type const & v
-                                             , typename M::vector3_type const & omega
+  template< typename T>
+  inline CoordSysEigen<T> integrate_motion(
+                                             const CoordSysEigen<T>& X
+                                             , const T tau
+                                             , const EigenVector3<T>& v
+                                             , const EigenVector3<T>& omega
                                              )
   {
-    typedef typename M::coordsys_type    C;
-    typedef typename M::real_type        T;
-    typedef typename M::vector3_type     V;
-    typedef typename M::quaternion_type  Q;
+
 
     assert( tau >= 0 || !"integrate_motion(): Tau must be non-negative");
 
-    T const radian           = tau * tiny::norm( omega );
-    V const axis             = tiny::unit( omega );
+      T const radian           = tau * ( omega ).norm();
+    const EigenVector3<T> axis             = ( omega ).normalized();
 
     assert( is_number( radian )  || !"integrate_motion(): NaN encountered");
     assert( is_number( axis(0) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( axis(1) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( axis(2) ) || !"integrate_motion(): NaN encountered");
 
-    Q dq;
-    V dv;
-    dq = Q::Ru( radian, axis);
+    EigenQuaternion<T> dq;
+    EigenVector3<T> dv;
+    dq = Rotateu( radian, axis);
     dv = v*tau;
 
     assert( is_number( dv(0) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( dv(1) ) || !"integrate_motion(): NaN encountered");
     assert( is_number( dv(2) ) || !"integrate_motion(): NaN encountered");
 
-    return C( dv + X.T(), tiny::prod(dq, X.Q()) );
+    return CoordSysEigen<T>( dv + X.T(), (dq*X.Q()) );
   }
 
 } // namespace convex

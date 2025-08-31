@@ -3,6 +3,7 @@
 
 #include <tiny.h>
 #include <convex_conservative_advancement.h>
+#include <convex_compute_velocities.h>
 
 namespace convex
 {
@@ -39,36 +40,33 @@ namespace convex
    *
    * @return                If an impact is found then the return value is true otherwise it is false.
    */
-  template<typename M>
-  inline bool motion_interpolation(
-                            typename M::coordsys_type const & X_A_from
-                            , typename M::coordsys_type const & X_A_to
-                            , geometry::SupportMapping<typename M::real_type> const * A
-                            , typename M::real_type const & r_max_A
-                            , typename M::coordsys_type const & X_B_from
-                            , typename M::coordsys_type const & X_B_to
-                            , geometry::SupportMapping<typename M::real_type> const * B
-                            , typename M::real_type const & r_max_B
-                            , typename M::vector3_type & p_A
-                            , typename M::vector3_type & p_B
-                            , typename M::real_type & time_of_impact
+  template<typename T>
+  inline bool motion_interpolation(const CoordSysEigen<T>& X_A_from
+                            , const CoordSysEigen<T>& X_A_to
+                            , geometry::SupportMapping<T> const * A
+                            , const T& r_max_A
+                            , const CoordSysEigen<T>& X_B_from
+                            , const CoordSysEigen<T>& X_B_to
+                            , geometry::SupportMapping<T> const * B
+                            , const T r_max_B
+                            , EigenVector3<T> & p_A
+                                 , EigenVector3<T> & p_B
+                            , T& time_of_impact
                             , size_t & iterations
-                            , typename M::real_type const & epsilon
+                            , const T epsilon
                             , size_t const & max_iterations
                             )
   {
-    typedef typename M::vector3_type   V;
-    typedef typename M::value_traits   VT;
-    typedef typename M::real_type T;
+
     EigenVector3<T> v_A;
     EigenVector3<T> w_A;
     EigenVector3<T> v_B;
     EigenVector3<T> w_B;
 
-    compute_velocities<M>( X_A_from, X_A_to, 1, v_A, w_A );
-    compute_velocities<M>( X_B_from, X_B_to, 1, v_B, w_B );
+    compute_velocities<T>( X_A_from, X_A_to, 1, v_A, w_A );
+    compute_velocities<T>( X_B_from, X_B_to, 1, v_B, w_B );
 
-    return conservative_advancement<M>(
+    return conservative_advancement<T>(
                                        X_A_from
                                         , (v_A)
         , (w_A)

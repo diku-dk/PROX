@@ -4,6 +4,8 @@
 #include <cassert>
 #include <tiny_math_types.h>
 #include <convex_compute_closest_points.h>
+#include <convex_integrate_motion.h>
+
 namespace convex
 {
 
@@ -38,56 +40,47 @@ namespace convex
    *
    * @return                If an impact is found then the return value is true otherwise it is false.
    */
-  template<typename M>
-  inline bool conservative_advancement(
-                                typename M::coordsys_type const & X_A
-                                , const EigenVector3<typename M::real_type>& v_A
-                                , const EigenVector3<typename M::real_type>& w_A
-                                , geometry::SupportMapping<typename M::real_type> const * A
-                                , typename M::real_type const & r_max_A
-                                , typename M::coordsys_type const & X_B
-                                , const EigenVector3<typename M::real_type>& v_B
-                                , const EigenVector3<typename M::real_type>& w_B
-                                , geometry::SupportMapping<typename M::real_type> const * B
-                                , typename M::real_type const & r_max_B
-                                , typename M::vector3_type& p_A
-                                , typename M::vector3_type& p_B
-                                , typename M::real_type & time_of_impact
+  template<typename T>
+  inline bool conservative_advancement(const CoordSysEigen<T>& X_A
+                                , const EigenVector3<T>& v_A
+                                , const EigenVector3<T>& w_A
+                                , geometry::SupportMapping<T> const * A
+                                , const T r_max_A
+                                , const CoordSysEigen<T>& X_B
+                                , const EigenVector3<T>& v_B
+                                , const EigenVector3<T>& w_B
+                                , geometry::SupportMapping<T> const * B
+                                , const T& r_max_B
+                                , EigenVector3<T>& p_A
+                                , EigenVector3<T>& p_B
+                                , T& time_of_impact
                                 , size_t & iterations
-                                , typename M::real_type const & epsilon
-                                , typename M::real_type const & max_tau
+                                , const T& epsilon
+                                , const T& max_tau
                                 , size_t const & max_iterations
                                 )
   {
-    typedef typename M::value_traits  VT;
-    typedef typename M::vector3_type  V;
-    typedef typename M::coordsys_type C;
-    typedef typename M::real_type     T;
 
     assert( r_max_A > 0              || !"conservative_advancement(): maximum distance of object A must be positive");
     assert( r_max_B > 0              || !"conservative_advancement(): maximum distance of object B must be positive");
     assert( max_tau > 0              || !"conservative_advancement(): maximum time-step must be positive");
     assert( epsilon > 0              || !"conservative_advancement(): collision envelope must be positive");
     assert( max_iterations > 0u               || !"conservative_advancement(): maximum iterations must be positive");
-    assert(epsilon >= VT::numeric_cast(1e-2)  || !"conservative_advancement(): Too aggressive setting of epsilon, compute_closest_points uses tolerance 10e4");
+    assert(epsilon >= (1e-2)  || !"conservative_advancement(): Too aggressive setting of epsilon, compute_closest_points uses tolerance 10e4");
 
     T tau = 0;
 
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
       // Compute the coordinate transformations corresponding to the current tau value
-        C T_A = integrate_motion<M>( X_A, tau, fromEigen(v_A), fromEigen(w_A) );
-      C T_B = integrate_motion<M>( X_B, tau, fromEigen(v_B), fromEigen(w_B) );
+        CoordSysEigen<T> T_A = integrate_motion<T>( X_A, tau, (v_A), (w_A) );
+        CoordSysEigen<T> T_B = integrate_motion<T>( X_B, tau, (v_B), (w_B) );
 
       // Compute the closest points at the time tau
-      EigenVector3<T> tmpPA = toEigen(p_A);
-      EigenVector3<T> tmpPB = toEigen(p_B);
-      compute_closest_points<T>( coordSysToEigen(T_A), A, coordSysToEigen(T_B), B, (tmpPA), (tmpPB) );
-      p_A = fromEigen(tmpPA);
-      p_B = fromEigen(tmpPB);
+      compute_closest_points<T>( (T_A), A, (T_B), B, (p_A), (p_B) );
 
       // Estimate normal direction and current minimum distance between A and B
-      EigenVector3<T> v = toEigen(p_A) - toEigen(p_B);
+      EigenVector3<T> v = (p_A) - (p_B);
 
       // 2015-11-19 Kenny: If GJK did not converge completely then p_A and p_B will
       //                   be slightly off... this means the distance we compute here
