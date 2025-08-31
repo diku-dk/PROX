@@ -10,16 +10,14 @@
 namespace mesh_array
 {
 
-  template<typename MT>
+  template<typename T>
   inline void compute_extents(
                        T3Mesh const & mesh
-                       , VertexAttribute<typename MT::real_type,T3Mesh> const & C
-                       , typename MT::real_type & low
-                       , typename MT::real_type & hi
+                       , VertexAttribute<T,T3Mesh> const & C
+                       , T& low
+                       , T& hi
                        )
   {
-    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
 
     T h = std::numeric_limits<T>::lowest();
     T l = std::numeric_limits<T>::max();
@@ -35,17 +33,14 @@ namespace mesh_array
   }
 
 
-  template<typename MT>
+  template<typename T>
   inline void compute_extents(
                               T4Mesh const & mesh
-                              , VertexAttribute<typename MT::real_type,T4Mesh> const & C
-                              , typename MT::real_type & low
-                              , typename MT::real_type & hi
+                              , VertexAttribute<T,T4Mesh> const & C
+                              , T& low
+                              , T& hi
                               )
   {
-    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
-
     T h = std::numeric_limits<T>::lowest();
     T l = std::numeric_limits<T>::max();
 

@@ -32,7 +32,6 @@ namespace procedural
     typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits    VT;
 
     static size_t counter = 0u;
 
@@ -53,9 +52,9 @@ namespace procedural
       T max_z = 0;
       T min_z = 0;
 
-      mesh_array::compute_extents<MT>( data.m_mesh , data.m_X , min_x , max_x );
-      mesh_array::compute_extents<MT>( data.m_mesh , data.m_Y , min_y , max_y );
-      mesh_array::compute_extents<MT>( data.m_mesh , data.m_Z , min_z , max_z );
+      mesh_array::compute_extents<typename MT::real_type>( data.m_mesh , data.m_X , min_x , max_x );
+      mesh_array::compute_extents<typename MT::real_type>( data.m_mesh , data.m_Y , min_y , max_y );
+      mesh_array::compute_extents<typename MT::real_type>( data.m_mesh , data.m_Z , min_z , max_z );
 
       T const x_scale = 1/(max_x-min_x);
       T const y_scale = 1/(max_y-min_y);
