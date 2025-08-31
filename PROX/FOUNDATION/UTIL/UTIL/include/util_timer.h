@@ -1,9 +1,8 @@
 #ifndef UTIL_TIMER_H
 #define UTIL_TIMER_H
 
-#if defined(HAS_CXX17) || defined(HAS_CXX0X)
+
 #define USE_CHRONO
-#endif
 
 #ifdef USE_CHRONO
   #include <chrono>

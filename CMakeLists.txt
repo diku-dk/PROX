@@ -49,29 +49,7 @@ ENDIF(CMAKE_GENERATOR MATCHES Xcode)
 #--- Make sure compiler knows we want to use c++11 features if they exist     ----
 #--- This works fine with "system" compiler, but NVCC will not work with this  ---
 
-INCLUDE(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-
-IF(COMPILER_SUPPORTS_CXX17)
-
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-  ADD_DEFINITIONS( -DHAS_CXX17 )
-
-  MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has C++17 support.")
-
-ELSEIF(COMPILER_SUPPORTS_CXX0X)
-
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-  ADD_DEFINITIONS( -DHAS_CXX0X )
-
-  MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has CXX0X support.")
-
-ELSE()
-
-  MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-
-ENDIF()
+set (CMAKE_CXX_STANDARD 20)
 
 
 ##########################################################
