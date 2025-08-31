@@ -44,7 +44,7 @@ namespace mesh_array
   {
     typedef typename MT::vector3_type    V;
 
-    V const d = compute_center<MT>(mesh,X,Y,Z);
+      V const d = fromEigen(compute_center<typename MT::real_type>(mesh,X,Y,Z));
 
     translate<MT>(-d,mesh,X,Y,Z);
     scale<MT>(factor,factor,factor,mesh,X,Y,Z);

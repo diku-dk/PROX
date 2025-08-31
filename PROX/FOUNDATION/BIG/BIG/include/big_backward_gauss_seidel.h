@@ -28,7 +28,6 @@ namespace big
                                     , boost::numeric::ublas::vector<T> const & b
                                     )
   {
-    typedef big::ValueTraits<T>                         value_traits;
 
     using std::fabs;
 

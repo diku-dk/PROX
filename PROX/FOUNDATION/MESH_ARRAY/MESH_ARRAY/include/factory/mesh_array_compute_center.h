@@ -4,26 +4,25 @@
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_t4mesh.h>
 #include <mesh_array_vertex_attribute.h>
+#include <tiny_math_types.h>
 
 namespace mesh_array
 {
 
-  template<typename MT>
-  inline typename MT::vector3_type compute_center(
+  template<typename T>
+inline EigenVector3<T> compute_center(
                                            T3Mesh const & mesh
-                                           , VertexAttribute<typename MT::real_type,T3Mesh> const & X
-                                           , VertexAttribute<typename MT::real_type,T3Mesh> const & Y
-                                           , VertexAttribute<typename MT::real_type,T3Mesh> const & Z
+                                           , VertexAttribute<T,T3Mesh> const & X
+                                           , VertexAttribute<T,T3Mesh> const & Y
+                                           , VertexAttribute<T,T3Mesh> const & Z
                                            )
   {
-    typedef typename MT::vector3_type    V;
-
-    V center = V::zero();
+    EigenVector3<T> center = {0,0,0};
 
     for(size_t i=0u; i < mesh.vertex_size(); ++i)
     {
       Vertex const v = mesh.vertex(i);
-      center += V::make( X(v), Y(v), Z(v) );
+      center += EigenVector3<T>( X(v), Y(v), Z(v) );
     }
 
     center /= mesh.vertex_size();
@@ -31,22 +30,21 @@ namespace mesh_array
     return center;
   }
 
-  template<typename MT>
-  inline typename MT::vector3_type compute_center(
+  template<typename T>
+  inline EigenVector3<T> compute_center(
                                                   T4Mesh const & mesh
-                                                  , VertexAttribute<typename MT::real_type,T4Mesh> const & X
-                                                  , VertexAttribute<typename MT::real_type,T4Mesh> const & Y
-                                                  , VertexAttribute<typename MT::real_type,T4Mesh> const & Z
+                                                  , VertexAttribute<T,T4Mesh> const & X
+                                                  , VertexAttribute<T,T4Mesh> const & Y
+                                                  , VertexAttribute<T,T4Mesh> const & Z
                                                   )
   {
-    typedef typename MT::vector3_type    V;
 
-    V center = V::zero();
+      EigenVector3<T> center = {0,0,0};
 
     for(size_t i=0u; i < mesh.vertex_size(); ++i)
     {
       Vertex const v = mesh.vertex(i);
-      center += V::make( X(v), Y(v), Z(v) );
+      center += EigenVector3<T>( X(v), Y(v), Z(v) );
     }
 
     center /= mesh.vertex_size();
