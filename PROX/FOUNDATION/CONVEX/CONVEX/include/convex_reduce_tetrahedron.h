@@ -172,7 +172,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_D] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(A),fromEigen(B),fromEigen(p),S.m_w[idx_A],S.m_w[idx_B]);
+      geometry::barycentric((A),(B),(p),S.m_w[idx_A],S.m_w[idx_B]);
       return;
     }
     if(outside_CAB_vp && outside_CAD_vp && !outside_CA && !outside_AC)
@@ -188,7 +188,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_D] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(A),fromEigen(C),fromEigen(p),S.m_w[idx_A],S.m_w[idx_C]);
+      geometry::barycentric((A),(C),(p),S.m_w[idx_A],S.m_w[idx_C]);
       return;
     }
     if(outside_DAB_vp && outside_ADC_vp && !outside_AD && !outside_DA)
@@ -204,7 +204,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_C] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(A),fromEigen(D),fromEigen(p),S.m_w[idx_A],S.m_w[idx_D]);
+      geometry::barycentric((A),(D),(p),S.m_w[idx_A],S.m_w[idx_D]);
       return;
     }
     if(outside_BCA_vp && outside_BCD_vp && !outside_BC && !outside_CB)
@@ -220,7 +220,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_D] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(B),fromEigen(C),fromEigen(p),S.m_w[idx_B],S.m_w[idx_C]);
+      geometry::barycentric((B),(C),(p),S.m_w[idx_B],S.m_w[idx_C]);
       return;
     }
     if(outside_BDA_vp && outside_DBC_vp && !outside_BD && !outside_DB)
@@ -236,7 +236,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_C] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(B),fromEigen(D),fromEigen(p),S.m_w[idx_B],S.m_w[idx_D]);
+      geometry::barycentric((B),(D),(p),S.m_w[idx_B],S.m_w[idx_D]);
       return;
     }
     if(outside_CDB_vp && outside_DCA_vp && !outside_CD && !outside_DC)
@@ -252,7 +252,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_B] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(C),fromEigen(D),fromEigen(p),S.m_w[idx_C],S.m_w[idx_D]);
+      geometry::barycentric((C),(D),(p),S.m_w[idx_C],S.m_w[idx_D]);
       return;
     }
 
@@ -266,7 +266,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_D]  = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(A), fromEigen(B), fromEigen(C), fromEigen(p), S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_C]);
+      geometry::barycentric((A), (B), (C), (p), S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_C]);
       return;
     }
     if (outside_ABD && !outside_ABD_vp && !outside_BDA_vp && !outside_DAB_vp)
@@ -278,7 +278,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_C]  = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(A), fromEigen(B), fromEigen(D), fromEigen(p), S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_D]);
+      geometry::barycentric((A), (B), (D), (p), S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_D]);
       return;
     }
     if (outside_BCD && !outside_BCD_vp && !outside_CDB_vp && !outside_DBC_vp)
@@ -290,7 +290,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_A] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric( fromEigen(B), fromEigen(C), fromEigen(D), fromEigen(p), S.m_w[idx_B], S.m_w[idx_C], S.m_w[idx_D]);
+      geometry::barycentric( (B), (C), (D), (p), S.m_w[idx_B], S.m_w[idx_C], S.m_w[idx_D]);
       return;
     }
     if (outside_CAD && !outside_CAD_vp && !outside_ADC_vp && !outside_DCA_vp)
@@ -302,7 +302,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
       S.m_w[idx_B] = 0;
 
       //barycentric coords are invariant to uniform scaling
-      geometry::barycentric(fromEigen(C), fromEigen(A), fromEigen(D), fromEigen(p), S.m_w[idx_C], S.m_w[idx_A], S.m_w[idx_D]);
+      geometry::barycentric((C), (A), (D), (p), S.m_w[idx_C], S.m_w[idx_A], S.m_w[idx_D]);
       return;
     }
 
@@ -310,7 +310,7 @@ inline void reduce_tetrahedron(const EigenVector3<T>& p_in, Simplex<T> & S)
     if( !outside_ABC  && !outside_ABD && !outside_BCD && !outside_CAD)
     {
       //barycentric coords are invariant to uniform scaling
-        geometry::barycentric(fromEigen(A), fromEigen(B), fromEigen(C), fromEigen(D), fromEigen(p), S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_C], S.m_w[idx_D]);
+        geometry::barycentric((A), (B), (C), (D), (p), S.m_w[idx_A], S.m_w[idx_B], S.m_w[idx_C], S.m_w[idx_D]);
       return;
     }
   }

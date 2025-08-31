@@ -157,7 +157,7 @@ namespace narrow
 
         for (size_t j=0u; j < this->m_hulls[i].data().size();++j)
         {
-          V const p = this->m_hulls[i].data().get_point(j);
+            V const p = fromEigen(this->m_hulls[i].data().get_point(j));
           V const q = tiny::xform_point(X,p);
 
           this->m_radius = max ( this->m_radius, norm(q) );

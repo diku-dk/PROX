@@ -94,6 +94,16 @@ inline typename tiny::MathTypes<double>::vector3_type fromEigen(EigenVector3<dou
     return tiny::MathTypes<double>::vector3_type::make(input.x(), input.y(), input.z());
 }
 
+inline typename tiny::MathTypes<float>::vector3_type fromEigen(typename tiny::MathTypes<float>::vector3_type& input)
+{
+    return input;
+}
+
+inline typename tiny::MathTypes<double>::vector3_type fromEigen(typename tiny::MathTypes<double>::vector3_type& input)
+{
+    return input;
+}
+
 inline EigenQuaternion<float> toEigen(typename tiny::MathTypes<float>::quaternion_type input)
 {
     typename tiny::MathTypes<float>::vector3_type vec;

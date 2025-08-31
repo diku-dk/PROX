@@ -106,7 +106,7 @@ namespace narrow
       {
       public:
 
-        typedef convex::ConvexHull<M> data_type;
+          typedef convex::ConvexHull<typename M::real_type> data_type;
 
       protected:
 

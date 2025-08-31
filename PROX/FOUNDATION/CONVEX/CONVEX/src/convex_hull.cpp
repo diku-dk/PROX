@@ -9,8 +9,8 @@
 namespace convex
 {
 
-  template<typename M>
-  void ConvexHull<M>::add_point( typename M::vector3_type const & p)
+  template<typename T>
+  void ConvexHull<T>::add_point(const EigenVector3<T>& p)
   {
     assert( is_number(p(0)) || !"nan encountered");
     assert( is_number(p(1)) || !"nan encountered");
@@ -22,14 +22,9 @@ namespace convex
     this->m_points.push_back( p );
   }
 
-  template <typename M>
-  void ConvexHull<M>::add_point(EigenVector3<T> point)
-  {
-      m_points.push_back(fromEigen(point));
-  }
 
-  template<typename M>
-  typename M::vector3_type const & ConvexHull<M>::get_point(size_t const & idx) const
+  template<typename T>
+  const EigenVector3<T>& ConvexHull<T>::get_point(size_t const & idx) const
   {
     assert( idx < this->size() || !"get_point(): illegal index");
     return this->m_points[idx];
@@ -41,13 +36,13 @@ namespace convex
   template<typename M>
   void ConvexHull<M>::clear() { this->m_points.clear(); }
 
-  template<typename M>
-  ConvexHull<M>::ConvexHull()
+  template<typename T>
+  ConvexHull<T>::ConvexHull()
   : m_points( )
   {}
 
-  template<typename M>
-  auto ConvexHull<M>::get_support_point(EigenVector3<T> v) const -> EigenVector3<T>
+  template<typename T>
+  auto ConvexHull<T>::get_support_point(EigenVector3<T> v) const -> EigenVector3<T>
   {
 
       assert( is_number(v(0)) || !"NAN encountered");
@@ -60,7 +55,7 @@ namespace convex
       size_t const N = this->m_points.size();
       assert( N > 0u       || !"empty hull");
 
-      EigenVector3<T> p = toEigen(this->m_points[0]);
+      EigenVector3<T> p = (this->m_points[0]);
 
       assert( is_number(p(0)) || !"NAN encountered");
       assert( is_number(p(1)) || !"NAN encountered");
@@ -73,7 +68,7 @@ namespace convex
 
       for(size_t i =1u; i < N;)
       {
-          EigenVector3<T> q = toEigen(this->m_points[i++]);
+          EigenVector3<T> q = (this->m_points[i++]);
 
           assert( is_number(q(0)) || !"NAN encountered");
           assert( is_number(q(1)) || !"NAN encountered");
@@ -100,13 +95,10 @@ namespace convex
       return p;
   }
 
-  template<typename M>
-  typename M::real_type ConvexHull<M>::get_scale() const
+  template<typename T>
+  T ConvexHull<T>::get_scale() const
   {
     using std::min;
-
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
 
     size_t const N = this->m_points.size();
 
@@ -129,7 +121,7 @@ namespace convex
 
     for(size_t i =1u;i < N;)
     {
-      V const & q = this->m_points[i++];
+      const EigenVector3<T>& q = this->m_points[i++];
 
       T const & x   = q(0);
       T const & y   = q(1);
@@ -176,10 +168,7 @@ namespace convex
     return min(w, min(h, d));
   }
 
-  using Mf = tiny::MathTypes<float>;
-  using Md = tiny::MathTypes<double>;
-
-  template class ConvexHull<Mf>;
-  template class ConvexHull<Md>;
+  template class ConvexHull<float>;
+  template class ConvexHull<double>;
 
 } // namespace convex

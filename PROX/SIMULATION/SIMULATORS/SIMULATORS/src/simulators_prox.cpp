@@ -651,8 +651,10 @@ ProxEngine::ProxEngine()
 
     assert( convex_number < geometry.number_of_hulls() || !"internal error: no such geometry");
 
-    for(size_t i=0u; i< p.size() ;++i)
-      geometry.m_hulls[convex_number].data().add_point( p[i] );
+    for(size_t i=0u; i< p.size(); ++i)
+    {
+        geometry.m_hulls[convex_number].data().add_point( toEigen(p[i]) );
+    }
   }
 
   void ProxEngine::set_convex_position(  size_t const & geometry_index
@@ -1512,7 +1514,7 @@ ProxEngine::ProxEngine()
 
     for(size_t i=0u; i< N ;++i)
     {
-      V const p = geometry.m_hulls[convex_number].data().get_point( i );
+        V const p = fromEigen(geometry.m_hulls[convex_number].data().get_point( i ));
 
       coordinates[3*i + 0 ] = p(0);
       coordinates[3*i + 1 ] = p(1);

@@ -135,25 +135,20 @@ namespace convex
 
   };
 
-  template<typename M>
+  template<typename T>
   class ConvexHull
-  : public geometry::SupportMapping<typename M::real_type>
+  : public geometry::SupportMapping<T>
   {
-  public:
-      using T = typename M::real_type;
-      using V = typename M::vector3_type;
 
   protected:
 
-    std::vector<V> m_points;
+      std::vector<EigenVector3<T>> m_points;
 
   public:
-
-    void add_point( V const & p);
-    void add_point(EigenVector3<T> point);
+    void add_point(const EigenVector3<T>& p);
 
 
-    V const & get_point( std::size_t const & idx) const;
+    const EigenVector3<T>& get_point( std::size_t const & idx) const;
 
     std::size_t size() const;
 
