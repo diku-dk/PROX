@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <cmath>    // needed for std::sqrt
+#include <tiny_math_types.h>
 
 namespace convex
 {
@@ -31,29 +32,24 @@ namespace convex
    *
    * @return                If a growth distance is found then the return value is true otherwise it is false.
    */
-  template< typename M>
+  template< typename T>
   inline bool growth_distance(
-                       typename M::coordsys_type const & X_A
-                       , geometry::SupportMapping<typename M::real_type> const * A
-                       , typename M::coordsys_type const & X_B
-                       , geometry::SupportMapping<typename M::real_type> const * B
-                       , typename M::vector3_type & p_A
-                       , typename M::vector3_type & p_B
-                       , typename M::real_type & growth_scale
+    const CoordSysEigen<T>& X_A
+                       , geometry::SupportMapping<T> const * A
+    , const CoordSysEigen<T>& X_B
+                       , geometry::SupportMapping<T> const * B
+    , EigenVector3<T>& p_A
+                       , EigenVector3<T>& p_B
+                       , T& growth_scale
                        , size_t & iterations
-                       , typename M::real_type const & epsilon
+                       , const T epsilon
                        , size_t const & max_iterations
                        )
   {
 
     using std::sqrt;
 
-    typedef typename M::value_traits    VT;
-    typedef typename M::vector3_type    V;
-    typedef typename M::coordsys_type   C;
-    typedef typename M::real_type       T;
-
-    V const v = X_A.T() - X_B.T();
+    const EigenVector3<T> v = X_A.T() - X_B.T();
 
     assert( epsilon > 0 || !"growth_distance(): collision envelope must be positive");
     assert( max_iterations > 0u  || !"growth_distance(): maximum iterations must be positive");
@@ -65,14 +61,14 @@ namespace convex
     assert( v2 > 0 || !"growth_distance(): internal error growth centers are bad");
 
     // compute the support point: \vec p = S_{\set A - \set B}(- \vec v)
-    V s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
-    V s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
+    EigenVector3<T> s_a = tiny::rotate( ( X_A.Q() ).conjugate(), - v  );
+    EigenVector3<T> s_b = rotate( ( X_B.Q() ).conjugate(),   v  );
 
-    auto w_a = fromEigen(A->get_support_point( toEigen(s_a) ));
-    auto w_b = fromEigen(B->get_support_point( toEigen(s_b )));
+    auto w_a = (A->get_support_point( (s_a) ));
+    auto w_b = (B->get_support_point( (s_b )));
 
-    w_a = tiny::rotate( X_A.Q(), w_a ) + X_A.T();
-    w_b = tiny::rotate( X_B.Q(), w_b ) + X_B.T();
+    w_a = rotate( X_A.Q(), w_a ) + X_A.T();
+    w_b = rotate( X_B.Q(), w_b ) + X_B.T();
 
     assert( is_number( w_a(0) ) || !"growth_distance(): NaN encountered");
     assert( is_number( w_a(1) ) || !"growth_distance(): NaN encountered");
@@ -82,15 +78,15 @@ namespace convex
     assert( is_number( w_b(1) ) || !"growth_distance(): NaN encountered");
     assert( is_number( w_b(2) ) || !"growth_distance(): NaN encountered");
 
-    V const p = w_a - w_b;
+    const EigenVector3<T> p = w_a - w_b;
 
     T tau = p*v/v2 - d_min/sqrt(v2);
 
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
       // Compute the coordinate transformations corresponding to the current tau value
-      V dv = v*tau;
-      C T_B = C( dv + X_B.T(), X_B.Q() );
+      EigenVector3<T> dv = v*tau;
+      CoordSysEigen T_B = CoordSysEigen<T>( dv + X_B.T(), X_B.Q() );
 
       // Compute the closest points at the time tau
       {
@@ -100,14 +96,14 @@ namespace convex
         // often means that the final p_A and p_B can substantially off
 
         size_t const max_iterations       = 100u;
-        T      const absolute_tolerance   = VT::numeric_cast(10e-4);
-        T      const relative_tolerance   = VT::numeric_cast(10e-4);
-        T      const stagnation_tolerance = VT::numeric_cast(10e-4);
+        T      const absolute_tolerance   = (10e-4);
+        T      const relative_tolerance   = (10e-4);
+        T      const stagnation_tolerance = (10e-4);
         size_t       iterations           = 0u;
         size_t       status               = 0u;
         T            distance             = std::numeric_limits<T>::max();
 
-        compute_closest_points<M>(
+        compute_closest_points<T>(
                                   X_A, A, T_B, B, p_A, p_B
                                   , distance
                                   , iterations
@@ -121,7 +117,7 @@ namespace convex
 
 
       // Compute separation vector
-      V s = p_A - p_B;
+      EigenVector3<T> s = p_A - p_B;
 
       // Test to see if separation is small enough
       T const d_squared = tiny::inner_prod(s,s);
