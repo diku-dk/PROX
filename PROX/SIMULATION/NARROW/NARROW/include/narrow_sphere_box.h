@@ -66,7 +66,7 @@ namespace narrow
           C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
 
           // compute contact point
-          geometry::Sphere<V>  const A = geometry::make_sphere( shapeAtoWCS.T(), a->radius());
+          geometry::Sphere<typename V::real_type>  const A = geometry::make_sphere( toEigen(shapeAtoWCS.T()), a->radius());
           geometry::OBB<M >    const B = geometry::make_obb<M>( shapeBtoWCS.T(), shapeBtoWCS.Q(), b->half_extent());
 
           geometry::contacts_obb_sphere(

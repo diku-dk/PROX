@@ -11,7 +11,7 @@ namespace geometry
 {
 
   template<size_t K,typename V>
-  inline DOP<typename V::real_type,K> convert( Sphere<V> const & S )
+  inline DOP<typename V::real_type,K> convert( Sphere<typename V::real_type> const & S )
   {
     typedef typename V::real_type T;
 
@@ -22,7 +22,7 @@ namespace geometry
 
     for(size_t k =  0u; k < N; ++k)
     {
-      T const o = inner_prod( D(k), S.center() );
+        T const o = inner_prod( D(k), fromEigen(S.center()) );
 
       kdop(k).lower() = o - S.radius();
       kdop(k).upper() = o + S.radius();

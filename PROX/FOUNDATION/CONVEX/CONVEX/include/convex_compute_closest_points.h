@@ -108,20 +108,20 @@ namespace convex
    * @param max_iterations
    *
    */
-  template<typename M>
+  template<typename T>
   inline void compute_closest_points(
-                              typename M::coordsys_type const & X_A
-                              , geometry::SupportMapping<typename M::real_type> const * A
-                              , typename M::coordsys_type const & X_B
-                              , geometry::SupportMapping<typename M::real_type> const * B
-                              , typename M::vector3_type & p_A
-                              , typename M::vector3_type & p_B
-                              , typename M::real_type & distance
+                                const CoordSysEigen<T>& X_A
+                              , geometry::SupportMapping<T> const * A
+                              , const CoordSysEigen<T>& X_B
+                              , geometry::SupportMapping<T> const * B
+                              , EigenVector3<T>& p_A
+                              , EigenVector3<T>& p_B
+                              , T& distance
                               , size_t & iterations
                               , size_t & status
-                              , typename M::real_type const & absolute_tolerance
-                              , typename M::real_type const & relative_tolerance
-                              , typename M::real_type const & stagnation_tolerance
+                              , const T& absolute_tolerance
+                              , const T& relative_tolerance
+                              , const T& stagnation_tolerance
                               , size_t const & max_iterations
                               )
 
@@ -129,9 +129,6 @@ namespace convex
     using std::sqrt;
     using std::fabs;
     using std::max;
-
-    typedef typename M::vector3_type  V;
-    typedef typename M::real_type     T;
 
     if( absolute_tolerance < 0 )
       throw std::invalid_argument( "absolute tolerance must be non-negative" );
@@ -155,7 +152,7 @@ namespace convex
     // Initially we use a 0-simplex corresponding to some point
     // in C. We do this by seeding the initial closest point to
     // be the zero-vector.
-    V v = V::make( 0, 0, 0 );
+    EigenVector3<T> v = { 0, 0, 0 };
 
     // Lower error bound on distance from origin to closest point
     T mu = 0;
@@ -170,14 +167,15 @@ namespace convex
       //   S_{ T_A(A) - T_B(B) }(s) = S_{ T_A(A) } (-v) - S_{ T_B(B) }(v)
       //                            = T_A( S_A(- R_A^T v) ) - T_B( S_B(R_B^T v)
       //
-      auto s_a = tiny::rotate( tiny::conj( X_A.Q() ), - v  );
-      auto s_b = tiny::rotate( tiny::conj( X_B.Q() ),   v  );
+      EigenVector3<T> newVec = -v;
+      auto s_a = rotate((( X_A.Q()).conjugate()), newVec);
+      auto s_b = rotate( ( X_B.Q() ).conjugate(), v);
 
-      auto w_a = fromEigen(A->get_support_point( toEigen(s_a) ));
-      auto w_b = fromEigen(B->get_support_point( toEigen(s_b) ));
+      auto w_a = (A->get_support_point( (s_a) ));
+      auto w_b = (B->get_support_point( (s_b) ));
 
-      w_a = tiny::rotate( X_A.Q(), w_a ) + X_A.T();
-      w_b = tiny::rotate( X_B.Q(), w_b ) + X_B.T();
+      w_a = rotate( X_A.Q(), w_a ) + X_A.T();
+      w_b = rotate( X_B.Q(), w_b ) + X_B.T();
 
       assert( is_number( w_a(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( w_a(1) ) || !"compute_closest_points(): NaN encountered");
@@ -194,7 +192,7 @@ namespace convex
       assert( is_number( w(2) ) || !"compute_closest_points(): NaN encountered");
 
       // Test if the new point is already part of the current simplex
-      if ( is_point_in_simplex<T>(toEigen(w), sigma ) )
+      if ( is_point_in_simplex<T>((w), sigma ) )
       {
         assert( iterations > 1u || !"compute_closest_points(): simplex should be empty in first iteration?");
         // if so it means we can not find any points in C that is
@@ -206,7 +204,7 @@ namespace convex
 
       // Update lower error bound
       distance = sqrt(squared_distance);
-      mu = max( mu, ( tiny::inner_prod(v,w) / distance) ); // check the minus sign with theory
+      mu = max( mu, ( (v.dot(w)) / distance) ); // check the minus sign with theory
       // Test relative stopping criteria proposed by Gino van den Bergen!
       if(distance - mu <= distance * relative_tolerance)
       {
@@ -214,24 +212,24 @@ namespace convex
         return;
       }
 
-      if (is_degenerate_point<T>(toEigen(w), sigma))
+      if (is_degenerate_point<T>((w), sigma))
       {
         status = DEGENERATE_SIMPLEX_ADDITION;
         return;
       }
 
       // Extend the simplex with a new vertex
-      add_point_to_simplex<T>(toEigen(w), toEigen(w_a), toEigen(w_b), sigma);
+      add_point_to_simplex<T>((w), (w_a), (w_b), sigma);
 
       // Compute the point, v, on the simplex that is closest to the origin and
       // Reduce simplex to lowest dimensional face on the boundary
       // containing the closest point.
       // 2010-02-13 mrtn: p_a and p_b may be on the inside of A-B in case of penetrations
-      EigenVector3<T> pAeigen = toEigen(p_A);
-      EigenVector3<T> pBeigen = toEigen(p_B);
-      v = fromEigen(reduce_simplex( sigma, pAeigen, pBeigen));
-      p_A = fromEigen(pAeigen);
-      p_B = fromEigen(pBeigen);
+      EigenVector3<T> pAeigen = (p_A);
+      EigenVector3<T> pBeigen = (p_B);
+      v = (reduce_simplex( sigma, pAeigen, pBeigen));
+      p_A = (pAeigen);
+      p_B = (pBeigen);
 
       assert( is_number( v(0) ) || !"compute_closest_points(): NaN encountered");
       assert( is_number( v(1) ) || !"compute_closest_points(): NaN encountered");
@@ -257,7 +255,7 @@ namespace convex
       }
 
       T const old_squared_distance = squared_distance;
-      squared_distance = tiny::inner_prod( v, v);
+      squared_distance = ( v.dot( v));
 
       assert( is_number( squared_distance ) || !"compute_closest_points(): NaN encountered");
 
@@ -307,28 +305,26 @@ namespace convex
     status = EXCEEDED_MAX_ITERATIONS_LIMIT;
   }
 
-  template<typename M>
+  template<typename T>
   inline void compute_closest_points(
-                                     typename M::coordsys_type const & X_A
-                                     , geometry::SupportMapping<typename M::real_type> const * A
-                                     , typename M::coordsys_type const & X_B
-                                     , geometry::SupportMapping<typename M::real_type> const * B
-                                     , typename M::vector3_type & p_A
-                                     , typename M::vector3_type & p_B
+                                     const CoordSysEigen<T>& X_A
+                                     , geometry::SupportMapping<T> const * A
+                                     , const CoordSysEigen<T>& X_B
+                                     , geometry::SupportMapping<T> const * B
+                                     , EigenVector3<T>& p_A
+                                     , EigenVector3<T>& p_B
                                      )
   {
-    typedef typename M::value_traits    value_traits;
-    typedef typename M::real_type       T;
 
     size_t const max_iterations       = 100u;
-    T      const absolute_tolerance   = value_traits::numeric_cast(10e-4);
-    T      const relative_tolerance   = value_traits::numeric_cast(10e-4);
-    T      const stagnation_tolerance = value_traits::numeric_cast(10e-4);
+    T      const absolute_tolerance   = (10e-4);
+    T      const relative_tolerance   = (10e-4);
+    T      const stagnation_tolerance = (10e-4);
     size_t       iterations           = 0u;
     size_t       status               = 0u;
     T            distance             = std::numeric_limits<T>::max();
 
-    compute_closest_points<M>(
+    compute_closest_points<T>(
                               X_A
                               , A
                               , X_B

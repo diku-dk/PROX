@@ -16,7 +16,7 @@ namespace geometry
   template<typename V>
   inline bool compute_raycast_sphere(
                                    Ray<V> const & ray
-                                   , Sphere<V> const & sphere
+                                   , Sphere<typename V::real_type> const & sphere
                                    , V & hit_point
                                    , typename V::real_type & length
                                    )
@@ -29,7 +29,7 @@ namespace geometry
     length       = std::numeric_limits<T>::max();
     hit_point    = V::zero();
 
-    V const & o = sphere.center();
+    V const & o = fromEigen(sphere.center());
     T const & r = sphere.radius();
     V const & p = ray.origin();
     V const & u = ray.direction();

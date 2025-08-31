@@ -66,7 +66,7 @@ namespace narrow
 
           // compute contact point
           geometry::OBB<M>    const A = geometry::make_obb<M>( shapeAtoWCS.T(), shapeAtoWCS.Q(), a->half_extent());
-          geometry::Sphere<V>  const B = geometry::make_sphere( shapeBtoWCS.T(), b->radius());
+          geometry::Sphere<typename V::real_type>  const B = geometry::make_sphere( toEigen(shapeBtoWCS.T()), b->radius());
 
           geometry::contacts_obb_sphere(
                                         A

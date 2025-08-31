@@ -15,40 +15,41 @@ void gjk_demo()
 
   typedef M::quaternion_type                      Q;
   typedef M::vector3_type                         V;
-  typedef M::real_type                            T;
+//  typedef M::real_type                            T;
   typedef M::coordsys_type                        C;
   typedef M::value_traits                         VT;
 
 
   // Parameters controlling the behaviour of the GJK
   size_t const max_iterations       = 100u;
-  T      const absolute_tolerance   = VT::numeric_cast(10e-6);
-  T      const relative_tolerance   = VT::numeric_cast(10e-6);
-  T      const stagnation_tolerance = VT::numeric_cast(10e-15);
+  using T = double;
+  T      const absolute_tolerance   = (10e-6);
+  T      const relative_tolerance   = (10e-6);
+  T      const stagnation_tolerance = (10e-15);
 
   // Define the geometries
-  geometry::Sphere<V> const A;
-  geometry::Sphere<V> const B;
+  geometry::Sphere<T> const A;
+  geometry::Sphere<T> const B;
 
   // Define the coordinate transformations for the geometries
-  C X_A;
-  C X_B;
+  CoordSysEigen<T> X_A;
+  CoordSysEigen<T> X_B;
 
-  X_A.T() = V::make( -2.1,12.0,1.0);
-  X_A.Q() = Q::identity();
-  X_B.T() = V::make( 4.1,11.3,1.0);
-  X_B.Q() = Q::identity();
+  X_A.T() = { -2.1,12.0,1.0};
+  X_A.Q() = EigenQuaternion<T>::Identity();
+  X_B.T() = { 4.1,11.3,1.0};
+  X_B.Q() = EigenQuaternion<T>::Identity();
 
   // Create variables to hold results from the computation
-  V p_A;
-  V p_B;
+  EigenVector3<T> p_A;
+  EigenVector3<T> p_B;
   size_t iterations  = 0u;
   size_t status      = 0u;
   T      distance    = std::numeric_limits<T>::max();
 
   // Ask GJK for closest points between the two geometries
 
-  convex::compute_closest_points<M>(
+  convex::compute_closest_points<T>(
                               X_A
                               , &A
                               , X_B
@@ -87,8 +88,8 @@ void continuous_demo()
   typedef M::value_traits                         VT;
 
   // Create some geometries
-  convex::Cylinder<M> A;
-  geometry::Sphere<V> B;
+  convex::Cylinder<T> A;
+  geometry::Sphere<T> B;
 
   A.half_height() = 10.0;
   A.radius()      =  1.0;

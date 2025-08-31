@@ -40,7 +40,7 @@ namespace narrow
 
         C const shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(shapeAtoWCS.T(), a->radius());
+        geometry::Sphere<typename V::real_type> const sphere = geometry::make_sphere(toEigen(shapeAtoWCS.T()), a->radius());
 
         kdop::single_traversal<V, 8, T>(
                                           sphere

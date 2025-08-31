@@ -11,12 +11,10 @@ namespace convex
   /**
    * The cylinder axis is by default equal to the z-axis.
    */
-  template<typename M>
+  template<typename T>
   class Cylinder
-  : public geometry::SupportMapping<typename M::real_type>
+  : public geometry::SupportMapping<T>
   {
-  public:
-      using T = typename M::real_type;
 
   protected:
 
@@ -44,12 +42,11 @@ namespace convex
   /**
    * The capsule axis is by default equal to the z-axis.
    */
-  template<typename M>
+  template<typename T>
   class Capsule
-  : public geometry::SupportMapping<typename M::real_type>
+  : public geometry::SupportMapping<T>
   {
-  public:
-      using T = typename M::real_type;
+  public:;
 
   protected:
 
@@ -74,22 +71,19 @@ namespace convex
 
   };
 
-  template<typename M>
+  template<typename T>
   class Ellipsoid
-  : public geometry::SupportMapping<typename M::real_type>
+  : public geometry::SupportMapping<T>
   {
-  public:
-      using T = typename M::real_type;
-      using V = typename M::vector3_type;
-
   protected:
 
-    V m_scale; /// The scaling of the unit sphere along the x, y and z axes.
+    EigenVector3<T> m_scale; /// The scaling of the unit sphere along the x, y and z axes.
 
   public:
 
-    V const & scale() const;
-    V       & scale();
+    void setScale(const EigenVector3<T>& vec);
+    const EigenVector3<T>& scale() const;
+    const EigenVector3<T>& scale();
 
   public:
 
@@ -114,14 +108,10 @@ namespace convex
    * and height of the cone one can compute the cone angle at the apex.
    * This angle is denoted alpha.
    */
-  template<typename M>
+  template<typename T>
   class Cone
-  : public geometry::SupportMapping<typename M::real_type>
+  : public geometry::SupportMapping<T>
   {
-  public:
-      using T = typename M::real_type;
-      using V = typename M::vector3_type;
-
   protected:
 
     T    m_half_height;   ///< The half height of the cone. Default value is one.

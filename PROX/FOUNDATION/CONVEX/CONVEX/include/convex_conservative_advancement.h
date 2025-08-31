@@ -80,7 +80,11 @@ namespace convex
       C T_B = integrate_motion<M>( X_B, tau, fromEigen(v_B), fromEigen(w_B) );
 
       // Compute the closest points at the time tau
-      compute_closest_points<M>( T_A, A, T_B, B, (p_A), (p_B) );
+      EigenVector3<T> tmpPA = toEigen(p_A);
+      EigenVector3<T> tmpPB = toEigen(p_B);
+      compute_closest_points<T>( coordSysToEigen(T_A), A, coordSysToEigen(T_B), B, (tmpPA), (tmpPB) );
+      p_A = fromEigen(tmpPA);
+      p_B = fromEigen(tmpPB);
 
       // Estimate normal direction and current minimum distance between A and B
       EigenVector3<T> v = toEigen(p_A) - toEigen(p_B);

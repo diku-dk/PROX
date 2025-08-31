@@ -80,7 +80,7 @@ namespace narrow
           C const shapeAtobodyA = C(a->transform().T(), a->transform().Q());
           C const shapeAtoWCS   = tiny::prod(shapeAtobodyA, bodyAtoWCS);
 
-          geometry::Sphere<V> const sphere = geometry::make_sphere( shapeAtoWCS.T(), a->radius());
+          geometry::Sphere<T> const sphere = geometry::make_sphere<T>( toEigen(shapeAtoWCS.T()), a->radius());
 
           T local_distance = std::numeric_limits<T>::max();
           V local_point    = V::zero();

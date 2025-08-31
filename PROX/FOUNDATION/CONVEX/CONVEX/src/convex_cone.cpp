@@ -8,54 +8,37 @@
 
 namespace convex
 {
-  template<typename M>
-  typename M::real_type const & Cone<M>::half_height() const { return this->m_half_height; }
+  template<typename T>
+  T const & Cone<T>::half_height() const { return this->m_half_height; }
 
-  template<typename M>
-  typename M::real_type       & Cone<M>::half_height()       { return this->m_half_height; }
+  template<typename T>
+  T& Cone<T>::half_height()       { return this->m_half_height; }
 
-  template<typename M>
-  typename M::real_type const & Cone<M>::base_radius() const { return this->m_base_radius; }
+  template<typename T>
+  const T& Cone<T>::base_radius() const { return this->m_base_radius; }
 
-  template<typename M>
-    typename M::real_type       & Cone<M>::base_radius()       { return this->m_base_radius; }
+  template<typename T>
+  T& Cone<T>::base_radius()       { return this->m_base_radius; }
 
-  template<typename M>
-  Cone<M>::Cone()
-  : m_half_height( 1 )
+  template<typename T>
+  Cone<T>::Cone()
+      : m_half_height( 1 )
   , m_base_radius( 1 )
   {}
 
-  template<typename M>
-  auto Cone<M>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
+  template<typename T>
+  auto Cone<T>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
   {
       using std::sqrt;
 
-      typedef typename M::real_type     T;
-      typedef typename M::vector3_type  V;
-      typedef typename M::value_traits VT;
 
       T const & vx = dir(0);
       T const & vy = dir(1);
       T const & vz = dir(2);
 
-      assert( is_number(vx) || !"NAN encountered");
-      assert( is_number(vy) || !"NAN encountered");
-      assert( is_number(vz) || !"NAN encountered");
-      assert( is_finite(vx) || !"INF encountered");
-      assert( is_finite(vy) || !"INF encountered");
-      assert( is_finite(vz) || !"INF encountered");
 
-      assert( is_number(this->m_half_height)    || !"NAN encountered");
-      assert( is_finite(this->m_half_height)    || !"INF encountered");
-      assert( this->m_half_height >= 0 || !"Negative half height");
-      assert( is_number(this->m_base_radius)    || !"NAN encountered");
-      assert( is_finite(this->m_base_radius)    || !"INF encountered");
-      assert( this->m_base_radius >= 0 || !"Negative base radius");
 
       T const vv = vx*vx + vy*vy + vz*vz;
-      assert( is_number(vv)    || !"NAN encountered");
-      assert( is_finite(vv)    || !"INF encountered");
 
       T px = 0;
       T py = 0;
@@ -223,13 +206,10 @@ namespace convex
       return {px,py,pz};
   }
 
-  template<typename M>
-  typename M::real_type Cone<M>::get_scale() const
+  template<typename T>
+  T Cone<T>::get_scale() const
   {
     using std::min;
-
-    typedef typename M::real_type     T;
-    typedef typename M::value_traits VT;
 
     assert( is_number(this->m_half_height)    || !"NAN encountered");
     assert( is_finite(this->m_half_height)    || !"INF encountered");
@@ -244,10 +224,7 @@ namespace convex
     return min(h, d);
   }
 
-  using Mf = tiny::MathTypes<float>;
-  using Md = tiny::MathTypes<double>;
-
-  template class Cone<Mf>;
-  template class Cone<Md>;
+  template class Cone<float>;
+  template class Cone<double>;
 
 } // namespace convex

@@ -33,7 +33,7 @@ namespace geometry
    */
   template<typename V>
   inline bool contacts_sphere_tetrahedron(
-                                          Sphere<V> const & A
+    Sphere<typename V::real_type> const & A
                                           , Tetrahedron<V> const & B
                                           , ContactsCallback<V> & callback
                                           , bool const flip
@@ -58,7 +58,7 @@ namespace geometry
     {
       triangle[k] = get_opposite_face( k, B );
       plane[k]    = make_plane(triangle[k]);
-      d[k]        = get_signed_distance( A.center(), plane[k] );
+      d[k]        = get_signed_distance( (fromEigen(A.center())), plane[k] );
 
       // Sphere too far from tetrahedron face to ever come in contact
       if (d[k] > A.radius())
@@ -83,7 +83,7 @@ namespace geometry
 
         V const n = flip ? plane[k].n() : - plane[k].n();
 
-        V const p = closest_point_on_plane(A.center(), plane[k]);
+        V const p = closest_point_on_plane((fromEigen(A.center())), plane[k]);
 
         callback( p, n, d[k] );
 
@@ -101,13 +101,13 @@ namespace geometry
       Plane<V> const vp_02 = make_plane( tiny::unit( B.p(i)-B.p( (i+2)%4) ), B.p(i) );
       Plane<V> const vp_03 = make_plane( tiny::unit( B.p(i)-B.p( (i+3)%4) ), B.p(i) );
 
-      T const d_vp_01 = get_signed_distance( A.center(), vp_01 );
-      T const d_vp_02 = get_signed_distance( A.center(), vp_02 );
-      T const d_vp_03 = get_signed_distance( A.center(), vp_03 );
+      T const d_vp_01 = get_signed_distance( fromEigen(A.center()), vp_01 );
+      T const d_vp_02 = get_signed_distance( fromEigen(A.center()), vp_02 );
+      T const d_vp_03 = get_signed_distance( fromEigen(A.center()), vp_03 );
 
       if(d_vp_01 >= 0 && d_vp_02 >= 0 && d_vp_03 >= 0)
       {
-        V const m =  A.center() - B.p(i);
+        V const m =  fromEigen(A.center()) - B.p(i);
 
         T const d = tiny::norm( m );
 
@@ -150,14 +150,14 @@ namespace geometry
         Plane<V> const vp_k = make_plane( n_k, B.p(i) );
         Plane<V> const vp_m = make_plane( n_m, B.p(i) );
 
-        T const d_vp_k = get_signed_distance( A.center(), vp_k );
-        T const d_vp_m = get_signed_distance( A.center(), vp_m );
+        T const d_vp_k = get_signed_distance( fromEigen(A.center()), vp_k );
+        T const d_vp_m = get_signed_distance( fromEigen(A.center()), vp_m );
 
         if(d_vp_k >= 0 && d_vp_m >= 0)
         {
-          V const p = closest_point_on_line(A.center(), make_line( B.p(i), B.p(j) ) );
+          V const p = closest_point_on_line(fromEigen(A.center()), make_line( B.p(i), B.p(j) ) );
 
-          V const m =  A.center() - p;
+          V const m =  fromEigen(A.center()) - p;
 
           T const d = tiny::norm( m );
 
@@ -179,18 +179,18 @@ namespace geometry
       if( !surface_map[v])  // Test if face is part of the surface
         continue;
 
-      T const d = get_signed_distance( A.center(), plane[v] );
+      T const d = get_signed_distance( fromEigen(A.center()), plane[v] );
 
       if( d < 0 )
         continue;
 
-      bool const inside = inside_triangle( A.center(), triangle[v], false );
+      bool const inside = inside_triangle( fromEigen(A.center()), triangle[v], false );
 
       if (inside)
       {
         V const n = flip ? plane[v].n() : - plane[v].n();
 
-        V const p = closest_point_on_plane(A.center(), plane[v]);
+        V const p = closest_point_on_plane(fromEigen(A.center()), plane[v]);
 
         callback( p, n,  d - A.radius() );
 

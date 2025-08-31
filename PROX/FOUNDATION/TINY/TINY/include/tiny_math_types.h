@@ -196,6 +196,20 @@ public:
 
 };
 
+template<typename Number>
+inline EigenVector3<Number> rotate(const EigenQuaternion<Number>& Quat, const EigenVector3<Number>& rVec)
+{
+    //return prod(  prod(q , r)  , conj(q) ).imag();
+    return Quat*rVec;
+}
+
+/*template<typename Number>
+inline EigenVector3<Number> rotate(const EigenQuaternion<Number>& Quat, const Eigen::Matrix<Number, 3,1>::NeagtiveReturnType& rVec)
+{
+    //return prod(  prod(q , r)  , conj(q) ).imag();
+    return Quat*rVec;
+}*/
+
 template <typename TypeParameter>
 inline auto coordSysToEigen(const tiny::CoordSys<TypeParameter>& input)
 {

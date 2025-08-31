@@ -21,7 +21,7 @@ namespace geometry
   template<typename MT>
   inline void contacts_obb_sphere(
                                  OBB<MT> const & A
-                                 , Sphere<typename MT::vector3_type> const & B
+                                 , Sphere<typename MT::real_type> const & B
                                  , typename MT::real_type const & envelope
                                  , ContactsCallback<typename MT::vector3_type> & callback
                                  , bool const flip = false
@@ -39,7 +39,7 @@ namespace geometry
     V const & ext    = A.half_extent();
 
     V const & pA     = A.center();
-    V const & pB     = B.center();
+    V const & pB     = fromEigen(B.center());
     Q const & qA     = A.orientation();
     Q const   qB     = Q::identity();
 

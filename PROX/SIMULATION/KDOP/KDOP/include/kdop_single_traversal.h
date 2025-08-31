@@ -25,7 +25,7 @@ namespace kdop
      */
     template< typename V>
     inline bool contacts_shape_tetrahedron(
-                                           geometry::Sphere<V> const & sphere
+      geometry::Sphere<typename V::real_type> const & sphere
                                            , geometry::Tetrahedron<V> const & tetrahedron
                                            , std::vector<bool> const & surface_map
                                            , geometry::ContactsCallback<V> & callback

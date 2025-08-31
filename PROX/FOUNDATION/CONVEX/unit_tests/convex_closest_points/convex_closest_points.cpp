@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_SUITE(convex_compute_closest_points);
 BOOST_AUTO_TEST_CASE(sphere_box_compile_test)
 {
   {
-    geometry::Sphere<V>  B;
+    geometry::Sphere<T>  B;
     geometry::Box<V>     A;
 
     B.radius()      = 0.5;
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(sphere_box_compile_test)
 
 BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
 {
-  geometry::Sphere<V> const A;
-  geometry::Sphere<V> const B;
+  geometry::Sphere<T> const A;
+  geometry::Sphere<T> const B;
 
   size_t const max_iterations       = 100u;
   T      const absolute_tolerance   = VT::numeric_cast(10e-6);
@@ -250,8 +250,8 @@ BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
 
 BOOST_AUTO_TEST_CASE(random_test)
 {
-  geometry::Sphere<V> const A;
-  geometry::Sphere<V> const B;
+  geometry::Sphere<T> const A;
+  geometry::Sphere<T> const B;
 
   size_t const max_iterations       = 100u;
   T      const absolute_tolerance   = VT::numeric_cast(10e-6);

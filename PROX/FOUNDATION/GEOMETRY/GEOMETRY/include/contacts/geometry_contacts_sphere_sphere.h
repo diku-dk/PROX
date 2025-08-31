@@ -24,24 +24,23 @@ namespace geometry
    */
   template<typename V>
   inline void contacts_sphere_sphere(
-                                    Sphere<V> const & A
-                                    , Sphere<V> const & B
-                                    , typename V::real_type const & envelope
+    Sphere<typename V::real_type> const & A
+                                    , Sphere<typename V::real_type> const & B
+                                    , const typename V::real_type& envelope
                                     , ContactsCallback<V> & callback
                                     )
   {
+      using T = typename V::real_type;
     using std::sqrt;
 
-    typedef typename V::real_type       T;
-    typedef typename V::value_traits    VT;
 
-    V const & p_a = A.center();
+    const EigenVector3<T>& p_a = A.center();
     T const & rA  = A.radius();
-    V const & p_b = B.center();
+    const EigenVector3<T>& p_b = B.center();
     T const & rB  = B.radius();
 
     //--- Make a vector between the two sphere centers.
-    V const d  = p_b - p_a;
+    const EigenVector3<T> d  = p_b - p_a;
     T const rs = rA + rB;
 
     assert( is_number(rs) || !"contacts_sphere_sphere(): nan");
@@ -55,7 +54,7 @@ namespace geometry
     //--- The tests is performed using squared distances to avoid the
     //--- square root in the distance computations.
     T const r2eps = (rs + envelope)*(rs + envelope);
-    T const d2    = inner_prod(d,d);
+    T const d2    = dot(d,d);
 
     if(d2 > r2eps)
     {
@@ -73,7 +72,7 @@ namespace geometry
     assert( is_finite(lgh) || !"contacts_sphere_sphere(): inf");
     assert( lgh>0 || !"contacts_sphere_sphere(): lgh non-positive");
 
-    V const n      = d/lgh;
+    const EigenVector3<T> n      = d/lgh;
 
     //--- The contact point is kind of a midpoint weighted by the radius of the
     //--- spheres. That is the contact point, p, is computed  according to the
@@ -106,7 +105,7 @@ namespace geometry
     assert( is_number(depth) || !"contacts_sphere_sphere(): nan");
     assert( is_finite(depth) || !"contacts_sphere_sphere(): inf");
 
-    V const p       = n*dA + p_a;
+    const EigenVector3<T> p       = n*dA + p_a;
 
     assert( is_number(p(0)) || !"contacts_sphere_sphere(): nan");
     assert( is_finite(p(0)) || !"contacts_sphere_sphere(): inf");
@@ -116,7 +115,7 @@ namespace geometry
     assert( is_finite(p(2)) || !"contacts_sphere_sphere(): inf");
 
     if( depth <=  envelope  )
-      callback(p,n,depth);
+        callback(fromEigen(p),fromEigen(n),depth);
   }
 
 }//namespace geometry

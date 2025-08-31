@@ -5,6 +5,7 @@
 
 #include <tiny_is_number.h>
 #include <tiny_is_finite.h>
+#include <tiny_math_types.h>
 
 #include <cmath> // needed for std::sqrt
 #include <cassert>
@@ -12,35 +13,32 @@
 namespace geometry
 {
 
-  template<typename V>
+  template<typename T>
   class Sphere
-    : public geometry::SupportMapping<typename V::real_type>
+    : public geometry::SupportMapping<T>
 
   {
-  public:
-      using T = typename V::real_type;
-      using VT = typename V::value_traits;
 
   protected:
-      V m_center;
+      EigenVector3<T> m_center;
       T m_radius;
 
   public:
 
-    V const & center() const { return this->m_center; }
-    T const & radius() const { return this->m_radius; }
-    V       & center()       { return this->m_center; }
-    T       & radius()       { return this->m_radius; }
+    const EigenVector3<T>& center() const { return this->m_center; }
+    const T radius() const { return this->m_radius; }
+    EigenVector3<T>& center()       { return this->m_center; }
+    T& radius()       { return this->m_radius; }
 
   public:
 
     Sphere()
-      : m_center( V::zero() )
+          : m_center( EigenVector3<T>({0,0,0}) )
       , m_radius( 1 )
     {
     }
 
-    Sphere( V const & center, T const &  radius )
+    Sphere(const EigenVector3<T>& center, const T radius )
       : m_center( center )
       , m_radius( radius )
     {
@@ -69,9 +67,9 @@ namespace geometry
         assert(is_number(dirLen) && is_finite(dirLen));
         if (dirLen > 0)
         {
-            return (m_radius / dirLen) * dir + toEigen(m_center);
+            return (m_radius / dirLen) * dir + (m_center);
         }
-        return toEigen(m_center) + EigenVector3<T>{m_radius, 0, 0};
+        return (m_center) + EigenVector3<T>{m_radius, 0, 0};
     }
 
     T get_scale() const
@@ -85,10 +83,10 @@ namespace geometry
 
   };
 
-  template<typename V>
-  inline Sphere<V> make_sphere(V const & center, typename V::real_type const &  radius)
+  template<typename T>
+  inline Sphere<T> make_sphere(const EigenVector3<T>& center, const T radius)
   {
-    return Sphere<V>(center,radius);
+    return Sphere<T>(center,radius);
   }
 
 }// namespace geometry

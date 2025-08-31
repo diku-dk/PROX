@@ -9,26 +9,26 @@
 namespace convex
 {
 
-  template<typename M>
-  typename M::real_type const & Cylinder<M>::half_height() const { return this->m_half_height; }
+  template<typename T>
+  const T& Cylinder<T>::half_height() const { return this->m_half_height; }
 
-  template<typename M>
-  typename M::real_type & Cylinder<M>::half_height() { return this->m_half_height; }
+  template<typename T>
+  T& Cylinder<T>::half_height() { return this->m_half_height; }
 
-  template<typename M>
-  typename M::real_type const & Cylinder<M>::radius() const { return this->m_radius; }
+  template<typename T>
+  const T& Cylinder<T>::radius() const { return this->m_radius; }
 
-  template<typename M>
-  typename M::real_type & Cylinder<M>::radius() { return this->m_radius; }
+  template<typename T>
+  T& Cylinder<T>::radius() { return this->m_radius; }
 
-  template<typename M>
-  Cylinder<M>::Cylinder()
-  : m_half_height( 1 )
-  , m_radius( 1 )
+  template<typename T>
+  Cylinder<T>::Cylinder()
+      : m_half_height( 1 )
+      , m_radius( 1 )
   {}
 
-  template<typename M>
-  auto Cylinder<M>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
+  template<typename T>
+  auto Cylinder<T>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
   {
       auto height = dir.z() > 0 ? m_half_height : -m_half_height;
       auto sigmaNorm = std::sqrt(dir.x()*dir.x() + dir.y()*dir.y());
@@ -44,13 +44,10 @@ namespace convex
       return {0, 0, height};
   }
 
-  template<typename M>
-  typename M::real_type Cylinder<M>::get_scale() const
+  template<typename T>
+  T Cylinder<T>::get_scale() const
   {
     using std::min;
-
-    typedef typename M::real_type     T;
-    typedef typename M::value_traits VT;
 
     assert( is_number(this->m_half_height)    || !"NAN encountered");
     assert( is_finite(this->m_half_height)    || !"INF encountered");
@@ -65,10 +62,7 @@ namespace convex
     return min(h, d);
   }
 
-  using Mf = tiny::MathTypes<float>;
-  using Md = tiny::MathTypes<double>;
-
-  template class Cylinder<Mf>;
-  template class Cylinder<Md>;
+  template class Cylinder<float>;
+  template class Cylinder<double>;
 
 } // namespace convex

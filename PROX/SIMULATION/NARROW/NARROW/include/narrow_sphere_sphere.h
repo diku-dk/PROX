@@ -64,10 +64,10 @@ namespace narrow
           C shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
           C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
 
-          geometry::Sphere<V> const A = geometry::make_sphere( shapeAtoWCS.T(), a->radius());
-          geometry::Sphere<V> const B = geometry::make_sphere( shapeBtoWCS.T(), b->radius());
+          geometry::Sphere<typename V::real_type> const A = geometry::make_sphere( toEigen(shapeAtoWCS.T()), a->radius());
+          geometry::Sphere<typename V::real_type> const B = geometry::make_sphere( toEigen(shapeBtoWCS.T()), b->radius());
 
-          geometry::contacts_sphere_sphere(
+          geometry::contacts_sphere_sphere<V>(
                                            A
                                            , B
                                            , envelope * min(a->scale(), b->scale())

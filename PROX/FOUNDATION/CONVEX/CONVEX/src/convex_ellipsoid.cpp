@@ -9,20 +9,26 @@
 namespace convex
 {
 
-  template<typename M>
-  typename M::vector3_type const & Ellipsoid<M>::scale() const { return this->m_scale; }
+  template<typename T>
+  const EigenVector3<T>& Ellipsoid<T>::scale() const { return this->m_scale; }
 
-  template<typename M>
-  typename M::vector3_type & Ellipsoid<M>::scale() { return this->m_scale; }
+template<typename T>
+  void Ellipsoid<T>::setScale(const EigenVector3<T>& vec)
+  {
+    this->m_scale = vec;
+  }
 
-  template<typename M>
-  Ellipsoid<M>::Ellipsoid()
+  template<typename T>
+  const EigenVector3<T>& Ellipsoid<T>::scale() { return this->m_scale; }
+
+  template<typename T>
+  Ellipsoid<T>::Ellipsoid()
   : m_scale( 1 )
   {}
 
 
-  template<typename M>
-  auto Ellipsoid<M>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
+  template<typename T>
+  auto Ellipsoid<T>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
   {
       T const & vx = dir(0);
       T const & vy = dir(1);
@@ -117,13 +123,11 @@ namespace convex
       return {px,py,pz};
   }
 
-  template<typename M>
-  typename M::real_type Ellipsoid<M>::get_scale() const
+  template<typename T>
+  T Ellipsoid<T>::get_scale() const
   {
     using std::min;
 
-    typedef typename M::real_type    T;
-    typedef typename M::value_traits VT;
 
     T const & sx = this->m_scale(0);
     T const & sy = this->m_scale(1);
@@ -145,11 +149,7 @@ namespace convex
 
     return min(w, min(h, d));
   }
-
-  using Mf = tiny::MathTypes<float>;
-  using Md = tiny::MathTypes<double>;
-
-  template class Ellipsoid<Mf>;
-  template class Ellipsoid<Md>;
+  template class Ellipsoid<float>;
+  template class Ellipsoid<double>;
 
 } // namespace convex

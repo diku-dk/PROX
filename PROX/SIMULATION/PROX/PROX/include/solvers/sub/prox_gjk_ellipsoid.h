@@ -65,32 +65,32 @@ namespace prox
             assert( c > 0       || !"gjk_ellipsoid(): a non-positive");
 
             geometry::Point<vector3_type>                       point;
-            convex::Ellipsoid<typename math_policy::base_type>  ellipsoid;
+            convex::Ellipsoid<T>  ellipsoid;
 
             point.coord() = vector3_type::make( z_s, z_t, z_tau);
 
             // TODO: Chek theory
-            ellipsoid.scale() = vector3_type::make(a,b,c);  // TODO check this is how to setup the scale!
+            ellipsoid.setScale({a,b,c});  // TODO check this is how to setup the scale!
 
             size_t    const max_iterations       = 100u;
             real_type const absolute_tolerance   = value_traits::numeric_cast(10e-6);
             real_type const relative_tolerance   = value_traits::numeric_cast(10e-6);
             real_type const stagnation_tolerance = value_traits::numeric_cast(10e-15);
 
-            transformation_type transformA;
-            transformation_type transformB;
-            transformA.T().clear();
-            transformA.Q() = quaternion_type::identity();//may cause issues on Windows/VS platform
-            transformB.T().clear();
-            transformB.Q() = quaternion_type::identity();
+            CoordSysEigen<T> transformA;
+            CoordSysEigen<T> transformB;
+            transformA.T() = {0,0,0};
+            transformA.Q() = EigenQuaternion<T>::Identity();//may cause issues on Windows/VS platform
+            transformB.T() = {0,0,0};
+            transformB.Q() = EigenQuaternion<T>::Identity();
 
-            vector3_type pa;
-            vector3_type pb;
+            EigenVector3<T> pa;
+            EigenVector3<T> pb;
             size_t iterations     = 0u;
             size_t status         = 0u;
             real_type distance    = std::numeric_limits<T>::max();
 
-            convex::compute_closest_points<typename math_policy::base_type>(
+            convex::compute_closest_points<T>(
                                                                             transformA
                                                                             , &point
                                                                             , transformB
