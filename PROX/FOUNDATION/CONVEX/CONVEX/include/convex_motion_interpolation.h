@@ -2,6 +2,7 @@
 #define CONVEX_MOTION_INTERPOLATION_H
 
 #include <tiny.h>
+#include <convex_conservative_advancement.h>
 
 namespace convex
 {
@@ -58,28 +59,28 @@ namespace convex
   {
     typedef typename M::vector3_type   V;
     typedef typename M::value_traits   VT;
-
-    V v_A;
-    V w_A;
-    V v_B;
-    V w_B;
+    typedef typename M::real_type T;
+    EigenVector3<T> v_A;
+    EigenVector3<T> w_A;
+    EigenVector3<T> v_B;
+    EigenVector3<T> w_B;
 
     compute_velocities<M>( X_A_from, X_A_to, 1, v_A, w_A );
     compute_velocities<M>( X_B_from, X_B_to, 1, v_B, w_B );
 
     return conservative_advancement<M>(
                                        X_A_from
-                                       , v_A
-                                       , w_A
+                                        , (v_A)
+        , (w_A)
                                        , A
                                        , r_max_A
                                        , X_B_from
-                                       , v_B
-                                       , w_B
+        , (v_B)
+        , (w_B)
                                        , B
                                        , r_max_B
-                                       , p_A
-                                       , p_B
+        , (p_A)
+        , (p_B)
                                        , time_of_impact
                                        , iterations
                                        , epsilon

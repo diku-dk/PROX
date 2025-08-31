@@ -2,7 +2,8 @@
 #define CONVEX_CONSERVATIVE_ADVANCEMENT_H
 
 #include <cassert>
-
+#include <tiny_math_types.h>
+#include <convex_compute_closest_points.h>
 namespace convex
 {
 
@@ -40,17 +41,17 @@ namespace convex
   template<typename M>
   inline bool conservative_advancement(
                                 typename M::coordsys_type const & X_A
-                                , typename M::vector3_type const & v_A
-                                , typename M::vector3_type const & w_A
+                                , const EigenVector3<typename M::real_type>& v_A
+                                , const EigenVector3<typename M::real_type>& w_A
                                 , geometry::SupportMapping<typename M::real_type> const * A
                                 , typename M::real_type const & r_max_A
                                 , typename M::coordsys_type const & X_B
-                                , typename M::vector3_type const & v_B
-                                , typename M::vector3_type const & w_B
+                                , const EigenVector3<typename M::real_type>& v_B
+                                , const EigenVector3<typename M::real_type>& w_B
                                 , geometry::SupportMapping<typename M::real_type> const * B
                                 , typename M::real_type const & r_max_B
-                                , typename M::vector3_type & p_A
-                                , typename M::vector3_type & p_B
+                                , typename M::vector3_type& p_A
+                                , typename M::vector3_type& p_B
                                 , typename M::real_type & time_of_impact
                                 , size_t & iterations
                                 , typename M::real_type const & epsilon
@@ -75,14 +76,14 @@ namespace convex
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
       // Compute the coordinate transformations corresponding to the current tau value
-      C T_A = integrate_motion<M>( X_A, tau, v_A, w_A );
-      C T_B = integrate_motion<M>( X_B, tau, v_B, w_B );
+        C T_A = integrate_motion<M>( X_A, tau, fromEigen(v_A), fromEigen(w_A) );
+      C T_B = integrate_motion<M>( X_B, tau, fromEigen(v_B), fromEigen(w_B) );
 
       // Compute the closest points at the time tau
-      compute_closest_points<M>( T_A, A, T_B, B, p_A, p_B );
+      compute_closest_points<M>( T_A, A, T_B, B, (p_A), (p_B) );
 
       // Estimate normal direction and current minimum distance between A and B
-      V v = p_A - p_B;
+      EigenVector3<T> v = toEigen(p_A) - toEigen(p_B);
 
       // 2015-11-19 Kenny: If GJK did not converge completely then p_A and p_B will
       //                   be slightly off... this means the distance we compute here
@@ -91,7 +92,7 @@ namespace convex
       //                   is too aggressive then one might overstep the true TOI estimate
       //                   by a tiny fraction.
 
-      T min_distance = tiny::norm(v);
+      T min_distance = (v).norm();
 
       if( min_distance <= epsilon )
       {
@@ -113,11 +114,11 @@ namespace convex
       //                   (too low than the true value.
       //
 
-      V n = tiny::unit( v );
+      EigenVector3<T> n = ( v ).normalized();
 
       // Estimate maximum relative normal velocity between any two points from A and B
 
-      T max_velocity = tiny::inner_prod(v_B - v_A, n) + tiny::norm(w_A)*r_max_A + tiny::norm(w_B)*r_max_B;
+      T max_velocity = (v_B - v_A).dot(n) + (w_A).norm()*r_max_A + (w_B).norm()*r_max_B;
 
       if (max_velocity <= 0 )
         return false;

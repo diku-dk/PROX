@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cassert>
 
+#include <tiny_math_types.h>
+
 namespace convex
 {
 
@@ -26,28 +28,27 @@ namespace convex
                           typename M::coordsys_type  const & T_from
                           , typename M::coordsys_type  const & T_to
                           , typename M::real_type const & delta_tau
-                          , typename M::vector3_type  & v
-                          , typename M::vector3_type & omega
+                          , EigenVector3<typename M::real_type>& v
+                          , EigenVector3<typename M::real_type> & omega
                           )
   {
     using std::atan2;
 
     typedef typename M::real_type         T;
-    typedef typename M::vector3_type      V;
 
     assert(  delta_tau > 0 || !"compute_velocities(): time step must be positive");
 
     // Translation is straightforward
-    v = (T_to.T() - T_from.T()) / delta_tau;
+    v = toEigen((T_to.T() - T_from.T()) / delta_tau);
 
     T theta;
-    V n;
+    typename M::vector3_type n;
     tiny::get_axis_angle(
                          tiny::prod( T_to.Q(), tiny::conj( T_from.Q() ) )   // Change in orientation from ``from'' to ''to'', ie. R = T_to * T_from^{-1}
                          , n
                          , theta
                          );
-    omega = (theta/ delta_tau)*n;
+    omega = toEigen((theta/ delta_tau)*n);
   }
 
 } // namespace convex
