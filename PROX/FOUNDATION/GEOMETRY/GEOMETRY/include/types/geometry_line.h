@@ -1,23 +1,25 @@
 #ifndef GEOMETRY_LINE_H
 #define GEOMETRY_LINE_H
 
+#include <tiny_math_types.h>
+
 namespace geometry
 {
 
-  template<typename V>
+template<typename T>
   class Line
   {
   protected:
 
-    V m_point;
-    V m_direction;
+    EigenVector3<T> m_point;
+    EigenVector3<T> m_direction;
 
   public:
 
-    V       & point()           { return this->m_point;      }
-    V       & direction()       { return this->m_direction;  }
-    V const & point()     const { return this->m_point;      }
-    V const & direction() const { return this->m_direction;  }
+    EigenVector3<T>& point()           { return this->m_point;      }
+    EigenVector3<T>& direction()       { return this->m_direction;  }
+    const EigenVector3<T>& point()     const { return this->m_point;      }
+    const EigenVector3<T>& direction() const { return this->m_direction;  }
 
   public:
 
@@ -26,9 +28,9 @@ namespace geometry
     , m_direction()
     {}
 
-    Line(V const & point, V const & direction)
+    Line(const EigenVector3<T>& point, const EigenVector3<T>& direction)
     : m_point(point)
-    , m_direction( unit( direction) )
+        , m_direction( ( direction).normalized() )
     {}
 
     Line(Line const & line)
@@ -51,20 +53,20 @@ namespace geometry
   struct FROM_POINTS {};
   struct FROM_DIRECTION {};
 
-  template<typename V>
-  inline Line<V> make_line(V const & a, V const & b, FROM_POINTS const & )
+  template<typename T>
+  inline Line<T> make_line(const EigenVector3<T>& a, const EigenVector3<T>& b, FROM_POINTS const & )
   {
-    return Line<V>( a, b - a  );
+    return Line<T>( a, b - a  );
   }
 
-  template<typename V>
-  inline Line<V> make_line(V const & point, V const & direction, FROM_DIRECTION const & )
+  template<typename T>
+  inline Line<T> make_line(const EigenVector3<T>& point, const EigenVector3<T>& direction, FROM_DIRECTION const & )
   {
-    return Line<V>( point, direction );
+    return Line<T>( point, direction );
   }
 
-  template<typename V>
-  inline Line<V> make_line(V const & a, V const & b)
+  template<typename T>
+  inline Line<T> make_line(const EigenVector3<T>& a, const EigenVector3<T>& b)
   {
     return make_line( a, b, FROM_POINTS() );
   }

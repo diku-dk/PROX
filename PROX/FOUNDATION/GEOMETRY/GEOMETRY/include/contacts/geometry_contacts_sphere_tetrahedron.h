@@ -155,18 +155,18 @@ namespace geometry
 
         if(d_vp_k >= 0 && d_vp_m >= 0)
         {
-          V const p = closest_point_on_line(fromEigen(A.center()), make_line( B.p(i), B.p(j) ) );
+            const EigenVector3<T> p = closest_point_on_line<T>((A.center()), make_line( toEigen(B.p(i)), toEigen(B.p(j)) ) );
 
-          V const m =  fromEigen(A.center()) - p;
+          const EigenVector3<T> m =  (A.center()) - p;
 
-          T const d = tiny::norm( m );
+            T const d = ( m ).norm();
 
           if (d > A.radius() )
             return false;
 
-          V const n = flip ? tiny::unit(m) : - tiny::unit(m);
+          const EigenVector3<T> n = flip ? (m).normalized() : - (m).normalized();
 
-          callback( p, n, d - A.radius() );
+          callback( fromEigen(p), fromEigen(n), d - A.radius() );
 
           return true;
         }

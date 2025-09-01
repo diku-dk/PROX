@@ -6,19 +6,21 @@
 #include <tiny_is_finite.h>
 #include <tiny_is_number.h>
 
+
+
 #include <cassert>
 
 
 namespace geometry
 {
 
-  template<typename V>
-  inline V closest_point_on_line(V const & p, Line<V> const & L)
+  template<typename T>
+  inline EigenVector3<T> closest_point_on_line(const EigenVector3<T>& p, Line<T> const & L)
   {
-    V const & o = L.point();
-    V const & d = L.direction();
+    const EigenVector3<T>& o = L.point();
+    const EigenVector3<T>& d = L.direction();
 
-    V const   q = o + d * inner_prod( d, (p-o) );
+    const  EigenVector3<T> q = o + d * ( d).dot( (p-o) );
 
     assert( is_number(q(0)) || !"closest_point_on_line(): NaN encountered");
     assert( is_finite(q(0)) || !"closest_point_on_line(): Inf encountered");
