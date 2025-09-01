@@ -7,15 +7,15 @@
 namespace mesh_array
 {
 
-  template<typename MT>
+  template<typename T>
   void make_sphere(
-                   typename MT::real_type const & radius
+                   T const & radius
                    , size_t const & slices
                    , size_t const & segments
                    , T3Mesh & mesh
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Z
+                   , VertexAttribute<T,T3Mesh> & X
+                   , VertexAttribute<T,T3Mesh> & Y
+                   , VertexAttribute<T,T3Mesh> & Z
                    );
 
 } //namespace mesh_array

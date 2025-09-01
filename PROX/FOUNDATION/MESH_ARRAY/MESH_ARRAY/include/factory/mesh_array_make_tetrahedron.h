@@ -3,21 +3,22 @@
 
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_vertex_attribute.h>
+#include <tiny_math_types.h>
 
 namespace mesh_array
 {
 
-  template<typename MT>
-  void make_tetrahedron(
-                        typename MT::vector3_type const & p0
-                        , typename MT::vector3_type const & p1
-                        , typename MT::vector3_type const & p2
-                        , typename MT::vector3_type const & p3
-                        , T3Mesh & mesh
-                        , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                        , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                        , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-                        );
+template<typename T>
+void make_tetrahedron(
+    EigenVector3<T> const & p0
+    , EigenVector3<T> const & p1
+    , EigenVector3<T> const & p2
+    , EigenVector3<T> const & p3
+    , T3Mesh & mesh
+    , VertexAttribute<T,T3Mesh> & X
+    , VertexAttribute<T,T3Mesh> & Y
+    , VertexAttribute<T,T3Mesh> & Z
+    );
 
 } //namespace mesh_array
 

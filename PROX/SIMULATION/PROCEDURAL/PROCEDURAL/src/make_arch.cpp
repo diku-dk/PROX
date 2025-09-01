@@ -6,9 +6,9 @@
 
 namespace procedural
 {
-	
+
   template<typename MT>
-	void make_arch(
+    void make_arch(
                  content::API *  engine
                  , typename MT::vector3_type const & position
                  , typename MT::quaternion_type const & orientation
@@ -20,7 +20,7 @@ namespace procedural
                  , size_t const & pillar_segments
                  , MaterialInfo<typename MT::real_type> mat_info
                  )
-	{
+    {
     using std::cos;
     using std::sin;
 
@@ -29,38 +29,38 @@ namespace procedural
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
 
-		T      const delta_theta         = VT::pi()/arch_slices;
-		T      const pillar_stone_width  = pillar_height / pillar_segments;
-		T      const pillar_stone_height = r_outer - r_inner;
-		T      const center_radius       = ( r_outer + r_inner )*0.5f;
-		T      const stone_density       = get_material_density<MT>(mat_info, "Stone");
-		size_t const mid                 = get_material_id<MT>(mat_info, "Stone");
-		
-		std::vector<V>  arch_vertices(8u);
+        T      const delta_theta         = VT::pi()/arch_slices;
+        T      const pillar_stone_width  = pillar_height / pillar_segments;
+        T      const pillar_stone_height = r_outer - r_inner;
+        T      const center_radius       = ( r_outer + r_inner )*0.5f;
+        T      const stone_density       = get_material_density<MT>(mat_info, "Stone");
+        size_t const mid                 = get_material_id<MT>(mat_info, "Stone");
 
-		compute_arch_stone_vertices<MT>(
+        std::vector<EigenVector3<T>>  arch_vertices(8u);
+
+        compute_arch_stone_vertices_eigen<T>(
                                       delta_theta
                                     , stone_depth
                                     , r_outer
                                     , r_inner
                                     , &arch_vertices[0]
                                     );
-		
-		GeometryHandle<MT> arch_stone   = create_geometry_handle_cuboid<MT>( engine, &arch_vertices[0] );
-		GeometryHandle<MT> pillar_stone = create_geometry_handle_box<MT>( engine, pillar_stone_width, pillar_stone_height, stone_depth );
-		
-		for( size_t i = 0; i<pillar_segments; ++i )
-		{
-			T const y = ( 0.5f + i )*pillar_stone_width;
+
+        GeometryHandleEigen<T> arch_stone   = create_geometry_handle_cuboid<T>( engine, &arch_vertices[0] );
+        GeometryHandle<MT> pillar_stone = create_geometry_handle_box<MT>( engine, pillar_stone_width, pillar_stone_height, stone_depth );
+
+        for( size_t i = 0; i<pillar_segments; ++i )
+        {
+            T const y = ( 0.5f + i )*pillar_stone_width;
 
       V const T_b2m       = pillar_stone.Tb2m();
       Q const Q_b2m       = pillar_stone.Qb2m();
 
-			V const T_left_m2l  = V::make( -center_radius, y, 0 );
-			Q const Q_left_m2l  = Q::Ru( VT::pi_half(),  V::k() );
+            V const T_left_m2l  = V::make( -center_radius, y, 0 );
+            Q const Q_left_m2l  = Q::Ru( VT::pi_half(),  V::k() );
 
-			V const T_l2w       = position;
-			Q const Q_l2w       = orientation;
+            V const T_l2w       = position;
+            Q const Q_l2w       = orientation;
 
       V T_left_b2w;
       Q Q_left_b2w;
@@ -76,7 +76,7 @@ namespace procedural
                                           , Q_left_b2w
                                           );
 
-			create_rigid_body<MT>(
+            create_rigid_body<MT>(
                             engine
                             , T_left_b2w
                             , Q_left_b2w
@@ -102,7 +102,7 @@ namespace procedural
                                           , Q_right_b2w
                                           );
 
-			create_rigid_body<MT>(
+            create_rigid_body<MT>(
                             engine
                             , T_right_b2w
                             , Q_right_b2w
@@ -110,21 +110,21 @@ namespace procedural
                             , mid
                             , stone_density
                             );
-			
-		}
+
+        }
 
 
-		for(size_t i = 0;i<arch_slices;++i)
-		{
-			T const theta = delta_theta*( i+0.5f );
-			T const x     = center_radius * cos( theta );
-			T const y     = center_radius * sin( theta ) + pillar_height;
-			
-      V const T_b2m = arch_stone.Tb2m();
-      Q const Q_b2m = arch_stone.Qb2m();
+        for(size_t i = 0;i<arch_slices;++i)
+        {
+            T const theta = delta_theta*( i+0.5f );
+            T const x     = center_radius * cos( theta );
+            T const y     = center_radius * sin( theta ) + pillar_height;
+
+            V const T_b2m = fromEigen(arch_stone.Tb2m());
+      Q const Q_b2m = fromEigen(arch_stone.Qb2m());
 
       V const T_m2l = V::make( x, y, 0 );
-			Q const Q_m2l = Q::Ru(  theta - VT::pi_half() , V::k() );
+            Q const Q_m2l = Q::Ru(  theta - VT::pi_half() , V::k() );
 
       V const T_l2w = position;
       Q const Q_l2w = orientation;
@@ -143,15 +143,15 @@ namespace procedural
                                           , Q_b2w
                                           );
 
-			create_rigid_body<MT>(  engine
+            create_rigid_body<MT>(  engine
                         , T_b2w
                         , Q_b2w
                         , arch_stone
                         , mid
                         , stone_density
                         );
-		}
-	}
+        }
+    }
 
     using MTf = tiny::MathTypes<float>;
 

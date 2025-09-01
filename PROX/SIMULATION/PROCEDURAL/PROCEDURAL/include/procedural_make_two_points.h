@@ -42,19 +42,19 @@ namespace procedural
 
     if(use_spike)
     {
-      std::vector< V > spike_vertices;
+      std::vector<EigenVector3<T>> spike_vertices;
       spike_vertices.resize( 5u );
-      spike_vertices[0] = V::make(0.0,H,0.0);
-      spike_vertices[1] = V::make( B,0.0, B);
-      spike_vertices[2] = V::make(-B,0.0, B);
-      spike_vertices[3] = V::make( B,0.0,-B);
-      spike_vertices[4] = V::make(-B,0.0,-B);
+      spike_vertices[0] = EigenVector3<T>(0.0,H,0.0);
+      spike_vertices[1] = EigenVector3<T>( B,0.0, B);
+      spike_vertices[2] = EigenVector3<T>(-B,0.0, B);
+      spike_vertices[3] = EigenVector3<T>( B,0.0,-B);
+      spike_vertices[4] = EigenVector3<T>(-B,0.0,-B);
 
-      GeometryHandle<MT> const spike = create_geometry_handle_convex<MT>(engine, spike_vertices);
+      GeometryHandleEigen<T> const spike = create_geometry_handle_convex<T>(engine, spike_vertices);
 
       {
-        V const T_b2m = spike.Tb2m();
-        Q const Q_b2m = spike.Qb2m();
+          V const T_b2m = fromEigen(spike.Tb2m());
+          Q const Q_b2m = fromEigen(spike.Qb2m());
 
         V const T_m2l = V::make( H, H, 0.0 );
         Q const Q_m2l = Q::Rx( VT::pi()  );
@@ -88,8 +88,8 @@ namespace procedural
         engine->set_rigid_body_velocity(rid, -H/2.0, -H*2.0, 0.0);
       }
       {
-        V const T_b2m = spike.Tb2m();
-        Q const Q_b2m = spike.Qb2m();
+          V const T_b2m = fromEigen(spike.Tb2m());
+          Q const Q_b2m = fromEigen(spike.Qb2m());
 
         V const T_m2l = V::make( H, -H, 0.0 );
         Q const Q_m2l = Q::identity();
@@ -126,19 +126,19 @@ namespace procedural
 
     if(use_spike_and_wedge)
     {
-      std::vector< V > spike_vertices;
+      std::vector< EigenVector3<T>> spike_vertices;
       spike_vertices.resize( 5u );
-      spike_vertices[0] = V::make(0.0,H,0.0);
-      spike_vertices[1] = V::make( B,0.0, B);
-      spike_vertices[2] = V::make(-B,0.0, B);
-      spike_vertices[3] = V::make( B,0.0,-B);
-      spike_vertices[4] = V::make(-B,0.0,-B);
+      spike_vertices[0] = EigenVector3<T>(0.0,H,0.0);
+      spike_vertices[1] = EigenVector3<T>( B,0.0, B);
+      spike_vertices[2] = EigenVector3<T>(-B,0.0, B);
+      spike_vertices[3] = EigenVector3<T>( B,0.0,-B);
+      spike_vertices[4] = EigenVector3<T>(-B,0.0,-B);
 
-      GeometryHandle<MT> const spike = create_geometry_handle_convex<MT>(engine, spike_vertices);
+      GeometryHandleEigen<T> const spike = create_geometry_handle_convex<T>(engine, spike_vertices);
 
       {
-        V const T_b2m = spike.Tb2m();
-        Q const Q_b2m = spike.Qb2m();
+          V const T_b2m = fromEigen(spike.Tb2m());
+          Q const Q_b2m = fromEigen(spike.Qb2m());
 
         V const T_m2l = V::make( 0, H, 0.0 );
         Q const Q_m2l = Q::Rx( VT::pi()  );
@@ -172,21 +172,21 @@ namespace procedural
         engine->set_rigid_body_velocity(rid, -H/2.0, -H*2.0, 0.0);
       }
 
-      std::vector< V > wedge_vertices;
+      std::vector<EigenVector3<T>> wedge_vertices;
       wedge_vertices.resize( 6u );
 
-      wedge_vertices[0] = V::make( 0.0,   H, -2.0*B );
-      wedge_vertices[1] = V::make( 0.0,   H,  2.0*B );
-      wedge_vertices[2] = V::make(   B, 0.0,  2.0*B );
-      wedge_vertices[3] = V::make(  -B, 0.0,  2.0*B );
-      wedge_vertices[4] = V::make(   B, 0.0, -2.0*B );
-      wedge_vertices[5] = V::make(  -B, 0.0, -2.0*B );
+      wedge_vertices[0] = EigenVector3<T>( 0.0,   H, -2.0*B );
+      wedge_vertices[1] = EigenVector3<T>( 0.0,   H,  2.0*B );
+      wedge_vertices[2] = EigenVector3<T>(   B, 0.0,  2.0*B );
+      wedge_vertices[3] = EigenVector3<T>(  -B, 0.0,  2.0*B );
+      wedge_vertices[4] = EigenVector3<T>(   B, 0.0, -2.0*B );
+      wedge_vertices[5] = EigenVector3<T>(  -B, 0.0, -2.0*B );
 
-      GeometryHandle<MT> const wedge = create_geometry_handle_convex<MT>(engine, wedge_vertices);
+      GeometryHandleEigen<T> const wedge = create_geometry_handle_convex<T>(engine, wedge_vertices);
 
       {
-        V const T_b2m = wedge.Tb2m();
-        Q const Q_b2m = wedge.Qb2m();
+          V const T_b2m = fromEigen(wedge.Tb2m());
+          Q const Q_b2m = fromEigen(wedge.Qb2m());
 
         V const T_m2l = V::make( 0, -H, 0.0 );
         Q const Q_m2l = Q::identity();
@@ -226,21 +226,21 @@ namespace procedural
 
     if(use_wedge)
     {
-      std::vector< V > wedge_vertices;
+      std::vector<EigenVector3<T>> wedge_vertices;
       wedge_vertices.resize( 6u );
 
-      wedge_vertices[0] = V::make( 0.0,   H, -2.0*B );
-      wedge_vertices[1] = V::make( 0.0,   H,  2.0*B );
-      wedge_vertices[2] = V::make(   B, 0.0,  2.0*B );
-      wedge_vertices[3] = V::make(  -B, 0.0,  2.0*B );
-      wedge_vertices[4] = V::make(   B, 0.0, -2.0*B );
-      wedge_vertices[5] = V::make(  -B, 0.0, -2.0*B );
+      wedge_vertices[0] = EigenVector3<T>( 0.0,   H, -2.0*B );
+      wedge_vertices[1] = EigenVector3<T>( 0.0,   H,  2.0*B );
+      wedge_vertices[2] = EigenVector3<T>(   B, 0.0,  2.0*B );
+      wedge_vertices[3] = EigenVector3<T>(  -B, 0.0,  2.0*B );
+      wedge_vertices[4] = EigenVector3<T>(   B, 0.0, -2.0*B );
+      wedge_vertices[5] = EigenVector3<T>(  -B, 0.0, -2.0*B );
 
-      GeometryHandle<MT> const wedge = create_geometry_handle_convex<MT>(engine, wedge_vertices);
+      GeometryHandleEigen<T> const wedge = create_geometry_handle_convex<T>(engine, wedge_vertices);
 
       {
-        V const T_b2m = wedge.Tb2m();
-        Q const Q_b2m = wedge.Qb2m();
+          V const T_b2m = fromEigen(wedge.Tb2m());
+          Q const Q_b2m = fromEigen(wedge.Qb2m());
 
         V const T_m2l = V::make( -H, H, 0.0 );
         Q const Q_m2l = Q::Rx( VT::pi()  );
@@ -274,8 +274,8 @@ namespace procedural
         engine->set_rigid_body_velocity(rid, H/2.0, -H*2.0, 0.0);
       }
       {
-        V const T_b2m = wedge.Tb2m();
-        Q const Q_b2m = wedge.Qb2m();
+          V const T_b2m = fromEigen(wedge.Tb2m());
+          Q const Q_b2m = fromEigen(wedge.Qb2m());
 
         V const T_m2l = V::make( -H, -H, 0.0 );
         Q const Q_m2l = Q::identity();

@@ -4,24 +4,24 @@
 
 #include <vector>
 #include <cassert>
-
+#include <numbers>
 namespace mesh_array
 {
 
-  template<typename MT>
+  template<typename T>
   void profile_sweep(
-                     std::vector<typename MT::vector3_type> const & profile
+                     std::vector<EigenVector3<T>> const & profile
                      , size_t const & slices
                      , T3Mesh & mesh
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & Z
+                     , VertexAttribute<T,T3Mesh> & X
+                     , VertexAttribute<T,T3Mesh> & Y
+                     , VertexAttribute<T,T3Mesh> & Z
                      )
   {
-    typedef typename MT::real_type       T;
+/*    typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+    typedef typename MT::quaternion_type Q;*/
 
     size_t const N      = profile.size();
     size_t const J      = slices;
@@ -44,16 +44,16 @@ namespace mesh_array
     Z.bind(mesh);
 
       //--- Make a 2D grid of vertices by sweeping profile around y-axis
-    T const dtheta = 2*VT::pi() / J;  // The angle of each slice
+    T const dtheta = 2*std::numbers::pi_v<T> / J;  // The angle of each slice
 
     for(size_t j = 0u; j < J; ++j)
     {
       T const theta = j*dtheta;
-      Q const R = Q::Ru( theta, V::j() );
+        const EigenQuaternion<T> R = Rotateu( theta, EigenVector3<T>(0,1,0) );
 
       for(size_t i = 0u; i < H; ++i)
       {
-        V      const coords = rotate(R, profile[i+1]);
+        const EigenVector3<T> coords = rotate(R, profile[i+1]);
         Vertex const v      = mesh.push_vertex();
 
         X(v) = coords(0);
@@ -132,27 +132,25 @@ namespace mesh_array
     }
   }
 
-  using MTf = tiny::MathTypes<float>;
-  using MTd = tiny::MathTypes<double>;
 
   template
-  void profile_sweep<MTf>(
-                          std::vector<MTf::vector3_type> const & profile
+  void profile_sweep<float>(
+                          std::vector<EigenVector3<float>> const & profile
                           , size_t const & slices
                           , T3Mesh & mesh
-                          , VertexAttribute<MTf::real_type,T3Mesh> & X
-                          , VertexAttribute<MTf::real_type,T3Mesh> & Y
-                          , VertexAttribute<MTf::real_type,T3Mesh> & Z
+                          , VertexAttribute<float,T3Mesh> & X
+                          , VertexAttribute<float,T3Mesh> & Y
+                          , VertexAttribute<float,T3Mesh> & Z
                           );
 
   template
-  void profile_sweep<MTd>(
-                          std::vector<MTd::vector3_type> const & profile
+  void profile_sweep<double>(
+                          std::vector<EigenVector3<double>> const & profile
                           , size_t const & slices
                           , T3Mesh & mesh
-                          , VertexAttribute<MTd::real_type,T3Mesh> & X
-                          , VertexAttribute<MTd::real_type,T3Mesh> & Y
-                          , VertexAttribute<MTd::real_type,T3Mesh> & Z
+                          , VertexAttribute<double,T3Mesh> & X
+                          , VertexAttribute<double,T3Mesh> & Y
+                          , VertexAttribute<double,T3Mesh> & Z
                           );
 
 } //namespace mesh_array

@@ -39,7 +39,7 @@ namespace procedural
 
     std::string const geom_name = "mesh_" + util::to_string( counter++ );
 
-    typename detail::MeshData<MT> data;
+    typename detail::MeshData<T> data;
 
     data.m_mesh = mesh;
     data.m_X = X;

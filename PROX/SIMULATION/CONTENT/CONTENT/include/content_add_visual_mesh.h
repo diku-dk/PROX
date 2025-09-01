@@ -64,9 +64,9 @@ namespace content
                                           , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                           )
   {
-    typedef tiny::MathTypes<float>       MT;
+/*    typedef tiny::MathTypes<float>       MT;
     typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+    typedef typename MT::quaternion_type Q;*/
 
     for(size_t j=0u; j < engine->get_number_of_capsules(gid) ; ++j)
     {
@@ -79,23 +79,23 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_capsule<MT>( radius, height, 12, 12, submesh, subX, subY, subZ );
+      mesh_array::make_capsule<float>( radius, height, 12, 12, submesh, subX, subY, subZ );
 
       float x;
       float y;
       float z;
       engine->get_capsule_position( gid, j , x, y, z );
 
-      V const trans = V::make(x, y, z);
+      const EigenVector3<float> trans = EigenVector3<float>(x, y, z);
 
       float qs, qx, qy, qz;
       engine->get_capsule_orientation( gid, j, qs, qx, qy, qz );
 
-      Q const rot = Q(qs,qx,qy,qz);
+      EigenQuaternion<float> const rot = EigenQuaternion<float>(qs,qx,qy,qz);
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+      mesh_array::transform<float>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
   }
 
@@ -123,23 +123,23 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_cone<MT>( radius, height, 12, submesh, subX, subY, subZ );
+      mesh_array::make_cone<float>( radius, height, 12, submesh, subX, subY, subZ );
 
       float x;
       float y;
       float z;
       engine->get_cone_position( gid, j , x, y, z );
 
-      V const trans = V::make(x, y, z);
+      const EigenVector3<float>  trans = EigenVector3<float>(x, y, z);
 
       float qs, qx, qy, qz;
       engine->get_cone_orientation( gid, j, qs, qx, qy, qz );
 
-      Q const rot = Q(qs,qx,qy,qz);
+      const EigenQuaternion<float> rot = EigenQuaternion<float>(qs,qx,qy,qz);
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+      mesh_array::transform<float>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
   }
 
@@ -152,9 +152,6 @@ namespace content
                                           , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                           )
   {
-    typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
 
     for(size_t j=0u; j < engine->get_number_of_convexes(gid) ; ++j)
     {
@@ -167,7 +164,7 @@ namespace content
 
       engine->get_convex_shape( gid, j, &coordinates[0] );
 
-      std::vector<V> vertices;
+      std::vector<EigenVector3<float>> vertices;
       vertices.resize(no_points);
 
       for(size_t k=0u;k<no_points;++k)
@@ -182,23 +179,23 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_convex<MT>( vertices, submesh, subX, subY,subZ );
+      mesh_array::make_convex<float>( vertices, submesh, subX, subY,subZ );
 
       float x;
       float y;
       float z;
       engine->get_convex_position( gid, j , x, y, z );
 
-      V const trans = V::make(x, y, z);
+      const EigenVector3<float> trans = EigenVector3<float> (x, y, z);
 
       float qs, qx, qy, qz;
       engine->get_convex_orientation( gid, j, qs, qx, qy, qz );
 
-      Q const rot = Q(qs,qx,qy,qz);
+      EigenQuaternion<float> const rot = EigenQuaternion<float>(qs,qx,qy,qz);
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+      mesh_array::transform<float>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
   }
 
@@ -211,9 +208,6 @@ namespace content
                                            , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                            )
   {
-    typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
 
     for(size_t j=0u; j < engine->get_number_of_cylinders(gid) ; ++j)
     {
@@ -226,23 +220,23 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_cylinder<MT>( radius, height, 12, submesh, subX, subY, subZ );
+      mesh_array::make_cylinder<float>( radius, height, 12, submesh, subX, subY, subZ );
 
       float x;
       float y;
       float z;
       engine->get_cylinder_position( gid, j , x, y, z );
 
-      V const trans = V::make(x, y, z);
+      const EigenVector3<float>  trans = EigenVector3<float> (x, y, z);
 
       float qs, qx, qy, qz;
       engine->get_cylinder_orientation( gid, j, qs, qx, qy, qz );
 
-      Q const rot = Q(qs,qx,qy,qz);
+      const EigenQuaternion<float> rot = EigenQuaternion<float>(qs,qx,qy,qz);
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+      mesh_array::transform<float>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
   }
 
@@ -255,9 +249,9 @@ namespace content
                                             , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                             )
   {
-    typedef tiny::MathTypes<float>       MT;
+    /*typedef tiny::MathTypes<float>       MT;
     typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+    typedef typename MT::quaternion_type Q;*/
 
     for(size_t j=0u; j < engine->get_number_of_ellipsoids(gid) ; ++j)
     {
@@ -278,16 +272,16 @@ namespace content
       float z;
       engine->get_ellipsoid_position( gid, j , x, y, z );
 
-      V const trans = V::make(x, y, z);
+      const EigenVector3<float> trans = EigenVector3<float>(x, y, z);
 
       float qs, qx, qy, qz;
       engine->get_ellipsoid_orientation( gid, j, qs, qx, qy, qz );
 
-      Q const rot = Q(qs,qx,qy,qz);
+      const EigenQuaternion<float> rot = EigenQuaternion<float> (qs,qx,qy,qz);
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+      mesh_array::transform<float>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
   }
 
@@ -300,9 +294,9 @@ namespace content
                                          , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                          )
   {
-    typedef tiny::MathTypes<float>       MT;
+    /*typedef tiny::MathTypes<float>       MT;
     typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+    typedef typename MT::quaternion_type Q;*/
 
     for(size_t j=0u; j < engine->get_number_of_spheres(gid) ; ++j)
     {
@@ -314,23 +308,23 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_sphere<MT>( radius, 12, 12, submesh, subX, subY, subZ );
+      mesh_array::make_sphere<float>( radius, 12, 12, submesh, subX, subY, subZ );
 
       float x;
       float y;
       float z;
       engine->get_sphere_position( gid, j , x, y, z );
 
-      V const trans = V::make(x, y, z);
+      const EigenVector3<float> trans = EigenVector3<float>(x, y, z);
 
       float qs, qx, qy, qz;
       engine->get_sphere_orientation( gid, j, qs, qx, qy, qz );
 
-      Q const rot = Q(qs,qx,qy,qz);
+      const EigenQuaternion<float>  rot = EigenQuaternion<float> (qs,qx,qy,qz);
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+      mesh_array::transform<float>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
   }
 
@@ -343,7 +337,7 @@ namespace content
                                              , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                              )
   {
-    typedef tiny::MathTypes<float>       MT;
+    //typedef tiny::MathTypes<float>       MT;
 
     for(size_t j=0u; j < engine->get_number_of_tetrameshes(gid) ; ++j)
     {
@@ -383,7 +377,7 @@ namespace content
 
       mesh_array::make_t3mesh( tetmesh, tetX, tetY, tetZ, submesh, subX, subY,subZ );
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
+      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
     }
 
   }

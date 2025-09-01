@@ -47,9 +47,9 @@ namespace rigid_body
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> headY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> headZ;
 
-      mesh_array::make_sphere<MT>(radius1, 12, 12, base, baseX, baseY, baseZ);
-      mesh_array::make_cone<MT>(radius1, height, 12, head, headX, headY, headZ);
-      mesh_array::make_cylinder<MT>(radius2, height, 12, shaft, shaftX, shaftY, shaftZ);
+      mesh_array::make_sphere<typename MT::real_type>(radius1, 12, 12, base, baseX, baseY, baseZ);
+      mesh_array::make_cone<typename MT::real_type>(radius1, height, 12, head, headX, headY, headZ);
+      mesh_array::make_cylinder<typename MT::real_type>(radius2, height, 12, shaft, shaftX, shaftY, shaftZ);
 
       mesh_array::translate<MT>(V::make(0, height/2, 0), shaft, shaftX, shaftY, shaftZ);
       mesh_array::translate<MT>(V::make(0, height, 0), head, headX, headY, headZ);

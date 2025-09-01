@@ -18,7 +18,7 @@ void make_ellipsoid(Number a, Number b, Number c,
                     VertexAttribute<Number, T3Mesh>& yAttr,
                     VertexAttribute<Number, T3Mesh>& zAttr)
 {
-    make_sphere<tiny::MathTypes<Number>>(1, slices, segments, mesh, xAttr, yAttr, zAttr);
+    make_sphere<Number>(1, slices, segments, mesh, xAttr, yAttr, zAttr);
     scale<tiny::MathTypes<Number>>(a,b,c, mesh, xAttr, yAttr, zAttr);
 }
 

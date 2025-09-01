@@ -63,13 +63,13 @@ namespace procedural
             T const cos_theta_right = cos(   delta_theta / 2    );
             T const sin_theta_right = sin(   delta_theta / 2    );
 
-            V vertices[8];
+            EigenVector3<T> vertices[8];
 
             // The front face in CCW order
-            vertices[0] = r_outer * V::make( cos_theta_left  * sin_phi_lower, sin_theta_left  * sin_phi_lower,  cos_phi_lower );
-            vertices[1] = r_outer * V::make( cos_theta_right * sin_phi_lower, sin_theta_right * sin_phi_lower,  cos_phi_lower );
-            vertices[2] = r_outer * V::make( cos_theta_right * sin_phi_upper, sin_theta_right * sin_phi_upper,  cos_phi_upper );
-            vertices[3] = r_outer * V::make( cos_theta_left  * sin_phi_upper, sin_theta_left  * sin_phi_upper,  cos_phi_upper );
+            vertices[0] = r_outer * EigenVector3<T>( cos_theta_left  * sin_phi_lower, sin_theta_left  * sin_phi_lower,  cos_phi_lower );
+            vertices[1] = r_outer * EigenVector3<T>( cos_theta_right * sin_phi_lower, sin_theta_right * sin_phi_lower,  cos_phi_lower );
+            vertices[2] = r_outer * EigenVector3<T>( cos_theta_right * sin_phi_upper, sin_theta_right * sin_phi_upper,  cos_phi_upper );
+            vertices[3] = r_outer * EigenVector3<T>( cos_theta_left  * sin_phi_upper, sin_theta_left  * sin_phi_upper,  cos_phi_upper );
 
             // The back face in CCW order
             vertices[4] = r_inner * vertices[0] / r_outer;
@@ -78,7 +78,7 @@ namespace procedural
             vertices[7] = r_inner * vertices[3] / r_outer;
 
             //--- Compute geometric center of the stone
-      V const geometric_center =  ( vertices[0]
+      const EigenVector3<T> geometric_center =  ( vertices[0]
                                   + vertices[1]
                                   + vertices[2]
                                   + vertices[3]
@@ -92,16 +92,16 @@ namespace procedural
             for( size_t i=0; i<8; ++i )
         vertices[i] = vertices[i] -  geometric_center;
 
-            GeometryHandle<MT> stone_handle = create_geometry_handle_cuboid<MT>(  engine, vertices );
+            GeometryHandleEigen<T> stone_handle = create_geometry_handle_cuboid<T>(  engine, vertices );
 
             T theta = offset_theta;
             for( size_t h = 0u; h < slices;	++h, theta += delta_theta )
             {
-        V const T_b2m = stone_handle.Tb2m();
-        Q const Q_b2m = stone_handle.Qb2m();
+                V const T_b2m = fromEigen(stone_handle.Tb2m());
+                Q const Q_b2m = fromEigen(stone_handle.Qb2m());
 
                 Q const Q_m2l = Q::Ru( theta , V::k() );
-        V const T_m2l = rotate(Q_m2l, geometric_center);//V::make( x, y, z );
+                V const T_m2l = fromEigen(rotate(toEigen(Q_m2l), geometric_center));//V::make( x, y, z );
 
         V const T_l2w = position;
         Q const Q_l2w = orientation;

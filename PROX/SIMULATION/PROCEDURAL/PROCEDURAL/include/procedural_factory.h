@@ -24,11 +24,28 @@ namespace procedural
                            , std::string const visual_material = "Visualizer/stone"
                            );
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_convex(
+template<typename MT>
+size_t create_rigid_body(  content::API *  engine
+                         , typename MT::vector3_type const & Tb2w
+                         , typename MT::quaternion_type const & Qb2w
+                           , GeometryHandleEigen<typename MT::real_type>  const & geometry
+                         , size_t const & mid
+                         , typename MT::real_type const & density
+                         , bool const fixed = false
+                         , std::string const visual_material = "Visualizer/stone"
+                         );
+
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_convex(
                                                    content::API * engine
-                                                   , std::vector<typename MT::vector3_type> const &  vertices
+                                                   , std::vector<EigenVector3<T>> const &  vertices
                                                    );
+
+  template<typename MT>
+  GeometryHandle<MT> create_geometry_handle_convex_old(
+        content::API * engine
+        , std::vector<typename MT::vector3_type> const &  vertices
+        );
 
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_sphere(
@@ -51,30 +68,29 @@ namespace procedural
                                                 , typename MT::real_type  const & depth
                                                 );
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_cuboid(
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_cuboid(
                                                    content::API * engine
-                                                   , typename MT::vector3_type * vertices
+                                                   , EigenVector3<T>* vertices
                                                    );
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_tetrahedron(
-                                                        content::API * engine
-                                                        , typename MT::vector3_type one
-                                                        , typename MT::vector3_type two
-                                                        , typename MT::vector3_type three
-                                                        , typename MT::vector3_type four
-                                                        );
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_tetrahedron(
+      content::API * engine
+      , EigenVector3<T> one
+      , EigenVector3<T> two
+      , EigenVector3<T> three
+      , EigenVector3<T> four
+      );
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_pillar_segment(
-                                                           content::API * engine
-                                                           , typename MT::real_type const & bottom_radius
-                                                           , typename MT::real_type const & top_radius
-                                                           , typename MT::real_type const & height
-                                                           , size_t const & slices
-                                                           , mesh_array::TetGenSettings tetset  = mesh_array::tetgen_default_settings()
-                                                           );
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_pillar_segment( content::API * engine
+                                                               , const T bottom_radius
+                                                               , const T top_radius
+                                                               , const T height
+                                                               , size_t const & slices
+                                                               , mesh_array::TetGenSettings tetset
+                                                               );
 
   template<typename MT>
   void compute_arch_stone_vertices(
@@ -84,6 +100,15 @@ namespace procedural
                                    , typename MT::real_type const & r_inner
                                    , typename MT::vector3_type * vertices
                                    );
+
+  template<typename T>
+  void compute_arch_stone_vertices_eigen(
+      const T& theta
+      , const T& depth
+      , const T& r_outer
+      , const T& r_inner
+      , EigenVector3<T>* vertices
+      );
   template<typename MT>
   void compute_body_to_world_transform(
                                    typename MT::vector3_type      const & Tb2m

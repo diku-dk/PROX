@@ -4,9 +4,9 @@
 
 namespace procedural
 {
-	
+
   template<typename MT>
-	void make_tower(
+    void make_tower(
                     content::API * engine
                   , typename MT::vector3_type const & position
                   , typename MT::quaternion_type const & orientation
@@ -18,21 +18,21 @@ namespace procedural
                   , MaterialInfo<typename MT::real_type> mat_info
                   , bool const & use_cubes
                   )
-	{
+    {
     typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
 
-		size_t const mid = get_material_id<MT>(mat_info, "Stone");
-		
-		T const stone_depth    = height/segments;
-		T const delta_theta    = 2* VT::pi()/ slices;
-		T const center_radius  = ( r_outer + r_inner )*0.5f;
-		T const stone_density  = get_material_density<MT>(mat_info, "Stone");
+        size_t const mid = get_material_id<MT>(mat_info, "Stone");
 
-    std::vector<V>  vertices(8u);
-    compute_arch_stone_vertices<MT>(
+        T const stone_depth    = height/segments;
+        T const delta_theta    = 2* VT::pi()/ slices;
+        T const center_radius  = ( r_outer + r_inner )*0.5f;
+        T const stone_density  = get_material_density<MT>(mat_info, "Stone");
+
+    std::vector<EigenVector3<T>>  vertices(8u);
+    compute_arch_stone_vertices_eigen<T>(
                                     delta_theta
                                     , stone_depth
                                     , r_outer
@@ -60,26 +60,26 @@ namespace procedural
     }
     else
     {
-      stone_handle = create_geometry_handle_cuboid<MT>( engine, &vertices[0] );
+        stone_handle = geometryHandleFromEigen<MT>(create_geometry_handle_cuboid<T>( engine, &vertices[0] ));
     }
 
-		for(size_t i = 0u; i < segments; ++i)
-		{
-			for(size_t j = 0u; j < slices; ++j)
-			{
-				T const theta = j*delta_theta + (i%2)*( delta_theta*0.5f );
-				T const x     = center_radius * cos(  theta  );
-				T const y     = center_radius * sin(  theta  );
-				T const z     = (i + 0.5f) * stone_depth;
-				
-				V const T_b2m = stone_handle.Tb2m();
-				Q const Q_b2m = stone_handle.Qb2m();
+        for(size_t i = 0u; i < segments; ++i)
+        {
+            for(size_t j = 0u; j < slices; ++j)
+            {
+                T const theta = j*delta_theta + (i%2)*( delta_theta*0.5f );
+                T const x     = center_radius * cos(  theta  );
+                T const y     = center_radius * sin(  theta  );
+                T const z     = (i + 0.5f) * stone_depth;
 
-				V const T_m2l = V::make( x, y, z );
+                V const T_b2m = stone_handle.Tb2m();
+                Q const Q_b2m = stone_handle.Qb2m();
+
+                V const T_m2l = V::make( x, y, z );
         Q const Q_m2l = Q::Ru( theta - VT::pi_half(),  V::k() );
-				
+
         V const T_l2w = position;
-				Q const Q_l2w = orientation;
+                Q const Q_l2w = orientation;
 
         V T_b2w;
         Q Q_b2w;
@@ -95,7 +95,7 @@ namespace procedural
                                             , Q_b2w
                                             );
 
-				create_rigid_body<MT>(
+                create_rigid_body<MT>(
                               engine
                               , T_b2w
                               , Q_b2w
@@ -103,9 +103,9 @@ namespace procedural
                               , mid
                               , stone_density
                               );
-			}
-		}
-	}
+            }
+        }
+    }
 
     using MTf = tiny::MathTypes<float>;
 

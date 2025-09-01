@@ -17,6 +17,20 @@
 
 namespace procedural
 {
+    template <typename TypeParameter>
+    inline GeometryHandle<TypeParameter> geometryHandleFromEigen(GeometryHandleEigen<typename TypeParameter::real_type> input)
+    {
+        GeometryHandle<TypeParameter> gH(input.m_m,
+                                         input.m_Ixx,
+                                         input.m_Iyy,
+                                         input.m_Izz,
+                                         fromEigen(input.m_T),
+                                         fromEigen(input.m_Q),
+                                         input.m_gid);
+        return gH;
+    }
+
+
 
   template<typename MT>
   inline GeometryHandle<MT> create_geometry_handle_obj(
@@ -37,7 +51,7 @@ namespace procedural
 
     std::string const geom_name = "obj_" + util::to_string( counter++ );
 
-    detail::MeshData<MT> data;
+    detail::MeshData<T> data;
 
     mesh_array::read_obj(rel_file_name, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
 
@@ -171,7 +185,7 @@ namespace procedural
 
     std::string const geom_name = "nonuniform_obj_" + util::to_string( counter++ );
 
-    typename detail::MeshData<MT> data;
+    typename detail::MeshData<T> data;
 
     mesh_array::read_obj(rel_file_name, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
 

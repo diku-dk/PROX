@@ -471,7 +471,7 @@ ProxEngine::ProxEngine()
     size_t const segments = 12u;
     size_t const slices   = 12u;
 
-    mesh_array::make_capsule<MT>(
+    mesh_array::make_capsule<T>(
                                  radius
                                  , height
                                  , slices
@@ -543,7 +543,7 @@ ProxEngine::ProxEngine()
 
     size_t const slices = 12u;
 
-    mesh_array::make_cone<MT>(
+    mesh_array::make_cone<T>(
                               radius
                               , height
                               , slices
@@ -613,13 +613,15 @@ ProxEngine::ProxEngine()
 
     ProxData::geometry_type & geometry = m_data->m_narrow.get_geometry(geometry_index);
 
-    std::vector<V> p;
+    std::vector<EigenVector3<T>> p;
     p.resize(N);
     for(size_t i = 0u; i < N; ++i)
     {
-      p[i](0) = coordinates[3u*i+0u];
+        EigenVector3<T> vec(coordinates[3u*i+0u], coordinates[3u*i+1u], coordinates[3u*i+2u]);
+        p[i] = vec;
+/*      p[i](0) = coordinates[3u*i+0u];
       p[i](1) = coordinates[3u*i+1u];
-      p[i](2) = coordinates[3u*i+2u];
+      p[i](2) = coordinates[3u*i+2u];*/
     }
 
     if (m_data->m_use_only_tetrameshes)
@@ -630,7 +632,7 @@ ProxEngine::ProxEngine()
       mesh_array::VertexAttribute<T, mesh_array::T3Mesh> surface_Y;
       mesh_array::VertexAttribute<T, mesh_array::T3Mesh> surface_Z;
 
-      mesh_array::make_convex<MT>(p
+      mesh_array::make_convex<T>(p
                                   , surface
                                   , surface_X
                                   , surface_Y
@@ -653,7 +655,7 @@ ProxEngine::ProxEngine()
 
     for(size_t i=0u; i< p.size(); ++i)
     {
-        geometry.m_hulls[convex_number].data().add_point( toEigen(p[i]) );
+        geometry.m_hulls[convex_number].data().add_point( (p[i]) );
     }
   }
 
@@ -726,7 +728,7 @@ ProxEngine::ProxEngine()
 
     size_t const slices = 12u;
 
-    mesh_array::make_cylinder<MT>(
+    mesh_array::make_cylinder<T>(
                                   radius
                                   , height
                                   , slices
@@ -884,7 +886,7 @@ ProxEngine::ProxEngine()
       size_t const segments = 12u;
       size_t const slices   = 12u;
 
-      mesh_array::make_sphere<MT>(
+      mesh_array::make_sphere<T>(
                                   radius
                                   , slices
                                   , segments

@@ -8,46 +8,43 @@
 namespace mesh_array
 {
 
-  template<typename MT>
+  template<typename T>
   void make_conical(
-                 typename MT::real_type const & bottom_radius
-                 , typename MT::real_type const & top_radius
-                 , typename MT::real_type const & height
+                 T const & bottom_radius
+                 , T const & top_radius
+                 , T const & height
                  , size_t const & slices
                  , T3Mesh & mesh
-                 , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                 , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                 , VertexAttribute<typename MT::real_type,T3Mesh> & Z
+                 , VertexAttribute<T,T3Mesh> & X
+                 , VertexAttribute<T,T3Mesh> & Y
+                 , VertexAttribute<T,T3Mesh> & Z
                  )
   {
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::vector3_type    V;
+        std::vector<EigenVector3<T>> profile;
 
-		std::vector<V> profile;
-		
-		profile.resize(4u);
-		
-		profile[ 0 ] = V::make(   0, 0, 0 );
-		profile[ 1 ] = V::make(bottom_radius, 0, 0 );
-		profile[ 2 ] = V::make(   top_radius,     height, 0 );
-		profile[ 3 ] = V::make(   0,     height, 0 );
-		
-		profile_sweep<MT>( profile, slices, mesh, X, Y, Z  );
-	}
+        profile.resize(4u);
+
+        profile[ 0 ] = EigenVector3<T>(   0, 0, 0 );
+        profile[ 1 ] = EigenVector3<T>(bottom_radius, 0, 0 );
+        profile[ 2 ] = EigenVector3<T>(   top_radius,     height, 0 );
+        profile[ 3 ] = EigenVector3<T>(   0,     height, 0 );
+
+        profile_sweep<T>( profile, slices, mesh, X, Y, Z  );
+    }
 
     using MTf = tiny::MathTypes<float>;
     using MTd = tiny::MathTypes<double>;
 
-    template void make_conical<MTf>(MTf::real_type const& bottom_radius, MTf::real_type const& top_radius,
-                                    MTf::real_type const& height, size_t const& slices, T3Mesh& mesh,
-                                    VertexAttribute<MTf::real_type, T3Mesh>& X,
-                                    VertexAttribute<MTf::real_type, T3Mesh>& Y,
-                                    VertexAttribute<MTf::real_type, T3Mesh>& Z);
+    template void make_conical<float>(float const& bottom_radius, float const& top_radius,
+                                    float const& height, size_t const& slices, T3Mesh& mesh,
+                                    VertexAttribute<float, T3Mesh>& X,
+                                    VertexAttribute<float, T3Mesh>& Y,
+                                    VertexAttribute<float, T3Mesh>& Z);
 
-    template void make_conical<MTd>(MTd::real_type const& bottom_radius, MTd::real_type const& top_radius,
-                                    MTd::real_type const& height, size_t const& slices, T3Mesh& mesh,
-                                    VertexAttribute<MTd::real_type, T3Mesh>& X,
-                                    VertexAttribute<MTd::real_type, T3Mesh>& Y,
-                                    VertexAttribute<MTd::real_type, T3Mesh>& Z);
+    template void make_conical<double>(double const& bottom_radius, double const& top_radius,
+                                    double const& height, size_t const& slices, T3Mesh& mesh,
+                                    VertexAttribute<double, T3Mesh>& X,
+                                    VertexAttribute<double, T3Mesh>& Y,
+                                    VertexAttribute<double, T3Mesh>& Z);
 
 } //namespace mesh_array

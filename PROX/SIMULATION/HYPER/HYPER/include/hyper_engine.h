@@ -222,7 +222,7 @@ namespace hyper
       size_t const segments = 12u;
       size_t const slices   = 12u;
 
-      mesh_array::make_capsule<typename MT::base_type>(
+      mesh_array::make_capsule<float>(
                                    radius
                                    , height
                                    , slices
@@ -255,7 +255,7 @@ namespace hyper
 
       size_t const slices = 12u;
 
-      mesh_array::make_cone<typename MT::base_type>(
+      mesh_array::make_cone<typename MT::real_type>(
                                 radius
                                 , height
                                 , slices

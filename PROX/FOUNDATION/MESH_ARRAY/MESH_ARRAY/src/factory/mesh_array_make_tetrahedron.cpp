@@ -5,16 +5,16 @@
 namespace mesh_array
 {
 
-  template<typename MT>
+  template<typename T>
   void make_tetrahedron(
-                   typename MT::vector3_type const & p0
-                   , typename MT::vector3_type const & p1
-                   , typename MT::vector3_type const & p2
-                   , typename MT::vector3_type const & p3
+                   EigenVector3<T> const & p0
+                   , EigenVector3<T> const & p1
+                   , EigenVector3<T> const & p2
+                   , EigenVector3<T> const & p3
                    , T3Mesh & mesh
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Z
+                   , VertexAttribute<T,T3Mesh> & X
+                   , VertexAttribute<T,T3Mesh> & Y
+                   , VertexAttribute<T,T3Mesh> & Z
                    )
   {
     mesh.clear();
@@ -35,24 +35,22 @@ namespace mesh_array
     X(vk) = p2(0);    Y(vk) = p2(1);    Z(vk) = p2(2);
     X(vm) = p3(0);    Y(vm) = p3(1);    Z(vm) = p3(2);
 
-		mesh.push_triangle( vi, vk, vj );
-		mesh.push_triangle( vi, vj, vm );
-		mesh.push_triangle( vj, vk, vm );
-		mesh.push_triangle( vk, vi, vm );
-	}
+        mesh.push_triangle( vi, vk, vj );
+        mesh.push_triangle( vi, vj, vm );
+        mesh.push_triangle( vj, vk, vm );
+        mesh.push_triangle( vk, vi, vm );
+    }
 
-    using MTf = tiny::MathTypes<float>;
-    using MTd = tiny::MathTypes<double>;
 
-    template void make_tetrahedron<MTf>(MTf::vector3_type const& p0, MTf::vector3_type const& p1,
-                                        MTf::vector3_type const& p2, MTf::vector3_type const& p3, T3Mesh& mesh,
-                                        VertexAttribute<MTf::real_type, T3Mesh>& X,
-                                        VertexAttribute<MTf::real_type, T3Mesh>& Y,
-                                        VertexAttribute<MTf::real_type, T3Mesh>& Z);
-    template void make_tetrahedron<MTd>(MTd::vector3_type const& p0, MTd::vector3_type const& p1,
-                                        MTd::vector3_type const& p2, MTd::vector3_type const& p3, T3Mesh& mesh,
-                                        VertexAttribute<MTd::real_type, T3Mesh>& X,
-                                        VertexAttribute<MTd::real_type, T3Mesh>& Y,
-                                        VertexAttribute<MTd::real_type, T3Mesh>& Z);
+    template void make_tetrahedron<float>(EigenVector3<float> const& p0, EigenVector3<float> const& p1,
+                                        EigenVector3<float> const& p2, EigenVector3<float> const& p3, T3Mesh& mesh,
+                                        VertexAttribute<float, T3Mesh>& X,
+                                        VertexAttribute<float, T3Mesh>& Y,
+                                        VertexAttribute<float, T3Mesh>& Z);
+    template void make_tetrahedron<double>(EigenVector3<double> const& p0, EigenVector3<double> const& p1,
+                                        EigenVector3<double> const& p2, EigenVector3<double> const& p3, T3Mesh& mesh,
+                                        VertexAttribute<double, T3Mesh>& X,
+                                        VertexAttribute<double, T3Mesh>& Y,
+                                        VertexAttribute<double, T3Mesh>& Z);
 
 } //namespace mesh_array

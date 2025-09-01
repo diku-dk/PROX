@@ -59,6 +59,7 @@ namespace procedural
 
       typedef typename MT::vector3_type     V;
       typedef typename MT::value_traits     VT;
+      typedef typename MT::real_type        T;
 
       std::ifstream file;
       file.open(filename.c_str());
@@ -76,12 +77,12 @@ namespace procedural
 
       unsigned int i = 0u;  // counter for how many grains have been read so far
 
-      V max_coord = V::make( std::numeric_limits<typename MT::real_type>::lowest(),std::numeric_limits<typename MT::real_type>::lowest(),std::numeric_limits<typename MT::real_type>::lowest()    );
-      V min_coord = V::make( std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max() );
+      EigenVector3<T> max_coord = EigenVector3<T>( std::numeric_limits<typename MT::real_type>::lowest(),std::numeric_limits<typename MT::real_type>::lowest(),std::numeric_limits<typename MT::real_type>::lowest()    );
+      EigenVector3<T> min_coord = EigenVector3<T>( std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max() );
 
       while (!file.eof() && i < max_number_of_grains)
       {
-        std::vector<V> vertices;
+        std::vector<EigenVector3<T>> vertices;
 
         std::string line;
 
@@ -107,14 +108,14 @@ namespace procedural
 
         while (!stream.eof())
         {
-          V p;
-
-          stream >> p;
+          EigenVector3<T> p;
+            V pTmp = fromEigen(p);
+            stream >> pTmp;
 
           p = p * (voxel_size * grain_scale);
 
-          max_coord = tiny::max( p, max_coord);
-          min_coord = tiny::min( p, min_coord);
+          max_coord = p.cwiseMax( max_coord);
+          min_coord = p.cwiseMax( min_coord);
 
           if (!stream.eof())
           {
@@ -125,16 +126,18 @@ namespace procedural
           vertices.push_back(p);
         }
 
-        GeometryHandle<MT> const handle = create_geometry_handle_convex<MT>(engine, vertices);
-
-        grains.push_back( handle );
+        GeometryHandleEigen<T> const handle = create_geometry_handle_convex<T>(engine, vertices);
+        GeometryHandle<MT> handleG = geometryHandleFromEigen<MT>(handle);
+        grains.push_back(handleG);
 
         ++i;
       }
 
       file.close();
 
-      V const grain_bounding_box = max_coord - min_coord;
+      EigenVector3<T> vec = max_coord - min_coord;
+
+      V const grain_bounding_box = fromEigen(vec);
 
       grain_size = tiny::max( grain_bounding_box );
 

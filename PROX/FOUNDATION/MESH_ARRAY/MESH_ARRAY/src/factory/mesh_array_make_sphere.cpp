@@ -2,6 +2,7 @@
 #include <factory/mesh_array_profile_sweep.h>
 
 #include <tiny_math_types.h>
+#include <numbers>
 
 #include <cmath>
 #include <cassert>
@@ -9,37 +10,37 @@
 namespace mesh_array
 {
 
-  template<typename MT>
-  void make_sphere(
-                   typename MT::real_type const & radius
-                   , size_t const & slices
-                   , size_t const & segments
-                   , T3Mesh & mesh
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-                   )
+template<typename T>
+void make_sphere(
+    T const & radius
+    , size_t const & slices
+    , size_t const & segments
+    , T3Mesh & mesh
+    , VertexAttribute<T,T3Mesh> & X
+    , VertexAttribute<T,T3Mesh> & Y
+    , VertexAttribute<T,T3Mesh> & Z
+    )
   {
-    typedef typename MT::real_type       T;
+/*    typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+    typedef typename MT::quaternion_type Q;*/
 
-		std::vector<V> profile;
-		
-		profile.resize(segments);
-		
-		T const dtheta = VT::pi() / (segments-1);
+      std::vector<EigenVector3<T>> profile;
 
-		for(size_t i=0;i < segments; ++i )
-		{
-			T const theta = dtheta*i;
-			
-			Q const R = Q::Ru( theta ,V::k() );			
-			profile[ i ] = rotate( R, V::make(  0, -radius, 0 ) );
-		}
-		
-		profile_sweep<MT>( profile, slices, mesh, X, Y, Z );
+        profile.resize(segments);
+
+      T const dtheta = std::numbers::pi_v<T> / (segments-1);
+
+        for(size_t i=0;i < segments; ++i )
+        {
+            T const theta = dtheta*i;
+
+            const EigenQuaternion<T> R = Rotateu( theta ,EigenVector3<T>(0, 0, 1));
+            profile[ i ] = rotate( R, EigenVector3<T>(  0, -radius, 0 ) );
+        }
+
+        profile_sweep<T>( profile, slices, mesh, X, Y, Z );
 
 
 //    typedef typename MT::real_type       T;
@@ -49,10 +50,10 @@ namespace mesh_array
 //
 //		using std::cos;
 //		using std::sin;
-//		
+//
 //		assert(slices>2u   || !"make_sphere(): must have at least 3 slices"  );
 //		assert(segments>1u || !"make_sphere(): must have at least 2 segments");
-//		
+//
 //		size_t const no_quads = segments*slices;
 //
 //    mesh.clear();
@@ -62,10 +63,10 @@ namespace mesh_array
 //    X.bind(mesh);
 //    Y.bind(mesh);
 //    Z.bind(mesh);
-//		
+//
 //		T const delta_theta = 2*VT::pi()/slices;
 //		T const delta_phi   =      VT::pi()/segments;
-//		
+//
 //		size_t vertex_offset = 0u;
 //		for(size_t i=0u; i<segments; ++i)
 //		{
@@ -116,19 +117,16 @@ namespace mesh_array
 //				vertex_offset += 4u;
 //			}
 //		}
-	}
+    }
 
-    using MTf = tiny::MathTypes<float>;
-    using MTd = tiny::MathTypes<double>;
+    template void make_sphere<float>(float const& radius, size_t const& slices, size_t const& segments,
+                                   T3Mesh& mesh, VertexAttribute<float, T3Mesh>& X,
+                                   VertexAttribute<float, T3Mesh>& Y,
+                                   VertexAttribute<float, T3Mesh>& Z);
 
-    template void make_sphere<MTf>(MTf::real_type const& radius, size_t const& slices, size_t const& segments,
-                                   T3Mesh& mesh, VertexAttribute<MTf::real_type, T3Mesh>& X,
-                                   VertexAttribute<MTf::real_type, T3Mesh>& Y,
-                                   VertexAttribute<MTf::real_type, T3Mesh>& Z);
-
-    template void make_sphere<MTd>(MTd::real_type const& radius, size_t const& slices, size_t const& segments,
-                                   T3Mesh& mesh, VertexAttribute<MTd::real_type, T3Mesh>& X,
-                                   VertexAttribute<MTd::real_type, T3Mesh>& Y,
-                                   VertexAttribute<MTd::real_type, T3Mesh>& Z);
+    template void make_sphere<double>(double const& radius, size_t const& slices, size_t const& segments,
+                                   T3Mesh& mesh, VertexAttribute<double, T3Mesh>& X,
+                                   VertexAttribute<double, T3Mesh>& Y,
+                                   VertexAttribute<double, T3Mesh>& Z);
 
 } //namespace mesh_array

@@ -156,18 +156,18 @@ namespace procedural
     GeometryHandle<MT> const base = create_geometry_handle_mesh<MT>(engine, mesh, X, Y, Z, tetset);
 
     T const H = 0.05*scene_size;
-    std::vector< V > top_vertices;
+    std::vector<EigenVector3<T>> top_vertices;
     top_vertices.resize( 8u );
-    top_vertices[0] = V::make( -H,  H,  H);
-    top_vertices[1] = V::make(  H,  H,  H);
-    top_vertices[2] = V::make( -H,  H, -H);
-    top_vertices[3] = V::make(  H,  H, -H);
-    top_vertices[4] = V::make( -H, -H,  H);
-    top_vertices[5] = V::make(  H, -H,  H);
-    top_vertices[6] = V::make( -H, -H, -H);
-    top_vertices[7] = V::make(  H, -H, -H);
+    top_vertices[0] = EigenVector3<T>( -H,  H,  H);
+    top_vertices[1] = EigenVector3<T>(  H,  H,  H);
+    top_vertices[2] = EigenVector3<T>( -H,  H, -H);
+    top_vertices[3] = EigenVector3<T>(  H,  H, -H);
+    top_vertices[4] = EigenVector3<T>( -H, -H,  H);
+    top_vertices[5] = EigenVector3<T>(  H, -H,  H);
+    top_vertices[6] = EigenVector3<T>( -H, -H, -H);
+    top_vertices[7] = EigenVector3<T>(  H, -H, -H);
 
-    GeometryHandle<MT> const top = create_geometry_handle_convex<MT>(engine, top_vertices);
+    GeometryHandleEigen<T> const top = create_geometry_handle_convex<T>(engine, top_vertices);
 
     {
       V const T_b2m = base.Tb2m();
@@ -206,8 +206,8 @@ namespace procedural
     }
 
     {
-      V const T_b2m = top.Tb2m();
-      Q const Q_b2m = top.Qb2m();
+        V const T_b2m = fromEigen(top.Tb2m());
+      Q const Q_b2m = fromEigen(top.Qb2m());
 
       V const T_m2l = V::make( 0.0, 2.0*H, 0.0 );
       Q const Q_m2l = Q::identity();

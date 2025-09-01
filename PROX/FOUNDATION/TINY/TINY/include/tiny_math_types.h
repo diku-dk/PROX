@@ -9,6 +9,7 @@
 #include <tiny_type_traits.h>
 
 #include <type_traits>
+#include <numbers>
 
 #include <eigen3/Eigen/Dense>
 
@@ -207,7 +208,8 @@ public:
 };
 
 template<typename Number>
-inline EigenVector3<Number> rotate(const EigenQuaternion<Number>& Quat, const EigenVector3<Number>& rVec)
+inline EigenVector3<Number> rotate(const EigenQuaternion<Number>& Quat,
+                                   const EigenVector3<Number>& rVec)
 {
     //return prod(  prod(q , r)  , conj(q) ).imag();
     return Quat*rVec;
@@ -271,6 +273,9 @@ inline auto coordSysToEigen(const tiny::CoordSys<TypeParameter>& input)
     using Number = std::remove_cv_t<std::remove_reference_t<decltype(input.T()[0])>>;
     return CoordSysEigen<Number>{toEigen(input.T()), toEigen(input.Q())};
 }
+
+
+
 
 
 template<typename T>

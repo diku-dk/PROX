@@ -19,9 +19,11 @@ namespace procedural
 
 using MTf = tiny::MathTypes<float>;
 
-template <typename MT>
-GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
-                                                 std::vector<typename MT::vector3_type> const& vertices)
+template<typename MT>
+GeometryHandle<MT> create_geometry_handle_convex_old(
+    content::API * engine
+    , std::vector<typename MT::vector3_type> const &  vertices
+    )
 {
     typedef typename MT::real_type        T;
     typedef typename MT::vector3_type     V;
@@ -32,18 +34,18 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
     std::string const geom_name = "convex_" + util::to_string( counter++ );
 
-    detail::MeshData<MT> data;
+    detail::MeshData<T> data;
 
     //fix vertex sequence
     mesh_array::make_convex<MT>(
-                                vertices
-                                , data.m_mesh
-                                , data.m_X
-                                , data.m_Y
-                                , data.m_Z
-                                );
+        vertices
+        , data.m_mesh
+        , data.m_X
+        , data.m_Y
+        , data.m_Z
+        );
 
-    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_mf = mass::compute_mesh(T(1), data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
@@ -62,6 +64,74 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
     for(size_t i = 0; i<N; ++i)
     {
+        mesh_array::Vertex const v = data.m_mesh.vertex( i );
+        coords[3*i  ] = data.m_X(v);
+        coords[3*i+1] = data.m_Y(v);
+        coords[3*i+2] = data.m_Z(v);
+    }
+
+    engine->set_convex_shape( gid, sid, N ,&coords[0] );
+
+    return GeometryHandle<MT>(
+        props.m_m
+        , props.m_Ixx
+        , props.m_Iyy
+        , props.m_Izz
+        , V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z)
+        , Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
+        , gid
+        );
+}
+
+template
+    GeometryHandle<MTf> create_geometry_handle_convex_old(
+        content::API * engine
+        , std::vector<MTf::vector3_type> const &  vertices
+        );
+
+template <typename T>
+GeometryHandleEigen<T> create_geometry_handle_convex(content::API* engine,
+                                                 std::vector<EigenVector3<T>> const& vertices)
+{
+/*    typedef typename MT::real_type        T;
+    typedef typename MT::vector3_type     V;
+    typedef typename MT::quaternion_type  Q;
+    typedef typename MT::value_traits     VT;*/
+
+    static size_t counter = 0u;
+
+    std::string const geom_name = "convex_" + util::to_string( counter++ );
+
+    detail::MeshData<T> data;
+
+    //fix vertex sequence
+    mesh_array::make_convex<T>(
+                                vertices
+                                , data.m_mesh
+                                , data.m_X
+                                , data.m_Y
+                                , data.m_Z
+                                );
+
+    mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
+    mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
+    mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
+
+    // Change geometry from model space to body space
+    const EigenVector3<T> d = - EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z);
+    const EigenQuaternion<T> R = EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
+    mesh_array::translate<T>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    mesh_array::rotate<T>((R).conjugate(), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+
+    size_t const gid = engine->create_collision_geometry( geom_name );
+    size_t const sid = engine->create_convex_shape( gid );
+    size_t const N	 = data.m_mesh.vertex_size();
+
+    std::vector<T> coords;
+    coords.resize(3u*N);
+
+    for(size_t i = 0; i<N; ++i)
+    {
       mesh_array::Vertex const v = data.m_mesh.vertex( i );
       coords[3*i  ] = data.m_X(v);
       coords[3*i+1] = data.m_Y(v);
@@ -70,21 +140,21 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
     engine->set_convex_shape( gid, sid, N ,&coords[0] );
 
-    return GeometryHandle<MT>(
+    return GeometryHandleEigen<T>(
                               props.m_m
                               , props.m_Ixx
                               , props.m_Iyy
                               , props.m_Izz
-                              , V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z)
-                              , Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
+                              , EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z)
+                              , EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
                               , gid
                               );
   }
 
   template
-  GeometryHandle<MTf> create_geometry_handle_convex(
+  GeometryHandleEigen<float> create_geometry_handle_convex(
                                                    content::API * engine
-                                                   , std::vector<MTf::vector3_type> const &  vertices
+                                                   , std::vector<EigenVector3<float>> const &  vertices
                                                    );
 
   template<typename MT>
@@ -190,27 +260,27 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
                                                       , MTf::real_type  const & depth
                                                       );
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_tetrahedron(
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_tetrahedron(
                                                   content::API * engine
-                                                  , typename MT::vector3_type one
-                                                  , typename MT::vector3_type two
-                                                  , typename MT::vector3_type three
-                                                  , typename MT::vector3_type four
+                                                  , EigenVector3<T> one
+                                                  , EigenVector3<T> two
+                                                  , EigenVector3<T> three
+                                                  , EigenVector3<T> four
                                                   )
   {
-    typedef typename MT::real_type       T;
+/*    typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
-    typedef typename MT::value_traits    VT;
+    typedef typename MT::value_traits    VT;*/
 
     static size_t counter = 0u;
 
     std::string const geom_name = "tetra_" + util::to_string( counter++ );
 
-    detail::MeshData<MT> data;
+    detail::MeshData<T> data;
 
-    mesh_array::make_tetrahedron<MT>(one, two, three, four, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    mesh_array::make_tetrahedron<T>(one, two, three, four, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
 
     mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data );
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
@@ -218,10 +288,10 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
 
       // Change geometry from model space to body space
-    V const d = - V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z);
-    Q const R =   Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
-    mesh_array::translate<MT>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-    mesh_array::rotate<MT>(conj(R), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    const EigenVector3<T> d = - EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z);
+    const EigenQuaternion<T> R =   EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
+    mesh_array::translate<T>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    mesh_array::rotate<T>((R).conjugate(), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
 
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_convex_shape( gid );
@@ -240,46 +310,40 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
     engine->set_convex_shape( gid, sid, N ,&coords[0] );
 
-    return GeometryHandle<MT>(
+    return GeometryHandleEigen<T>(
                               props.m_m
                               , props.m_Ixx
                               , props.m_Iyy
                               , props.m_Izz
-                              , V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z)
-                              , Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
+                              , EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z)
+                              , EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
                               , gid
                               );
   }
 
   template
-  GeometryHandle<MTf> create_geometry_handle_tetrahedron<MTf>(
+  GeometryHandleEigen<float> create_geometry_handle_tetrahedron<float>(
                                                         content::API * engine
-                                                        , MTf::vector3_type one
-                                                        , MTf::vector3_type two
-                                                        , MTf::vector3_type three
-                                                        , MTf::vector3_type four
+                                                        , EigenVector3<float> one
+                                                        , EigenVector3<float> two
+                                                        , EigenVector3<float> three
+                                                        , EigenVector3<float> four
                                                         );
 
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_cuboid(
-                                                   content::API * engine
-                                                   , typename MT::vector3_type * vertices
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_cuboid(
+      content::API * engine, EigenVector3<T> * vertices
                                                    )
   {
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type  Q;
-    typedef typename MT::value_traits    VT;
-
     static size_t counter = 0u;
 
     std::string const geom_name = "cuboid_" + util::to_string( counter++ );
 
-    detail::MeshData<MT> data;
+    detail::MeshData<T> data;
 
     //fix vertex sequence
-    mesh_array::make_cuboid<MT>(
+    mesh_array::make_cuboid<T>(
                                   vertices[0]
                                 , vertices[1]
                                 , vertices[2]
@@ -296,10 +360,10 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
       // Change geometry from model space to body space
-    V const d = - V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z);
-    Q const R = Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
-    mesh_array::translate<MT>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-    mesh_array::rotate<MT>(conj(R), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    const EigenVector3<T> d = - EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z);
+    const EigenQuaternion<T> R = EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
+    mesh_array::translate<T>( d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    mesh_array::rotate<T>((R).conjugate(), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
 
     size_t const gid = engine->create_collision_geometry( geom_name );
     size_t const sid = engine->create_convex_shape( gid );
@@ -318,38 +382,33 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
     engine->set_convex_shape( gid, sid, N ,&coords[0] );
 
-    return GeometryHandle<MT>(
+    return GeometryHandleEigen<T>(
                               props.m_m
                               , props.m_Ixx
                               , props.m_Iyy
                               , props.m_Izz
-                              , V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z)
-                              , Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
+                              , EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z)
+                              , EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
                               , gid
                               );
   }
 
   template
-  GeometryHandle<MTf> create_geometry_handle_cuboid<MTf>(
+  GeometryHandleEigen<float> create_geometry_handle_cuboid<float>(
                                                          content::API * engine
-                                                         , MTf::vector3_type * vertices
+                                                         , EigenVector3<float>* vertices
                                                          );
 
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_pillar_segment( content::API * engine
-                                                           , typename MT::real_type const & bottom_radius
-                                                           , typename MT::real_type const & top_radius
-                                                           , typename MT::real_type const & height
+  template<typename T>
+  GeometryHandleEigen<T> create_geometry_handle_pillar_segment( content::API * engine
+                                                           , const T bottom_radius
+                                                           , const T top_radius
+                                                           , const T height
                                                            , size_t const & slices
                                                            , mesh_array::TetGenSettings tetset
                                                         )
   {
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits    VT;
-
     static size_t counter = 0u;
 
     std::string const geom_name = "pillar_segment_" + util::to_string( counter++ );
@@ -359,17 +418,17 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
     mesh_array::VertexAttribute<T,mesh_array::T3Mesh> Y;
     mesh_array::VertexAttribute<T,mesh_array::T3Mesh> Z;
 
-    mesh_array::make_conical<MT>( bottom_radius, top_radius, height, slices, mesh, X, Y, Z );
+    mesh_array::make_conical<T>( bottom_radius, top_radius, height, slices, mesh, X, Y, Z );
 
     mass::Properties<T> props_mf = mass::compute_conical_solid<T>(1, bottom_radius, top_radius, height);
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
     mass::Properties<T> props    = mass::rotate_to_body_frame(props_bf);
 
     // Change geometry from model space to body space
-    V const d = - V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z);
-    Q const R = Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
-    mesh_array::translate<MT>( d, mesh, X, Y, Z);
-    mesh_array::rotate<MT>(conj(R), mesh, X, Y, Z);
+    const EigenVector3<T> d = - EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z);
+    const EigenQuaternion<T> R = EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz);
+    mesh_array::translate<T>( d, mesh, X, Y, Z);
+    mesh_array::rotate<T>((R).conjugate(), mesh, X, Y, Z);
 
     mesh_array::T4Mesh volume;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> volX;
@@ -415,22 +474,22 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
 
     engine->set_tetramesh_shape(gid, N, K, &verts[0], &tets[0], &coords[0]);
 
-    return GeometryHandle<MT>(
+    return GeometryHandleEigen<T>(
                               props.m_m
                               , props.m_Ixx
                               , props.m_Iyy
                               , props.m_Izz
-                              , V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z)
-                              , Q(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
+                              , EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z)
+                              , EigenQuaternion<T>(props.m_Qs,props.m_Qx,props.m_Qy,props.m_Qz)
                               , gid
                               );
   }
 
   template
-  GeometryHandle<MTf> create_geometry_handle_pillar_segment<MTf>( content::API * engine
-                                                                 , MTf::real_type const & bottom_radius
-                                                                 , MTf::real_type const & top_radius
-                                                                 , MTf::real_type const & height
+  GeometryHandleEigen<float> create_geometry_handle_pillar_segment<float>( content::API * engine
+                                                                 , const float bottom_radius
+                                                                 , const float top_radius
+                                                                 , const float height
                                                                  , size_t const & slices
                                                                  , mesh_array::TetGenSettings tetset
                                                                  );
@@ -494,6 +553,65 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
     return rid;
   }
 
+  template<typename MT>
+  size_t create_rigid_body(  content::API * engine
+                           , typename MT::vector3_type const & Tb2w
+                           , typename MT::quaternion_type const & Qb2w
+                           , GeometryHandleEigen<typename MT::real_type> const & geometry
+                           , size_t const & mid
+                           , typename MT::real_type const & density
+                           , bool const fixed
+                           , std::string const material_name
+                           )
+  {
+      typedef typename MT::value_traits    VT;
+
+      static size_t counter = 0u;
+
+      std::string const body_name = "body_" + util::to_string( counter++ );
+
+      size_t const rid = engine->create_rigid_body( body_name );
+
+      //2011-05-04 Mort: should these be passed as a parameter? Right now I have just hardcoded them to zero;
+      //set_rigid_body spin?
+      engine->set_rigid_body_velocity( rid, 0, 0, 0);
+
+
+
+      if (Noise::on() )
+      {
+          typedef typename MT::vector3_type V;
+
+          V const noise = V::random(- Noise::scale(), Noise::scale());
+
+          //engine->set_rigid_body_position( rid, Tb2w(0)+ noise(0), Tb2w(1)+ noise(1), Tb2w(2)+ noise(2) );
+          engine->set_rigid_body_position( rid, Tb2w(0)+ noise(0), Tb2w(1), Tb2w(2)+ noise(2) );
+      }
+      else
+      {
+          engine->set_rigid_body_position( rid, Tb2w(0), Tb2w(1), Tb2w(2) );
+      }
+
+      engine->set_rigid_body_orientation( rid, Qb2w.real(), Qb2w.imag()(0), Qb2w.imag()(1), Qb2w.imag()(2) );
+
+      engine->set_rigid_body_mass( rid , geometry.m_m*density );
+
+      engine->set_rigid_body_inertia(
+          rid
+          , geometry.m_Ixx*density
+          , geometry.m_Iyy*density
+          , geometry.m_Izz*density
+          );
+
+      engine->connect_collision_geometry( rid, geometry.m_gid );
+
+      engine->set_rigid_body_material( rid, mid );
+
+      engine->set_rigid_body_fixed( rid, fixed);
+
+      return rid;
+  }
+
   template
   size_t create_rigid_body<MTf>(  content::API * engine
                                 , MTf::vector3_type const & Tb2w
@@ -504,6 +622,17 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
                                 , bool const fixed
                                 , std::string const material_name
                                 );
+
+  template
+      size_t create_rigid_body<MTf>(  content::API * engine
+                             , MTf::vector3_type const & Tb2w
+                             , MTf::quaternion_type const & Qb2w
+                                         , GeometryHandleEigen<typename MTf::real_type> const & geometry
+                             , size_t const & mid
+                             , MTf::real_type const & density
+                             , bool const fixed
+                             , std::string const material_name
+                             );
 
   template<typename MT>
   void compute_arch_stone_vertices(
@@ -547,6 +676,46 @@ GeometryHandle<MT> create_geometry_handle_convex(content::API* engine,
                                         , MTf::real_type const & r_inner
                                         , MTf::vector3_type * vertices
                                         );
+
+  template<typename T>
+  void compute_arch_stone_vertices_eigen(
+      const T& theta
+      , const T& depth
+      , const T& r_outer
+      , const T& r_inner
+      , EigenVector3<T>* vertices
+      )
+  {
+
+      using std::sin;
+      using std::cos;
+
+      T const center_height    = (r_outer + r_inner)*0.5f;
+      T const max_height       = r_outer*cos( theta*0.5f );
+      T const min_height       = r_inner*cos( theta*0.5f );
+      T const half_width_inner = r_inner * sin( theta*0.5f );
+      T const half_width_outer = r_outer * sin( theta*0.5f );
+      T const half_depth       = depth*0.5f;
+
+      vertices[0] = EigenVector3<T>( - half_width_inner, min_height-center_height, half_depth );
+      vertices[1] = EigenVector3<T>(   half_width_inner, min_height-center_height, half_depth );
+      vertices[2] = EigenVector3<T>(   half_width_outer, max_height-center_height, half_depth );
+      vertices[3] = EigenVector3<T>( - half_width_outer, max_height-center_height, half_depth );
+
+      vertices[4] =  vertices[0] - EigenVector3<T>( 0, 0, depth );
+      vertices[5] =  vertices[1] - EigenVector3<T>( 0, 0, depth );
+      vertices[6] =  vertices[2] - EigenVector3<T>( 0, 0, depth );
+      vertices[7] =  vertices[3] - EigenVector3<T>( 0, 0, depth );
+  }
+
+  template
+      void compute_arch_stone_vertices_eigen<float>(
+          const float& theta
+          , const float& depth
+          , const float& r_outer
+          , const float& r_inner
+          , EigenVector3<float>* vertices
+          );
 
   template<typename MT>
   void compute_body_to_world_transform(

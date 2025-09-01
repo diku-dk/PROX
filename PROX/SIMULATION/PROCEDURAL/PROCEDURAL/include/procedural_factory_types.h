@@ -10,12 +10,11 @@ namespace procedural
   namespace detail
   {
 
-    template<typename MT>
+    template<typename T>
     class MeshData
-    : public mass::FaceCallbackInterface<typename MT::real_type>
+    : public mass::FaceCallbackInterface<T>
     {
     protected:
-        using T = typename MT::real_type;
 
     public:
 

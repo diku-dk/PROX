@@ -34,7 +34,7 @@ namespace soft_body
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> meshY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> meshZ;
 
-      mesh_array::make_sphere<MT>(radius, 12, 12, mesh, meshX, meshY, meshZ);
+      mesh_array::make_sphere<float>(radius, 12, 12, mesh, meshX, meshY, meshZ);
 
       dirichlet_geometry.m_vbo        = gl3::make_vbo(mesh, meshX, meshY, meshZ);
       dirichlet_geometry.m_solid_vao  = gl3::make_vao(dirichlet_geometry.m_vbo, program, "position", "normal");

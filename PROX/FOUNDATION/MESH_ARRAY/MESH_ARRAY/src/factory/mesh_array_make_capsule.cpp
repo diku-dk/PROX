@@ -4,57 +4,51 @@
 #include <tiny_math_types.h>
 
 #include <vector>
-
+#include <numbers>
 namespace mesh_array
 {
 
-  template<typename MT>
-  void make_capsule(
-                    typename MT::real_type const & radius
-                    , typename MT::real_type const & height
-                    , size_t const & slices
-                    , size_t const & segments
-                    , T3Mesh & mesh
-                    , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                    , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                    , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-                    )
+template<typename T>
+void make_capsule(
+    const T& radius
+    , const T& height
+    , size_t const & slices
+    , size_t const & segments
+    , T3Mesh & mesh
+    , VertexAttribute<T,T3Mesh> & X
+    , VertexAttribute<T,T3Mesh> & Y
+    , VertexAttribute<T,T3Mesh> & Z
+    )
   {
-    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
 
-		std::vector<V> profile;
-		
-		profile.resize(segments);
-		
-		T const dtheta = VT::pi() / (segments-1);
 
-		for(size_t i=0;i < segments; ++i )
-		{
-			T const theta = dtheta*i;
-			
-			Q const R = Q::Ru( theta ,V::k() );
-			T const dh = (i < (segments/2)) ? -height/2.0f : height/2.0f;
-			
-			profile[ i ] = rotate( R, V::make(  0, -radius, 0 ) ) + V::make(0,dh,0);
-		}
-		
-		profile_sweep<MT>( profile, slices, mesh, X, Y, Z );
-	}
+        std::vector<EigenVector3<T>> profile;
 
-    using MTf = tiny::MathTypes<float>;
-    using MTd = tiny::MathTypes<double>;
+        profile.resize(segments);
 
-    template void make_capsule<MTf>(MTf::real_type const& radius, MTf::real_type const& height, size_t const& slices,
-                                    size_t const& segments, T3Mesh& mesh, VertexAttribute<MTf::real_type, T3Mesh>& X,
-                                    VertexAttribute<MTf::real_type, T3Mesh>& Y,
-                                    VertexAttribute<MTf::real_type, T3Mesh>& Z);
+        T const dtheta = std::numbers::pi_v<T> / (segments-1);
 
-    template void make_capsule<MTd>(MTd::real_type const& radius, MTd::real_type const& height, size_t const& slices,
-                                    size_t const& segments, T3Mesh& mesh, VertexAttribute<MTd::real_type, T3Mesh>& X,
-                                    VertexAttribute<MTd::real_type, T3Mesh>& Y,
-                                    VertexAttribute<MTd::real_type, T3Mesh>& Z);
+        for(size_t i=0;i < segments; ++i )
+        {
+            T const theta = dtheta*i;
+
+            EigenQuaternion<T> const R = Rotateu( theta ,EigenVector3<T>{0,0,1});
+            T const dh = (i < (segments/2)) ? -height/2.0f : height/2.0f;
+
+            profile[ i ] = rotate( R, EigenVector3<T>(  0, -radius, 0 ) ) + EigenVector3<T>(0,dh,0);
+        }
+
+        profile_sweep<T>( profile, slices, mesh, X, Y, Z );
+    }
+
+    template void make_capsule<float>(float const& radius, float const& height, size_t const& slices,
+                                    size_t const& segments, T3Mesh& mesh, VertexAttribute<float, T3Mesh>& X,
+                                    VertexAttribute<float, T3Mesh>& Y,
+                                    VertexAttribute<float, T3Mesh>& Z);
+
+    template void make_capsule<double>(double const& radius, double const& height, size_t const& slices,
+                                    size_t const& segments, T3Mesh& mesh, VertexAttribute<double, T3Mesh>& X,
+                                    VertexAttribute<double, T3Mesh>& Y,
+                                    VertexAttribute<double, T3Mesh>& Z);
 
 } //namespace mesh_array

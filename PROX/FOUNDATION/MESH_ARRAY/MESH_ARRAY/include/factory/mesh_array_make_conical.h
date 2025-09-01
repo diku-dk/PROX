@@ -7,17 +7,17 @@
 namespace mesh_array
 {
 
-  template<typename MT>
-  void make_conical(
-                    typename MT::real_type const & bottom_radius
-                    , typename MT::real_type const & top_radius
-                    , typename MT::real_type const & height
-                    , size_t const & slices
-                    , T3Mesh & mesh
-                    , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                    , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                    , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-                    );
+template<typename T>
+void make_conical(
+    T const & bottom_radius
+    , T const & top_radius
+    , T const & height
+    , size_t const & slices
+    , T3Mesh & mesh
+    , VertexAttribute<T,T3Mesh> & X
+    , VertexAttribute<T,T3Mesh> & Y
+    , VertexAttribute<T,T3Mesh> & Z
+    );
 
 } //namespace mesh_array
 

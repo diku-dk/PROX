@@ -4,9 +4,9 @@
 
 namespace procedural
 {
-	
+
   template<typename MT>
-	void make_tetrahedral_stack(
+    void make_tetrahedral_stack(
                        content::API *  engine
                        , typename MT::vector3_type const & position
                        , typename MT::quaternion_type const & orientation
@@ -16,42 +16,42 @@ namespace procedural
                        , size_t const & sub_divisions
                        , MaterialInfo<typename MT::real_type> mat_info
                        )
-	{
+    {
     typedef typename MT::real_type       T;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type  Q;
     typedef typename MT::value_traits    VT;
 
-		T      const stone_density	= get_material_density<MT>(mat_info, "Stone");
-		size_t const mid	      		= get_material_id<MT>(mat_info, "Stone");
-		
-		//--- Find the size of each of the boxes
-		T const box_width  = cube_width/sub_divisions;
-		T const box_height = cube_height/sub_divisions;
-		T const box_depth  = cube_depth/sub_divisions;
+        T      const stone_density	= get_material_density<MT>(mat_info, "Stone");
+        size_t const mid	      		= get_material_id<MT>(mat_info, "Stone");
 
-		//--- The dimensions of the box is in place now we will make the individual tetras that make up the box
-		V one   = V::make( -box_width/2.0, -box_height/2.0, -box_depth/2.0 );
-		V two   = V::make(  box_width/2.0, -box_height/2.0, -box_depth/2.0 );
-		V three = V::make(  box_width/2.0,  box_height/2.0, -box_depth/2.0 );
-		V four  = V::make( -box_width/2.0,  box_height/2.0, -box_depth/2.0 );
+        //--- Find the size of each of the boxes
+        T const box_width  = cube_width/sub_divisions;
+        T const box_height = cube_height/sub_divisions;
+        T const box_depth  = cube_depth/sub_divisions;
 
-		V five  = V::make( -box_width/2.0, -box_height/2.0,  box_depth/2.0 );
-		V six   = V::make(  box_width/2.0, -box_height/2.0,  box_depth/2.0 );
-		V seven = V::make(  box_width/2.0,  box_height/2.0,  box_depth/2.0 );
-		V eight = V::make( -box_width/2.0,  box_height/2.0,  box_depth/2.0 );
+        //--- The dimensions of the box is in place now we will make the individual tetras that make up the box
+        EigenVector3<T> one   = EigenVector3<T>( -box_width/2.0, -box_height/2.0, -box_depth/2.0 );
+        EigenVector3<T> two   = EigenVector3<T>(  box_width/2.0, -box_height/2.0, -box_depth/2.0 );
+        EigenVector3<T> three = EigenVector3<T>(  box_width/2.0,  box_height/2.0, -box_depth/2.0 );
+        EigenVector3<T> four  = EigenVector3<T>( -box_width/2.0,  box_height/2.0, -box_depth/2.0 );
 
-    GeometryHandle<MT> tetra_handle1 = create_geometry_handle_tetrahedron<MT>( engine, one,  two,   three, six   );
-    GeometryHandle<MT> tetra_handle2 = create_geometry_handle_tetrahedron<MT>( engine, one,  three, four,  eight );
-    GeometryHandle<MT> tetra_handle3 = create_geometry_handle_tetrahedron<MT>( engine, five, eight, six,   one   );
-    GeometryHandle<MT> tetra_handle4 = create_geometry_handle_tetrahedron<MT>( engine, six,  eight, seven, three );
-    GeometryHandle<MT> tetra_handle5 = create_geometry_handle_tetrahedron<MT>( engine, one,  three, eight, six   );
+        EigenVector3<T> five  = EigenVector3<T>( -box_width/2.0, -box_height/2.0,  box_depth/2.0 );
+        EigenVector3<T> six   = EigenVector3<T>(  box_width/2.0, -box_height/2.0,  box_depth/2.0 );
+        EigenVector3<T> seven = EigenVector3<T>(  box_width/2.0,  box_height/2.0,  box_depth/2.0 );
+        EigenVector3<T> eight = EigenVector3<T>( -box_width/2.0,  box_height/2.0,  box_depth/2.0 );
 
-		T x = 1;
+    GeometryHandleEigen<T> tetra_handle1 = create_geometry_handle_tetrahedron<T>( engine, one,  two,   three, six   );
+    GeometryHandleEigen<T> tetra_handle2 = create_geometry_handle_tetrahedron<T>( engine, one,  three, four,  eight );
+    GeometryHandleEigen<T> tetra_handle3 = create_geometry_handle_tetrahedron<T>( engine, five, eight, six,   one   );
+    GeometryHandleEigen<T> tetra_handle4 = create_geometry_handle_tetrahedron<T>( engine, six,  eight, seven, three );
+    GeometryHandleEigen<T> tetra_handle5 = create_geometry_handle_tetrahedron<T>( engine, one,  three, eight, six   );
+
+        T x = 1;
     T y = 1;
     T z = 1;
 
-		for (size_t i = 0; i < sub_divisions; ++i)
+        for (size_t i = 0; i < sub_divisions; ++i)
     {
       x = i*box_width - (cube_width/2) + (box_width/2);
       for (size_t j = 0; j < sub_divisions; ++j)
@@ -61,9 +61,9 @@ namespace procedural
         {
           z = k*box_depth;
 
-          V const Tb = tetra_handle1.Tb2m();
-          Q const Qb = tetra_handle1.Qb2m();
-					V const Tm = V::make( x, y, z );
+            V const Tb = fromEigen(tetra_handle1.Tb2m());
+          Q const Qb = fromEigen(tetra_handle1.Qb2m());
+                    V const Tm = V::make( x, y, z );
           Q const Qm = Q::identity();
           V const Tu = rotate(Qm,Tb) + Tm;
           Q const Qu  = Qm*Qb;
@@ -75,11 +75,11 @@ namespace procedural
                                 , stone_density
                                 );
 
-					V const Tb2 = tetra_handle2.Tb2m();
-          Q const Qb2 = tetra_handle2.Qb2m();
+          V const Tb2 = fromEigen(tetra_handle2.Tb2m());
+          Q const Qb2 = fromEigen(tetra_handle2.Qb2m());
           V const Tu2 = rotate(Qm,Tb2) + Tm;
           Q const Qu2 = Qm*Qb2;
-					create_rigid_body<MT>(  engine
+                    create_rigid_body<MT>(  engine
                                 , Tu2
                                 , Qu2
                                 , tetra_handle2
@@ -87,11 +87,11 @@ namespace procedural
                                 , stone_density
                                 );
 
-					V const Tb3 = tetra_handle3.Tb2m();
-          Q const Qb3 = tetra_handle3.Qb2m();
+          V const Tb3 = fromEigen(tetra_handle3.Tb2m());
+          Q const Qb3 = fromEigen(tetra_handle3.Qb2m());
           V const Tu3 = rotate(Qm,Tb3) + Tm;
           Q const Qu3 = Qm*Qb3;
-					create_rigid_body<MT>(  engine
+                    create_rigid_body<MT>(  engine
                                 , Tu3
                                 , Qu3
                                 , tetra_handle3
@@ -99,11 +99,11 @@ namespace procedural
                                 , stone_density
                                 );
 
-					V const Tb4 = tetra_handle4.Tb2m();
-          Q const Qb4 = tetra_handle4.Qb2m();
+          V const Tb4 = fromEigen(tetra_handle4.Tb2m());
+                    Q const Qb4 = fromEigen(tetra_handle4.Qb2m());
           V const Tu4 = rotate(Qm,Tb4) + Tm;
           Q const Qu4 = Qm*Qb4;
-					create_rigid_body<MT>(  engine
+                    create_rigid_body<MT>(  engine
                                 , Tu4
                                 , Qu4
                                 , tetra_handle4
@@ -111,11 +111,11 @@ namespace procedural
                                 , stone_density
                                 );
 
-					V const Tb5 = tetra_handle5.Tb2m();
-          Q const Qb5 = tetra_handle5.Qb2m();
+          V const Tb5 = fromEigen(tetra_handle5.Tb2m());
+                    Q const Qb5 = fromEigen(tetra_handle5.Qb2m());
           V const Tu5 = rotate(Qm,Tb5) + Tm;
           Q const Qu5 = Qm*Qb5;
-					create_rigid_body<MT>(  engine
+                    create_rigid_body<MT>(  engine
                                 , Tu5
                                 , Qu5
                                 , tetra_handle5
@@ -130,7 +130,7 @@ namespace procedural
   using MTf = tiny::MathTypes<float>;
 
   template
-	void make_tetrahedral_stack<MTf>(
+    void make_tetrahedral_stack<MTf>(
                        content::API *  engine
                        , MTf::vector3_type const & position
                        , MTf::quaternion_type const & orientation

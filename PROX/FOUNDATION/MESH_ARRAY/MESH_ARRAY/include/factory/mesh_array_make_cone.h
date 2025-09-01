@@ -7,15 +7,15 @@
 namespace mesh_array
 {
 
-  template<typename MT>
+  template<typename T>
   void make_cone(
-                 typename MT::real_type const & radius
-                 , typename MT::real_type const & height
+                 T const & radius
+                 ,T const & height
                  , size_t const & slices
                  , T3Mesh & mesh
-                 , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                 , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                 , VertexAttribute<typename MT::real_type,T3Mesh> & Z
+                 , VertexAttribute<T,T3Mesh> & X
+                 , VertexAttribute<T,T3Mesh> & Y
+                 , VertexAttribute<T,T3Mesh> & Z
                  );
 
 } //namespace mesh_array

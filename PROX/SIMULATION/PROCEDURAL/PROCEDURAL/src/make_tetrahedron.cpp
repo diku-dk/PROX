@@ -25,10 +25,10 @@ namespace procedural
     T const stone_density = get_material_density<MT>(mat_info, "Stone");
     size_t const mid      = get_material_id<MT>(mat_info, "Stone");
 
-    GeometryHandle<MT> tet_handle = create_geometry_handle_tetrahedron<MT>( engine, one, two, three, four);
+    GeometryHandleEigen<T> tet_handle = create_geometry_handle_tetrahedron<T>( engine, toEigen(one), toEigen(two), toEigen(three), toEigen(four));
 
-    V const T_b2m = tet_handle.Tb2m();
-    Q const Q_b2m = tet_handle.Qb2m();
+    V const T_b2m = fromEigen(tet_handle.Tb2m());
+    Q const Q_b2m = fromEigen(tet_handle.Qb2m());
 
     V const T_m2l = V::make( 0, 0, 0 );
     Q const Q_m2l = Q::identity();
@@ -78,19 +78,19 @@ namespace procedural
                      , bool const fixed);
 
   template<typename MT>
-	void make_tetrahedron(
+    void make_tetrahedron(
                   content::API * engine
                   , typename MT::vector3_type const& position
                   , typename MT::quaternion_type const & orientation
                   , MaterialInfo<typename MT::real_type> mat_info
                   , bool const fixed = false)
-	{
+    {
     typedef typename MT::vector3_type    V;
 
-		V one   = V::make(0.0, 0.0, 0.0);
-		V two   = V::make(1.0, 0.0, 0.0);
-		V three = V::make(0.0, 0.0, 1.0);
-		V four  = V::make(0.0, 1.0, 0.0);
+        V one   = V::make(0.0, 0.0, 0.0);
+        V two   = V::make(1.0, 0.0, 0.0);
+        V three = V::make(0.0, 0.0, 1.0);
+        V four  = V::make(0.0, 1.0, 0.0);
 
     make_tetrahedron<MT>(engine, one, two, three, four, position, orientation, mat_info);
 }

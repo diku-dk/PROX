@@ -3,6 +3,7 @@
 
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_vertex_attribute.h>
+#include <tiny_math_types.h>
 
 namespace mesh_array
 {
@@ -13,21 +14,20 @@ namespace mesh_array
    * the back face vertices in same order as the front face. That is in CW order if
    * one is looking at the front-side of the back face.
    */
-  template<typename MT>
-  void make_cuboid(
-                   typename MT::vector3_type const & v0
-                   , typename MT::vector3_type const & v1
-                   , typename MT::vector3_type const & v2
-                   , typename MT::vector3_type const & v3
-                   , typename MT::vector3_type const & v4
-                   , typename MT::vector3_type const & v5
-                   , typename MT::vector3_type const & v6
-                   , typename MT::vector3_type const & v7
-                   , T3Mesh & mesh
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                   , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-                   );
+template<typename T>
+void make_cuboid(EigenVector3<T> const & v0
+                 , EigenVector3<T> const & v1
+                 , EigenVector3<T> const & v2
+                 , EigenVector3<T> const & v3
+                 , EigenVector3<T> const & v4
+                 , EigenVector3<T> const & v5
+                 , EigenVector3<T> const & v6
+                 , EigenVector3<T> const & v7
+                 , T3Mesh & mesh
+                 , VertexAttribute<T,T3Mesh> & X
+                 , VertexAttribute<T,T3Mesh> & Y
+                 , VertexAttribute<T,T3Mesh> & Z
+                 );
 
 } //namespace mesh_array
 
