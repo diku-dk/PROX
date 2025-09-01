@@ -3,27 +3,25 @@
 
 #include <tiny_value_traits.h>
 #include <tiny_vector_functions.h>
-
+#include <tiny_math_types.h>
 #include <cassert>
 
 namespace geometry
 {
 
-  template<typename V>
+  template<typename T>
   inline void barycentric_derivatives(
-                                      V const & x1
-                                      , V const & x2
-                                      , V const & x3
-                                      , V const & x4
-                                      , V & nabla_w1
-                                      , V & nabla_w2
-                                      , V & nabla_w3
-                                      , V & nabla_w4
+                                      const EigenVector3<T>& x1
+                                      , const EigenVector3<T>& x2
+                                      , const EigenVector3<T>& x3
+                                      , const EigenVector3<T>& x4
+                                      , EigenVector3<T>& nabla_w1
+                                      , EigenVector3<T>& nabla_w2
+                                      , EigenVector3<T>& nabla_w3
+                                      , EigenVector3<T>& nabla_w4
                                       )
   {
     using std::fabs;
-
-    typedef typename V::real_type          T;
 
     T const vol6 = inner_prod(x4 - x1, cross(x2 - x1, x3 - x1 ));
 

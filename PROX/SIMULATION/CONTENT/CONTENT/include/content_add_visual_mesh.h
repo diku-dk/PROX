@@ -108,9 +108,6 @@ namespace content
                                        , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                        )
   {
-    typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
 
     for(size_t j=0u; j < engine->get_number_of_cones(gid) ; ++j)
     {
@@ -249,10 +246,6 @@ namespace content
                                             , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                             )
   {
-    /*typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;*/
-
     for(size_t j=0u; j < engine->get_number_of_ellipsoids(gid) ; ++j)
     {
       float a;
@@ -294,10 +287,6 @@ namespace content
                                          , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                          )
   {
-    /*typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;*/
-
     for(size_t j=0u; j < engine->get_number_of_spheres(gid) ; ++j)
     {
       float radius;
@@ -337,8 +326,6 @@ namespace content
                                              , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                              )
   {
-    //typedef tiny::MathTypes<float>       MT;
-
     for(size_t j=0u; j < engine->get_number_of_tetrameshes(gid) ; ++j)
     {
       // Get raw data from engine
