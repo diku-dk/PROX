@@ -61,8 +61,6 @@ namespace mesh_array
   {
     using std::min;
 
-    typedef typename tiny::ValueTraits<T> VT;
-
     VertexRing<T4Mesh>    ring(mesh);
     AdjacencyInfo<T4Mesh> A(ring);
 

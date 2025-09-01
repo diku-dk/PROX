@@ -14,7 +14,7 @@
 namespace simulators
 {
 
-	ProxData::ProxData()
+    ProxData::ProxData()
   : m_geometry_names()
   , m_materials()
   , m_bodies()
@@ -28,17 +28,17 @@ namespace simulators
   , m_use_only_tetrameshes(false)
   , m_tetgen_settings(mesh_array::tetgen_quality_settings())
   , m_all_scripted_bodies()
-	{
+    {
     clear();
   }
-	
+
   ProxData::~ProxData()
-	{
-		clear();
-	}
-	
-	void ProxData::clear()
-	{
+    {
+        clear();
+    }
+
+    void ProxData::clear()
+    {
     m_bodies.clear();
     m_contacts.clear();
     m_broad.clear();
@@ -75,8 +75,8 @@ namespace simulators
     m_oscillation_motions.clear();
 
     util::Profiling::reset();
-	}
-	
+    }
+
   void ProxData::step_simulation(float const & dt)
   {
     typedef prox::StepperBinder< MT > stepper_binder_type;
@@ -163,13 +163,13 @@ namespace simulators
 //                             , surface_Y
 //                             , surface_Z
 //                             );
-      std::vector<V> normals;
+      std::vector<EigenVector3<T>> normals;
 
-      mesh_array::compute_vertex_normals<MT>(surface, surface_X, surface_Y, surface_Z, normals);
+      mesh_array::compute_vertex_normals<T>(surface, surface_X, surface_Y, surface_Z, normals);
 
       T const distance = VT::numeric_cast(-0.01);
 
-      mesh_array::displace_vertices<MT>(surface, surface_X, surface_Y, surface_Z, distance, normals);
+      mesh_array::displace_vertices<T>(surface, surface_X, surface_Y, surface_Z, distance, normals);
     }
 
     mesh_array::T4Mesh                                 volume;

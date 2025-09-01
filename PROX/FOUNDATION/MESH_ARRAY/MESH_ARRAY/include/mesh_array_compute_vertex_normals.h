@@ -11,22 +11,19 @@
 namespace mesh_array
 {
 
-  template <typename MT>
+  template <typename T>
   inline void compute_vertex_normals(
                                      T3Mesh const & mesh
-                                     , mesh_array::VertexAttribute<typename MT::real_type, T3Mesh> const & X
-                                     , mesh_array::VertexAttribute<typename MT::real_type, T3Mesh> const & Y
-                                     , mesh_array::VertexAttribute<typename MT::real_type, T3Mesh> const & Z
-                                     , std::vector<typename MT::vector3_type> & normals
+                                     , mesh_array::VertexAttribute<T, T3Mesh> const & X
+                                     , mesh_array::VertexAttribute<T, T3Mesh> const & Y
+                                     , mesh_array::VertexAttribute<T, T3Mesh> const & Z
+                                     , std::vector<EigenVector3<T>> & normals
                                      )
   {
     using std::min;
     using std::max;
     using std::acos;
 
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
 
     unsigned int const cntV = mesh.vertex_size();
     unsigned int const cntT = mesh.triangle_size();
@@ -35,7 +32,8 @@ namespace mesh_array
 
     for(unsigned int v = 0u; v < cntV; ++v)
     {
-      normals[v] = V::zero();
+        EigenVector3<T> vecZero = {T(0),T(0),T(0)};
+        normals[v] = vecZero;
     }
 
     for(unsigned int t = 0u; t < cntT; ++t)
@@ -46,28 +44,28 @@ namespace mesh_array
       mesh_array::Vertex const & j = mesh.vertex( tri.j() );
       mesh_array::Vertex const & k = mesh.vertex( tri.k() );
 
-      V const pi = V::make( X(i), Y(i), Z(i) );
-      V const pj = V::make( X(j), Y(j), Z(j) );
-      V const pk = V::make( X(k), Y(k), Z(k) );
+      const EigenVector3<T> pi = EigenVector3<T>( X(i), Y(i), Z(i) );
+      const EigenVector3<T> pj = EigenVector3<T>( X(j), Y(j), Z(j) );
+      const EigenVector3<T> pk = EigenVector3<T>( X(k), Y(k), Z(k) );
 
-      V const a_i      = unit(pj - pi);
-      V const b_i      = unit(pk - pi);
-      T const dot_i    = min<T>( 1, max<T>( -1, inner_prod(a_i,b_i) ) );
+      const EigenVector3<T> a_i      = (pj - pi).normalized();
+      const EigenVector3<T> b_i      = (pk - pi).normalized();
+      T const dot_i    = min<T>( 1, max<T>( -1, dot(a_i,b_i) ) );
       T const alpha_i  = acos( dot_i );
 
-      V const a_j      = unit(pk - pj);
-      V const b_j      = unit(pi - pj);
-      T const dot_j    = min<T>( 1, max<T>( -1, inner_prod(a_j,b_j) ) );
+      const EigenVector3<T> a_j      = (pk - pj).normalized();
+      const EigenVector3<T> b_j      = (pi - pj).normalized();
+      T const dot_j    = min<T>( 1, max<T>( -1, dot(a_j,b_j) ) );
       T const alpha_j  = acos( dot_j );
 
-      V const a_k      = unit(pi - pk);
-      V const b_k      = unit(pj - pk);
-      T const dot_k    = min<T>( 1, max<T>( -1, inner_prod(a_k,b_k) ) );
+      const EigenVector3<T> a_k      = (pi - pk).normalized();
+      const EigenVector3<T> b_k      = (pj - pk).normalized();
+      T const dot_k    = min<T>( 1, max<T>( -1, dot(a_k,b_k) ) );
       T const alpha_k  = acos( dot_k );
 
-      V const a = pj - pi;
-      V const b = pk - pi;
-      V const n = unit( cross(a,b) );
+      const EigenVector3<T> a = pj - pi;
+      const EigenVector3<T> b = pk - pi;
+      const EigenVector3<T> n = ( (a.cross(b)).normalized() );
 
       normals[ tri.i() ] += n*alpha_i;
       normals[ tri.j() ] += n*alpha_j;
@@ -75,7 +73,7 @@ namespace mesh_array
     }
     for(unsigned int v = 0u; v < cntV; ++v)
     {
-      normals[v] = unit( normals[v] );
+        normals[v] = ( normals[v] ).normalized();
     }
   }
 
