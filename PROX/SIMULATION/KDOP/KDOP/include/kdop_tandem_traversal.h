@@ -9,6 +9,7 @@
 #include <mesh_array.h>
 
 #include <util_profiling.h>
+#include <tiny_math_types.h>
 
 namespace kdop
 {
@@ -100,8 +101,8 @@ namespace kdop
         std::vector<bool> surface_A( 4u, false );
         std::vector<bool> surface_B( 4u, false );
 
-        geometry::Tetrahedron<V> const gtet_A = geometry::make_tetrahedron(a0,a1,a2,a3);
-        geometry::Tetrahedron<V> const gtet_B = geometry::make_tetrahedron(b0,b1,b2,b3);
+        geometry::TetrahedronEigen<typename V::real_type> const gtet_A = geometry::make_tetrahedron(toEigen(a0),toEigen(a1),toEigen(a2),toEigen(a3));
+        geometry::TetrahedronEigen<typename V::real_type> const gtet_B = geometry::make_tetrahedron(toEigen(b0),toEigen(b1),toEigen(b2),toEigen(b3));
 
         surface_A[0] = surface_Ai;
         surface_A[1] = surface_Aj;

@@ -27,7 +27,7 @@ namespace geometry
   template<typename V>
   inline bool compute_raycast_tetrahedron(
                                       Ray<V> const & ray
-                                      , Tetrahedron<V> const & tetrahedron
+    , TetrahedronEigen<typename V::real_type> const & tetrahedron
                                       , V & hit
                                       , typename V::real_type & length
                                       , std::vector<bool> const & surface_map
@@ -44,24 +44,24 @@ namespace geometry
 
     bool status = false;
 
-    std::vector<V>  n(4u, V::zero() );
+    std::vector<EigenVector3<T>>  n(4u, EigenVector3<T>(0,0,0) );
     std::vector<T>  w(4u, 0 );
 
     for(unsigned int m = 0u; m < 4u; ++m)
     {
-      Triangle<V> const triangle = get_opposite_face( m, tetrahedron );
+      Triangle<T> const triangle = get_opposite_face( m, tetrahedron );
 
-      V const n0    = tiny::cross( triangle.p(1)- triangle.p(0), triangle.p(2) - triangle.p(0));
-      V const n1    = tiny::cross( triangle.p(2)- triangle.p(1), triangle.p(0) - triangle.p(1));
-      V const n2    = tiny::cross( triangle.p(0)- triangle.p(2), triangle.p(1) - triangle.p(2));
+        const EigenVector3<T> n0    = ( triangle.p(1)- triangle.p(0)).cross( triangle.p(2) - triangle.p(0));
+      const EigenVector3<T> n1    = ( triangle.p(2)- triangle.p(1)).cross( triangle.p(0) - triangle.p(1));
+      const EigenVector3<T> n2    = ( triangle.p(0)- triangle.p(2)).cross( triangle.p(1) - triangle.p(2));
 
-      T const w0    = tiny::inner_prod( n0, triangle.p(0));
-      T const w1    = tiny::inner_prod( n1, triangle.p(1));
-      T const w2    = tiny::inner_prod( n2, triangle.p(2));
+      T const w0    = dot( n0, triangle.p(0));
+      T const w1    = dot( n1, triangle.p(1));
+      T const w2    = dot( n2, triangle.p(2));
 
-      T const test0 = tiny::inner_prod(n0, n0);
-      T const test1 = tiny::inner_prod(n1, n1);
-      T const test2 = tiny::inner_prod(n2, n2);
+      T const test0 = dot(n0, n0);
+      T const test1 = dot(n1, n1);
+      T const test2 = dot(n2, n2);
 
       if( test0 >= test1 && test0 >= test2)
       {
@@ -91,8 +91,8 @@ namespace geometry
       if(!is_surface)
         continue;
 
-      T const rn  = tiny::inner_prod(ray.direction(), n[m] );
-      T const on  = tiny::inner_prod(ray.origin(),    n[m] );
+      T const rn  = dot(toEigen(ray.direction()), n[m] );
+      T const on  = dot(toEigen(ray.origin()),    n[m] );
 
       if(rn >= 0)  // Ray is parallel with plane or hitting form back-side
         continue;
@@ -102,15 +102,15 @@ namespace geometry
       if( t <  0 )  // if we hit behind the ray origin we give up
         continue;
 
-      V const q = ray.origin() + t* ray.direction();   // we know we are hitting the ray in front of ray origin
+      const EigenVector3<T> q = toEigen(ray.origin() + t* ray.direction());   // we know we are hitting the ray in front of ray origin
 
       unsigned int const i = (m+1u) % 4;
       unsigned int const j = (m+2u) % 4;
       unsigned int const k = (m+3u) % 4;
 
-      T const tst_i = tiny::inner_prod( n[ i ], q) - w[ i ];
-      T const tst_j = tiny::inner_prod( n[ j ], q) - w[ j ];
-      T const tst_k = tiny::inner_prod( n[ k ], q) - w[ k ];
+      T const tst_i = dot( n[ i ], q) - w[ i ];
+      T const tst_j = dot( n[ j ], q) - w[ j ];
+      T const tst_k = dot( n[ k ], q) - w[ k ];
 
       if( tst_i > 0 )  // Hit poit in front of face i
         continue;
@@ -126,7 +126,7 @@ namespace geometry
         // We found a hit-point on the surface of the tetrahedron
         // which is better than any previous hit point
         length = t;
-        hit    = q;
+        hit    = fromEigen(q);
         status = true;
       }
 
@@ -139,7 +139,7 @@ namespace geometry
   template<typename V>
   inline bool compute_raycast_tetrahedron(
                                           Ray<V> const & ray
-                                          , Tetrahedron<V> const & tetrahedron
+      , TetrahedronEigen<typename V::real_type> const & tetrahedron
                                           , V & hit
                                           , typename V::real_type & length
                                           )

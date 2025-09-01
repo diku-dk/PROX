@@ -1,6 +1,8 @@
 #ifndef GEOMETRY_CONTACTS_CALLBACK_H
 #define GEOMETRY_CONTACTS_CALLBACK_H
 
+#include <tiny_math_types.h>
+
 namespace geometry
 {
 
@@ -22,6 +24,7 @@ namespace geometry
                                 , typename V::real_type const & distance
                                  ) = 0;
     };
+
 
 }//namespace geometry
 

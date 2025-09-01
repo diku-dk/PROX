@@ -6,6 +6,7 @@
 #include <solvers/strategies/prox_R_strategy.h>
 
 #include <solvers/prox_solver_params.h>
+#include <iostream>
 
 #include <util_profiling.h>
 #include <util_log.h>
@@ -90,7 +91,15 @@ namespace prox
     //--- Gauss--Seidel loops
     for(size_t iteration = 0u; iteration < params.max_iterations(); ++iteration )
     {
-      RECORD_VECTOR_PUSH("rfactor", R(1)(1,1));
+
+        //Safety guard:
+        int lookup = 1;
+        if (R.size() == 1)
+        {
+            lookup = 0;
+        }
+        auto val = R(lookup)(1,1);
+        RECORD_VECTOR_PUSH("rfactor", val);
 
       //--- Loop over contact points
       for(size_t k = 0u; k < K; ++k)

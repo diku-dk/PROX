@@ -34,7 +34,7 @@ namespace geometry
   template<typename V>
   inline bool contacts_sphere_tetrahedron(
     Sphere<typename V::real_type> const & A
-                                          , Tetrahedron<V> const & B
+    , TetrahedronEigen<typename V::real_type> const & B
                                           , ContactsCallback<V> & callback
                                           , bool const flip
                                           , std::vector<bool> const & surface_map
@@ -51,14 +51,14 @@ namespace geometry
     typedef typename V::value_traits VT;
 
     std::vector<T>            d(4);
-    std::vector<Triangle<V> > triangle(4);
-    std::vector<Plane<V> >    plane(4);
+    std::vector<Triangle<T> > triangle(4);
+    std::vector<Plane<T> >    plane(4);
 
     for (unsigned int k = 0u; k < 4u; ++k)
     {
       triangle[k] = get_opposite_face( k, B );
       plane[k]    = make_plane(triangle[k]);
-      d[k]        = get_signed_distance( (fromEigen(A.center())), plane[k] );
+      d[k]        = get_signed_distance( ((A.center())), plane[k] );
 
       // Sphere too far from tetrahedron face to ever come in contact
       if (d[k] > A.radius())
@@ -81,11 +81,11 @@ namespace geometry
         if( d[k] < d[(k+3) % 4] )
           continue;
 
-        V const n = flip ? plane[k].n() : - plane[k].n();
+        const EigenVector3<T> n = flip ? plane[k].n() : - plane[k].n();
 
-        V const p = closest_point_on_plane((fromEigen(A.center())), plane[k]);
+        const EigenVector3<T> p = closest_point_on_plane(((A.center())), plane[k]);
 
-        callback( p, n, d[k] );
+        callback( fromEigen(p), fromEigen(n), d[k] );
 
         return true;
       }
@@ -97,26 +97,26 @@ namespace geometry
       if( ! ( surface_map[ (i+1)%4 ] || surface_map[ (i+2)%4 ] || surface_map[ (i+3)%4 ] ) )  // Test if vertex is part of the surface
         continue;
 
-      Plane<V> const vp_01 = make_plane( tiny::unit( B.p(i)-B.p( (i+1)%4) ), B.p(i) );
-      Plane<V> const vp_02 = make_plane( tiny::unit( B.p(i)-B.p( (i+2)%4) ), B.p(i) );
-      Plane<V> const vp_03 = make_plane( tiny::unit( B.p(i)-B.p( (i+3)%4) ), B.p(i) );
+      Plane<T> const vp_01 = make_plane( unit( B.p(i)-B.p( (i+1)%4) ), B.p(i) );
+      Plane<T> const vp_02 = make_plane( unit( B.p(i)-B.p( (i+2)%4) ), B.p(i) );
+      Plane<T> const vp_03 = make_plane( unit( B.p(i)-B.p( (i+3)%4) ), B.p(i) );
 
-      T const d_vp_01 = get_signed_distance( fromEigen(A.center()), vp_01 );
-      T const d_vp_02 = get_signed_distance( fromEigen(A.center()), vp_02 );
-      T const d_vp_03 = get_signed_distance( fromEigen(A.center()), vp_03 );
+      T const d_vp_01 = get_signed_distance( (A.center()), vp_01 );
+      T const d_vp_02 = get_signed_distance( (A.center()), vp_02 );
+      T const d_vp_03 = get_signed_distance( (A.center()), vp_03 );
 
       if(d_vp_01 >= 0 && d_vp_02 >= 0 && d_vp_03 >= 0)
       {
-        V const m =  fromEigen(A.center()) - B.p(i);
+        const EigenVector3<T> m =  (A.center()) - B.p(i);
 
-        T const d = tiny::norm( m );
+        T const d = norm( m );
 
         if (d > A.radius() )
           return false;
 
-        V const n = flip ? tiny::unit(m) : - tiny::unit(m);
+        const EigenVector3<T> n = flip ? unit(m) : - unit(m);
 
-        callback( B.p(i), n, d - A.radius() );
+        callback( fromEigen(B.p(i)), fromEigen(n), d - A.radius() );
 
         return true;
       }
@@ -143,19 +143,19 @@ namespace geometry
         if( !(surface_map[k] || surface_map[m]))  // Test if edge is part of the surface
           continue;
 
-        V const  d  = B.p(j) - B.p(i);
-        V const n_k = tiny::unit( tiny::cross(  d, plane[k].n()) );
-        V const n_m = tiny::unit( tiny::cross( -d, plane[m].n()) );
+        const EigenVector3<T> d  = B.p(j) - B.p(i);
+        const EigenVector3<T> n_k = unit( cross(  d, plane[k].n()) );
+        const EigenVector3<T> n_m = unit( ( -d).cross( plane[m].n()) );
 
-        Plane<V> const vp_k = make_plane( n_k, B.p(i) );
-        Plane<V> const vp_m = make_plane( n_m, B.p(i) );
+        Plane<T> const vp_k = make_plane( n_k, B.p(i) );
+        Plane<T> const vp_m = make_plane( n_m, B.p(i) );
 
-        T const d_vp_k = get_signed_distance( fromEigen(A.center()), vp_k );
-        T const d_vp_m = get_signed_distance( fromEigen(A.center()), vp_m );
+        T const d_vp_k = get_signed_distance( (A.center()), vp_k );
+        T const d_vp_m = get_signed_distance( (A.center()), vp_m );
 
         if(d_vp_k >= 0 && d_vp_m >= 0)
         {
-            const EigenVector3<T> p = closest_point_on_line<T>((A.center()), make_line( toEigen(B.p(i)), toEigen(B.p(j)) ) );
+            const EigenVector3<T> p = closest_point_on_line<T>((A.center()), make_line( (B.p(i)), (B.p(j)) ) );
 
           const EigenVector3<T> m =  (A.center()) - p;
 
@@ -179,20 +179,20 @@ namespace geometry
       if( !surface_map[v])  // Test if face is part of the surface
         continue;
 
-      T const d = get_signed_distance( fromEigen(A.center()), plane[v] );
+      T const d = get_signed_distance( (A.center()), plane[v] );
 
       if( d < 0 )
         continue;
 
-      bool const inside = inside_triangle( fromEigen(A.center()), triangle[v], false );
+      bool const inside = inside_triangle( (A.center()), triangle[v], false );
 
       if (inside)
       {
-        V const n = flip ? plane[v].n() : - plane[v].n();
+        const EigenVector3<T> n = flip ? plane[v].n() : - plane[v].n();
 
-        V const p = closest_point_on_plane(fromEigen(A.center()), plane[v]);
+        const EigenVector3<T> p = closest_point_on_plane((A.center()), plane[v]);
 
-        callback( p, n,  d - A.radius() );
+        callback(fromEigen( p), fromEigen(n),  d - A.radius() );
 
         return true;
       }
@@ -203,8 +203,8 @@ namespace geometry
 
   template<typename V>
   inline bool contacts_sphere_tetrahedron(
-                                          Sphere<V> const & A
-                                          , Tetrahedron<V> const & B
+                                          Sphere<typename V::real_type> const & A
+                                          , TetrahedronEigen<typename V::real_type> const & B
                                           , ContactsCallback<V> & callback
                                           , bool const flip = false
                                         )

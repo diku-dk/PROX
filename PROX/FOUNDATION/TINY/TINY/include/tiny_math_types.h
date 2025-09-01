@@ -127,12 +127,39 @@ inline typename tiny::MathTypes<double>::quaternion_type fromEigen(EigenQuaterni
     return tiny::MathTypes<double>::quaternion_type(input.w(), input.x(), input.y(), input.z());
 }
 
-
+template <typename Vec>
+inline std::vector<Vec> eigenvecofvecToTiny(std::vector<EigenVector3<typename Vec::real_type>> input)
+{
+    std::vector<Vec> v;
+    throw std::runtime_error("HERE");
+    for (size_t i = 0; i < input.size(); ++i)
+    {
+        v.push_back(Vec::make(input[i].x(), input[i].y(), input[i].z()));
+    }
+}
 
 template <typename Vector>
 inline auto dot(Vector a, Vector b)
 {
     return a.dot(b);
+}
+
+template <typename Vector>
+inline auto cross(Vector a, Vector b)
+{
+    return a.cross(b);
+}
+
+template <typename Vector>
+inline auto norm(Vector a)
+{
+    return a.norm();
+}
+
+template <typename Vector>
+inline auto unit(Vector a)
+{
+    return a.normalized();
 }
 
 template< typename Number >

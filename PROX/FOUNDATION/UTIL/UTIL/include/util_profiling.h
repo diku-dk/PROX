@@ -214,7 +214,7 @@ namespace util
         m_values.push_back( std::vector<float>() );
       }
 
-      void record_push( float const & value )
+      void record_push( float const value )
       {
         m_values.back().push_back( value );
       }

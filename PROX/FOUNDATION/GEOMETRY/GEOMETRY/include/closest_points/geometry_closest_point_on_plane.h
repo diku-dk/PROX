@@ -11,15 +11,14 @@
 namespace geometry
 {
 
-  template<typename V>
-  inline V closest_point_on_plane(V const & p, Plane<V> const & P)
+  template<typename T>
+  inline EigenVector3<T> closest_point_on_plane(const EigenVector3<T>& p, Plane<T> const & P)
   {
-    typedef typename V::real_type T;
 
-    V const & n = P.n();
+    const EigenVector3<T>& n = P.n();
     T const & w = P.w();
 
-    V const   q = p - n * inner_prod( n, (p - n*w) );
+    const EigenVector3<T> q = p - n * ( n).dot( (p - n*w) );
 
     assert( is_number(q(0)) || !"closest_point_on_line(): NaN encountered");
     assert( is_finite(q(0)) || !"closest_point_on_line(): Inf encountered");

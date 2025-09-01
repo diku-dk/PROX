@@ -78,8 +78,8 @@ namespace kdop
 
     template<typename V>
     static bool call_algorithm(
-                      geometry::Tetrahedron<V> const & A
-                    , geometry::Tetrahedron<V> const & B
+                      geometry::TetrahedronEigen<typename V::real_type> const & A
+                    , geometry::TetrahedronEigen<typename V::real_type> const & B
                     , geometry::ContactsCallback<V> & callback
                     , std::vector<bool> const & surface_A
                     , std::vector<bool> const & surface_B
@@ -90,9 +90,9 @@ namespace kdop
         case use_sat:
           return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::SAT() );
         case use_restricted_sat:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::RESTRICTED_SAT() );
+            return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::RESTRICTED_SAT() );
         case use_most_opposing_surfaces:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::MOST_OPPOSING_SURFACES() );
+            return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::MOST_OPPOSING_SURFACES() );
         case use_triangle_intersection:
           return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::TRIANGLE_INTERSECTION() );
         case use_vertex_only:

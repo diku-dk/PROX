@@ -14,14 +14,13 @@ namespace geometry
 {
   template< typename V>
   inline void closest_points_tetrahedron_tetrahedron(
-                                                     Tetrahedron<V> const & A
-                                                     , Tetrahedron<V> const & B
-                                                     , V & a
-                                                     , V & b
+                                                     TetrahedronEigen<typename V::real_type> const & A
+                                                     , TetrahedronEigen<typename V::real_type> const & B
+                                                     , EigenVector3<typename V::real_type>& a
+                                                     , EigenVector3<typename V::real_type>& b
                                                      , typename V::real_type & min_distance
                                                      )
   {
-    typedef typename V::value_traits VT;
     typedef typename V::real_type     T;
 
     unsigned int const edge[6][2] = {
@@ -34,18 +33,18 @@ namespace geometry
     };
 
 
-    std::vector<Triangle<V> >                trianglesA(4u);
-    std::vector<Triangle<V> >                trianglesB(4u);
-    std::vector<details::UnscaledPlane<V> >  planesA(4u);
-    std::vector<details::UnscaledPlane<V> >  planesB(4u);
+    std::vector<Triangle<T> >                trianglesA(4u);
+    std::vector<Triangle<T> >                trianglesB(4u);
+    std::vector<details::UnscaledPlane<T> >  planesA(4u);
+    std::vector<details::UnscaledPlane<T> >  planesB(4u);
 
     //--- Pre-computation ---- -------------------------------------------------
     for (unsigned int v =0u; v < 4u; ++v)
     {
       trianglesA[v] = get_opposite_face( v, A );
       trianglesB[v] = get_opposite_face( v, B );
-      planesA[v]    = details::make_unscaled_plane(trianglesA[v]);
-      planesB[v]    = details::make_unscaled_plane(trianglesB[v]);
+      planesA[v]    = details::make_unscaled_plane_eigen(trianglesA[v]);
+      planesB[v]    = details::make_unscaled_plane_eigen(trianglesB[v]);
     }
 
     min_distance = std::numeric_limits<T>::max();
@@ -54,13 +53,13 @@ namespace geometry
 
     for (unsigned int i =0u; i < 4u; ++i)
     {
-      V const & ai = A.p(i);
+      const EigenVector3<T>& ai = A.p(i);
 
       for (unsigned int j =0u; j < 4u; ++j)
       {
-        V const & bj = B.p(j);
+        const EigenVector3<T>& bj = B.p(j);
 
-        T const distance = tiny::norm(ai-bj);
+          T const distance = (ai-bj).norm();
 
         a            = (distance < min_distance) ? ai : a;
         b            = (distance < min_distance) ? bj : b;
@@ -74,14 +73,14 @@ namespace geometry
       // Test vertex of A against edge from B
       for (unsigned int k =0u; k < 6u; ++k)
       {
-        V const & p_a  = A.p(i);
-        V const & p_b0 = B.p(edge[k][0]);
-        V const & p_b1 = B.p(edge[k][1]);
+        const EigenVector3<T>& p_a  = A.p(i);
+        const EigenVector3<T>& p_b0 = B.p(edge[k][0]);
+        const EigenVector3<T>& p_b1 = B.p(edge[k][1]);
 
-        V const da    = p_a  - p_b0;
-        V const db    = p_b1 - p_b0;
+        const EigenVector3<T> da    = p_a  - p_b0;
+        const EigenVector3<T> db    = p_b1 - p_b0;
 
-        T const t = (tiny::inner_prod(da, db)/tiny::inner_prod(db, db));
+        T const t = (dot(da, db)/dot(db, db));
 
         if (t <= 0)
           continue;
@@ -89,9 +88,9 @@ namespace geometry
         if (t >= 1)
           continue;
 
-        V const p_b      = p_b0 + t * db;
-        V const ortho    = p_a - p_b;
-        T const distance = tiny::norm(ortho);
+        const EigenVector3<T> p_b      = p_b0 + t * db;
+        const EigenVector3<T> ortho    = p_a - p_b;
+        T const distance = (ortho).norm();
 
         a            = (distance < min_distance) ? p_a      : a;
         b            = (distance < min_distance) ? p_b      : b;
@@ -101,14 +100,14 @@ namespace geometry
       // Test V of B against E of A
       for (unsigned int k =0u; k < 6u; ++k)
       {
-        V const & p_b  = B.p(i);
-        V const & p_a0 = A.p(edge[k][0]);
-        V const & p_a1 = A.p(edge[k][1]);
+        const EigenVector3<T> & p_b  = B.p(i);
+        const EigenVector3<T>& p_a0 = A.p(edge[k][0]);
+        const EigenVector3<T>& p_a1 = A.p(edge[k][1]);
 
-        V const db    = p_b  - p_a0;
-        V const da    = p_a1 - p_a0;
+        const EigenVector3<T> db    = p_b  - p_a0;
+        const EigenVector3<T> da    = p_a1 - p_a0;
 
-        T const t = (tiny::inner_prod(da, db)/tiny::inner_prod(da, da));
+        T const t = (dot(da, db)/dot(da, da));
 
         if (t <= 0)
           continue;
@@ -116,9 +115,9 @@ namespace geometry
         if (t >= 1)
           continue;
 
-        V const p_a      = p_a0 + t * da;
-        V const ortho    = p_a - p_b;
-        T const distance = tiny::norm(ortho);
+        const EigenVector3<T> p_a      = p_a0 + t * da;
+        const EigenVector3<T> ortho    = p_a - p_b;
+        T const distance = (ortho).norm();
 
         a            = (distance < min_distance) ? p_a      : a;
         b            = (distance < min_distance) ? p_b      : b;
@@ -130,20 +129,20 @@ namespace geometry
     //--- Search for E-E cases -------------------------------------------------
     for (unsigned int k = 0u; k < 6u; ++k)
     {
-      V const & ai = A.p(edge[k][0u]);
-      V const & aj = A.p(edge[k][1u]);
-      V const   da = tiny::unit(aj - ai);
+      const EigenVector3<T>& ai = A.p(edge[k][0u]);
+      const EigenVector3<T>& aj = A.p(edge[k][1u]);
+      const  EigenVector3<T> da = (aj - ai).normalized();
 
       for (unsigned int m = 0u; m < 6u; ++m)
       {
-        V const & bi = B.p(edge[m][0u]);
-        V const & bj = B.p(edge[m][1u]);
-        V const   db = tiny::unit(bj - bi);
+        const EigenVector3<T>& bi = B.p(edge[m][0u]);
+        const EigenVector3<T>& bj = B.p(edge[m][1u]);
+        const EigenVector3<T> db = (bj - bi).normalized();
 
-        V const r  =   bi - ai;
-        T const k  =   tiny::inner_prod(da, db);
-        T const q1 =   tiny::inner_prod(da,r);
-        T const q2 = - tiny::inner_prod(db,r);
+        const EigenVector3<T> r  =   bi - ai;
+        T const k  =   dot(da, db);
+        T const q1 =   dot(da,r);
+        T const q2 = - dot(db,r);
         T const w  =   1 - k*k;
 
         // Test if edges too close to parallel
@@ -161,15 +160,15 @@ namespace geometry
         if (s<= 0)
           continue;
 
-        if (t>= tiny::norm(aj - ai))
+        if (t>= (aj - ai).norm())
           continue;
 
-        if (s>= tiny::norm(bj - bi))
+        if (s>= (bj - bi).norm())
           continue;
 
-        V const p_a      = ai + t*da;
-        V const p_b      = bi + s*db;
-        T const distance = tiny::norm(p_a - p_b);
+        const EigenVector3<T> p_a      = ai + t*da;
+        const EigenVector3<T> p_b      = bi + s*db;
+        T const distance = (p_a - p_b).norm();
 
         a            = (distance < min_distance) ? p_a      : a;
         b            = (distance < min_distance) ? p_b      : b;
@@ -183,22 +182,22 @@ namespace geometry
       // Vs of A against triangles of B
       for (unsigned int k = 0u; k < 4u; ++k)
       {
-        V const p_a = A.p(i);
+        const EigenVector3<T> p_a = A.p(i);
 
         bool inside_voronoi_planes = true;
 
-        V const & n_b  = planesB[k].m_normal;
+        const EigenVector3<T>& n_b  = planesB[k].m_normal;
 
         for(unsigned int m = 0u; m < 3u;++m)
         {
           unsigned int const n = (m + 1) % 3;
 
-          V const & p_b0 = trianglesB[k].p(m);
-          V const & p_b1 = trianglesB[k].p(n);
-          V const   e_b  = p_b1 - p_b0;
+          const EigenVector3<T>& p_b0 = trianglesB[k].p(m);
+          const EigenVector3<T>& p_b1 = trianglesB[k].p(n);
+          const  EigenVector3<T> e_b  = p_b1 - p_b0;
 
-          V const vp_n  = tiny::cross(n_b, e_b);
-          T const tst  = tiny::inner_prod( p_a - p_b0, vp_n);
+          const EigenVector3<T> vp_n  = (n_b).cross( e_b);
+          T const tst  = ( p_a - p_b0).dot( vp_n);
 
           inside_voronoi_planes = tst < 0 ? false : inside_voronoi_planes;
         }
@@ -206,9 +205,9 @@ namespace geometry
         if (!inside_voronoi_planes)
           continue;
 
-        V const & q_b      = planesB[k].m_point;
-        V const   p_b      =  p_a -  n_b * tiny::inner_prod(n_b, p_a - q_b)/tiny::inner_prod(n_b, n_b);
-        T const   distance = tiny::inner_prod( p_a - q_b, n_b)/ tiny::norm( n_b );
+        const EigenVector3<T>& q_b      = planesB[k].m_point;
+        const  EigenVector3<T> p_b      =  p_a -  n_b * (n_b).dot( p_a - q_b)/dot(n_b, n_b);
+        T const   distance = ( p_a - q_b).dot( n_b)/ ( n_b ).norm();
 
         if(distance < 0 )
           continue;
@@ -221,22 +220,22 @@ namespace geometry
       // Vs of B against triangles of A
       for (unsigned int k = 0u; k < 4u; ++k)
       {
-        V const p_b = B.p(i);
+        const EigenVector3<T> p_b = B.p(i);
 
         bool inside_voronoi_planes = true;
 
-        V const & n_a  = planesA[k].m_normal;
+        const EigenVector3<T>& n_a  = planesA[k].m_normal;
 
         for(unsigned int m = 0u; m < 3u;++m)
         {
           unsigned int const n = (m + 1) % 3;
 
-          V const & p_a0 = trianglesA[k].p(m);
-          V const & p_a1 = trianglesA[k].p(n);
-          V const   e_a  = p_a1 - p_a0;
+          const EigenVector3<T>& p_a0 = trianglesA[k].p(m);
+          const EigenVector3<T>& p_a1 = trianglesA[k].p(n);
+          const  EigenVector3<T> e_a  = p_a1 - p_a0;
 
-          V const vp_n  = tiny::cross(n_a, e_a);
-          T const tst  = tiny::inner_prod( p_b - p_a0, vp_n);
+          const EigenVector3<T> vp_n  = (n_a).cross( e_a);
+          T const tst  = ( p_b - p_a0).dot( vp_n);
 
           inside_voronoi_planes = tst < 0 ? false : inside_voronoi_planes;
         }
@@ -244,9 +243,9 @@ namespace geometry
         if (!inside_voronoi_planes)
           continue;
 
-        V const & q_a      = planesA[k].m_point;
-        V const   p_a      =  p_b -  n_a * tiny::inner_prod(n_a, p_b - q_a)/tiny::inner_prod(n_a, n_a);
-        T const   distance = tiny::inner_prod( p_b - q_a, n_a)/ tiny::norm( n_a );
+        const EigenVector3<T>& q_a      = planesA[k].m_point;
+        const  EigenVector3<T> p_a      =  p_b -  n_a * (n_a).dot( p_b - q_a)/dot(n_a, n_a);
+        T const   distance = ( p_b - q_a).dot( n_a)/ ( n_a ).norm();
 
         if(distance < 0 )
           continue;

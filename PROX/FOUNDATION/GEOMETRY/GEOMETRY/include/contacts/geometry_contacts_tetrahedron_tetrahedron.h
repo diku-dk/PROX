@@ -19,30 +19,28 @@ namespace geometry
 {
   namespace details
   {
-    template<typename V>
+    template<typename T>
     class UnscaledPlane
     {
     public:
 
-      V m_normal;    ///< The plane normal NOT necessary a unit-normal
-      V m_point;     ///< A point on the plane (any point)
+    EigenVector3<T> m_normal;    ///< The plane normal NOT necessary a unit-normal
+    EigenVector3<T> m_point;     ///< A point on the plane (any point)
 
     };
 
-    template<typename V>
-    inline UnscaledPlane<V> make_unscaled_plane(V const & p0,V const & p1,V const & p2)
+    template<typename T>
+    inline UnscaledPlane<T> make_unscaled_plane(const EigenVector3<T>& p0,const EigenVector3<T>& p1,const EigenVector3<T>& p2)
     {
-      UnscaledPlane<V> plane;
+      UnscaledPlane<T> plane;
 
-      typedef typename V::real_type T;
+        const EigenVector3<T> m0 = (p1-p0).cross( p2-p0);
+      const EigenVector3<T> m1 = (p2-p1).cross( p0-p1);
+      const EigenVector3<T> m2 = (p0-p2).cross( p1-p2);
 
-      V const m0 = cross(p1-p0, p2-p0);
-      V const m1 = cross(p2-p1, p0-p1);
-      V const m2 = cross(p0-p2, p1-p2);
-
-      T const l0 = inner_prod(m0,m0);
-      T const l1 = inner_prod(m1,m1);
-      T const l2 = inner_prod(m2,m2);
+      T const l0 = dot(m0,m0);
+      T const l1 = dot(m1,m1);
+      T const l2 = dot(m2,m2);
 
       if (l0 >= l1 && l0 >= l2)
       {
@@ -63,16 +61,17 @@ namespace geometry
       return plane;
     }
 
-    template<typename V>
-    inline UnscaledPlane<V> make_unscaled_plane(Triangle<V> const & triangle)
+
+    template<typename T>
+    inline UnscaledPlane<T> make_unscaled_plane_eigen(Triangle<T> const & triangle)
     {
-      return make_unscaled_plane(triangle.p(0),triangle.p(1),triangle.p(2));
+        return make_unscaled_plane((triangle.p(0)),(triangle.p(1)),(triangle.p(2)));
     }
 
-    template<typename V>
-    inline UnscaledPlane<V> make_unscaled_plane(V const & normal, V const & point)
+    template<typename T>
+    inline UnscaledPlane<T> make_unscaled_plane(const EigenVector3<T>& normal, const EigenVector3<T>& point)
     {
-      UnscaledPlane<V> plane;
+      UnscaledPlane<T> plane;
 
       plane.m_normal = normal;
       plane.m_point  = point;
@@ -80,19 +79,17 @@ namespace geometry
       return plane;
     }
 
-    template<typename V>
-    inline typename V::real_type get_signed_distance( V const & q, UnscaledPlane<V> const & plane)
+    template<typename T>
+    inline T get_signed_distance( const EigenVector3<T>& q, UnscaledPlane<T> const & plane)
     {
-      return inner_prod( plane.m_normal, q - plane.m_point);
+        return ( plane.m_normal).dot( q - plane.m_point);
     }
 
-    template<typename V>
-    inline bool inside_planes(V const & q, std::vector<UnscaledPlane<V> > const & planes)
+    template<typename T>
+    inline bool inside_planes(const EigenVector3<T>& q, std::vector<UnscaledPlane<T> > const & planes)
     {
       assert(planes.size() == 4u || !"inside_planes(): internal error");
 
-      typedef typename V::value_traits  VT;
-      typedef typename V::real_type     T;
 
       T const d0 = get_signed_distance( q, planes[0] );
       T const d1 = get_signed_distance( q, planes[1] );
@@ -111,27 +108,23 @@ namespace geometry
       return true;
     }
 
-    template<typename V>
-    inline V make_intersection(V const & a, V const & b, UnscaledPlane<V> const & plane)
+    template<typename T>
+    inline EigenVector3<T> make_intersection(const EigenVector3<T>& a, const EigenVector3<T>& b, UnscaledPlane<T> const & plane)
     {
       using std::fabs;
-
-      typedef typename V::real_type     T;
 
       T const dA = fabs( get_signed_distance( a, plane )  );
       T const dB = fabs( get_signed_distance( b, plane )  );
       T const t = dA / (dA+dB);
-      V const q = a + (b-a)*t;
+      const EigenVector3<T> q = a + (b-a)*t;
 
       return q;
     }
 
-    template<typename V>
-    inline typename V::real_type make_intersection_parameter(V const & a, V const & b, UnscaledPlane<V> const & plane)
+    template<typename T>
+    inline T make_intersection_parameter(const EigenVector3<T>& a, const EigenVector3<T>& b, UnscaledPlane<T> const & plane)
     {
       using std::fabs;
-
-      typedef typename V::real_type     T;
 
       T const dA = fabs( get_signed_distance( a, plane )  );
       T const dB = fabs( get_signed_distance( b, plane )  );
@@ -140,11 +133,9 @@ namespace geometry
       return t;
     }
 
-    template<typename V>
-    inline bool is_crossing_plane(V const & a, V const & b, UnscaledPlane<V> const & plane)
+    template<typename T>
+    inline bool is_crossing_plane(const EigenVector3<T>& a, const EigenVector3<T>& b, UnscaledPlane<T> const & plane)
     {
-      typedef typename V::value_traits  VT;
-      typedef typename V::real_type     T;
 
       T const dA = get_signed_distance( a, plane );
       T const dB = get_signed_distance( b, plane );
@@ -161,23 +152,21 @@ namespace geometry
     /**
      * Determines the SAT axis with minimum overlap and propose to use this as contact normal
      */
-    template< typename V>
+    template< typename T>
     inline bool pick_sat_normal(
-                            Tetrahedron<V> const & tetA
-                            , Tetrahedron<V> const & tetB
-                            , V & n
+                            TetrahedronEigen<T> const & tetA
+                            , TetrahedronEigen<T> const & tetB
+                            , EigenVector3<T>& n
                             )
     {
       using std::min;
       using std::max;
 
-      typedef typename V::value_traits VT;
-      typedef typename V::real_type     T;
 
-      std::vector<V> A(4,V::zero());
-      std::vector<V> B(4,V::zero());
+      std::vector<EigenVector3<T>> A(4,EigenVector3<T>(0,0,0));
+      std::vector<EigenVector3<T>> B(4,EigenVector3<T>(0,0,0));
 
-      std::vector<V> axes;
+      std::vector<EigenVector3<T>> axes;
       axes.reserve(44u);
 
       A[0] = tetA.p(0);
@@ -192,15 +181,15 @@ namespace geometry
 
       for(unsigned int p = 0u; p < 4u; ++p)
       {
-        Triangle<V>               const triangleA = get_opposite_face(p, tetA);
-        details::UnscaledPlane<V> const planA     = details::make_unscaled_plane(triangleA);
+        Triangle<T>               const triangleA = get_opposite_face(p, tetA);
+        details::UnscaledPlane<T> const planA     = details::make_unscaled_plane_eigen(triangleA);
 
-        axes.push_back ( tiny::unit( planA.m_normal ) );
+        axes.push_back ( ( planA.m_normal ).normalized() );
 
-        Triangle<V>               const triangleB = get_opposite_face(p, tetB);
-        details::UnscaledPlane<V> const planB     = details::make_unscaled_plane(triangleB);
+        Triangle<T>               const triangleB = get_opposite_face(p, tetB);
+        details::UnscaledPlane<T> const planB     = details::make_unscaled_plane_eigen(triangleB);
 
-        axes.push_back ( tiny::unit( planB.m_normal ) );
+        axes.push_back ( ( planB.m_normal ).normalized() );
       }
 
       unsigned int const edge_table[6][2] = {
@@ -214,17 +203,17 @@ namespace geometry
 
       for(unsigned int a=0u;a < 6u;++a)
       {
-        V const edgeA = A[edge_table[a][1]] - A[edge_table[a][0]];
+        const EigenVector3<T> edgeA = A[edge_table[a][1]] - A[edge_table[a][0]];
 
         for(unsigned int b = 0u; b < 6u; ++b)
         {
-          V const edgeB = B[edge_table[b][1]] - B[edge_table[b][0]];
-          V const AxB   = tiny::cross( edgeA, edgeB );
-          T const l     = tiny::norm(AxB);
+          const EigenVector3<T> edgeB = B[edge_table[b][1]] - B[edge_table[b][0]];
+          const EigenVector3<T> AxB   = cross( edgeA, edgeB );
+          T const l     = norm(AxB);
 
           if(l > tiny::working_precision<T>() )
           {
-            V const axis = AxB / l;
+            const EigenVector3<T> axis = AxB / l;
 
             axes.push_back( axis );
           }
@@ -243,15 +232,15 @@ namespace geometry
       for(size_t i=0u;i < N; ++i)
       {
 
-        for( typename std::vector<V>::const_iterator p_a = A.begin(); p_a != A.end(); ++p_a)
+        for( typename std::vector<EigenVector3<T>>::const_iterator p_a = A.begin(); p_a != A.end(); ++p_a)
         {
-          T const d = inner_prod( (*p_a), axes[i] );
+          T const d = dot( (*p_a), axes[i] );
           a_min[i] = min( a_min[i], d);
           a_max[i] = max( a_max[i], d);
         }
-        for( typename std::vector<V>::const_iterator p_b = B.begin(); p_b != B.end(); ++p_b)
+        for( typename std::vector<EigenVector3<T>>::const_iterator p_b = B.begin(); p_b != B.end(); ++p_b)
         {
-          T const d = inner_prod( (*p_b), axes[i] );
+          T const d = dot( (*p_b), axes[i] );
           b_min[i] = min( b_min[i], d);
           b_max[i] = max( b_max[i], d);
         }
@@ -292,13 +281,13 @@ namespace geometry
      * This is just an overloaded version of pick_sat_normal that makes it
      * convenient to pass surface information arguments as dummy data.
      */
-    template< typename V>
+    template< typename T>
     inline bool pick_sat_normal(
-                                Tetrahedron<V> const & tetA
-                                , Tetrahedron<V> const & tetB
+                                TetrahedronEigen<T> const & tetA
+                                , TetrahedronEigen<T> const & tetB
                                 , std::vector<bool> const & surface_A
                                 , std::vector<bool> const & surface_B
-                                , V & n
+                                , EigenVector3<T>& n
                                 )
     {
       return pick_sat_normal(tetA, tetB, n );
@@ -309,25 +298,23 @@ namespace geometry
      * under the restricted that only separation axes generated from
      * surface information are considered valid.
      */
-    template< typename V>
+    template< typename T>
     inline bool pick_restricted_sat_normal(
-                            Tetrahedron<V> const & tetA
-                            , Tetrahedron<V> const & tetB
+                            TetrahedronEigen<T> const & tetA
+                            , TetrahedronEigen<T> const & tetB
                             , std::vector<bool> const & surface_A
                             , std::vector<bool> const & surface_B
-                            , V & n
+                            , EigenVector3<T> & n
                             )
     {
       using std::min;
       using std::max;
 
-      typedef typename V::value_traits VT;
-      typedef typename V::real_type     T;
 
-      std::vector<V> A(4,V::zero());
-      std::vector<V> B(4,V::zero());
+      std::vector<EigenVector3<T>> A(4,EigenVector3<T>(0,0,0));
+      std::vector<EigenVector3<T>> B(4,EigenVector3<T>(0,0,0));
 
-      std::vector<V> axes;
+      std::vector<EigenVector3<T>> axes;
       axes.reserve(44u);
 
       A[0] = tetA.p(0);
@@ -342,17 +329,17 @@ namespace geometry
 
       for(unsigned int p = 0u; p < 4u; ++p)
       {
-        Triangle<V>               const triangleA = get_opposite_face(p, tetA);
-        details::UnscaledPlane<V> const planA     = details::make_unscaled_plane(triangleA);
+        Triangle<T>               const triangleA = get_opposite_face(p, tetA);
+        details::UnscaledPlane<T> const planA     = details::make_unscaled_plane_eigen(triangleA);
 
         if (surface_A[p])
-          axes.push_back ( tiny::unit( planA.m_normal ) );
+          axes.push_back ( unit( planA.m_normal ) );
 
-        Triangle<V>               const triangleB = get_opposite_face(p, tetB);
-        details::UnscaledPlane<V> const planB     = details::make_unscaled_plane(triangleB);
+        Triangle<T>               const triangleB = get_opposite_face(p, tetB);
+        details::UnscaledPlane<T> const planB     = details::make_unscaled_plane_eigen(triangleB);
 
         if (surface_B[p])
-          axes.push_back ( tiny::unit( planB.m_normal ) );
+          axes.push_back ( unit( planB.m_normal ) );
       }
 
       unsigned int const edge_table[6][2] = {
@@ -380,7 +367,7 @@ namespace geometry
         if (!is_surface_edge_A )
           continue;
 
-        V const edgeA = A[edge_table[a][1]] - A[edge_table[a][0]];
+        const EigenVector3<T> edgeA = A[edge_table[a][1]] - A[edge_table[a][0]];
 
         for(unsigned int b = 0u; b < 6u; ++b)
         {
@@ -389,13 +376,13 @@ namespace geometry
           if (!is_surface_edge_B )
             continue;
 
-          V const edgeB = B[edge_table[b][1]] - B[edge_table[b][0]];
-          V const AxB   = tiny::cross( edgeA, edgeB );
-          T const l     = tiny::norm(AxB);
+          const EigenVector3<T> edgeB = B[edge_table[b][1]] - B[edge_table[b][0]];
+          const EigenVector3<T> AxB   = ( edgeA).cross( edgeB );
+          T const l     = (AxB).norm();
 
           if(l > tiny::working_precision<T>() )
           {
-            V const axis = AxB / l;
+            const EigenVector3<T> axis = AxB / l;
 
             axes.push_back( axis );
           }
@@ -414,15 +401,15 @@ namespace geometry
       for(size_t i=0u;i < N; ++i)
       {
 
-        for( typename std::vector<V>::const_iterator p_a = A.begin(); p_a != A.end(); ++p_a)
+        for( typename std::vector<EigenVector3<T>>::const_iterator p_a = A.begin(); p_a != A.end(); ++p_a)
         {
-          T const d = inner_prod( (*p_a), axes[i] );
+          T const d = dot( (*p_a), axes[i] );
           a_min[i] = min( a_min[i], d);
           a_max[i] = max( a_max[i], d);
         }
-        for( typename std::vector<V>::const_iterator p_b = B.begin(); p_b != B.end(); ++p_b)
+        for( typename std::vector<EigenVector3<T>>::const_iterator p_b = B.begin(); p_b != B.end(); ++p_b)
         {
-          T const d = inner_prod( (*p_b), axes[i] );
+          T const d = dot( (*p_b), axes[i] );
           b_min[i] = min( b_min[i], d);
           b_max[i] = max( b_max[i], d);
         }
@@ -463,20 +450,17 @@ namespace geometry
      * This method determines the contact normal to be the normal-direction
      * that are defined by the two most opposing surfaces.
      */
-    template< typename V>
+    template< typename T>
     inline bool pick_most_opposing_surface_normal(
-                            Tetrahedron<V> const & tetA
-                            , Tetrahedron<V> const & tetB
+                            TetrahedronEigen<T> const & tetA
+                            , TetrahedronEigen<T> const & tetB
                             , std::vector<bool> const & surface_A
                             , std::vector<bool> const & surface_B
-                            , V & n
+                            , EigenVector3<T>& n
                             )
     {
       using std::min;
       using std::max;
-
-      typedef typename V::value_traits VT;
-      typedef typename V::real_type     T;
 
       bool found_normal = false;
 
@@ -487,22 +471,22 @@ namespace geometry
         if (!surface_A[a])
           continue;
 
-        Triangle<V>               const triangleA = get_opposite_face(a, tetA);
-        details::UnscaledPlane<V> const planA     = details::make_unscaled_plane(triangleA);
+        Triangle<T>               const triangleA = get_opposite_face(a, tetA);
+        details::UnscaledPlane<T> const planA     = details::make_unscaled_plane_eigen(triangleA);
 
-        V const nA = unit(planA.m_normal);
+        const EigenVector3<T> nA = (planA.m_normal).normalized();
 
         for(unsigned int b = 0u; b < 4u; ++b)
         {
           if (!surface_B[b])
             continue;
 
-          Triangle<V>               const triangleB = get_opposite_face(b, tetB);
-          details::UnscaledPlane<V> const planB     = details::make_unscaled_plane(triangleB);
+          Triangle<T>               const triangleB = get_opposite_face(b, tetB);
+          details::UnscaledPlane<T> const planB     = details::make_unscaled_plane_eigen(triangleB);
 
-          V const nB = unit(planB.m_normal);
+          const EigenVector3<T> nB = (planB.m_normal).normalized();
 
-          T const test = tiny::inner_prod(nA, nB);
+          T const test = dot(nA, nB);
 
           if (test >= 0 ) // surfaces must be opposing each other
             continue;
@@ -510,11 +494,11 @@ namespace geometry
           //--- Now we know that planes are opposing each other
           //--- Next we will test if A is in front of B face and vice versa
 
-          V const & pB = tetB.p(b);
-          V const & pA = tetA.p(a);
+          const EigenVector3<T>& pB = tetB.p(b);
+          const EigenVector3<T>& pA = tetA.p(a);
 
-          T const testA =  tiny::inner_prod( planA.m_normal, pB - planA.m_point) ;
-          T const testB =  tiny::inner_prod( planB.m_normal, pA - planB.m_point) ;
+          T const testA =  ( planA.m_normal).dot( pB - planA.m_point) ;
+          T const testB =  ( planB.m_normal).dot( pA - planB.m_point) ;
 
           if (testA < 0 && testB < 0)
             continue;
@@ -541,33 +525,32 @@ namespace geometry
      */
     template< typename V>
     inline bool generate_contacts_from_intersection(
-                                                    Tetrahedron<V> const & A
-                                                    , Tetrahedron<V> const & B
+                                                    TetrahedronEigen<typename V::real_type> const & A
+                                                    , TetrahedronEigen<typename V::real_type> const & B
                                                     , ContactsCallback<V> & callback
-                                                    , V const & n
+                                                    , const EigenVector3<typename V::real_type>& n
                                                     )
     {
       using std::min;
       using std::max;
 
-      typedef typename V::value_traits VT;
       typedef typename V::real_type     T;
 
-      std::vector<V> contacts;
+      std::vector<EigenVector3<T>> contacts;
       contacts.reserve(16);
 
-      std::vector<Triangle<V> >                trianglesA(4u);
-      std::vector<Triangle<V> >                trianglesB(4u);
+      std::vector<Triangle<T> >                trianglesA(4u);
+      std::vector<Triangle<T> >                trianglesB(4u);
 
-      std::vector<details::UnscaledPlane<V> >  planesA(4u);
-      std::vector<details::UnscaledPlane<V> >  planesB(4u);
+      std::vector<details::UnscaledPlane<T> >  planesA(4u);
+      std::vector<details::UnscaledPlane<T> >  planesB(4u);
 
       for (unsigned int v =0u; v < 4u; ++v)
       {
         trianglesA[v] = get_opposite_face( v, A );
         trianglesB[v] = get_opposite_face( v, B );
-        planesA[v]    = details::make_unscaled_plane(trianglesA[v]);
-        planesB[v]    = details::make_unscaled_plane(trianglesB[v]);
+        planesA[v]    = details::make_unscaled_plane_eigen(trianglesA[v]);
+        planesB[v]    = details::make_unscaled_plane_eigen(trianglesB[v]);
       }
 
       for (unsigned int v =0u; v < 4u; ++v)
@@ -593,19 +576,19 @@ namespace geometry
         unsigned int const i = edge_table[e][0u];
         unsigned int const j = edge_table[e][1u];
 
-        V const & Ai = A.p(i);
-        V const & Aj = A.p(j);
-        V const & Bi = B.p(i);
-        V const & Bj = B.p(j);
+        const EigenVector3<T>& Ai = A.p(i);
+        const EigenVector3<T>& Aj = A.p(j);
+        const EigenVector3<T>& Bi = B.p(i);
+        const EigenVector3<T>& Bj = B.p(j);
 
         for (unsigned int p = 0u; p < 4u; ++p)
         {
-          details::UnscaledPlane<V> const & planeA = planesA[p];
-          details::UnscaledPlane<V> const & planeB = planesB[p];
+          details::UnscaledPlane<T> const & planeA = planesA[p];
+          details::UnscaledPlane<T> const & planeB = planesB[p];
 
           if (details::is_crossing_plane(Bi, Bj, planeA) )
           {
-            V const qB = details::make_intersection(Bi, Bj, planeA);
+            const EigenVector3<T> qB = details::make_intersection(Bi, Bj, planeA);
 
             if( details::inside_planes(qB, planesA) )
               contacts.push_back(qB);
@@ -613,7 +596,7 @@ namespace geometry
 
           if (details::is_crossing_plane(Ai, Aj, planeB) )
           {
-            V const qA = details::make_intersection( Ai, Aj, planeB);
+            const EigenVector3<T> qA = details::make_intersection( Ai, Aj, planeB);
 
             if( details::inside_planes(qA, planesB) )
               contacts.push_back(qA);
@@ -633,9 +616,9 @@ namespace geometry
       T max_val = std::numeric_limits<T>::lowest();
 
       {
-        for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
+        for( typename std::vector<EigenVector3<T>>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
         {
-          T const d = inner_prod( (*p), n );
+          T const d = dot( (*p), n );
 
           min_val = min( min_val, d );
           max_val = max( max_val, d );
@@ -645,25 +628,26 @@ namespace geometry
       T const depth = min_val - max_val;
 
       // Project contact points onto cotact plane
-      V const mid =  n * (max_val + min_val)*0.5f;
+      const EigenVector3<T> mid =  n * (max_val + min_val)*0.5f;
 
-      for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
+      for( typename std::vector<EigenVector3<T>>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
       {
-        (*p) = (*p) - inner_prod( n, ( (*p) - mid ) ) * n;
+          (*p) = (*p) - ( n).dot (( (*p) - mid ) ) * n;
       }
 
       // Some contacts might have been projected to the same point in the
       // contact plane, so we filter away redundant information before
       // using the callback to report the computed contact point.
-      typename std::vector<V>::iterator p    = contacts.begin();
+      typename std::vector<EigenVector3<T>>::iterator p    = contacts.begin();
       for(; p!= contacts.end(); ++p)
       {
         bool unique = true;
 
-        typename std::vector<V>::iterator q = contacts.begin();
+        typename std::vector<EigenVector3<T>>::iterator q = contacts.begin();
         for(; q != p; ++q)
         {
-          if( tiny::norm_1( (*q) - (*p) ) < tiny::working_precision<T>())
+            EigenVector3<T> vec = (*q) - (*p);
+          if( vec.cwiseAbs().maxCoeff() < std::numeric_limits<T>::epsilon()*10)
           {
             unique = false;
             break;
@@ -672,7 +656,7 @@ namespace geometry
 
         if(unique)
         {
-          callback( (*p), n, depth);
+            callback( fromEigen(*p), fromEigen(n), depth);
         }
       }
 
@@ -694,15 +678,15 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+                                               TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                , std::vector<bool> const & surface_A
                                                , std::vector<bool> const & surface_B
                                                , TRIANGLE_INTERSECTION const & /*algorithm_tag*/
   )
   {
-
+      using T = typename V::real_type;
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_A[0] || surface_A[1] || surface_A[2] || surface_A[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron A must have at least one surface face");
     assert(surface_B.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
@@ -711,26 +695,24 @@ namespace geometry
     using std::min;
     using std::max;
 
-    typedef typename V::value_traits VT;
-    typedef typename V::real_type     T;
 
-    T const small_number = tiny::working_precision<T>();
+    T const small_number = std::numeric_limits<T>::epsilon()*10;
 
     unsigned int count = 0u;
 
-    std::vector<Triangle<V> >                trianglesA(4u);
-    std::vector<Triangle<V> >                trianglesB(4u);
+    std::vector<Triangle<T> >                trianglesA(4u);
+    std::vector<Triangle<T> >                trianglesB(4u);
 
-    std::vector<details::UnscaledPlane<V> >  planesA(4u);
-    std::vector<details::UnscaledPlane<V> >  planesB(4u);
+    std::vector<details::UnscaledPlane<T> >  planesA(4u);
+    std::vector<details::UnscaledPlane<T> >  planesB(4u);
 
     //--- Preprocessing tetrahedrons for fast triangle face lookup info --------
     for (unsigned int v =0u; v < 4u; ++v)
     {
       trianglesA[v] = get_opposite_face( v, A );
       trianglesB[v] = get_opposite_face( v, B );
-      planesA[v]    = details::make_unscaled_plane(trianglesA[v]);
-      planesB[v]    = details::make_unscaled_plane(trianglesB[v]);
+      planesA[v]    = details::make_unscaled_plane_eigen<T>((trianglesA[v]));
+      planesB[v]    = details::make_unscaled_plane_eigen<T>((trianglesB[v]));
     }
 
     //--- Search for a pair of triangle surfaces from tetrahedron A and B
@@ -747,38 +729,38 @@ namespace geometry
         //--- We now know we have two surface triangles and we wish to generate
         //--- contact between these two surface triangles.
 
-        Triangle<V>               const & triA = trianglesA[a];
-        Triangle<V>               const & triB = trianglesB[b];
+        Triangle<T>               const & triA = trianglesA[a];
+        Triangle<T>               const & triB = trianglesB[b];
 
         //--- Make sure the two surface triangles are actually intersecing. If
         //-- not we skip them.
         if(! geometry::overlap_triangle_triangle(triA, triB) )
           continue;
 
-        details::UnscaledPlane<V> const & plA  = planesA[a];
-        details::UnscaledPlane<V> const & plB  = planesB[b];
+        details::UnscaledPlane<T> const & plA  = planesA[a];
+        details::UnscaledPlane<T> const & plB  = planesB[b];
 
         //--- Test vertex-face contacts of A vs. B
         for (unsigned int k = 0u; k < 3u; ++k)
         {
-          V    const & pk          = triA.p(k);
-          T    const   depth       = tiny::inner_prod(plB.m_normal, pk - plB.m_point);
+          const EigenVector3<T>& pk          = triA.p(k);
+            T    const   depth       = ((plB.m_normal)).dot( pk - plB.m_point);
 
           if (depth > 0)
             continue;
 
-          V    const & n           = plB.m_normal;
+          const EigenVector3<T>& n           = plB.m_normal;
           bool         is_inside_B = true;
 
           for (unsigned int i = 0u; i < 3u; ++i)
           {
             unsigned int j = (i+1) % 3;
 
-            V const & pi = triB.p(i);
-            V const & pj = triB.p(j);
-            V const e    = pj - pi;
-            V const m    = tiny::cross(n,e);
-            T const tst  = tiny::inner_prod(m, pk - pi);
+            const EigenVector3<T>& pi = triB.p(i);
+            const EigenVector3<T>& pj = triB.p(j);
+            const EigenVector3<T> e    = pj - pi;
+            const EigenVector3<T> m    = (n).cross(e);
+            T const tst  = (m).dot( pk - pi);
 
             if(tst < 0 )
             {
@@ -789,7 +771,7 @@ namespace geometry
 
           if(is_inside_B)
           {
-            callback( pk, -n, depth);
+              callback( fromEigen(pk), -fromEigen(n), depth);
             ++count;
           }
 
@@ -798,24 +780,24 @@ namespace geometry
         //--- Test vertex-face contacts of B vs. A
         for (unsigned int k = 0u; k < 3u; ++k)
         {
-          V    const & pk          = triB.p(k);
-          T    const   depth       = tiny::inner_prod(plA.m_normal, pk - plA.m_point);
+          const EigenVector3<T>& pk          = triB.p(k);
+            T    const   depth       = (plA.m_normal).dot( pk - plA.m_point);
 
           if (depth > 0)
             continue;
 
-          V    const & n           = plA.m_normal;
+          const EigenVector3<T>& n           = plA.m_normal;
           bool         is_inside_A = true;
 
           for (unsigned int i = 0u; i < 3u; ++i)
           {
             unsigned int j = (i+1) % 3;
 
-            V const & pi = triA.p(i);
-            V const & pj = triA.p(j);
-            V const e    = pj - pi;
-            V const m    = tiny::cross(n,e);
-            T const tst  = tiny::inner_prod(m, pk - pi);
+            const EigenVector3<T>& pi = triA.p(i);
+            const EigenVector3<T>& pj = triA.p(j);
+            const EigenVector3<T> e    = pj - pi;
+            const EigenVector3<T> m    = (n).cross(e);
+            T const tst  = (m).dot( pk - pi);
 
             if(tst < 0 )
             {
@@ -826,7 +808,7 @@ namespace geometry
 
           if(is_inside_A)
           {
-            callback( pk, n, depth);
+              callback( fromEigen(pk), fromEigen(n), depth);
             ++count;
           }
         }
@@ -835,21 +817,21 @@ namespace geometry
         for (unsigned int k = 0u; k < 3u; ++k)
         {
           unsigned int         m  = (k+1) % 3;
-          V            const & pk = triA.p(k);
-          V            const & pm = triA.p(m);
-          V            const   eA = unit(pm - pk);
+          const EigenVector3<T> & pk = triA.p(k);
+          const EigenVector3<T>& pm = triA.p(m);
+          const EigenVector3<T> eA = (pm - pk).normalized();
 
           for (unsigned int i = 0u; i < 3u; ++i)
           {
             unsigned int j = (i+1) % 3;
 
-            V const & pi = triB.p(i);
-            V const & pj = triB.p(j);
-            V const eB    = unit(pj - pi);
+            const EigenVector3<T>& pi = triB.p(i);
+            const EigenVector3<T>& pj = triB.p(j);
+            const EigenVector3<T> eB    = (pj - pi).normalized();
 
-            V const eA_X_eB = cross(eA,eB);
+            const EigenVector3<T> eA_X_eB = (eA).cross(eB);
 
-            bool const too_parallel = norm(eA_X_eB) < small_number;
+            bool const too_parallel = (eA_X_eB).norm() < small_number;
 
             if( too_parallel )
               continue;
@@ -868,7 +850,7 @@ namespace geometry
             // and hence do a quick-rejection test earlier on.
             //
             //
-            V const n     =  unit(eA_X_eB); // tiny::unit(pB-pA); should give us same direction
+            const EigenVector3<T> n     =  (eA_X_eB).normalized(); // tiny::unit(pB-pA); should give us same direction
 
             // Technically, we cheat a little here and use the fact that
             // we have tetrahedra to do the SAT test and not just
@@ -882,19 +864,19 @@ namespace geometry
             // than b_min = b_max. The tetrahedra will prevent this case
             // from happening.
 
-            T const a0    = tiny::inner_prod(n, A.p(0));
-            T const a1    = tiny::inner_prod(n, A.p(1));
-            T const a2    = tiny::inner_prod(n, A.p(2));
-            T const a3    = tiny::inner_prod(n, A.p(3));
+            T const a0    = dot(n, A.p(0));
+            T const a1    = dot(n, A.p(1));
+            T const a2    = dot(n, A.p(2));
+            T const a3    = dot(n, A.p(3));
             T const a_min = min(a0, min( a1, min( a2, a3 ) ) );
             T const a_max = max(a0, max( a1, max( a2, a3 ) ) );
 
             assert( a_min < a_max || !"contacts_tetrahedron_tetrahedron(): Internal error, flat tetrahedron encountered");
 
-            T const b0    = tiny::inner_prod(n, B.p(0));
-            T const b1    = tiny::inner_prod(n, B.p(1));
-            T const b2    = tiny::inner_prod(n, B.p(2));
-            T const b3    = tiny::inner_prod(n, B.p(3));
+            T const b0    = dot(n, B.p(0));
+            T const b1    = dot(n, B.p(1));
+            T const b2    = dot(n, B.p(2));
+            T const b3    = dot(n, B.p(3));
             T const b_min = min(b0, min( b1, min( b2, b3 ) ) );
             T const b_max = max(b0, max( b1, max( b2, b3 ) ) );
 
@@ -915,16 +897,16 @@ namespace geometry
             T s = 0;
             T t = 0;
 
-            geometry::closest_points_line_line(pk, eA, pi, eB, s, t);
+            geometry::closest_points_line_line_eigen(pk, eA, pi, eB, s, t);
 
-            V const pA = pk + s*eA;
-            V const pB = pi + t*eB;
+            const EigenVector3<T> pA = pk + s*eA;
+            const EigenVector3<T> pB = pi + t*eB;
 
             // Then we will test if the cloests points are actual on the "edges"
-            T const inside_tst1 =  tiny::inner_prod( eA, (pA - pm) );
-            T const inside_tst2 =  tiny::inner_prod(-eA, (pA - pk) );
-            T const inside_tst3 =  tiny::inner_prod( eB, (pB - pj) );
-            T const inside_tst4 =  tiny::inner_prod(-eB, (pB - pi) );
+            T const inside_tst1 =  ( eA).dot( (pA - pm) );
+            T const inside_tst2 =  (-eA).dot( (pA - pk) );
+            T const inside_tst3 =  ( eB).dot( (pB - pj) );
+            T const inside_tst4 =  (-eB).dot( (pB - pi) );
 
             if(inside_tst1 >= -small_number)
               continue;
@@ -941,7 +923,7 @@ namespace geometry
             // So we have closest points on the edges, meaning that a sensible
             // predicted contact location would be he mid-point of the two
             // closest points.
-            V const p     = (pA + pB)*0.5f;
+            const EigenVector3<T> p     = (pA + pB)*0.5f;
 
             // Although we know tetrahedra overlap along the n-direction there
             // might be some other "direction" separating the objects... Hence
@@ -949,10 +931,10 @@ namespace geometry
             // "triangle" surfaces.
             //
             // We are going to allow for a litle threshold in this test...
-            if(  details::get_signed_distance(p, plA) > small_number*norm(plA.m_normal) )
+            if(  details::get_signed_distance(p, plA) > small_number*(plA.m_normal).norm() )
               continue;
 
-            if(  details::get_signed_distance(p, plB) > small_number*norm(plB.m_normal) )
+            if(  details::get_signed_distance(p, plB) > small_number*(plB.m_normal).norm() )
               continue;
 
             // Now we know we can reply on p-being a true "contact" point so
@@ -960,14 +942,14 @@ namespace geometry
             if(a_min <= b_min &&  b_min <= a_max)
             {
               T const depth = b_min - a_max;
-              callback( p, n, depth);
+                callback( fromEigen(p), fromEigen(n), depth);
               ++count;
             }
 
             if(b_min <= a_min &&  a_min <= b_max)
             {
               T const depth = a_min - b_max;
-              callback( p, -n, depth);
+              callback( fromEigen(p), -fromEigen(n), depth);
               ++count;
             }
 
@@ -982,8 +964,8 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+                                               TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                , std::vector<bool> const & surface_A
                                                , std::vector<bool> const & surface_B
@@ -995,30 +977,29 @@ namespace geometry
     assert(surface_B.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_B[0] || surface_B[1] || surface_B[2] || surface_B[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron B must have at least one surface face");
 
-    typedef typename V::value_traits VT;
     typedef typename V::real_type     T;
 
     unsigned int count = 0u;
 
-    std::vector<Triangle<V> >                trianglesA(4u);
-    std::vector<Triangle<V> >                trianglesB(4u);
+    std::vector<Triangle<T> >                trianglesA(4u);
+    std::vector<Triangle<T> >                trianglesB(4u);
 
-    std::vector<details::UnscaledPlane<V> >  planesA(4u);
-    std::vector<details::UnscaledPlane<V> >  planesB(4u);
+    std::vector<details::UnscaledPlane<T> >  planesA(4u);
+    std::vector<details::UnscaledPlane<T> >  planesB(4u);
 
     //--- Preprocessing tetrahedrons for fast triangle face lookup info --------
     for (unsigned int v =0u; v < 4u; ++v)
     {
       trianglesA[v] = get_opposite_face( v, A );
       trianglesB[v] = get_opposite_face( v, B );
-      planesA[v]    = details::make_unscaled_plane(trianglesA[v]);
-      planesB[v]    = details::make_unscaled_plane(trianglesB[v]);
+      planesA[v]    = details::make_unscaled_plane_eigen(trianglesA[v]);
+      planesB[v]    = details::make_unscaled_plane_eigen(trianglesB[v]);
     }
 
     //--- B's vertices inside A
     for (unsigned int v =0u; v < 4u; ++v)
     {
-      V const b = B.p(v);
+      const EigenVector3<T> b = B.p(v);
 
       T const a0 = get_signed_distance( b, planesA[0] );
       T const a1 = get_signed_distance( b, planesA[1] );
@@ -1033,19 +1014,19 @@ namespace geometry
       if( b_outside_A )
         continue;
 
-      T const depth0 = surface_A[0] ? a0 / norm(planesA[0].m_normal) : std::numeric_limits<T>::max() ;
-      T const depth1 = surface_A[1] ? a1 / norm(planesA[1].m_normal) : std::numeric_limits<T>::max() ;
-      T const depth2 = surface_A[2] ? a2 / norm(planesA[2].m_normal) : std::numeric_limits<T>::max() ;
-      T const depth3 = surface_A[3] ? a3 / norm(planesA[3].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth0 = surface_A[0] ? a0 / (planesA[0].m_normal).norm() : std::numeric_limits<T>::max() ;
+      T const depth1 = surface_A[1] ? a1 / (planesA[1].m_normal).norm() : std::numeric_limits<T>::max() ;
+      T const depth2 = surface_A[2] ? a2 / (planesA[2].m_normal).norm() : std::numeric_limits<T>::max() ;
+      T const depth3 = surface_A[3] ? a3 / (planesA[3].m_normal).norm() : std::numeric_limits<T>::max() ;
 
       if ( depth0 <= depth1 && depth0 <= depth2 && depth0 <= depth3 )
-        callback( b, unit(planesA[0].m_normal), depth0 );
+          callback( fromEigen(b), fromEigen((planesA[0].m_normal).normalized()), depth0 );
       if ( depth1 <= depth0 && depth1 <= depth2 && depth1 <= depth3 )
-        callback( b, unit(planesA[1].m_normal), depth1 );
+          callback( fromEigen(b), fromEigen((planesA[1].m_normal).normalized()), depth1 );
       if ( depth2 <= depth0 && depth2 <= depth1 && depth2 <= depth3 )
-        callback( b, unit(planesA[2].m_normal), depth2 );
+          callback( fromEigen(b), fromEigen((planesA[2].m_normal).normalized()), depth2 );
       if ( depth3 <= depth0 && depth3 <= depth1 && depth3 <= depth2 )
-        callback( b, unit(planesA[3].m_normal), depth3 );
+          callback( fromEigen(b), fromEigen((planesA[3].m_normal).normalized()), depth3 );
 
       ++count;
     }
@@ -1053,7 +1034,7 @@ namespace geometry
     //--- A's vertices inside B
     for (unsigned int v =0u; v < 4u; ++v)
     {
-      V const a = A.p(v);
+      const EigenVector3<T> a = A.p(v);
 
       T const b0 = get_signed_distance( a, planesB[0] );
       T const b1 = get_signed_distance( a, planesB[1] );
@@ -1068,20 +1049,19 @@ namespace geometry
       if( a_outside_B )
         continue;
 
-      T const depth0 = surface_B[0] ? b0 / norm(planesB[0].m_normal) : std::numeric_limits<T>::max() ;
-      T const depth1 = surface_B[1] ? b1 / norm(planesB[1].m_normal) : std::numeric_limits<T>::max() ;
-      T const depth2 = surface_B[2] ? b2 / norm(planesB[2].m_normal) : std::numeric_limits<T>::max() ;
-      T const depth3 = surface_B[3] ? b3 / norm(planesB[3].m_normal) : std::numeric_limits<T>::max() ;
+      T const depth0 = surface_B[0] ? b0 / (planesB[0].m_normal).norm() : std::numeric_limits<T>::max() ;
+      T const depth1 = surface_B[1] ? b1 / (planesB[1].m_normal).norm() : std::numeric_limits<T>::max() ;
+      T const depth2 = surface_B[2] ? b2 / (planesB[2].m_normal).norm() : std::numeric_limits<T>::max() ;
+      T const depth3 = surface_B[3] ? b3 / (planesB[3].m_normal).norm() : std::numeric_limits<T>::max() ;
 
       if ( depth0 <= depth1 && depth0 <= depth2 && depth0 <= depth3 )
-        callback( a, -unit(planesB[0].m_normal), depth0 );
+          callback( fromEigen(a), fromEigen((planesB[0].m_normal).normalized()), depth0 );
       if ( depth1 <= depth0 && depth1 <= depth2 && depth1 <= depth3 )
-        callback( a, -unit(planesB[1].m_normal), depth1 );
+          callback( fromEigen(a), fromEigen((planesB[1].m_normal).normalized()), depth1 );
       if ( depth2 <= depth0 && depth2 <= depth1 && depth2 <= depth3 )
-        callback( a, -unit(planesB[2].m_normal), depth2 );
+          callback( fromEigen(a), fromEigen((planesB[2].m_normal).normalized()), depth2 );
       if ( depth3 <= depth0 && depth3 <= depth1 && depth3 <= depth2 )
-        callback( a, -unit(planesB[3].m_normal), depth3 );
-
+          callback( fromEigen(a), fromEigen((planesB[3].m_normal).normalized()), depth3 );
       ++count;
     }
 
@@ -1090,8 +1070,8 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+      TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                , std::vector<bool> const & surface_A
                                                , std::vector<bool> const & surface_B
@@ -1108,19 +1088,19 @@ namespace geometry
 
     unsigned int count = 0u;
 
-    std::vector<Triangle<V> >                trianglesA(4u);
-    std::vector<Triangle<V> >                trianglesB(4u);
+    std::vector<Triangle<T> >                trianglesA(4u);
+    std::vector<Triangle<T> >                trianglesB(4u);
     std::vector<bool >                       insideA(4u);
     std::vector<bool >                       insideB(4u);
-    std::vector<details::UnscaledPlane<V> >  planesA(4u);
-    std::vector<details::UnscaledPlane<V> >  planesB(4u);
+    std::vector<details::UnscaledPlane<T> >  planesA(4u);
+    std::vector<details::UnscaledPlane<T> >  planesB(4u);
 
     for (unsigned int v =0u; v < 4u; ++v)
     {
       trianglesA[v] = get_opposite_face( v, A );
       trianglesB[v] = get_opposite_face( v, B );
-      planesA[v]    = details::make_unscaled_plane(trianglesA[v]);
-      planesB[v]    = details::make_unscaled_plane(trianglesB[v]);
+      planesA[v]    = details::make_unscaled_plane_eigen(trianglesA[v]);
+      planesB[v]    = details::make_unscaled_plane_eigen(trianglesB[v]);
     }
 
     for (unsigned int v =0u; v < 4u; ++v)
@@ -1179,10 +1159,10 @@ namespace geometry
         // generating the contact plane of this vertex-tetrahedron contact
         if(best_plane < 4u)
         {
-          V const & n     = planesA[best_plane].m_normal;
-          T const   depth = details::get_signed_distance( B.p(i), planesA[best_plane] ) / norm(n);
+          const EigenVector3<T>& n     = planesA[best_plane].m_normal;
+            T const   depth = details::get_signed_distance( B.p(i), planesA[best_plane] ) / (n.norm());
 
-          callback( B.p(i), unit(n), depth );
+          callback( fromEigen(B.p(i)), fromEigen(n.normalized()), depth );
           ++count;
         }
       }
@@ -1229,10 +1209,10 @@ namespace geometry
         // generating the contact plane of this vertex-tetrahedron contact
         if(best_plane < 4u)
         {
-          V const & n     = -planesB[best_plane].m_normal;
-          T const   depth = details::get_signed_distance( A.p(i), planesB[best_plane] ) / norm(n);
+          const EigenVector3<T>& n     = -planesB[best_plane].m_normal;
+            T const   depth = details::get_signed_distance( A.p(i), planesB[best_plane] ) / (n.norm());
 
-          callback( A.p(i), unit(n), depth );
+          callback( fromEigen(A.p(i)), fromEigen(n.normalized()), depth );
           ++count;
         }
       }
@@ -1244,8 +1224,8 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+                                               TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                , std::vector<bool> const & surface_A
                                                , std::vector<bool> const & surface_B
@@ -1265,7 +1245,7 @@ namespace geometry
     if(!overlap)
       return false;
 
-    V n; // The contact normal to be used
+    EigenVector3<typename V::real_type> n; // The contact normal to be used
 
     bool const found_normal = details::pick_sat_normal(A,B,surface_A,surface_B, n);
 
@@ -1277,8 +1257,8 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+                                               TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                , std::vector<bool> const & surface_A
                                                , std::vector<bool> const & surface_B
@@ -1297,7 +1277,7 @@ namespace geometry
     if(!overlap)
       return false;
 
-    V n; // The contact normal to be used
+    EigenVector3<typename V::real_type> n; // The contact normal to be used
 
     bool const found_normal = details::pick_restricted_sat_normal(A,B,surface_A,surface_B, n);
 
@@ -1310,8 +1290,8 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+                                               TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                , std::vector<bool> const & surface_A
                                                , std::vector<bool> const & surface_B
@@ -1330,7 +1310,7 @@ namespace geometry
     if(!overlap)
       return false;
 
-    V n; // The contact normal to be used
+    EigenVector3<typename V::real_type> n; // The contact normal to be used
 
     bool const found_normal = details::pick_most_opposing_surface_normal(A,B,surface_A,surface_B, n);
 
@@ -1342,8 +1322,8 @@ namespace geometry
 
   template< typename V>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               Tetrahedron<V> const & A
-                                               , Tetrahedron<V> const & B
+                                               TetrahedronEigen<typename V::real_type> const & A
+                                               , TetrahedronEigen<typename V::real_type> const & B
                                                , ContactsCallback<V> & callback
                                                )
   {

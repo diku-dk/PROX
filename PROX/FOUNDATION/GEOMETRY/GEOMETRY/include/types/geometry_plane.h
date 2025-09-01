@@ -4,8 +4,10 @@
 #include <types/geometry_triangle.h>
 
 #include <tiny_precision.h>
+#include <tiny_math_types.h>
 
 #include <cmath>
+
 
 namespace geometry
 {
@@ -23,46 +25,43 @@ namespace geometry
    *
    * Given that n is the unit normal then w is the distance form origin to the plane.
    */
-  template<typename V>
+  template<typename T>
   class Plane
   {
   protected:
-      using T = typename V::real_type;
-      using VT = typename V::value_traits;
-
-      V m_normal;
+      EigenVector3<T> m_normal;
       T m_offset;
 
   public:
 
-    void set_normal(V const & normal)
+    void set_normal(const EigenVector3<T>& normal)
     {
       this->m_normal = unit(normal);
     }
 
     T       & offset()       { return this->m_offset; }
-    V const & normal() const { return this->m_normal; }
+    const EigenVector3<T>& normal() const { return this->m_normal; }
     T const & offset() const { return this->m_offset; }
 
-    void set_n(V const & n)
+    void set_n(const EigenVector3<T>& n)
     {
       this->m_normal = unit(n);
     }
 
     T       & w()       { return this->m_offset; }
-    V const & n() const { return this->m_normal; }
+    const EigenVector3<T>& n() const { return this->m_normal; }
     T const & w() const { return this->m_offset; }
 
   public:
 
     Plane()
-    : m_normal( V::k() )
+          : m_normal( EigenVector3<T>(0,0,1) )
     , m_offset( 0 )
     {}
 
     ~Plane(){}
 
-    Plane(V const & normal, T const & offset)
+    Plane(const EigenVector3<T>& normal, T const & offset)
     : m_normal( unit(normal) )
     , m_offset(offset)
     {
@@ -87,94 +86,89 @@ namespace geometry
 
   };
 
-  template<typename V>
-  inline Plane<V> make_plane(V const & normal, typename V::real_type const & offset)
+  template<typename T>
+  inline Plane<T> make_plane(const EigenVector3<T>& normal, const T& offset)
   {
-    typedef typename V::value_traits  VT;
-    typedef typename V::real_type      T;
 
     assert(fabs(1 - norm(normal)) < tiny::working_precision<T>() || !"make_plane(): Must be unit normal");
 
-    return Plane<V>(normal,offset);
+    return Plane<T>(normal,offset);
   }
 
-  template<typename V>
-  inline Plane<V> make_plane(V const & p0, V const & p1, V const & p2)
+  template<typename T>
+  inline Plane<T> make_plane(const EigenVector3<T>& p0, const EigenVector3<T>& p1, const EigenVector3<T>& p2)
   {
-    typedef typename V::real_type T;
 
-    V const normal = unit( cross(p1-p0, p2-p0) );
-    T const offset = inner_prod(p0,normal);
+      const EigenVector3<T> normal = ( (p1-p0).cross( p2-p0) ).normalized();
+    T const offset = dot(p0,normal);
 
-    return Plane<V>(normal,offset);
+    return Plane<T>(normal,offset);
   }
 
   /**
    * Tries to counter numerical precision errors as much as possible.
    * This is 3 times more expensive to do that just making a plane.
    */
-  template<typename V>
-  inline Plane<V> make_precise_plane(V const & p0, V const & p1, V const & p2)
+  template<typename T>
+  inline Plane<T> make_precise_plane(const EigenVector3<T>& p0, const EigenVector3<T>& p1, const EigenVector3<T>& p2)
   {
-    typedef typename V::real_type T;
 
-    V const m0 = cross(p1-p0, p2-p0);
-    V const m1 = cross(p2-p1, p0-p1);
-    V const m2 = cross(p0-p2, p1-p2);
+    const EigenVector3<T> m0 = (p1-p0).cross (p2-p0);
+    const EigenVector3<T> m1 = (p2-p1).cross (p0-p1);
+    const EigenVector3<T> m2 = (p0-p2).cross( p1-p2);
 
-    T const l0 = inner_prod(m0,m0);
-    T const l1 = inner_prod(m1,m1);
-    T const l2 = inner_prod(m2,m2);
+    T const l0 = dot(m0,m0);
+    T const l1 = dot(m1,m1);
+    T const l2 = dot(m2,m2);
 
     if (l0 >= l1 && l0 >= l2)
     {
-      V const normal = m0 / sqrt(l0);
+      const EigenVector3<T> normal = m0 / sqrt(l0);
       T const offset = inner_prod(p0,normal);
 
-      return Plane<V>(normal,offset);
+      return Plane<T>(normal,offset);
     }
     if (l1 >= l0 && l1 >= l2)
     {
-      V const normal = m1 / sqrt(l1);
+      const EigenVector3<T> normal = m1 / sqrt(l1);
       T const offset = inner_prod(p1,normal);
 
-      return Plane<V>(normal,offset);
+      return Plane<T>(normal,offset);
     }
     if (l2 >= l1 && l2 >= l0)
     {
-      V const normal = m2 / sqrt(l2);
+      const EigenVector3<T> normal = m2 / sqrt(l2);
       T const offset = inner_prod(p2,normal);
 
-      return Plane<V>(normal,offset);
+      return Plane<T>(normal,offset);
     }
 
-    return Plane<V>();
+    return Plane<T>();
   }
 
-  template<typename V>
-  inline Plane<V> make_plane(V const & normal, V const & p)
+  template<typename T>
+  inline Plane<T> make_plane(const EigenVector3<T>& normal, const EigenVector3<T>& p)
   {
-    typedef typename V::real_type T;
 
-    T const offset = inner_prod(p ,normal);
+    T const offset = dot(p ,normal);
 
-    return Plane<V>(normal,offset);
+    return Plane<T>(normal,offset);
   }
 
-  template<typename V>
-  inline Plane<V> make_plane(Triangle<V> const & t)
+  template<typename T>
+  inline Plane<T> make_plane(Triangle<T> const & t)
   {
-    return make_plane<V>(t.point(0),t.point(1),t.point(2));
+    return make_plane<T>(t.point(0),t.point(1),t.point(2));
   }
 
-  template<typename V>
-  inline typename V::real_type get_signed_distance(V const & p, Plane<V>  const & P)
+  template<typename T>
+  inline T get_signed_distance(const EigenVector3<T>& p, Plane<T>  const & P)
   {
-    return inner_prod(P.n(),p) - P.w();
+    return dot(P.n(),p) - P.w();
   }
 
-  template<typename V>
-  inline typename V::real_type get_distance(V const & p, Plane<V>  const & P)
+  template<typename T>
+  inline T get_distance(const EigenVector3<T>& p, Plane<T>  const & P)
   {
     using std::fabs;
 

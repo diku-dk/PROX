@@ -159,6 +159,34 @@ namespace geometry
     return true;
   }
 
+  template<typename T>
+  inline bool inside_triangle(
+      const EigenVector3<T>& p
+      , Triangle<T> const & triangle
+      , bool const & test_face_plane = true
+      )
+  {
+
+      Plane<T> const plane = make_plane(triangle);
+
+      if (test_face_plane && get_distance(p, plane) > 0 )
+          return false;
+
+      for (unsigned int k=0u; k < 3u; ++k)
+      {
+          const EigenVector3<T>& p0 = triangle.p(  k       );
+          const EigenVector3<T>& p1 = triangle.p( (k+1)%3u );
+          const  EigenVector3<T> p2 = p1 + plane.n();
+
+          Plane<T> const wall = make_plane(p0,p1,p2);
+
+          if( get_signed_distance(p, wall) > 0 )
+              return false;
+      }
+
+      return true;
+  }
+
 }// namespace geometry
 
 // GEOMETRY_INSIDE_H

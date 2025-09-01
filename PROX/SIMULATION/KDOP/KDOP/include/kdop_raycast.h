@@ -67,7 +67,7 @@ namespace kdop
         V p = V::zero();
         T s = std::numeric_limits<T>::max();
 
-        geometry::Tetrahedron<V> const gT = geometry::make_tetrahedron(p0,p1,p2,p3);
+        geometry::TetrahedronEigen<typename V::real_type> const gT = geometry::make_tetrahedron(toEigen(p0),toEigen(p1),toEigen(p2),toEigen(p3));
 
         bool const did_hit = geometry::compute_raycast_tetrahedron( ray, gT, p, s, surf);
 

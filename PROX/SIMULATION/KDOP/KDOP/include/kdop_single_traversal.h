@@ -26,7 +26,7 @@ namespace kdop
     template< typename V>
     inline bool contacts_shape_tetrahedron(
       geometry::Sphere<typename V::real_type> const & sphere
-                                           , geometry::Tetrahedron<V> const & tetrahedron
+      , geometry::TetrahedronEigen<typename V::real_type> const & tetrahedron
                                            , std::vector<bool> const & surface_map
                                            , geometry::ContactsCallback<V> & callback
                                            , bool const & should_flip
@@ -69,12 +69,12 @@ namespace kdop
       {
         Tetrahedron const tet = mesh.tetrahedron( node.m_start );
 
-        V const p0 = V::make( X( tet.i() ), Y( tet.i() ), Z( tet.i() ) );
-        V const p1 = V::make( X( tet.j() ), Y( tet.j() ), Z( tet.j() ) );
-        V const p2 = V::make( X( tet.k() ), Y( tet.k() ), Z( tet.k() ) );
-        V const p3 = V::make( X( tet.m() ), Y( tet.m() ), Z( tet.m() ) );
+        const EigenVector3<T> p0 = EigenVector3<T>( X( tet.i() ), Y( tet.i() ), Z( tet.i() ) );
+        const EigenVector3<T> p1 = EigenVector3<T>( X( tet.j() ), Y( tet.j() ), Z( tet.j() ) );
+        const EigenVector3<T> p2 = EigenVector3<T>( X( tet.k() ), Y( tet.k() ), Z( tet.k() ) );
+        const EigenVector3<T> p3 = EigenVector3<T>( X( tet.m() ), Y( tet.m() ), Z( tet.m() ) );
 
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2,p3);
+        geometry::TetrahedronEigen<typename V::real_type> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2,p3);
 
         std::vector<bool> surface(4u, false);
 
@@ -83,7 +83,7 @@ namespace kdop
         surface[2] = surface_map( tet ).m_k;
         surface[3] = surface_map( tet ).m_m;
 
-        contacts_shape_tetrahedron(shape, tetrahedron, surface, callback, should_flip);
+        contacts_shape_tetrahedron<V>(shape, tetrahedron, surface, callback, should_flip);
       }
       else
       {
