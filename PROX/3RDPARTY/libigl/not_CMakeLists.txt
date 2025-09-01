@@ -1,0 +1,14 @@
+# Declare header-only libigl as an INTERFACE target
+add_library(libigl INTERFACE)
+
+# Propagate include path to consumers
+target_include_directories(libigl INTERFACE
+    ${PROJECT_SOURCE_DIR}/PROX/3RDPARTY/libigl/include
+)
+
+# Optional: warnings for Xcode
+if(CMAKE_GENERATOR MATCHES Xcode)
+    set_target_properties(libigl PROPERTIES XCODE_ATTRIBUTE_WARNING_CFLAGS "-Wall")
+endif()
+
+target_link_libraries(PROX PRIVATE libigl)
