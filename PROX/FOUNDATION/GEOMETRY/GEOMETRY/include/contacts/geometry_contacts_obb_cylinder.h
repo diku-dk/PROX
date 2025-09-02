@@ -199,26 +199,24 @@ namespace geometry
       return !feature.empty();
     }
 
-    template<typename V>
+    template<typename T>
     inline unsigned int intersect_line_circle(
-                                                V const & p0
-                                              , V const & p1
-                                              , typename V::real_type const & radius
-                                              , V & i0
-                                              , V & i1
+                                                const EigenVector3<T>& p0
+                                              , const EigenVector3<T>& p1
+                                              , const T& radius
+                                              , EigenVector3<T>& i0
+                                              , EigenVector3<T>& i1
                                               )
     {
       using std::fabs;
       using std::sqrt;
 
-      typedef typename V::real_type          T;
-      typedef typename V::value_traits       VT;
 
-      V const dP = p1-p0;
+      const EigenVector3<T> dP = p1-p0;
 
-      T const a = tiny::inner_prod(dP,dP);
-      T const b = 2*tiny::inner_prod(dP,p0);
-      T const c = tiny::inner_prod(p0,p0) - radius*radius;
+      T const a = dot(dP,dP);
+      T const b = 2*dot(dP,p0);
+      T const c = dot(p0,p0) - radius*radius;
 
 
       assert(is_finite(a) || !"intersect_line_circle(): inf number");
@@ -276,16 +274,13 @@ namespace geometry
     /**
      * Test point for inclusion in the specified quad. This method assumes that points live in cylinder space.
      */
-    template<typename V>
-    inline bool inside_quad(V const & p, std::vector<V> & quad)
+    template<typename T>
+    inline bool inside_quad(const EigenVector3<T>& p, std::vector<EigenVector3<T>> & quad)
     {
-      typedef typename V::real_type          T;
-      typedef typename V::value_traits       VT;
-
       for(unsigned int k = 0u; k < 4u; ++k)
       {
-        V const a = quad[(k+1)%4] - quad[k];
-        V const b = p - quad[k];
+        const EigenVector3<T> a = quad[(k+1)%4] - quad[k];
+        const EigenVector3<T> b = p - quad[k];
 
         T const tst = tiny::cross(a, b)[2];
 
@@ -300,18 +295,15 @@ namespace geometry
     /**
      * This method assumes that all points live in cylinder space.
      */
-    template<typename V>
-    inline void intersect_polygon_circle( std::vector<V> & feature, typename V::real_type const & radius, std::vector<V> & intersection)
+    template<typename T>
+    inline void intersect_polygon_circle( std::vector<EigenVector3<T>> & feature, const T& radius, std::vector<EigenVector3<T>> & intersection)
     {
       using std::cos;
       using std::sin;
 
-      typedef typename V::real_type          T;
-      typedef typename V::value_traits       VT;
-
       if (feature.size()==1u)
       {
-        T const distance = tiny::norm(V::make(feature[0](0), feature[0](1), 0) );
+        T const distance = tiny::norm(EigenVector3<T>(feature[0](0), feature[0](1), 0) );
 
         if (distance <=  radius )
         {
@@ -324,8 +316,8 @@ namespace geometry
 
       if (feature.size()==2u)
       {
-        T const distance0 = tiny::norm(V::make(feature[0](0), feature[0](1), 0) );
-        T const distance1 = tiny::norm(V::make(feature[1](0), feature[1](1), 0) );
+        T const distance0 = norm(EigenVector3<T>(feature[0](0), feature[0](1), 0) );
+        T const distance1 = norm(EigenVector3<T>(feature[1](0), feature[1](1), 0) );
         bool const inside0 = (distance0 <=  radius ) ? true : false;
         bool const inside1 = (distance1 <=  radius ) ? true : false;
 
@@ -337,8 +329,8 @@ namespace geometry
         if (inside0 && !inside1)
         {
 
-          V p0;
-          V p1;
+          EigenVector3<T> p0;
+          EigenVector3<T> p1;
 
           unsigned int const cnt = intersect_line_circle(feature[0], feature[1], radius, p0, p1);
 
@@ -349,8 +341,8 @@ namespace geometry
         }
         if (!inside0 && inside1)
         {
-          V p0;
-          V p1;
+          EigenVector3<T> p0;
+          EigenVector3<T> p1;
 
           unsigned int const cnt = intersect_line_circle(feature[0], feature[1], radius, p0, p1);
 
@@ -361,8 +353,8 @@ namespace geometry
         }
         if (!inside0 && !inside1)
         {
-          V p0;
-          V p1;
+          EigenVector3<T> p0;
+          EigenVector3<T> p1;
 
           unsigned int const cnt = intersect_line_circle(feature[0], feature[1], radius, p0, p1);
 
@@ -385,10 +377,10 @@ namespace geometry
       {
         // First we generate the part of the contact area perimeter that are from quad perimeter
 
-        T const distance0 = tiny::norm(V::make(feature[0](0), feature[0](1), 0) );
-        T const distance1 = tiny::norm(V::make(feature[1](0), feature[1](1), 0) );
-        T const distance2 = tiny::norm(V::make(feature[2](0), feature[2](1), 0) );
-        T const distance3 = tiny::norm(V::make(feature[3](0), feature[3](1), 0) );
+        T const distance0 = norm(EigenVector3<T>(feature[0](0), feature[0](1), 0) );
+        T const distance1 = norm(EigenVector3<T>(feature[1](0), feature[1](1), 0) );
+        T const distance2 = norm(EigenVector3<T>(feature[2](0), feature[2](1), 0) );
+        T const distance3 = norm(EigenVector3<T>(feature[3](0), feature[3](1), 0) );
 
         bool const inside0 = (distance0 <=  radius ) ? true : false;
         bool const inside1 = (distance1 <=  radius ) ? true : false;
@@ -411,8 +403,8 @@ namespace geometry
 
         for(unsigned int k = 0u; k < 4u; ++k)
         {
-          V p0;
-          V p1;
+          EigenVector3<T> p0;
+          EigenVector3<T> p1;
 
           unsigned int const cnt = intersect_line_circle(
                                                          feature[k]
@@ -438,12 +430,12 @@ namespace geometry
         unsigned int const max_samples = 12u;  // Magic number....
 
         T const half_height = (feature[0](2) + feature[1](2) + feature[2](2) + feature[3](2)) / 4;
-        T const dtheta = 2*VT::pi() / max_samples;
+        T const dtheta = 2*std::numbers::pi_v<T> / max_samples;
         T       theta = 0;
 
         for (unsigned int sample = 0u; sample < max_samples; ++sample)
         {
-          V const p = V::make( radius*cos(theta), radius*sin(theta), half_height);
+          const EigenVector3<T> p = EigenVector3<T>( radius*cos(theta), radius*sin(theta), half_height);
 
           if(inside_quad(p, feature))
             intersection.push_back( p );
