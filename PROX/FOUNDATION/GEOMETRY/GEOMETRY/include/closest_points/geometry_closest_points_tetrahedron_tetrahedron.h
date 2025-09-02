@@ -12,16 +12,15 @@
 
 namespace geometry
 {
-  template< typename V>
+  template< typename T>
   inline void closest_points_tetrahedron_tetrahedron(
-                                                     TetrahedronEigen<typename V::real_type> const & A
-                                                     , TetrahedronEigen<typename V::real_type> const & B
-                                                     , EigenVector3<typename V::real_type>& a
-                                                     , EigenVector3<typename V::real_type>& b
-                                                     , typename V::real_type & min_distance
+                                                     TetrahedronEigen<T> const & A
+                                                     , TetrahedronEigen<T> const & B
+                                                     , EigenVector3<T>& a
+                                                     , EigenVector3<T>& b
+                                                     , T& min_distance
                                                      )
   {
-    typedef typename V::real_type     T;
 
     unsigned int const edge[6][2] = {
       {0,  1}

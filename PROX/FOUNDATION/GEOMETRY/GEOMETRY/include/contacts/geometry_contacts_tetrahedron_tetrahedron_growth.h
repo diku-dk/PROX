@@ -282,7 +282,7 @@ namespace geometry
     EigenVector3<T> sB;
 
 
-    closest_points_tetrahedron_tetrahedron<V>(scaled_A, scaled_B, sA, sB, distance );
+    closest_points_tetrahedron_tetrahedron<T>(scaled_A, scaled_B, sA, sB, distance );
 
 
     if( distance == std::numeric_limits<T>::max() )
@@ -315,7 +315,7 @@ namespace geometry
       scaled_A = uniform_scale(tau , A);
       scaled_B = uniform_scale(tau , B);
 
-      closest_points_tetrahedron_tetrahedron<V>(scaled_A, scaled_B, sA, sB, distance );
+      closest_points_tetrahedron_tetrahedron<T>(scaled_A, scaled_B, sA, sB, distance );
 
       ++iteration;
     }
