@@ -38,6 +38,7 @@ namespace narrow
                            , typename geometry::ContactsCallback<typename M::vector3_type> & callback
                            )
     {
+        using T = typename M::real_type;
       using std::min;
 
       typedef typename M::value_traits    VT;
@@ -65,11 +66,10 @@ namespace narrow
           C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
 
           // compute contact point
-          geometry::OBB<M>    const A = geometry::make_obb<M>( shapeAtoWCS.T(), shapeAtoWCS.Q(), a->half_extent());
+          geometry::OBBEigen<T>    const A = geometry::make_obb<T>( toEigen(shapeAtoWCS.T()), toEigen(shapeAtoWCS.Q()), toEigen(a->half_extent()));
           geometry::Sphere<typename V::real_type>  const B = geometry::make_sphere( toEigen(shapeBtoWCS.T()), b->radius());
 
-          geometry::contacts_obb_sphere(
-                                        A
+          geometry::contacts_obb_sphere<M>((A)
                                         , B
                                         , envelope * min(a->scale(), b->scale())
                                         , callback

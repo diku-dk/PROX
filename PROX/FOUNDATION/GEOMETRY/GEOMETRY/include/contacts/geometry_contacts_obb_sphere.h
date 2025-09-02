@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_CONTACTS_OBB_SPHERE_H
 #define GEOMETRY_CONTACTS_OBB_SPHERE_H
 
+#include "tiny_coordsys_functions.h"
 #include <types/geometry_obb.h>
 #include <types/geometry_sphere.h>
 #include <contacts/geometry_contacts_callback.h>
@@ -19,8 +20,7 @@ namespace geometry
    *
    */
   template<typename MT>
-  inline void contacts_obb_sphere(
-                                 OBB<MT> const & A
+  inline void contacts_obb_sphere(OBBEigen<typename MT::real_type> const & A
                                  , Sphere<typename MT::real_type> const & B
                                  , typename MT::real_type const & envelope
                                  , ContactsCallback<typename MT::vector3_type> & callback
@@ -31,31 +31,31 @@ namespace geometry
     typedef typename MT::vector3_type      V;
     typedef typename MT::quaternion_type   Q;
     typedef typename MT::value_traits      VT;
-    typedef typename MT::coordsys_type     C;
+ //   typedef typename MT::coordsys_type     C;
 
     using std::sqrt;
 
     T const & radius = B.radius();
-    V const & ext    = A.half_extent();
+    const EigenVector3<T>& ext    = A.half_extent();
 
-    V const & pA     = A.center();
-    V const & pB     = fromEigen(B.center());
-    Q const & qA     = A.orientation();
-    Q const   qB     = Q::identity();
+    const EigenVector3<T>& pA     = A.center();
+    const EigenVector3<T>& pB     = (B.center());
+    const EigenQuaternion<T>& qA     = A.orientation();
+    const EigenQuaternion<T> qB     = EigenQuaternion<T>::Identity();
 
-    C const AtoWCS   = C::make(pA,qA);
-    C const BtoWCS   = C::make(pB,qB);
+    const CoordSysEigen AtoWCS   = CoordSysEigen<T>::make(pA,qA);
+    const CoordSysEigen BtoWCS   = CoordSysEigen<T>::make(pB,qB);
 
     //--- Transform sphere center into model frame of box
-    C const BtoA = tiny::model_update(BtoWCS,AtoWCS);
-    V const c    = BtoA.T();
+    const CoordSysEigen  BtoA = model_update(BtoWCS,AtoWCS);
+    const EigenVector3<T> c    = BtoA.T();
 
     //--- Cut line from center of box to center of sphere by the box
     //--- faces. This is done in the model frame of the box.
     bool inside = true;
 
-    V p = c;
-    V n = V::zero();
+    EigenVector3<T> p = c;
+    EigenVector3<T> n = EigenVector3<T>(0,0,0);
     T d = 0;
 
     if(c(0) > ext(0))
@@ -109,8 +109,8 @@ namespace geometry
       //--- closest face plus the radius of the sphere.
       int cnt_closest_faces = 0;
 
-      p.clear();
-      V f = ext - tiny::abs( c );
+      p = {0,0,0};
+      EigenVector3<T> f = ext - abs( c );
 
       if(f(0) <= f(1) && f(0) <= f(2))
       {
@@ -137,7 +137,8 @@ namespace geometry
       {
         n = unit(n);
         f = p-c; //--- reuse f
-        d = - sqrt(f*f) - radius;
+        T ff = dot(f,f);
+        d = - sqrt(ff) - radius;
       }
       //p = c - n*r; //--- point on sphere
       p = c - n*(d+radius); //--- point on box
@@ -150,19 +151,19 @@ namespace geometry
       //--- Separation (or penetration) distance is equal to the distance
       //--- between the intersection point and the sphere center (projected
       //--- onto the contact normal) minus the sphere radius.
-      T tmp = sqrt(n*n);
+        T tmp = sqrt(dot(n, n));
       n /= tmp;
-      V diff = c - p;
+      EigenVector3<T> diff = c - p;
       //--- Bug-reported by Stefan Glimberg!!!
       //distance = diff*n - r;
-      d = sqrt(diff*diff) - radius;
+      d = sqrt(dot(diff, diff)) - radius;
     }
     if( d <=  envelope )
     {
       //--- Transform normal and point into WCS
-      p = tiny::xform_point(AtoWCS,p);
-      n = flip ? -tiny::xform_vector(AtoWCS, n) : tiny::xform_vector(AtoWCS, n);
-      callback(p,n,d);
+        p = xform_point<T>(AtoWCS,p);
+      n = flip ? -xform_vector<T>(AtoWCS, n) : xform_vector<T>(AtoWCS, n);
+      callback(fromEigen(p),fromEigen(n),d);
     }
 
   }

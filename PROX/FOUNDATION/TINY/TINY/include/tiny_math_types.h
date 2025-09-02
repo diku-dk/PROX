@@ -144,6 +144,8 @@ inline std::vector<Vec> eigenvecofvecToTiny(std::vector<EigenVector3<typename Ve
     }
 }
 
+
+
 template <typename Vector>
 inline auto dot(Vector a, Vector b)
 {
@@ -421,6 +423,47 @@ inline void getAxisAngle(const EigenQuaternion<T>& Q,EigenVector3<T>& axis, T& t
 
     axis = st2 > 0 ? EigenVector3<T>(Q.x(), Q.y(), Q.z()) / st2 : EigenVector3<T>( 0,0,0 );
 }
+
+template<typename T>
+inline CoordSysEigen<T> model_update(const EigenVector3<T>& TA, const EigenQuaternion<T>& QA, const EigenVector3<T>& TB, const EigenQuaternion<T>& QB)
+{
+    //---
+    //---  p' = RA p + TA         (*1)  from A->WCS
+    //---
+    //---  p = RB^T (p' - TB)     (*2)  from WCS-B
+    //---
+    //--- Insert (*1) into (*2)  A -> B
+    //---
+    //---   p = RB^T ( RA p + TA - TB)
+    //---     =  RB^T  RA p + RB^T (TA - TB)
+    //--- So
+    //---   R = RB^T  RA
+    //---   T = RB^T (TA - TB)
+    //---
+    EigenQuaternion<T> q;
+
+    if(fabs(1- (QA.dot(QB))) < std::numeric_limits<T>::epsilon()*10)
+    {
+        q = EigenQuaternion<T>::Identity();
+    }
+    else
+    {
+        q = ( ( (QB.conjugate())* QA).normalized() );
+    }
+    EigenVector3<T> vecA = (TA - TB);
+    return CoordSysEigen<T>( rotate( (QB).conjugate(), vecA) ,  q);
+}
+template<typename T>
+inline CoordSysEigen<T> model_update(CoordSysEigen<T> const & A, CoordSysEigen<T> const & B)
+{
+    return model_update(A.T(),A.Q(),B.T(),B.Q());
+}
+
+template<typename T>
+inline EigenVector3<T> xform_point(CoordSysEigen<T> const & X, EigenVector3<T> const & p) {    return rotate(X.Q(), p) + X.T();  }
+
+template<typename T>
+inline EigenVector3<T> xform_vector(CoordSysEigen<T> const & X, EigenVector3<T> const & v) { return rotate(X.Q(), v); }
 
 //TINY_MATH_TYPES_H
 #endif

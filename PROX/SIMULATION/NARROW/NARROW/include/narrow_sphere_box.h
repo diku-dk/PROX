@@ -43,6 +43,7 @@ namespace narrow
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
       typedef typename M::vector3_type    V;
+      using T = V::real_type;
 
       typedef typename Geometry<M>::sphere_container::const_iterator    sphere_iterator;
       typedef typename Geometry<M>::box_container::const_iterator       box_iterator;
@@ -67,10 +68,9 @@ namespace narrow
 
           // compute contact point
           geometry::Sphere<typename V::real_type>  const A = geometry::make_sphere( toEigen(shapeAtoWCS.T()), a->radius());
-          geometry::OBB<M >    const B = geometry::make_obb<M>( shapeBtoWCS.T(), shapeBtoWCS.Q(), b->half_extent());
+          geometry::OBBEigen<T>    const B = geometry::make_obb<T>( toEigen(shapeBtoWCS.T()), toEigen(shapeBtoWCS.Q()), toEigen(b->half_extent()));
 
-          geometry::contacts_obb_sphere(
-                                        B
+          geometry::contacts_obb_sphere<M>(B
                                         , A
                                         , envelope * min(a->scale(), b->scale())
                                         , callback

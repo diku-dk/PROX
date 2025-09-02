@@ -77,7 +77,7 @@ template<typename T>
 inline OBBEigen<T> make_obb(
     const EigenVector3<T>& center
     , const EigenQuaternion<T>& orientation
-    , Box<EigenVector3<T>> const & box
+    , BoxEigen<T> const & box
     )
 {
     return OBBEigen<T>( center, orientation, box.half_extent() );
