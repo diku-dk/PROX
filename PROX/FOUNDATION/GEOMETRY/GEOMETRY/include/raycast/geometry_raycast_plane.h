@@ -36,7 +36,7 @@ namespace geometry
     T const w = plane.offset();
 
     // Test if ray is parallel with plane
-    if (fabs(inner_prod(n,r)) <= tiny::working_precision<T>() )
+    if (fabs(inner_prod(n,r)) <= std::numeric_limits<T>::epsilon()*10 )
       return false;
 
     if (only_front_face && inner_prod(n,r) > 0 )

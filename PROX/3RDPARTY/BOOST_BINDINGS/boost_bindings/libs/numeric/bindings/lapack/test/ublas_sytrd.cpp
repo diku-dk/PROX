@@ -52,10 +52,10 @@ int do_value_type() {
    lapack::sytrd( 'U', a, d, e, tau ) ;
 
    for ( int i=0; i<d.size(); ++i) {
-      if (std::abs( d(i) - 2.0 ) > 10 * std::numeric_limits<T>::epsilon() ) return 1 ;
+      if (std::abs( d(i) - 2.0 ) > std::std::numeric_limits<T>::epsilon()*10turn 1 ;
    }
    for ( int i=0; i<e.size(); ++i) {
-      if (std::abs( e(i) + 1.0 ) > 10 * std::numeric_limits<T>::epsilon() ) return 1 ;
+      if (std::abs( e(i) + 1.0 ) > std::std::numeric_limits<T>::epsilon()*10turn 1 ;
    }
 
    return 0 ;

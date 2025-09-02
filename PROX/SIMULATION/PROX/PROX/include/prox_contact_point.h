@@ -94,7 +94,7 @@ namespace prox
 
       typedef typename M::real_type       T;
 
-      T const precision = tiny::working_precision<T>();
+      T const precision = std::numeric_limits<T>::epsilon()*10;
 
       if(this->m_body_i != point.m_body_i)
         return false;

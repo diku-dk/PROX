@@ -40,12 +40,12 @@ namespace geometry
       V const A2  = R.get_column_copy(2);
       V const B   = capsule.point1()- capsule.point0();
 
-      assert( fabs( 1 - inner_prod(A0,A0) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( 1 - inner_prod(A1,A1) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( 1 - inner_prod(A2,A2) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( inner_prod(A0,A1) ) < tiny::working_precision<T>()             || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( inner_prod(A0,A2) ) < tiny::working_precision<T>()             || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( inner_prod(A1,A2) ) < tiny::working_precision<T>()             || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(A0,A0) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(A1,A1) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(A2,A2) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( inner_prod(A0,A1) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( inner_prod(A0,A2) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( inner_prod(A1,A2) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
 
       axes.resize(7u);
 
@@ -62,10 +62,10 @@ namespace geometry
       T const l5 = tiny::norm( axes[5] );
       T const l6 = tiny::norm( axes[6] );
 
-      axes[3]    = (l3 > tiny::working_precision<T>() ) ? axes[3] / l3 : B;
-      axes[4]    = (l4 > tiny::working_precision<T>() ) ? axes[4] / l4 : A0;
-      axes[5]    = (l5 > tiny::working_precision<T>() ) ? axes[5] / l5 : A1;
-      axes[6]    = (l6 > tiny::working_precision<T>() ) ? axes[6] / l6 : A2;
+      axes[3]    = (l3 > std::numeric_limits<T>::epsilon()*10 ) ? axes[3] / l3 : B;
+      axes[4]    = (l4 > std::numeric_limits<T>::epsilon()*10 ) ? axes[4] / l4 : A0;
+      axes[5]    = (l5 > std::numeric_limits<T>::epsilon()*10 ) ? axes[5] / l5 : A1;
+      axes[6]    = (l6 > std::numeric_limits<T>::epsilon()*10 ) ? axes[6] / l6 : A2;
 
       assert( is_number( axes[0](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[0](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -73,7 +73,7 @@ namespace geometry
       assert( is_finite( axes[0](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[0](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[0](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[0],axes[0]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[0],axes[0]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[1](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[1](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -81,7 +81,7 @@ namespace geometry
       assert( is_finite( axes[1](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[1](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[1](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[1],axes[1]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[1],axes[1]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[2](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[2](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -89,7 +89,7 @@ namespace geometry
       assert( is_finite( axes[2](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[2](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[2](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[2],axes[2]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[2],axes[2]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[3](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[3](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -97,7 +97,7 @@ namespace geometry
       assert( is_finite( axes[3](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[3](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[3](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[3],axes[3]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[3],axes[3]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[4](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[4](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -105,7 +105,7 @@ namespace geometry
       assert( is_finite( axes[4](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[4](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[4](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[4],axes[4]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[4],axes[4]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[5](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[5](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -113,7 +113,7 @@ namespace geometry
       assert( is_finite( axes[5](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[5](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[5](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[5],axes[5]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[5],axes[5]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[6](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[6](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -121,7 +121,7 @@ namespace geometry
       assert( is_finite( axes[6](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[6](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[6](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[6],axes[6]) ) < tiny::working_precision<T>() || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - inner_prod(axes[6],axes[6]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
     }
 
   }// end namespace detail

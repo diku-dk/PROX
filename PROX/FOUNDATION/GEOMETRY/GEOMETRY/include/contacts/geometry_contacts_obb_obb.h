@@ -64,20 +64,16 @@ namespace geometry
      *
      * @return            If intersection exists then the return value is true.
      */
-    template<typename MT>
+    template<typename T>
     inline bool compute_edge_obb_face_intersection(
-                                                   typename MT::vector3_type const & a
-                                                   , typename MT::vector3_type const & b
+                                                   const EigenVector3<T>& a
+                                                   , const EigenVector3<T>& b
                                                    , size_t const & face_idx
-                                                   , OBB<MT> const & box
-                                                   , typename MT::vector3_type & p
+                                                   , OBBEigen<T> const & box
+                                                   , EigenVector3<T>& p
                                                    )
     {
       using std::fabs;
-
-      typedef typename MT::vector3_type   V;
-      typedef typename MT::value_traits   VT;
-      typedef typename MT::real_type      T;
 
       assert( face_idx<6u || !"compute_edge_obb_face_intersection(): logic error");
 
@@ -109,7 +105,7 @@ namespace geometry
       assert( i!=k     || !"compute_edge_obb_face_intersection(): logic error");
       assert( j!=k     || !"compute_edge_obb_face_intersection(): logic error");
 
-      V const & e  = box.half_extent();  // just for readabiity
+      const EigenVector3<T>& e  = box.half_extent();  // just for readabiity
       T const   di = b(i) - a(i);
       T const   E  = (face_idx & 0x0001) ? -e(i) : e(i); // pick the positive or negative face plane orthgonal with i'th direction.
 
@@ -171,32 +167,33 @@ namespace geometry
     using std::min;
     using std::max;
 
-    typedef typename MT::vector3_type    V;
     typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
 
-    std::vector<V> a(8u, V::zero());
-    a[0] = transform_from_obb( get_local_corner(0, A), A );
-    a[1] = transform_from_obb( get_local_corner(1, A), A );
-    a[2] = transform_from_obb( get_local_corner(2, A), A );
-    a[3] = transform_from_obb( get_local_corner(3, A), A );
-    a[4] = transform_from_obb( get_local_corner(4, A), A );
-    a[5] = transform_from_obb( get_local_corner(5, A), A );
-    a[6] = transform_from_obb( get_local_corner(6, A), A );
-    a[7] = transform_from_obb( get_local_corner(7, A), A );
+    OBBEigen<T> obbEigenA = obbtoGeometry<MT>(A);
+    OBBEigen<T> obbEigenB = obbtoGeometry<MT>(B);
 
-    std::vector<V> b(8, V::zero());
-    b[0] = transform_from_obb( get_local_corner(0, B), B );
-    b[1] = transform_from_obb( get_local_corner(1, B), B );
-    b[2] = transform_from_obb( get_local_corner(2, B), B );
-    b[3] = transform_from_obb( get_local_corner(3, B), B );
-    b[4] = transform_from_obb( get_local_corner(4, B), B );
-    b[5] = transform_from_obb( get_local_corner(5, B), B );
-    b[6] = transform_from_obb( get_local_corner(6, B), B );
-    b[7] = transform_from_obb( get_local_corner(7, B), B );
+    std::vector<EigenVector3<T>> a(8u, EigenVector3<T>(0,0,0));
+    a[0] = transform_from_obb( get_local_corner(0, obbEigenA), obbEigenA );
+    a[1] = transform_from_obb( get_local_corner(1, obbEigenA), obbEigenA);
+    a[2] = transform_from_obb( get_local_corner(2, obbEigenA), obbEigenA);
+    a[3] = transform_from_obb( get_local_corner(3, obbEigenA), obbEigenA);
+    a[4] = transform_from_obb( get_local_corner(4, obbEigenA), obbEigenA);
+    a[5] = transform_from_obb( get_local_corner(5, obbEigenA), obbEigenA);
+    a[6] = transform_from_obb( get_local_corner(6, obbEigenA), obbEigenA);
+    a[7] = transform_from_obb( get_local_corner(7, obbEigenA), obbEigenA);
 
-    V n;
-    bool const overlap = overlap_obb_obb(a,A,b,B,n);
+    std::vector<EigenVector3<T>> b(8, EigenVector3<T>(0,0,0));
+    b[0] = transform_from_obb( get_local_corner(0, obbEigenB), obbEigenB);
+    b[1] = transform_from_obb( get_local_corner(1, obbEigenB), obbEigenB);
+    b[2] = transform_from_obb( get_local_corner(2, obbEigenB), obbEigenB);
+    b[3] = transform_from_obb( get_local_corner(3, obbEigenB), obbEigenB);
+    b[4] = transform_from_obb( get_local_corner(4, obbEigenB), obbEigenB);
+    b[5] = transform_from_obb( get_local_corner(5, obbEigenB), obbEigenB);
+    b[6] = transform_from_obb( get_local_corner(6, obbEigenB), obbEigenB);
+    b[7] = transform_from_obb( get_local_corner(7, obbEigenB), obbEigenB);
+
+    EigenVector3<T> n;
+    bool const overlap = overlap_obb_obb(a,obbEigenA,b,obbEigenB,n);
 
     if(! overlap )
       return false;
@@ -207,49 +204,49 @@ namespace geometry
     assert( is_finite( n(1) )    || !"contacts_obb_obb(): inf");
     assert( is_number( n(2) )    || !"contacts_obb_obb(): nan");
     assert( is_finite( n(2) )    || !"contacts_obb_obb(): inf");
-    assert( fabs(1 - inner_prod(n,n)) < tiny::working_precision<T>() || !"contacts_obb_obb(): logic error");
+    assert( fabs(1 - dot(n,n)) < std::numeric_limits<T>::epsilon()*10 || !"contacts_obb_obb(): logic error");
 
     std::vector<bool> a_in_b( 8u, false);
-    a_in_b[0] = inside_obb( a[0], B );
-    a_in_b[1] = inside_obb( a[1], B );
-    a_in_b[2] = inside_obb( a[2], B );
-    a_in_b[3] = inside_obb( a[3], B );
-    a_in_b[4] = inside_obb( a[4], B );
-    a_in_b[5] = inside_obb( a[5], B );
-    a_in_b[6] = inside_obb( a[6], B );
-    a_in_b[7] = inside_obb( a[7], B );
+    a_in_b[0] = inside_obb( a[0], obbEigenB);
+    a_in_b[1] = inside_obb( a[1], obbEigenB);
+    a_in_b[2] = inside_obb( a[2], obbEigenB);
+    a_in_b[3] = inside_obb( a[3], obbEigenB);
+    a_in_b[4] = inside_obb( a[4], obbEigenB);
+    a_in_b[5] = inside_obb( a[5], obbEigenB);
+    a_in_b[6] = inside_obb( a[6], obbEigenB);
+    a_in_b[7] = inside_obb( a[7], obbEigenB);
 
     std::vector<bool> b_in_a( 8u, false);
-    b_in_a[0] = inside_obb( b[0], A );
-    b_in_a[1] = inside_obb( b[1], A );
-    b_in_a[2] = inside_obb( b[2], A );
-    b_in_a[3] = inside_obb( b[3], A );
-    b_in_a[4] = inside_obb( b[4], A );
-    b_in_a[5] = inside_obb( b[5], A );
-    b_in_a[6] = inside_obb( b[6], A );
-    b_in_a[7] = inside_obb( b[7], A );
+    b_in_a[0] = inside_obb( b[0], obbEigenA);
+    b_in_a[1] = inside_obb( b[1], obbEigenA);
+    b_in_a[2] = inside_obb( b[2], obbEigenA);
+    b_in_a[3] = inside_obb( b[3], obbEigenA);
+    b_in_a[4] = inside_obb( b[4], obbEigenA);
+    b_in_a[5] = inside_obb( b[5], obbEigenA);
+    b_in_a[6] = inside_obb( b[6], obbEigenA);
+    b_in_a[7] = inside_obb( b[7], obbEigenA);
 
-    std::vector<V> b_local( 8u, V::zero());
-    b_local[0] = transform_to_obb( b[0], A );
-    b_local[1] = transform_to_obb( b[1], A );
-    b_local[2] = transform_to_obb( b[2], A );
-    b_local[3] = transform_to_obb( b[3], A );
-    b_local[4] = transform_to_obb( b[4], A );
-    b_local[5] = transform_to_obb( b[5], A );
-    b_local[6] = transform_to_obb( b[6], A );
-    b_local[7] = transform_to_obb( b[7], A );
+    std::vector<EigenVector3<T>> b_local( 8u, EigenVector3<T>(0,0,0));
+    b_local[0] = transform_to_obb( b[0], obbEigenA);
+    b_local[1] = transform_to_obb( b[1], obbEigenA);
+    b_local[2] = transform_to_obb( b[2], obbEigenA);
+    b_local[3] = transform_to_obb( b[3], obbEigenA);
+    b_local[4] = transform_to_obb( b[4], obbEigenA);
+    b_local[5] = transform_to_obb( b[5], obbEigenA);
+    b_local[6] = transform_to_obb( b[6], obbEigenA);
+    b_local[7] = transform_to_obb( b[7], obbEigenA);
 
-    std::vector<V> a_local( 8u, V::zero() );
-    a_local[0] = transform_to_obb( a[0], B );
-    a_local[1] = transform_to_obb( a[1], B );
-    a_local[2] = transform_to_obb( a[2], B );
-    a_local[3] = transform_to_obb( a[3], B );
-    a_local[4] = transform_to_obb( a[4], B );
-    a_local[5] = transform_to_obb( a[5], B );
-    a_local[6] = transform_to_obb( a[6], B );
-    a_local[7] = transform_to_obb( a[7], B );
+    std::vector<EigenVector3<T>> a_local( 8u, EigenVector3<T>(0,0,0) );
+    a_local[0] = transform_to_obb( a[0], obbEigenB);
+    a_local[1] = transform_to_obb( a[1], obbEigenB);
+    a_local[2] = transform_to_obb( a[2], obbEigenB);
+    a_local[3] = transform_to_obb( a[3], obbEigenB);
+    a_local[4] = transform_to_obb( a[4], obbEigenB);
+    a_local[5] = transform_to_obb( a[5], obbEigenB);
+    a_local[6] = transform_to_obb( a[6], obbEigenB);
+    a_local[7] = transform_to_obb( a[7], obbEigenB);
 
-    std::vector<V> contacts;
+    std::vector<EigenVector3<T>> contacts;
 
     // If a vertex from OBB is inside the other OBB then generate a contact point
     unsigned int cnt_a_in_b = 0u;
@@ -278,13 +275,13 @@ namespace geometry
     {
       for(size_t face_idx=0u; face_idx<6u; ++face_idx)
       {
-        V p;
+        EigenVector3<T> p;
 
-        if( detail::compute_edge_obb_face_intersection( b_local[ LUT(edge_idx,0) ], b_local[ LUT(edge_idx,1) ], face_idx, A, p) )
-          contacts.push_back( transform_from_obb( p, A) );
+        if( detail::compute_edge_obb_face_intersection( b_local[ LUT(edge_idx,0) ], b_local[ LUT(edge_idx,1) ], face_idx, obbEigenA, p) )
+            contacts.push_back( (transform_from_obb<T>( p, obbEigenA)) );
 
-        if( detail::compute_edge_obb_face_intersection( a_local[ LUT(edge_idx,0) ], a_local[ LUT(edge_idx,1) ], face_idx, B, p) )
-          contacts.push_back( transform_from_obb( p, B) );
+        if( detail::compute_edge_obb_face_intersection( a_local[ LUT(edge_idx,0) ], a_local[ LUT(edge_idx,1) ], face_idx, obbEigenB, p) )
+            contacts.push_back( (transform_from_obb<T>( p, obbEigenB)) );
       }
     }
 
@@ -305,9 +302,9 @@ namespace geometry
       //            off... instead it will measure the thinkness of the
       //            embedded box...
 
-      for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
+      for( auto p = contacts.begin(); p!= contacts.end(); ++p)
       {
-        T const d = inner_prod( (*p), n );
+        T const d = dot( (*p), n );
 
         min_val = min( min_val, d );
         max_val = max( max_val, d );
@@ -317,9 +314,9 @@ namespace geometry
 
     T const depth = min_val - max_val;
 
-    V const mid =  n * (max_val + min_val)*0.5f;
+    const EigenVector3<T> mid =  n * (max_val + min_val)*0.5f;
 
-    for( typename std::vector<V>::iterator p = contacts.begin(); p!= contacts.end(); ++p)
+    for( auto p = contacts.begin(); p!= contacts.end(); ++p)
     {
       assert( is_number( (*p)(0) ) || !"contacts_obb_obb(): nan");
       assert( is_finite( (*p)(0) ) || !"contacts_obb_obb(): inf");
@@ -328,7 +325,7 @@ namespace geometry
       assert( is_number( (*p)(2) ) || !"contacts_obb_obb(): nan");
       assert( is_finite( (*p)(2) ) || !"contacts_obb_obb(): inf");
 
-      (*p) = (*p) - inner_prod( n, ( (*p) - mid ) ) * n;
+      (*p) = (*p) - ( n).dot( ( (*p) - mid ) ) * n;
 
       assert( is_number( (*p)(0) ) || !"contacts_obb_obb(): nan");
       assert( is_finite( (*p)(0) ) || !"contacts_obb_obb(): inf");
@@ -341,15 +338,15 @@ namespace geometry
     // Some contacts might have been projected to the same point in the
     // contact plane, so we filter away redundant information before
     // using the callback to report the computed contact point.
-    typename std::vector<V>::iterator p    = contacts.begin();
+    typename std::vector<EigenVector3<T>>::iterator p    = contacts.begin();
     for(; p!= contacts.end(); ++p)
     {
       bool unique = true;
 
-      typename std::vector<V>::iterator q = contacts.begin();
+      typename std::vector<EigenVector3<T>>::iterator q = contacts.begin();
       for(; q != p; ++q)
       {
-        if( tiny::norm_1( (*q) - (*p) ) < tiny::working_precision<T>())
+          if( ( (*q) - (*p) ).cwiseAbs().maxCoeff()  < std::numeric_limits<T>::epsilon()*10)
         {
           unique = false;
           break;
@@ -357,7 +354,7 @@ namespace geometry
       }
 
       if(unique)
-        callback( (*p), n, depth);
+          callback( fromEigen((*p)), fromEigen(n), depth);
     }
 
     return true;

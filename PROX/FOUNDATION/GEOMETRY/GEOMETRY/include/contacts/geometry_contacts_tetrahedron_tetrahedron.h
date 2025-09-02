@@ -211,7 +211,7 @@ namespace geometry
           const EigenVector3<T> AxB   = cross( edgeA, edgeB );
           T const l     = norm(AxB);
 
-          if(l > tiny::working_precision<T>() )
+          if(l > std::numeric_limits<T>::epsilon()*10 )
           {
             const EigenVector3<T> axis = AxB / l;
 
@@ -380,7 +380,7 @@ namespace geometry
           const EigenVector3<T> AxB   = ( edgeA).cross( edgeB );
           T const l     = (AxB).norm();
 
-          if(l > tiny::working_precision<T>() )
+          if(l > std::numeric_limits<T>::epsilon()*10 )
           {
             const EigenVector3<T> axis = AxB / l;
 

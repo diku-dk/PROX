@@ -179,7 +179,7 @@ namespace geometry
       typedef typename std::vector<V>::const_iterator   const_iterator;
       typedef typename std::vector<V>::iterator         iterator;
 
-      T const accuracy = tiny::working_precision<T>();
+      T const accuracy = std::numeric_limits<T>::epsilon()*10;
 
       reduced.clear();
       reduced.reserve( intersections.size() );

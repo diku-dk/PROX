@@ -96,7 +96,7 @@ namespace geometry
       return false;
     if(  !is_finite( cylinder.axis()(2) ) )
       return false;
-    if (  fabs( 1 - norm(cylinder.axis() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(cylinder.axis() ) ) > std::numeric_limits<T>::epsilon()*10 )
       return false;
 
     if( !is_number( cylinder.center()(0) ) )
@@ -174,7 +174,7 @@ namespace geometry
       return false;
     if(  !is_finite( line.direction()(2) ) )
       return false;
-    if (  fabs( 1 - length(line.direction() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - length(line.direction() ) ) > std::numeric_limits<T>::epsilon()*10 )
       return false;
     return true;
   }
@@ -240,7 +240,7 @@ namespace geometry
     if(  !is_finite( obb.orientation().imag()(2) ) )
       return false;
 
-    if (  fabs( 1 - norm(obb.orientation() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(obb.orientation() ) ) > std::numeric_limits<T>::epsilon()*10 )
       return false;
 
     return true;
@@ -267,7 +267,7 @@ namespace geometry
     if(  !is_finite( plane.normal()(2) ) )
       return false;
 
-    if (  fabs( 1 - norm(plane.normal() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(plane.normal() ) ) > std::numeric_limits<T>::epsilon()*10 )
       return false;
 
     if( !is_number( plane.offset() ) )
@@ -312,7 +312,7 @@ namespace geometry
     if(  !is_finite( ray.direction()(2) ) )
       return false;
 
-    if (  fabs( 1 - norm(ray.direction() ) ) > tiny::working_precision<T>() )
+    if (  fabs( 1 - norm(ray.direction() ) ) > std::numeric_limits<T>::epsilon()*10 )
       return false;
     return true;
   }

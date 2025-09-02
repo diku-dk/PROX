@@ -1,14 +1,14 @@
 #ifndef BIG_PRECISION_H
 #define BIG_PRECISION_H
 
-#include <limits>  // for std::numeric_limits<T>::epsilon()
+#include <limits>  // for std::numeric_limits<T>::epsilon()*10
 
 namespace big
 {
   template <typename T>
   inline T machine_precision()
   {
-    return std::numeric_limits<T>::epsilon();
+      return std::numeric_limits<T>::epsilon();
   }
 
   template <typename T>

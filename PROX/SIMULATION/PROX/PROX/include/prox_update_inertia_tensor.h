@@ -102,27 +102,27 @@ namespace prox
         {
           logging << "update_inertia_tensor(): I_body(2,2) was non-positive" << util::Log::newline();
         }
-        if( fabs(I_body(0,1)) <= tiny::working_precision<T>() )
+        if( fabs(I_body(0,1)) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): I_body(0,1) was non-zero" << util::Log::newline();
         }
-        if( fabs(I_body(0,2)) <= tiny::working_precision<T>() )
+        if( fabs(I_body(0,2)) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): I_body(0,2) was non-zero" << util::Log::newline();
         }
-        if( fabs(I_body(1,0)) <= tiny::working_precision<T>() )
+        if( fabs(I_body(1,0)) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): I_body(1,0) was non-zero" << util::Log::newline();
         }
-        if( fabs(I_body(1,2)) <= tiny::working_precision<T>() )
+        if( fabs(I_body(1,2)) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): I_body(1,2) was non-zero" << util::Log::newline();
         }
-        if( fabs(I_body(2,0)) <= tiny::working_precision<T>() )
+        if( fabs(I_body(2,0)) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): I_body(2,0) was non-zero" << util::Log::newline();
         }
-        if( fabs(I_body(2,1)) <= tiny::working_precision<T>() )
+        if( fabs(I_body(2,1)) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): I_body(2,1) was non-zero" << util::Log::newline();
         }
@@ -135,27 +135,27 @@ namespace prox
         T const I02 = R(0,0)*R(0,2) + R(1,0)*R(1,2) + R(2,0)*R(2,2);
         T const I12 = R(0,1)*R(0,2) + R(1,1)*R(1,2) + R(2,1)*R(2,2);
 
-        if( fabs(1-I00) <= tiny::working_precision<T>() )
+        if( fabs(1-I00) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(1-I11) <= tiny::working_precision<T>() )
+        if( fabs(1-I11) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(1-I22) <= tiny::working_precision<T>() )
+        if( fabs(1-I22) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(I01) <= tiny::working_precision<T>() )
+        if( fabs(I01) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(I02) <= tiny::working_precision<T>() )
+        if( fabs(I02) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }
-        if( fabs(I12) <= tiny::working_precision<T>() )
+        if( fabs(I12) <= std::numeric_limits<T>::epsilon()*10 )
         {
           logging << "update_inertia_tensor(): R was not sufficient orthonormal" << util::Log::newline();
         }

@@ -47,14 +47,14 @@ int do_value_type() {
      for (int j=0; j<d.size(); ++j) {
        sum += z(i,j)*z(i,j) * d(j) ;
      }
-     if (std::abs( sum - 2.0 ) > safety_factor*10 * std::numeric_limits<T>::epsilon() ) return 1 ;
+     if (std::abs( sum - 2.0 ) > safety_factor*std::std::numeric_limits<T>::epsilon()*10turn 1 ;
 
      if (i>0) {
        sum = 0.0 ;
        for (int j=0; j<d.size(); ++j) {
          sum += z(i-1,j)*z(i,j) * d(j) ;
        }
-       if (std::abs( sum + 1.0 ) > safety_factor*10 * std::numeric_limits<T>::epsilon() ) return 1 ;
+       if (std::abs( sum + 1.0 ) > safety_factor*std::std::numeric_limits<T>::epsilon()*10turn 1 ;
      }
    }
 

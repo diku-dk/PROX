@@ -139,8 +139,8 @@ BOOST_AUTO_TEST_CASE(raycast_tetrahedron)
 
     for(unsigned int i = 0;i<3u;++i)
     {
-      if(fabs(hit_point(i)) < tiny::working_precision<T>() )
-        BOOST_CHECK_SMALL( q(i),  tiny::working_precision<T>());
+      if(fabs(hit_point(i)) < std::numeric_limits<T>::epsilon()*10 )
+        BOOST_CHECK_SMALL( q(i),  std::numeric_limits<T>::epsilon()*10);
       else
         BOOST_CHECK_CLOSE( q(i),  hit_point(i), 0.01);
     }

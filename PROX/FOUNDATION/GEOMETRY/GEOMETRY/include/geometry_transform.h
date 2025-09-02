@@ -55,6 +55,39 @@ namespace geometry
     return transform_to_obb( p, box, TRANSFORM_POINT() );
   }
 
+  //EIGEN FUNCTIONS
+  template<typename T>
+  inline EigenVector3<T> transform_from_obb(const EigenVector3<T>& p, OBBEigen<T> const & box, TRANSFORM_POINT const & /*tag*/)
+  {
+      return rotate( box.orientation(), p ) + box.center();
+  }
+
+  template<typename T>
+  inline EigenVector3<T> transform_from_obb( const EigenVector3<T>& p, OBBEigen<T> const & box)
+  {
+      return transform_from_obb(p, box, TRANSFORM_POINT() );
+  }
+
+  template<typename T>
+  inline EigenVector3<T> transform_to_obb(const EigenVector3<T>& v, OBBEigen<T> const & box, TRANSFORM_VECTOR const & /*tag*/)
+  {
+      return rotate( ( box.orientation() ).conjugate(), v );
+  }
+
+  template<typename T>
+  inline EigenVector3<T> transform_to_obb(const EigenVector3<T>& p, OBBEigen<T> const & box, TRANSFORM_POINT const & /*tag*/)
+  {
+      EigenQuaternion<T> val = ( box.orientation() ).conjugate();
+      EigenVector3<T> val2 = (p - box.center());
+      return rotate(val, val2 );
+  }
+
+  template<typename T>
+  inline EigenVector3<T> transform_to_obb(const EigenVector3<T>& p, OBBEigen<T> const & box)
+  {
+      return transform_to_obb( p, box, TRANSFORM_POINT() );
+  }
+
   template<typename V>
   inline V transform_to_cylinder( V const & p, Cylinder<V> const & cylinder, TRANSFORM_POINT const & /*tag*/)
   {
@@ -62,7 +95,6 @@ namespace geometry
     using std::min;
     using std::max;
 
-    typedef typename V::value_traits    VT;
     typedef typename V::real_type        T;
     typedef          tiny::MathTypes<T>  MT;
     typedef typename MT::quaternion_type Q;

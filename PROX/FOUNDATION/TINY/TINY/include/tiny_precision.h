@@ -1,7 +1,7 @@
 #ifndef TINY_PRECISION_H
 #define TINY_PRECISION_H
 
-#include <limits>  // for std::numeric_limits<T>::epsilon()
+#include <limits>  // for std::numeric_limits<T>::epsilon()*10
 
 namespace tiny
 {
@@ -14,7 +14,7 @@ namespace tiny
   template <typename T>
   inline T machine_precision()
   {
-    return std::numeric_limits<T>::epsilon();
+    return std::numeric_limits<T>::epsilon()*10;
   }
 
   template <typename T>
@@ -26,7 +26,7 @@ namespace tiny
   template <typename T>
   inline T working_precision(unsigned int scale_factor)
   {
-    return std::numeric_limits<T>::epsilon()*scale_factor;
+    return std::numeric_limits<T>::epsilon()*10*scale_factor;
   }
 
 } // namespace tiny

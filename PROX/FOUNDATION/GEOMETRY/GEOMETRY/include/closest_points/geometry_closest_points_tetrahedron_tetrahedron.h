@@ -145,7 +145,7 @@ namespace geometry
         T const w  =   1 - k*k;
 
         // Test if edges too close to parallel
-        if(fabs(w) < tiny::working_precision<T>())
+        if(fabs(w) < std::numeric_limits<T>::epsilon()*10)
           continue;
 
         // Compute edge-parameters corresponding to closest points

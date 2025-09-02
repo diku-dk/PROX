@@ -41,7 +41,7 @@ namespace geometry
     typedef typename V::real_type         T;
     typedef          tiny::ValueTraits<T> VT;
 
-    T const epsilon = tiny::working_precision<T>();
+    T const epsilon = std::numeric_limits<T>::epsilon()*10;
 
     V const r  =   pointB - pointA;
     T const k  =   tiny::inner_prod(directionA,directionB);
@@ -122,7 +122,7 @@ namespace geometry
       using std::fabs;
 
 
-      T const epsilon = tiny::working_precision<T>();
+      T const epsilon = std::numeric_limits<T>::epsilon()*10;
 
       const EigenVector3<T> r  =   pointB - pointA;
       T const k  =   dot(directionA,directionB);

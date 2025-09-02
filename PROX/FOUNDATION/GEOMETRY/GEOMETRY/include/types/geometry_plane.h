@@ -65,7 +65,7 @@ namespace geometry
     : m_normal( unit(normal) )
     , m_offset(offset)
     {
-      assert(fabs(1 - norm(normal)) < tiny::working_precision<T>() || !"Plane(): Must be unit normal");
+      assert(fabs(1 - norm(normal)) < std::numeric_limits<T>::epsilon()*10 || !"Plane(): Must be unit normal");
     }
 
     Plane(Plane const & plane)
@@ -90,7 +90,7 @@ namespace geometry
   inline Plane<T> make_plane(const EigenVector3<T>& normal, const T& offset)
   {
 
-    assert(fabs(1 - norm(normal)) < tiny::working_precision<T>() || !"make_plane(): Must be unit normal");
+    assert(fabs(1 - norm(normal)) < std::numeric_limits<T>::epsilon()*10 || !"make_plane(): Must be unit normal");
 
     return Plane<T>(normal,offset);
   }

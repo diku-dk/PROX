@@ -32,7 +32,7 @@ namespace geometry
     typedef typename V::value_traits VT;
 
     T const too_far_away      = VT::numeric_cast(0.02); // 2 times the value of the collision envelope
-    T const too_small         = tiny::working_precision<T>();
+    T const too_small         = std::numeric_limits<T>::epsilon()*10;
 
     unsigned int const edge_to_vertex[6][2] = {
         {0,  1}

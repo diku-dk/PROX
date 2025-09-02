@@ -69,6 +69,12 @@ template <typename Number>
 using EigenVector3 = Eigen::Vector<Number, 3>;
 
 template <typename Number>
+using EigenMatrix3 = Eigen::Matrix<Number, 3, 3>;
+
+template <typename Number>
+using EigenQuaternion = Eigen::Quaternion<Number>;
+
+template <typename Number>
 using EigenQuaternion = Eigen::Quaternion<Number>;
 
 
@@ -143,6 +149,13 @@ inline auto dot(Vector a, Vector b)
 {
     return a.dot(b);
 }
+
+template <typename Vector>
+inline auto abs(Vector a)
+{
+    return a.cwiseAbs();
+}
+
 
 template <typename Vector>
 inline auto cross(Vector a, Vector b)

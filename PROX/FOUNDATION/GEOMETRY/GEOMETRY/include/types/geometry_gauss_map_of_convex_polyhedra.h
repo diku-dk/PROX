@@ -129,8 +129,8 @@ namespace geometry
 
       V const & m  = this->m_normals[face_idx];
 
-      assert(  fabs( 1 - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_face(): n was not unit vector" );
-      assert(  fabs( 1 - tiny::norm(m) ) < tiny::working_precision<T>() || !"inside_map_of_face(): m was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(n) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_face(): n was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(m) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_face(): m was not unit vector" );
 
       T const   dot      = tiny::inner_prod(n, m);
       T const   safe_dot = max<T>(-1, min<T>(1, dot ) );
@@ -156,9 +156,9 @@ namespace geometry
       V const & l   = this->m_normals[ lf ];
       V const & r   = this->m_normals[ rf ];
 
-      assert(  fabs( 1 - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): n was not unit vector" );
-      assert(  fabs( 1 - tiny::norm(l) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): l was not unit vector" );
-      assert(  fabs( 1 - tiny::norm(r) ) < tiny::working_precision<T>() || !"inside_map_of_edge(): r was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(n) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_edge(): n was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(l) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_edge(): l was not unit vector" );
+      assert(  fabs( 1 - tiny::norm(r) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_edge(): r was not unit vector" );
 
       V const d        = p1 - p0;
       V const n0       = n - (tiny::inner_prod(n,d)*d / tiny::inner_prod(d,d));
@@ -172,7 +172,7 @@ namespace geometry
 
       // Test if projected normal is too close to orign (means normal
       // is no-where close to the gauss map of the edge)
-      if ( tiny::inner_prod(n0,n0) < tiny::working_precision<T>() )
+      if ( tiny::inner_prod(n0,n0) < std::numeric_limits<T>::epsilon()*10 )
         return false;
 
       V const n1       = tiny::unit(n0);
@@ -260,9 +260,9 @@ namespace geometry
         V const & l   = this->m_normals[ lf ];
         V const & r   = this->m_normals[ rf ];
 
-        assert(  fabs( 1 - tiny::norm(n) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): n was not unit vector" );
-        assert(  fabs( 1 - tiny::norm(l) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): l was not unit vector" );
-        assert(  fabs( 1 - tiny::norm(r) ) < tiny::working_precision<T>() || !"inside_map_of_vertex(): r was not unit vector" );
+        assert(  fabs( 1 - tiny::norm(n) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_vertex(): n was not unit vector" );
+        assert(  fabs( 1 - tiny::norm(l) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_vertex(): l was not unit vector" );
+        assert(  fabs( 1 - tiny::norm(r) ) < std::numeric_limits<T>::epsilon()*10 || !"inside_map_of_vertex(): r was not unit vector" );
 
         V const d = p1 - p0;
 

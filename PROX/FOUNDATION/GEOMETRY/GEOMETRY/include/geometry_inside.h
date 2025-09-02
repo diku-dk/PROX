@@ -110,6 +110,23 @@ namespace geometry
     return true;
   }
 
+  template<typename T>
+  inline bool inside_obb(const EigenVector3<T>& p, OBBEigen<T> const & box)
+  {
+      const EigenVector3<T> p_local =  abs( EigenVector3<T>(transform_to_obb<T>(p, box)  ));
+
+      if( p_local(0) > box.half_extent()(0) )
+          return false;
+
+      if( p_local(1) > box.half_extent()(1) )
+          return false;
+
+      if( p_local(2) > box.half_extent()(2) )
+          return false;
+
+      return true;
+  }
+
   template<typename V>
   inline bool inside_cylinder(V const & p, Cylinder<V> const & cylinder)
   {
