@@ -38,6 +38,7 @@ namespace narrow
 
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
+      using T = M::real_type;
 
       typedef typename Geometry<M>::box_container::const_iterator    box_iterator;
 
@@ -46,22 +47,22 @@ namespace narrow
       if( A.empty() || B.empty())
         return;
 
-      C bodyAtoWCS = C(tA, qA);
-      C bodyBtoWCS = C(tB, qB);
+      CoordSysEigen<T> bodyAtoWCS = CoordSysEigen<T>(toEigen(tA), toEigen(qA));
+      CoordSysEigen<T> bodyBtoWCS = CoordSysEigen<T>(toEigen(tB), toEigen(qB));
 
       for( box_iterator a = A.begin(); a!=A.end(); ++a )
       {
         for( box_iterator b = B.begin(); b!=B.end(); ++b )
         {
-          C shapeAtobodyA = C(a->transform().T(), a->transform().Q());
-          C shapeBtobodyB = C(b->transform().T(), b->transform().Q());
-          C shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
-          C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
+            CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(toEigen(a->transform().T()), toEigen(a->transform().Q()));
+            CoordSysEigen<T> shapeBtobodyB = CoordSysEigen<T>(toEigen(b->transform().T()), toEigen(b->transform().Q()));
+          CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
+          CoordSysEigen<T> shapeBtoWCS = prod(shapeBtobodyB, bodyBtoWCS);
 
-          geometry::OBB<M> const A = geometry::make_obb<M>( shapeAtoWCS.T(), shapeAtoWCS.Q(), a->half_extent());
-          geometry::OBB<M> const B = geometry::make_obb<M>( shapeBtoWCS.T(), shapeBtoWCS.Q(), b->half_extent());
+          geometry::OBBEigen<T> const A = geometry::make_obb<T>( shapeAtoWCS.T(), shapeAtoWCS.Q(), toEigen(a->half_extent()));
+          geometry::OBBEigen<T> const B = geometry::make_obb<T>( shapeBtoWCS.T(), shapeBtoWCS.Q(), toEigen(b->half_extent()));
 
-          geometry::contacts_obb_obb(
+          geometry::contacts_obb_obb<M>(
                                      A
                                      , B
                                      , envelope * min(a->scale(), b->scale())

@@ -165,6 +165,16 @@ inline auto cross(Vector a, Vector b)
     return a.cross(b);
 }
 
+inline EigenQuaternion<float> prodEigen(const EigenQuaternion<float>& a, const EigenQuaternion<float>& b)
+{
+    return a*b;
+}
+
+inline EigenQuaternion<double> prodEigen(const EigenQuaternion<double>& a, const EigenQuaternion<double>& b)
+{
+    return a*b;
+}
+
 template <typename Vector>
 inline auto norm(Vector a)
 {
@@ -464,6 +474,13 @@ inline EigenVector3<T> xform_point(CoordSysEigen<T> const & X, EigenVector3<T> c
 
 template<typename T>
 inline EigenVector3<T> xform_vector(CoordSysEigen<T> const & X, EigenVector3<T> const & v) { return rotate(X.Q(), v); }
+
+template<typename T>
+inline CoordSysEigen<T> prod(CoordSysEigen<T> const & L, CoordSysEigen<T> const & R)
+{
+    return CoordSysEigen<T>(    rotate(L.Q(), R.T() )  +  L.T() , ( prodEigen( L.Q() , R.Q()) ).normalized() );
+}
+
 
 //TINY_MATH_TYPES_H
 #endif

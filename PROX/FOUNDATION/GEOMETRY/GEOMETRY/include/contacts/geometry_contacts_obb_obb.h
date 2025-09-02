@@ -157,8 +157,8 @@ namespace geometry
    */
   template<typename MT>
   inline bool contacts_obb_obb(
-                               OBB<MT> const & A
-                               , OBB<MT> const & B
+                               OBBEigen<typename MT::real_type > const & obbEigenA
+                               , OBBEigen<typename MT::real_type > const & obbEigenB
                                , typename MT::real_type const & envelope
                                , ContactsCallback<typename MT::vector3_type>  & callback
                                )
@@ -168,9 +168,6 @@ namespace geometry
     using std::max;
 
     typedef typename MT::real_type       T;
-
-    OBBEigen<T> obbEigenA = obbtoGeometry<MT>(A);
-    OBBEigen<T> obbEigenB = obbtoGeometry<MT>(B);
 
     std::vector<EigenVector3<T>> a(8u, EigenVector3<T>(0,0,0));
     a[0] = transform_from_obb( get_local_corner(0, obbEigenA), obbEigenA );
