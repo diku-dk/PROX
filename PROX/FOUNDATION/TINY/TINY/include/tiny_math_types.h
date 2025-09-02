@@ -113,14 +113,12 @@ inline typename tiny::MathTypes<double>::vector3_type fromEigen(typename tiny::M
 
 inline EigenQuaternion<float> toEigen(typename tiny::MathTypes<float>::quaternion_type input)
 {
-    typename tiny::MathTypes<float>::vector3_type vec;
-    return {input.real(), vec(0), vec(1), vec(2)};
+    return {input.real(), input(0), input(1), input(2)};
 }
 
 inline EigenQuaternion<double> toEigen(typename tiny::MathTypes<double>::quaternion_type input)
 {
-    typename tiny::MathTypes<double>::vector3_type vec;
-    return {input.real(), vec(0), vec(1), vec(2)};
+    return {input.real(), input(0), input(1), input(2)};
 }
 
 inline typename tiny::MathTypes<float>::quaternion_type fromEigen(EigenQuaternion<float> input)

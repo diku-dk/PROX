@@ -457,6 +457,7 @@ namespace geometry
       const EigenVector3<T> B1  = R_b.col(1);
       const EigenVector3<T> B2  = R_b.col(2);
 
+
       assert( fabs( 1 - dot(B0,B0) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( 1 - dot(B1,B1) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_obb_sat_axes(): logic error");
       assert( fabs( 1 - dot(B2,B2) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_obb_sat_axes(): logic error");
