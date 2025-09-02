@@ -37,8 +37,8 @@ namespace geometry
      *
      * @return               If a feature was extracted then the return value is true otherwise it is false.
      */
-    template<typename V>
-    inline bool extract_feature_from_bitmask(int const & bitmask, std::vector<V> const & corners, std::vector<V> & feature)
+    template<typename T>
+    inline bool extract_feature_from_bitmask(int const & bitmask, std::vector<EigenVector3<T>> const & corners, std::vector<EigenVector3<T>> & feature)
     {
       assert(corners.size() == 8u || !"extract_feature_from_bitmask():  Internal error there must be 8 corners.");
 
@@ -467,25 +467,22 @@ namespace geometry
    * @param flip              Set to true when using this to test cylinder versus box
    *                          (ie when objects order are swapped)
    */
-  template<typename MT>
+  template<typename T>
   inline bool contacts_obb_cylinder(
-                                    OBB<MT> const & A
-                                    , Cylinder<typename MT::vector3_type> const & B
-                                    , typename MT::real_type const & envelope
-                                    , ContactsCallback<typename MT::vector3_type> & callback
+                                    OBB<T> const & A
+                                    , Cylinder<EigenVector3<T>> const & B
+                                    , T const & envelope
+                                    , ContactsCallback<EigenVector3<T>> & callback
                                     , bool const flip = false
                                     )
   {
     using std::min;
     using std::max;
 
-    typedef typename MT::vector3_type       V;
-    typedef typename MT::real_type          T;
-    typedef typename MT::value_traits       VT;
 
     //--- First do a quick rejection test by approximating the cylinder with
     //--- a capsule and using a fast overlap test
-    Capsule<V> const & cap = convert(B);
+    Capsule<T> const & cap = convert(B);
 
     if(! overlap_obb_capsule(A,cap))
       return false;
@@ -494,8 +491,8 @@ namespace geometry
     //--- space and classify the corners position with respect to the cylinder.
     T const half_height = B.half_height();
 
-    std::vector<V> a(8u, V::zero());              // OBB corners in world space
-    std::vector<V> b(8u, V::zero());              // OBB corners in cylinder space
+    std::vector<EigenVector3<T>> a(8u, EigenVector3<T>(0,0,0));              // OBB corners in world space
+    std::vector<EigenVector3<T>> b(8u, EigenVector3<T>(0,0,0));              // OBB corners in cylinder space
     unsigned int cnt_above = 0u;                  // count the number of vertices above top cap
     unsigned int cnt_below = 0u;                  // count the number of vertices below bottom cap
     std::vector<bool> on_top_cap(8u, false);      // flag that is true if vertex is exactl on top cap
@@ -526,7 +523,7 @@ namespace geometry
         continue;
       }
 
-      T const distance = tiny::norm( V::make(b[i](0), b[i](1), 0) );
+      T const distance = norm( EigenVector3<T>(b[i](0), b[i](1), 0) );
 
       if( distance > B.radius() )
         continue;
@@ -568,20 +565,20 @@ namespace geometry
     //---- Test if we only have vertices on top cap and nothing below
     if( top_bit_mask != 0  && !cnt_below && !inbeween )
     {
-      std::vector<V> feature;
+      std::vector<EigenVector3<T>> feature;
 
       if(detail::extract_feature_from_bitmask(top_bit_mask, b, feature))
       {
-        std::vector<V> intersection_points;
+        std::vector<EigenVector3<T>> intersection_points;
 
         detail::intersect_polygon_circle(feature, B.radius(), intersection_points );
 
-        for (typename std::vector<V>::const_iterator p = intersection_points.begin(); p != intersection_points.end(); ++p)
+        for (typename std::vector<EigenVector3<T>>::const_iterator p = intersection_points.begin(); p != intersection_points.end(); ++p)
         {
-          V const  point      = transform_from_cylinder(*p, B);
-          V const  normal     = flip ? B.axis() : -B.axis();
+          const EigenVector3<T> point      = transform_from_cylinder(*p, B);
+          const EigenVector3<T> normal     = flip ? B.axis() : -B.axis();
           T const  distance   = 0;
-          callback(point, normal, distance);
+          callback(fromEigen(point), fromEigen(normal), distance);
         }
       }
       return ! feature.empty();
@@ -591,18 +588,18 @@ namespace geometry
     //---- Test if we only have vertices on bottom cap and nothing above
     if( bottom_bit_mask != 0 && !cnt_above && !inbeween)
     {
-      std::vector<V> feature;
+      std::vector<EigenVector3<T>> feature;
 
       if(detail::extract_feature_from_bitmask(bottom_bit_mask, b, feature))
       {
-        std::vector<V> intersection_points;
+        std::vector<EigenVector3<T>> intersection_points;
 
         detail::intersect_polygon_circle(feature, B.radius(), intersection_points );
 
-        for (typename std::vector<V>::const_iterator p = intersection_points.begin(); p != intersection_points.end(); ++p)
+        for (typename std::vector<EigenVector3<T>>::const_iterator p = intersection_points.begin(); p != intersection_points.end(); ++p)
         {
-          V const  point      = transform_from_cylinder(*p, B);
-          V const  normal     = flip ? -B.axis() : B.axis();
+          const EigenVector3<T> point      = transform_from_cylinder(*p, B);
+          const EigenVector3<T> normal     = flip ? -B.axis() : B.axis();
           T const  distance   = 0;
           callback(point, normal, distance);
         }
