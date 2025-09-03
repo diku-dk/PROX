@@ -35,7 +35,7 @@ namespace content
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_box<MT>( width, height, depth, submesh, subX, subY, subZ);
+      mesh_array::make_box<typename MT::real_type>( width, height, depth, submesh, subX, subY, subZ);
 
       float x;
       float y;

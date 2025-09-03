@@ -6,95 +6,86 @@
 #include <tiny_math_types.h>
 
 
-
 namespace mesh_array
 {
 
-  template<typename MT>
-  void make_box(
-                     typename MT::real_type const & width
-                     , typename MT::real_type const & height
-                     , typename MT::real_type const & depth
+  template<typename T>
+  void make_box(const T& width
+                     , const T& height
+                     , const T& depth
                      , T3Mesh & mesh
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & Z
+                     , VertexAttribute<T,T3Mesh> & X
+                     , VertexAttribute<T,T3Mesh> & Y
+                     , VertexAttribute<T,T3Mesh> & Z
                      )
   {
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::vector3_type    V;
+        const EigenVector3<T> v0 = EigenVector3<T>( - width, -height, depth )*0.5f;
+        const EigenVector3<T> v1 = EigenVector3<T>(   width, -height, depth )*0.5f;
+        const EigenVector3<T> v2 = EigenVector3<T>(   width,  height, depth )*0.5f;
+        const EigenVector3<T> v3 = EigenVector3<T>( - width,  height, depth )*0.5f;
+        const EigenVector3<T> v4 =  v0 - EigenVector3<T>( 0, 0, depth );
+        const EigenVector3<T> v5 =  v1 - EigenVector3<T>( 0, 0, depth );
+        const EigenVector3<T> v6 =  v2 - EigenVector3<T>( 0, 0, depth );
+        const EigenVector3<T> v7 =  v3 - EigenVector3<T>( 0, 0, depth );
 
-        V const v0 = V::make( - width, -height, depth )*0.5f;
-        V const v1 = V::make(   width, -height, depth )*0.5f;
-        V const v2 = V::make(   width,  height, depth )*0.5f;
-        V const v3 = V::make( - width,  height, depth )*0.5f;
-        V const v4 =  v0 - V::make( 0, 0, depth );
-        V const v5 =  v1 - V::make( 0, 0, depth );
-        V const v6 =  v2 - V::make( 0, 0, depth );
-        V const v7 =  v3 - V::make( 0, 0, depth );
-
-        make_cuboid<typename MT::real_type>( toEigen(v0), toEigen(v1), toEigen(v2), toEigen(v3), toEigen(v4), toEigen(v5), toEigen(v6), toEigen(v7), mesh, X, Y, Z );
+        make_cuboid<T>( (v0), (v1), (v2), (v3), (v4), (v5), (v6), (v7), mesh, X, Y, Z );
     }
 
-  template<typename MT>
+  /*template<typename T>
   void make_box(
-                typename MT::real_type const & width
-                , typename MT::real_type const & height
-                , typename MT::real_type const & depth
+                const T& width
+                , const T& height
+                , const T& depth
                 , T3Mesh & mesh
-                , VertexAttribute<typename MT::vector3_type,T3Mesh> & coords
+                , VertexAttribute<T,T3Mesh> & coords
                 )
   {
-    typedef typename MT::vector3_type    V;
+    IndexedVertexAttributeEigen<T,T3Mesh> X = IndexedVertexAttributeEigen<T,T3Mesh>(0, coords);
+    IndexedVertexAttributeEigen<T,T3Mesh> Y = IndexedVertexAttributeEigen<T,T3Mesh>(1, coords);
+    IndexedVertexAttributeEigen<T,T3Mesh> Z = IndexedVertexAttributeEigen<T,T3Mesh>(2, coords);
 
-    IndexedVertexAttribute<V,T3Mesh> X = IndexedVertexAttribute<V,T3Mesh>(0, coords);
-    IndexedVertexAttribute<V,T3Mesh> Y = IndexedVertexAttribute<V,T3Mesh>(1, coords);
-    IndexedVertexAttribute<V,T3Mesh> Z = IndexedVertexAttribute<V,T3Mesh>(2, coords);
+    make_box<T>(width,height,depth,mesh,X,Y,Z);
+  }*/
 
-    make_box<MT>(width,height,depth,mesh,X,Y,Z);
-  }
-
-  using MTf = tiny::MathTypes<float>;
-  using MTd = tiny::MathTypes<double>;
 
   template
-  void make_box<MTf>(
-                MTf::real_type const & width
-                , MTf::real_type const & height
-                , MTf::real_type const & depth
+  void make_box<float>(
+                float const & width
+                , float const & height
+                , float const & depth
                 , T3Mesh & mesh
-                , VertexAttribute<MTf::real_type,T3Mesh> & X
-                , VertexAttribute<MTf::real_type,T3Mesh> & Y
-                , VertexAttribute<MTf::real_type,T3Mesh> & Z
+                , VertexAttribute<float,T3Mesh> & X
+                , VertexAttribute<float,T3Mesh> & Y
+                , VertexAttribute<float,T3Mesh> & Z
                 );
 
   template
-  void make_box<MTd>(
-                MTd::real_type const & width
-                , MTd::real_type const & height
-                , MTd::real_type const & depth
+  void make_box<double>(
+                double const & width
+                , double const & height
+                , double const & depth
                 , T3Mesh & mesh
-                , VertexAttribute<MTd::real_type,T3Mesh> & X
-                , VertexAttribute<MTd::real_type,T3Mesh> & Y
-                , VertexAttribute<MTd::real_type,T3Mesh> & Z
+                , VertexAttribute<double,T3Mesh> & X
+                , VertexAttribute<double,T3Mesh> & Y
+                , VertexAttribute<double,T3Mesh> & Z
                 );
 
-  template
-  void make_box<MTf>(
-                     MTf::real_type const & width
-                     , MTf::real_type const & height
-                     , MTf::real_type const & depth
+/*  template
+  void make_box<float>(
+                     float const & width
+                     , float const & height
+                     , float const & depth
                      , T3Mesh & mesh
-                     , VertexAttribute<MTf::vector3_type,T3Mesh> & coords
+                     , VertexAttribute<float,T3Mesh> & coords
                      );
 
   template
-  void make_box<MTd>(
-                     MTd::real_type const & width
-                     , MTd::real_type const & height
-                     , MTd::real_type const & depth
+  void make_box<double>(
+                     double const & width
+                     , double const & height
+                     , double const & depth
                      , T3Mesh & mesh
-                     , VertexAttribute<MTd::vector3_type,T3Mesh> & coords
-                     );
+                     , VertexAttribute<double,T3Mesh> & coords
+                     );*/
 
 } //namespace mesh_array

@@ -379,7 +379,7 @@ ProxEngine::ProxEngine()
       mesh_array::VertexAttribute<T, mesh_array::T3Mesh> surface_Y;
       mesh_array::VertexAttribute<T, mesh_array::T3Mesh> surface_Z;
 
-      mesh_array::make_box<MT>(
+      mesh_array::make_box<typename MT::real_type>(
                                width
                                , height
                                , depth
