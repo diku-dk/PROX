@@ -107,7 +107,7 @@ namespace geometry
   }
 
   template<typename T>
-  inline bool inside_cylinder(const EigenVector3<T>& p, Cylinder<T> const & cylinder)
+  inline bool inside_cylinder(const EigenVector3<T>& p, CylinderEigen<T> const & cylinder)
   {
     const EigenVector3<T> p_local     =  abs( transform_to_cylinder( p, cylinder) );
     T const half_height = cylinder.height()/2;

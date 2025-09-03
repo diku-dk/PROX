@@ -88,59 +88,53 @@ namespace geometry
       return transform_to_obb( p, box, TRANSFORM_POINT() );
   }
 
-  template<typename V>
-  inline V transform_to_cylinder( V const & p, Cylinder<V> const & cylinder, TRANSFORM_POINT const & /*tag*/)
+  template<typename T>
+  inline EigenVector3<T> transform_to_cylinder( const EigenVector3<T> & p, CylinderEigen<T> const & cylinder, TRANSFORM_POINT const & /*tag*/)
   {
     using std::acos;
     using std::min;
     using std::max;
 
-    typedef typename V::real_type        T;
-    typedef          tiny::MathTypes<T>  MT;
-    typedef typename MT::quaternion_type Q;
 
 
       // A cylinders default orientation is with axis aligned with V::k() axis
-    V const axis = cross(V::k(), cylinder.axis());
+    const EigenVector3<T> axis = cross(EigenVector3<T>(0,0,1), cylinder.axis());
 
-    const auto angle = acos(min<T>(1, max<T>(-1, inner_prod(V::k(), cylinder.axis()))));
+    const auto angle = acos(min<T>(1, max<T>(-1, dot({0,0,1}, cylinder.axis()))));
 
-    Q const orientation = Q::Ru( angle, axis);
+    const EigenQuaternion<T> orientation = Rotateu( angle, axis);
 
     return rotate( conj( orientation ), (p - cylinder.center()) );
   }
 
-  template<typename V>
-  inline V transform_to_cylinder( V const & p, Cylinder<V> const & cylinder )
+  template<typename T>
+  inline EigenVector3<T> transform_to_cylinder(const EigenVector3<T>& p, CylinderEigen<T> const & cylinder )
   {
     return transform_to_cylinder( p, cylinder, TRANSFORM_POINT() );
   }
 
-  template<typename V>
-  inline V transform_from_cylinder( V const & p, Cylinder<V> const & cylinder, TRANSFORM_POINT const & /*tag*/)
+  template<typename T>
+  inline EigenVector3<T> transform_from_cylinder( const EigenVector3<T>& p, CylinderEigen<T> const & cylinder, TRANSFORM_POINT const & /*tag*/)
   {
     using std::acos;
     using std::min;
     using std::max;
 
-    typedef typename V::value_traits    VT;
-    typedef typename V::real_type        T;
-    typedef          tiny::MathTypes<T>  MT;
-    typedef typename MT::quaternion_type Q;
+
 
 
       // A cylinders default orientation is with axis aligned with V::k() axis
-    V const axis        =  cross( V::k(), cylinder.axis());
+    const EigenVector3<T> axis        =  cross( EigenVector3<T>(0,0,1), cylinder.axis());
 
-    T const angle = acos(min<T>(1, max<T>(-1, inner_prod(V::k(), cylinder.axis()))));
+    T const angle = acos(min<T>(1, max<T>(-1, dot(EigenVector3<T>(0,0,1), cylinder.axis()))));
 
-    Q const orientation = Q::Ru( angle, axis);
+    const EigenQuaternion<T> orientation = Rotateu( angle, axis);
 
     return rotate( orientation , p ) + cylinder.center();
   }
 
-  template<typename V>
-  inline V transform_from_cylinder( V const & p, Cylinder<V> const & cylinder )
+  template<typename T>
+  inline EigenVector3<T> transform_from_cylinder( const EigenVector3<T>& p, CylinderEigen<T> const & cylinder )
   {
     return transform_from_cylinder( p, cylinder, TRANSFORM_POINT());
   }
