@@ -12,8 +12,6 @@ namespace geometry
   class Interval
   {
   protected:
-      using VT = tiny::ValueTraits<T>;
-
       T m_lower;
       T m_upper;
 

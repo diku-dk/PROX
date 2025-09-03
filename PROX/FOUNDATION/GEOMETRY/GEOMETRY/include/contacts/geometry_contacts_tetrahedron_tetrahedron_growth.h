@@ -321,24 +321,24 @@ namespace geometry
 
     const EigenVector3<T> s = (sB-sA).normalized();
 
-    static GaussMapOfConvexPolyhedra<V> G = make_gauss_map( Tetrahedron<V>() );
+    static GaussMapOfConvexPolyhedra<T> G = make_gauss_map( TetrahedronEigen<T>() );
 
     //G.set_tolerance_in_degrees(50.0);
 
-    V nA;
-    V nB;
+    EigenVector3<T> nA;
+    EigenVector3<T> nB;
 
-    std::vector<V> pointsA;
-    std::vector<V> pointsB;
+    std::vector<EigenVector3<T>> pointsA;
+    std::vector<EigenVector3<T>> pointsB;
 
-    update_gauss_map(G,tetrahedronFromEigen<V>(A));
-    G.search_for_feature(fromEigen(s), pointsA, nA);
+    update_gauss_map(G,(A));
+    G.search_for_feature((s), pointsA, nA);
 
-    update_gauss_map(G,tetrahedronFromEigen<V>(B));
-    G.search_for_feature(-fromEigen(s), pointsB, nB);
+    update_gauss_map<T>(G,(B));
+    G.search_for_feature(-(s), pointsB, nB);
 
     // Determine contact normal from highest dimensional feature
-    const EigenVector3<T> normal = pointsA.size() >=  pointsB.size() ? toEigen(nA) : toEigen(-nB);
+    const EigenVector3<T> normal = pointsA.size() >=  pointsB.size() ? (nA) : (-nB);
 
     std::vector<EigenVector3<T>> intersections;
     details::compute_intersection_points<V>(A, B, intersections);

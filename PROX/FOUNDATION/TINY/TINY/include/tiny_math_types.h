@@ -479,6 +479,17 @@ inline CoordSysEigen<T> prod(CoordSysEigen<T> const & L, CoordSysEigen<T> const 
     return CoordSysEigen<T>(    rotate(L.Q(), R.T() )  +  L.T() , ( prodEigen( L.Q() , R.Q()) ).normalized() );
 }
 
+template<typename T>
+static T convert_to_degrees_eigen(T const & radians)
+{
+    return radians*boost::numeric_cast<T>(57.295779513082320876798154814105);
+}
+
+template<typename T>
+static T convert_to_radians_eigen(T const & degrees)
+{
+    return degrees*boost::numeric_cast<T>(0.017453292519943295769236907684886);
+}
 
 //TINY_MATH_TYPES_H
 #endif
