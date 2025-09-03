@@ -14,16 +14,13 @@ namespace geometry
 {
 
 
-  template<typename V>
-  inline V make_intersection(Line<V> const & L, Plane<V> const & P)
+  template<typename T>
+  inline T make_intersection(Line<T> const & L, Plane<T> const & P)
   {
     using std::fabs;
-
-    typedef typename V::real_type    T;
-
-    V const & o       = L.point();
-    V const & d       = L.direction();
-    V const & n       = P.normal();
+    const EigenVector3<T>& o       = L.point();
+    const EigenVector3<T>& d       = L.direction();
+    const EigenVector3<T>& n       = P.normal();
     T const & w       = P.offset();
 
     //
@@ -45,14 +42,14 @@ namespace geometry
     //
     //
 
-    T const   n_dot_d = inner_prod( n, d );
+    T const   n_dot_d = dot( n, d );
 
     assert( is_number(n_dot_d)         || !"make_intersection(): NaN encountered");
     assert( is_finite(n_dot_d)         || !"make_intersection(): Inf encountered");
     assert(fabs( n_dot_d) > 0 || !"make_intersection(): line was parallel withe plane");
 
 
-    T const   n_dot_o = inner_prod( n, o );
+    T const   n_dot_o = dot( n, o );
 
     assert( is_number(n_dot_o)         || !"make_intersection(): NaN encountered");
     assert( is_finite(n_dot_o)         || !"make_intersection(): Inf encountered");
@@ -61,7 +58,7 @@ namespace geometry
 
     assert( is_number(t)               || !"make_intersection(): NaN encountered");
     assert( is_finite(t)               || !"make_intersection(): Inf encountered");
-    V const   p       = o + t*d;
+    const  EigenVector3<T> p       = o + t*d;
 
     assert( is_number(p(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(p(0))               || !"make_intersection(): Inf encountered");
@@ -73,10 +70,10 @@ namespace geometry
     return p;
   }
 
-  template<typename V>
-  inline Line<V> make_intersection( Plane<V> const & A,  Plane<V> const & B)
+  template<typename T>
+  inline Line<T> make_intersection( Plane<T> const & A,  Plane<T> const & B)
   {
-    V const D = cross( A.normal(), B.normal() );
+    const EigenVector3<T> D = cross( A.normal(), B.normal() );
 
     assert( inner_prod(D,D) > 0 || !"make_intersection(): error planes are coplanar");
     assert( is_number(D(0))               || !"make_intersection(): NaN encountered");
@@ -86,7 +83,7 @@ namespace geometry
     assert( is_number(D(2))               || !"make_intersection(): NaN encountered");
     assert( is_finite(D(2))               || !"make_intersection(): Inf encountered");
 
-    V const d = unit( D );
+    const EigenVector3<T> d = unit( D );
 
     assert( is_number(d(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(d(0))               || !"make_intersection(): Inf encountered");
@@ -96,7 +93,7 @@ namespace geometry
     assert( is_finite(d(2))               || !"make_intersection(): Inf encountered");
 
     // Get a point on plane A
-    V const pA = A.normal()*A.offset();
+    const EigenVector3<T> pA = A.normal()*A.offset();
 
     assert( is_number(pA(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(pA(0))               || !"make_intersection(): Inf encountered");
@@ -106,7 +103,7 @@ namespace geometry
     assert( is_finite(pA(2))               || !"make_intersection(): Inf encountered");
 
     // Direction on plane A towards plane B
-    V const r = unit(cross( A.normal(), d ));
+    const EigenVector3<T> r = unit(cross( A.normal(), d ));
 
     assert( is_number(r(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(r(0))               || !"make_intersection(): Inf encountered");
@@ -119,9 +116,9 @@ namespace geometry
     //
     // Since line (pA, r) is on plane A then the intersection point with B will be a point both on plane A and B.
     //
-    Line<V> const L(pA, r);
+    Line<T> const L(pA, r);
 
-    V const o = make_intersection(L, B);
+    const EigenVector3<T> o = make_intersection(L, B);
 
     assert( is_number(o(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(o(0))               || !"make_intersection(): Inf encountered");
@@ -133,10 +130,10 @@ namespace geometry
     return make_line(o, d, FROM_DIRECTION() );
   }
 
-  template<typename V>
-  inline V make_intersection(Plane<V> const & A, Plane<V> const & B, Plane<V> const & C)
+  template<typename T>
+  inline EigenVector3<T> make_intersection(Plane<T> const & A, Plane<T> const & B, Plane<T> const & C)
   {
-    Line<V> const L = make_intersection(A,B);
+    Line<T> const L = make_intersection(A,B);
     return make_intersection(L,C);
   }
 
