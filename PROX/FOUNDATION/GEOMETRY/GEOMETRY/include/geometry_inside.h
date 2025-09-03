@@ -52,12 +52,10 @@ namespace geometry
     return ! outside_dop(p, dop);
   }
 
-  template<typename V>
-  inline bool inside_sphere(V const & p, Sphere<V> const & sphere)
+  template<typename T>
+  inline bool inside_sphere(const EigenVector3<T>& p, Sphere<T> const & sphere)
   {
-    typedef typename V::real_type      T;
-
-    V const p_local          =  p-sphere.center();
+    const EigenVector3<T> p_local          =  p-sphere.center();
     T const distance_squared = tiny::inner_prod( p_local, p_local );
 
     if (distance_squared > sphere.radius()*sphere.radius() )
@@ -91,25 +89,6 @@ namespace geometry
     return true;
   }
 
-  template<typename MT>
-  inline bool inside_obb(typename MT::vector3_type const & p, OBB<MT> const & box)
-  {
-    typedef typename MT::vector3_type V;
-
-    V const p_local =  abs( transform_to_obb(p, box)  );
-
-    if( p_local(0) > box.half_extent()(0) )
-      return false;
-
-    if( p_local(1) > box.half_extent()(1) )
-      return false;
-
-    if( p_local(2) > box.half_extent()(2) )
-      return false;
-
-    return true;
-  }
-
   template<typename T>
   inline bool inside_obb(const EigenVector3<T>& p, OBBEigen<T> const & box)
   {
@@ -127,51 +106,19 @@ namespace geometry
       return true;
   }
 
-  template<typename V>
-  inline bool inside_cylinder(V const & p, Cylinder<V> const & cylinder)
+  template<typename T>
+  inline bool inside_cylinder(const EigenVector3<T>& p, Cylinder<T> const & cylinder)
   {
-    typedef typename V::value_traits  VT;
-    typedef typename V::real_type      T;
-
-    V const p_local     =  abs( transform_to_cylinder( p, cylinder) );
+    const EigenVector3<T> p_local     =  abs( transform_to_cylinder( p, cylinder) );
     T const half_height = cylinder.height()/2;
 
     if ( p_local(2) > half_height )
       return false;
 
-    T const distance = tiny::norm(V::make(p_local(0), p_local(1), 0) );
+    T const distance = norm(EigenVector3<T>(p_local(0), p_local(1), 0) );
 
     if (distance > cylinder.radius() )
       return false;
-
-    return true;
-  }
-
-  template<typename V>
-  inline bool inside_triangle(
-                              V const & p
-                              , Triangle<V> const & triangle
-                              , bool const & test_face_plane = true
-                              )
-  {
-    typedef typename V::value_traits   VT;
-
-    Plane<V> const plane = make_plane(triangle);
-
-    if (test_face_plane && get_distance(p, plane) > 0 )
-      return false;
-
-    for (unsigned int k=0u; k < 3u; ++k)
-    {
-      V const & p0 = triangle.p(  k       );
-      V const & p1 = triangle.p( (k+1)%3u );
-      V const   p2 = p1 + plane.n();
-
-      Plane<V> const wall = make_plane(p0,p1,p2);
-
-      if( get_signed_distance(p, wall) > 0 )
-        return false;
-    }
 
     return true;
   }
