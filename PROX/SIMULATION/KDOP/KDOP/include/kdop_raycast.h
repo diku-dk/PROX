@@ -37,10 +37,10 @@ namespace kdop
 
       Node<T,K> const & node = branch.m_nodes[node_idx];
 
-      V p = V::zero();
+      EigenVector3<T> p = EigenVector3<T>(0,0,0);
       T t = std::numeric_limits<T>::max();
 
-      if(! geometry::compute_raycast_dop( ray, node.m_volume, p, t, dop_threshold))
+      if(! geometry::compute_raycast_dop<typename V::real_type, K>( geometry::convertRayToEigen(ray), node.m_volume, p, t, dop_threshold))
         return;
 
       if(t >= length)
@@ -119,16 +119,15 @@ namespace kdop
     typedef typename V::real_type    T;
     typedef typename V::value_traits VT;
 
-    T const dop_threshold = VT::numeric_cast(0.01);
+    T const dop_threshold = (0.01f);
 
     hit_point    = V::zero();
     length       = std::numeric_limits<T>::max();
 
-    V p = V::zero();
+    EigenVector3<T> p = EigenVector3<T>(0,0,0);
     T t = std::numeric_limits<T>::max();
 
-    if(!geometry::compute_raycast_dop( ray, tree.m_root, p, t, dop_threshold))
-      return false;
+    if(!geometry::compute_raycast_dop(geometry::convertRayToEigen(ray), tree.m_root, p, t, dop_threshold)) return false;
 
     size_t const C = tree.branches().size();
 

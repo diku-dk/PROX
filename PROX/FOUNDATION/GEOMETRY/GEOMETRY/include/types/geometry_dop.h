@@ -73,6 +73,33 @@ namespace geometry
     return kdop;
   }
 
+  template<typename iterator, typename T, size_t N>
+  inline DOP<T, N*2u> make_dop(
+      iterator const & begin
+      , iterator const & end
+      , DirectionTableEigen<T,N> const & D
+      )
+  {
+      using std::min;
+      using std::max;
+
+
+      DOP<T,N*2> kdop;
+
+      for(size_t k =  0u; k < N; ++k)
+      {
+          for(iterator p = begin; p!=end; ++p)
+          {
+              T const projection = dot( D(k), (*p) );
+
+              kdop(k).lower() = min( kdop(k).lower(), projection );
+              kdop(k).upper() = max( kdop(k).upper(), projection );
+          }
+      }
+
+      return kdop;
+  }
+
 }// namespace geometry
 
 // GEOMETRY_DOP_H

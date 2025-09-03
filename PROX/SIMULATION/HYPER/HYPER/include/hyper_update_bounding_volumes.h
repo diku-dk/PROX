@@ -5,6 +5,7 @@
 
 #include <geometry_make_intersection.h>
 
+#include <tiny_math_types.h>
 #include <cassert>
 #include <vector>
 
@@ -30,7 +31,7 @@ namespace hyper
     size_t const N = 2*K; // Number of planes
 
     geometry::DOP<T,8>            const & dop = body.m_tree.m_root;
-    geometry::DirectionTable<V,4> const   DT  = geometry::DirectionTableHelper<V,4>::make();
+    geometry::DirectionTableEigen<T,4> const   DT  = geometry::DirectionTableEigenHelper<T,4>::make();
 
     //--- Generate array of all planes of kDOP ---------------------------------
     std::vector< geometry::Plane<V> > planes;
@@ -42,7 +43,7 @@ namespace hyper
 
       T const l = slab.lower();
       T const u = slab.upper();
-      V const n = DT(i);
+      V const n = fromEigen(DT(i));
 
       geometry::Plane<V> const P_lower = geometry::make_plane( -n, -l );
       geometry::Plane<V> const P_upper = geometry::make_plane(  n,  u );

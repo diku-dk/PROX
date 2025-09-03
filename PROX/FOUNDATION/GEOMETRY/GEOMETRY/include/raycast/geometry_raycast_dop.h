@@ -15,47 +15,45 @@
 namespace geometry
 {
 
-  template<typename V, size_t K>
+  template<typename T, size_t K>
   inline bool compute_raycast_dop(
-                                  Ray<V> const & ray
-                                  , DOP<typename V::real_type,K> const & dop
-                                  , V & point
-                                  , typename V::real_type & length
-                                  , typename V::real_type const & threshold
+                                  RayEigen<T> const & ray
+                                  , DOP<T,K> const & dop
+                                  , EigenVector3<T>& point
+                                  , T& length
+                                  , const T& threshold
                                   )
   {
-    typedef typename V::real_type     T;
-    typedef typename V::value_traits VT;
 
     assert(threshold >= 0 || !"compute_raycast_dop(): threhold must be non-negative");
 
     size_t              const N = K/2;
-    DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
+    DirectionTableEigen<T,N> const D = DirectionTableEigenHelper<T,N>::make();
 
     length   = std::numeric_limits<T>::max();
-    point    = V::zero();
+    point    = EigenVector3<T>(0,0,0);
 
-    V const & p = ray.origin();
-    V const & r = ray.direction();
+    const EigenVector3<T> & p = ray.origin();
+    const EigenVector3<T> & r = ray.direction();
 
     T t_min = std::numeric_limits<T>::lowest();
     T t_max = std::numeric_limits<T>::max();
 
     for(unsigned int k =  0u; k < N; ++k)
     {
-      V const d0 =   -D(k);
+      const EigenVector3<T> d0 =   -D(k);
       T const w0 =   -dop(k).lower();
-      T const f0 =   inner_prod(d0,r);
+      T const f0 =   dot(d0,r);
 
-      V const d1 =   D(k);
+      const EigenVector3<T> d1 =   D(k);
       T const w1 =   dop(k).upper();
-      T const f1 =   inner_prod(d1,r);
+      T const f1 =   dot(d1,r);
 
       if(f0 == 0)
         continue;
 
-      T t_near = (w0 - inner_prod(d0,p))  / f0;
-      T t_far  = (w1 - inner_prod(d1,p))  / f1;
+      T t_near = (w0 - dot(d0,p))  / f0;
+      T t_far  = (w1 - dot(d1,p))  / f1;
 
       assert(is_number(t_near) || !"compute_raycast_dop() NaN");
       assert(is_finite(t_near) || !"compute_raycast_dop() Inf");
@@ -76,7 +74,7 @@ namespace geometry
 
     if( t_min > 0 &&  t_min <= t_max)
     {
-      V const q = p + r*t_min;
+      const EigenVector3<T> q = p + r*t_min;
 
       if ( outside_dop(q, dop, threshold) )
         return false;

@@ -10,19 +10,17 @@
 namespace geometry
 {
 
-  template<size_t K,typename V>
-  inline DOP<typename V::real_type,K> convert( Sphere<typename V::real_type> const & S )
+  template<size_t K,typename T>
+  inline DOP<T,K> convert( Sphere<T> const & S )
   {
-    typedef typename V::real_type T;
-
     size_t              const N = K/2;
-    DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
+    DirectionTableEigen<T,N> const D = DirectionTableEigenHelper<T,N>::make();
 
     DOP<T, K> kdop;
 
     for(size_t k =  0u; k < N; ++k)
     {
-        T const o = inner_prod( D(k), fromEigen(S.center()) );
+        T const o = dot( D(k), (S.center()) );
 
       kdop(k).lower() = o - S.radius();
       kdop(k).upper() = o + S.radius();
@@ -31,20 +29,18 @@ namespace geometry
     return kdop;
   }
 
-  template<size_t K,typename V>
-  inline DOP<typename V::real_type,K> convert( AABB<V> const & aabb )
+  template<size_t K,typename T>
+  inline DOP<T,K> convert( AABBEigen<T> const & aabb )
   {
-    typedef typename V::real_type T;
-
     size_t              const N = K/2;
-    DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
+    DirectionTableEigen<T,N> const D = DirectionTableEigenHelper<T,N>::make();
 
     DOP<T, K> kdop;
 
     for(size_t k =  0u; k < N; ++k)
     {
-      T const l = inner_prod(  D(k), aabb.min() );
-      T const u = inner_prod(  D(k), aabb.max() );
+      T const l = dot(  D(k), aabb.min() );
+      T const u = dot(  D(k), aabb.max() );
 
       kdop(k).lower() = l;
       kdop(k).upper() = u;

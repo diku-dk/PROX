@@ -15,18 +15,18 @@
 namespace geometry
 {
 
-  template<typename T, size_t K,typename V>
-  inline bool outside_dop( V const & p, DOP<T,K> const & dop, T const & threshold )
+  template<typename T, size_t K,typename T2>
+inline bool outside_dop( const EigenVector3<T2>& p, DOP<T,K> const & dop, T const & threshold )
   {
 
     assert(threshold >= 0  || !"outside_dop(): threshold must be non-negative");
 
     size_t              const N = K/2;
-    DirectionTable<V,N> const D = DirectionTableHelper<V,N>::make();
+    DirectionTableEigen<T2,N> const D = DirectionTableEigenHelper<T2,N>::make();
 
     for(size_t k =  0u; k < N; ++k)
     {
-      T const o = inner_prod( D(k), p );
+      T const o = dot( D(k), p );
 
       if (o < dop(k).lower() - threshold )
         return true;
@@ -38,16 +38,16 @@ namespace geometry
     return false;
   }
 
-  template<typename T, size_t K,typename V>
-  inline bool outside_dop( V const & p, DOP<T,K> const & dop )
+  template<typename T, size_t K,typename T2>
+  inline bool outside_dop( const EigenVector3<T2>& p, DOP<T,K> const & dop )
   {
     typedef tiny::ValueTraits<T> VT;
 
-    return outside_dop<T, K, V>(p, dop, 0 );
+    return outside_dop<T, K, T2>(p, dop, 0 );
   }
 
-  template<typename T, size_t K,typename V>
-  inline bool inside_dop( V const & p, DOP<T,K> const & dop )
+  template<typename T, size_t K,typename T2>
+  inline bool inside_dop(const EigenVector3<T2>& p, DOP<T,K> const & dop )
   {
     return ! outside_dop(p, dop);
   }
@@ -64,8 +64,8 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool inside_aabb(V const & p, AABB<V> const & box)
+  template<typename T>
+  inline bool inside_aabb(const EigenVector3<T>& p, AABBEigen<T> const & box)
   {
 
     if( p(0) > box.max()(0) )

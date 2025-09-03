@@ -133,7 +133,7 @@ namespace kdop
                                , bool const & should_flip = false
                                )
   {
-    geometry::DOP<T,K> const shape_dop = geometry::convert<K,V>( shape );
+      geometry::DOP<T,K> const shape_dop = geometry::convert<K,typename V::real_type>( shape );
 
     if(!overlap_dop_dop(tree.m_root, shape_dop))
       return;
