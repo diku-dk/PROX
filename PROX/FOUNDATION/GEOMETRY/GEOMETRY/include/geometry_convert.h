@@ -53,16 +53,14 @@ namespace geometry
     return kdop;
   }
 
-  template<typename V>
-  inline Capsule<V> convert( Cylinder<V> const & cylinder )
+  template<typename T>
+  inline CapsuleEigen<T> convert( CylinderEigen<T> const & cylinder )
   {
-    typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
 
     T const radius = cylinder.radius();
 
-    V const point0 = cylinder.center() - cylinder.axis()*cylinder.height()*0.5f;
-    V const point1 = cylinder.center() + cylinder.axis()*cylinder.height()*0.5f;
+    const EigenVector3<T> point0 = cylinder.center() - cylinder.axis()*cylinder.height()*0.5f;
+    const EigenVector3<T> point1 = cylinder.center() + cylinder.axis()*cylinder.height()*0.5f;
 
     return make_capsule(radius, point0, point1);
   }
