@@ -11,19 +11,17 @@ using Vd = tiny::Vector<3U, tiny::double_traits>;
 
 BOOST_AUTO_TEST_SUITE(tiny_truncate);
 
-  BOOST_AUTO_TEST_CASE(double_testing)
-  {
+BOOST_AUTO_TEST_CASE(double_testing)
+{
     double const tol = 0.1;
 
-    Vd const A  = Vd::make( 0.2, 0.01, 0.09999 );
+    Vd const A = Vd::make(0.2, 0.01, 0.09999);
 
     Vd const tB = tiny::truncate(A, tol);
-
 
     BOOST_CHECK_CLOSE(tB(0), 0.2, 0.01);
     BOOST_CHECK_CLOSE(tB(1), 0.0, 0.01);
     BOOST_CHECK_CLOSE(tB(2), 0.0, 0.01);
-  }
-
+}
 
 BOOST_AUTO_TEST_SUITE_END();

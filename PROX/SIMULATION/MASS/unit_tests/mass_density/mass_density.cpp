@@ -10,10 +10,10 @@ BOOST_AUTO_TEST_SUITE(mass);
 
 BOOST_AUTO_TEST_CASE(density)
 {
-  double const rho = mass::get_density<double>( mass::WATER );
-  std::string const units = mass::get_SI_units();
+    double const rho = mass::get_density<double>(mass::WATER);
+    std::string const units = mass::get_SI_units();
 
-  BOOST_CHECK(rho > 0.0f);
+    BOOST_CHECK(rho > 0.0f);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

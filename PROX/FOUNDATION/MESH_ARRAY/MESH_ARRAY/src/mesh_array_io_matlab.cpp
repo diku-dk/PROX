@@ -13,31 +13,26 @@
 namespace mesh_array
 {
 
-  template<typename T>
-  void read_matlab(
-                   std::string const & filename
-                   , T3Mesh & mesh
-                   , VertexAttribute<T,T3Mesh> & X
-                   , VertexAttribute<T,T3Mesh> & Y
-                   , VertexAttribute<T,T3Mesh> & Z
-                   )
-  {
-    boost::filesystem::path  mypath(filename);
+template <typename T>
+void read_matlab(std::string const& filename, T3Mesh& mesh, VertexAttribute<T, T3Mesh>& X,
+                 VertexAttribute<T, T3Mesh>& Y, VertexAttribute<T, T3Mesh>& Z)
+{
+    boost::filesystem::path mypath(filename);
 
-    std::string const ext = boost::filesystem::extension( mypath );
+    std::string const ext = boost::filesystem::extension(mypath);
 
-    assert( ext == ".m" || !"read_matlab(): illegal file name extension");
+    assert(ext == ".m" || !"read_matlab(): illegal file name extension");
 
-    bool const tst = boost::filesystem::exists( mypath );
+    bool const tst = boost::filesystem::exists(mypath);
 
-    assert( tst|| !"read_matlab(): file did not exist");
+    assert(tst || !"read_matlab(): file did not exist");
 
     typedef boost::tokenizer< boost::char_separator<char> > Tokenizer;
     boost::char_separator<char> sep(" XYZT=[];");
 
     std::ifstream file(filename.c_str());
 
-    assert (file.is_open() || !"read_matlab(): unable to open file");
+    assert(file.is_open() || !"read_matlab(): unable to open file");
 
     std::vector<T> px;
     std::vector<T> py;
@@ -54,65 +49,65 @@ namespace mesh_array
 
     std::string line;
 
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
-      {
-        T const x = util::to_value<T>( *tok );
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
+        {
+            T const x = util::to_value<T>(*tok);
 
-        assert( is_number(x) || !"read_matlab(): nan");
-        assert( is_finite(x) || !"read_matlab(): inf");
+            assert(is_number(x) || !"read_matlab(): nan");
+            assert(is_finite(x) || !"read_matlab(): inf");
 
-        px.push_back( x );
-      }
+            px.push_back(x);
+        }
     }
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
-      {
-        T const y = util::to_value<T>( *tok );
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
+        {
+            T const y = util::to_value<T>(*tok);
 
-        assert( is_number(y) || !"read_matlab(): nan");
-        assert( is_finite(y) || !"read_matlab(): inf");
+            assert(is_number(y) || !"read_matlab(): nan");
+            assert(is_finite(y) || !"read_matlab(): inf");
 
-        py.push_back( y );
-      }
+            py.push_back(y);
+        }
     }
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
-      {
-        T const z = util::to_value<T>( *tok );
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
+        {
+            T const z = util::to_value<T>(*tok);
 
-        assert( is_number(z) || !"read_matlab(): nan");
-        assert( is_finite(z) || !"read_matlab(): inf");
+            assert(is_number(z) || !"read_matlab(): nan");
+            assert(is_finite(z) || !"read_matlab(): inf");
 
-        pz.push_back( z );
-      }
+            pz.push_back(z);
+        }
     }
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end();)
-      {
-        size_t const i = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
-        size_t const j = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
-        size_t const k = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end();)
+        {
+            size_t const i = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
+            size_t const j = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
+            size_t const k = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
 
-        I.push_back(i);
-        J.push_back(j);
-        K.push_back(k);
-      }
+            I.push_back(i);
+            J.push_back(j);
+            K.push_back(k);
+        }
     }
 
     file.close();
@@ -122,72 +117,55 @@ namespace mesh_array
 
     mesh.clear();
 
-    mesh.set_capacity(cntV,cntT);
+    mesh.set_capacity(cntV, cntT);
 
     X.bind(mesh);
     Y.bind(mesh);
     Z.bind(mesh);
 
-    for(size_t idx=0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex v = mesh.push_vertex();
-      X(v) = px[idx];
-      Y(v) = py[idx];
-      Z(v) = pz[idx];
+        Vertex v = mesh.push_vertex();
+        X(v) = px[idx];
+        Y(v) = py[idx];
+        Z(v) = pz[idx];
     }
-    for(size_t idx=0u; idx< cntT; ++idx)
+    for (size_t idx = 0u; idx < cntT; ++idx)
     {
-      Vertex const & vi = mesh.vertex( I[idx] );
-      Vertex const & vj = mesh.vertex( J[idx] );
-      Vertex const & vk = mesh.vertex( K[idx] );
+        Vertex const& vi = mesh.vertex(I[idx]);
+        Vertex const& vj = mesh.vertex(J[idx]);
+        Vertex const& vk = mesh.vertex(K[idx]);
 
-      mesh.push_triangle(vi, vj, vk);
+        mesh.push_triangle(vi, vj, vk);
     }
-  }
+}
 
-  template
-  void read_matlab<float>(
-                   std::string const & filename
-                   , T3Mesh & mesh
-                   , VertexAttribute<float,T3Mesh> & X
-                   , VertexAttribute<float,T3Mesh> & Y
-                   , VertexAttribute<float,T3Mesh> & Z
-                   );
+template void read_matlab<float>(std::string const& filename, T3Mesh& mesh, VertexAttribute<float, T3Mesh>& X,
+                                 VertexAttribute<float, T3Mesh>& Y, VertexAttribute<float, T3Mesh>& Z);
 
-  template
-  void read_matlab<double>(
-                   std::string const & filename
-                   , T3Mesh & mesh
-                   , VertexAttribute<double,T3Mesh> & X
-                   , VertexAttribute<double,T3Mesh> & Y
-                   , VertexAttribute<double,T3Mesh> & Z
-                   );
+template void read_matlab<double>(std::string const& filename, T3Mesh& mesh, VertexAttribute<double, T3Mesh>& X,
+                                  VertexAttribute<double, T3Mesh>& Y, VertexAttribute<double, T3Mesh>& Z);
 
-  template<typename T>
-  void read_matlab(
-                   std::string const & filename
-                   , T4Mesh & mesh
-                   , VertexAttribute<T,T4Mesh> & X
-                   , VertexAttribute<T,T4Mesh> & Y
-                   , VertexAttribute<T,T4Mesh> & Z
-                   )
-  {
-    boost::filesystem::path  mypath(filename);
+template <typename T>
+void read_matlab(std::string const& filename, T4Mesh& mesh, VertexAttribute<T, T4Mesh>& X,
+                 VertexAttribute<T, T4Mesh>& Y, VertexAttribute<T, T4Mesh>& Z)
+{
+    boost::filesystem::path mypath(filename);
 
-    std::string const ext = boost::filesystem::extension( mypath );
+    std::string const ext = boost::filesystem::extension(mypath);
 
-    assert( ext == ".m" || !"read_matlab(): illegal file name extension");
+    assert(ext == ".m" || !"read_matlab(): illegal file name extension");
 
-    bool const tst = boost::filesystem::exists( mypath );
+    bool const tst = boost::filesystem::exists(mypath);
 
-    assert( tst|| !"read_matlab(): file did not exist");
+    assert(tst || !"read_matlab(): file did not exist");
 
     typedef boost::tokenizer< boost::char_separator<char> > Tokenizer;
     boost::char_separator<char> sep(" XYZT=[];");
 
     std::ifstream file(filename.c_str());
 
-    assert (file.is_open() || !"read_matlab(): unable to open file");
+    assert(file.is_open() || !"read_matlab(): unable to open file");
 
     std::vector<T> px;
     std::vector<T> py;
@@ -205,68 +183,68 @@ namespace mesh_array
 
     std::string line;
 
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
-      {
-        T const x = util::to_value<T>( *tok );
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
+        {
+            T const x = util::to_value<T>(*tok);
 
-        assert( is_number(x) || !"read_matlab(): nan");
-        assert( is_finite(x) || !"read_matlab(): inf");
+            assert(is_number(x) || !"read_matlab(): nan");
+            assert(is_finite(x) || !"read_matlab(): inf");
 
-        px.push_back( x );
-      }
+            px.push_back(x);
+        }
     }
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
-      {
-        T const y = util::to_value<T>( *tok );
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
+        {
+            T const y = util::to_value<T>(*tok);
 
-        assert( is_number(y) || !"read_matlab(): nan");
-        assert( is_finite(y) || !"read_matlab(): inf");
+            assert(is_number(y) || !"read_matlab(): nan");
+            assert(is_finite(y) || !"read_matlab(): inf");
 
-        py.push_back( y );
-      }
+            py.push_back(y);
+        }
     }
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
-      {
-        T const z = util::to_value<T>( *tok );
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end(); ++tok)
+        {
+            T const z = util::to_value<T>(*tok);
 
-        assert( is_number(z) || !"read_matlab(): nan");
-        assert( is_finite(z) || !"read_matlab(): inf");
+            assert(is_number(z) || !"read_matlab(): nan");
+            assert(is_finite(z) || !"read_matlab(): inf");
 
-        pz.push_back( z );
-      }
+            pz.push_back(z);
+        }
     }
-    assert( !file.eof() || !"read_matlab(): EOF");
-    getline(file,line);
+    assert(!file.eof() || !"read_matlab(): EOF");
+    getline(file, line);
     {
-      Tokenizer tokens(line, sep);
-      for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end();)
-      {
-        size_t const i = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
-        size_t const j = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
-        size_t const k = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
-        size_t const m = util::to_value<size_t>( *tok ) - 1u;
-        ++tok;
+        Tokenizer tokens(line, sep);
+        for (Tokenizer::iterator tok = tokens.begin(); tok != tokens.end();)
+        {
+            size_t const i = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
+            size_t const j = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
+            size_t const k = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
+            size_t const m = util::to_value<size_t>(*tok) - 1u;
+            ++tok;
 
-        I.push_back(i);
-        J.push_back(j);
-        K.push_back(k);
-        M.push_back(m);
-      }
+            I.push_back(i);
+            J.push_back(j);
+            K.push_back(k);
+            M.push_back(m);
+        }
     }
 
     file.close();
@@ -276,212 +254,169 @@ namespace mesh_array
 
     mesh.clear();
 
-    mesh.set_capacity(cntV,cntT);
+    mesh.set_capacity(cntV, cntT);
 
     X.bind(mesh);
     Y.bind(mesh);
     Z.bind(mesh);
 
-    for(size_t idx=0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex v = mesh.push_vertex();
-      X(v) = px[idx];
-      Y(v) = py[idx];
-      Z(v) = pz[idx];
+        Vertex v = mesh.push_vertex();
+        X(v) = px[idx];
+        Y(v) = py[idx];
+        Z(v) = pz[idx];
     }
-    for(size_t idx=0u; idx< cntT; ++idx)
+    for (size_t idx = 0u; idx < cntT; ++idx)
     {
-      Vertex const & vi = mesh.vertex( I[idx] );
-      Vertex const & vj = mesh.vertex( J[idx] );
-      Vertex const & vk = mesh.vertex( K[idx] );
-      Vertex const & vm = mesh.vertex( M[idx] );
+        Vertex const& vi = mesh.vertex(I[idx]);
+        Vertex const& vj = mesh.vertex(J[idx]);
+        Vertex const& vk = mesh.vertex(K[idx]);
+        Vertex const& vm = mesh.vertex(M[idx]);
 
-      mesh.push_tetrahedron(vi, vj, vk, vm);
+        mesh.push_tetrahedron(vi, vj, vk, vm);
     }
-  }
+}
 
-  template
-  void read_matlab<float>(
-                   std::string const & filename
-                   , T4Mesh & mesh
-                   , VertexAttribute<float,T4Mesh> & X
-                   , VertexAttribute<float,T4Mesh> & Y
-                   , VertexAttribute<float,T4Mesh> & Z
-                   );
+template void read_matlab<float>(std::string const& filename, T4Mesh& mesh, VertexAttribute<float, T4Mesh>& X,
+                                 VertexAttribute<float, T4Mesh>& Y, VertexAttribute<float, T4Mesh>& Z);
 
-  template
-  void read_matlab<double>(
-                   std::string const & filename
-                   , T4Mesh & mesh
-                   , VertexAttribute<double,T4Mesh> & X
-                   , VertexAttribute<double,T4Mesh> & Y
-                   , VertexAttribute<double,T4Mesh> & Z
-                   );
+template void read_matlab<double>(std::string const& filename, T4Mesh& mesh, VertexAttribute<double, T4Mesh>& X,
+                                  VertexAttribute<double, T4Mesh>& Y, VertexAttribute<double, T4Mesh>& Z);
 
-  template<typename T>
-  void write_matlab(
-                    std::string const & filename
-                    , T3Mesh const & mesh
-                    , VertexAttribute<T,T3Mesh> const & X
-                    , VertexAttribute<T,T3Mesh> const & Y
-                    , VertexAttribute<T,T3Mesh> const & Z
-                    )
-  {
-    boost::filesystem::path  mypath(filename);
+template <typename T>
+void write_matlab(std::string const& filename, T3Mesh const& mesh, VertexAttribute<T, T3Mesh> const& X,
+                  VertexAttribute<T, T3Mesh> const& Y, VertexAttribute<T, T3Mesh> const& Z)
+{
+    boost::filesystem::path mypath(filename);
 
-    std::string const ext = boost::filesystem::extension( mypath );
+    std::string const ext = boost::filesystem::extension(mypath);
 
-    assert( ext == ".m" || !"write_matlab(): illegal file name extension");
+    assert(ext == ".m" || !"write_matlab(): illegal file name extension");
 
-    std::ofstream file (filename.c_str());
+    std::ofstream file(filename.c_str());
 
-    assert( file.is_open() || !"write_matlab(): could not open file");
+    assert(file.is_open() || !"write_matlab(): could not open file");
 
     file.precision(30);
 
     size_t const cntV = mesh.vertex_size();
 
     file << "X = [";
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
-      file << " " << X(vertex);
+        Vertex const& vertex = mesh.vertex(idx);
+        file << " " << X(vertex);
     }
     file << " ];" << std::endl;
 
     file << "Y = [";
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
-      file << " " << Y(vertex);
+        Vertex const& vertex = mesh.vertex(idx);
+        file << " " << Y(vertex);
     }
     file << " ];" << std::endl;
 
     file << "Z = [";
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
-      file << " " << Z(vertex);
+        Vertex const& vertex = mesh.vertex(idx);
+        file << " " << Z(vertex);
     }
     file << " ];" << std::endl;
 
     size_t const cntT = mesh.triangle_size();
 
     file << "T = [";
-    for(size_t idx = 0u; idx < cntT; ++idx)
+    for (size_t idx = 0u; idx < cntT; ++idx)
     {
-      Triangle const & triangle = mesh.triangle(idx);
-      size_t const i = triangle.i() + 1u;
-      size_t const j = triangle.j() + 1u;
-      size_t const k = triangle.k() + 1u;
-      file << " " << i << " " << j << " " << k << ";";
+        Triangle const& triangle = mesh.triangle(idx);
+        size_t const i = triangle.i() + 1u;
+        size_t const j = triangle.j() + 1u;
+        size_t const k = triangle.k() + 1u;
+        file << " " << i << " " << j << " " << k << ";";
     }
     file << " ];" << std::endl;
 
     file.flush();
     file.close();
-  }
+}
 
-  template
-  void write_matlab<float>(
-                    std::string const & filename
-                    , T3Mesh const & mesh
-                    , VertexAttribute<float,T3Mesh> const & X
-                    , VertexAttribute<float,T3Mesh> const & Y
-                    , VertexAttribute<float,T3Mesh> const & Z
-                    );
+template void write_matlab<float>(std::string const& filename, T3Mesh const& mesh,
+                                  VertexAttribute<float, T3Mesh> const& X, VertexAttribute<float, T3Mesh> const& Y,
+                                  VertexAttribute<float, T3Mesh> const& Z);
 
-  template
-  void write_matlab<double>(
-                    std::string const & filename
-                    , T3Mesh const & mesh
-                    , VertexAttribute<double,T3Mesh> const & X
-                    , VertexAttribute<double,T3Mesh> const & Y
-                    , VertexAttribute<double,T3Mesh> const & Z
-                    );
+template void write_matlab<double>(std::string const& filename, T3Mesh const& mesh,
+                                   VertexAttribute<double, T3Mesh> const& X, VertexAttribute<double, T3Mesh> const& Y,
+                                   VertexAttribute<double, T3Mesh> const& Z);
 
-  template<typename T>
-  void write_matlab(
-                    std::string const & filename
-                    , T4Mesh const & mesh
-                    , VertexAttribute<T,T4Mesh> const & X
-                    , VertexAttribute<T,T4Mesh> const & Y
-                    , VertexAttribute<T,T4Mesh> const & Z
-                    )
-  {
-    boost::filesystem::path  mypath(filename);
+template <typename T>
+void write_matlab(std::string const& filename, T4Mesh const& mesh, VertexAttribute<T, T4Mesh> const& X,
+                  VertexAttribute<T, T4Mesh> const& Y, VertexAttribute<T, T4Mesh> const& Z)
+{
+    boost::filesystem::path mypath(filename);
 
-    std::string const ext = boost::filesystem::extension( mypath );
+    std::string const ext = boost::filesystem::extension(mypath);
 
-    assert( ext == ".m" || !"write_matlab(): illegal file name extension");
+    assert(ext == ".m" || !"write_matlab(): illegal file name extension");
 
-    std::ofstream file (filename.c_str());
+    std::ofstream file(filename.c_str());
 
-    assert( file.is_open() || !"write_matlab(): could not open file");
+    assert(file.is_open() || !"write_matlab(): could not open file");
 
     file.precision(30);
 
     size_t const cntV = mesh.vertex_size();
 
     file << "X = [";
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
-      file << " " << X(vertex);
+        Vertex const& vertex = mesh.vertex(idx);
+        file << " " << X(vertex);
     }
     file << " ];" << std::endl;
 
     file << "Y = [";
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
-      file << " " << Y(vertex);
+        Vertex const& vertex = mesh.vertex(idx);
+        file << " " << Y(vertex);
     }
     file << " ];" << std::endl;
 
     file << "Z = [";
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
-      file << " " << Z(vertex);
+        Vertex const& vertex = mesh.vertex(idx);
+        file << " " << Z(vertex);
     }
     file << " ];" << std::endl;
 
     size_t const cntT = mesh.tetrahedron_size();
 
     file << "T = [";
-    for(size_t idx = 0u; idx < cntT; ++idx)
+    for (size_t idx = 0u; idx < cntT; ++idx)
     {
-      Tetrahedron const & tetrahedron = mesh.tetrahedron(idx);
-      size_t const i = tetrahedron.i() + 1u;
-      size_t const j = tetrahedron.j() + 1u;
-      size_t const k = tetrahedron.k() + 1u;
-      size_t const m = tetrahedron.m() + 1u;
-      file << " " << i << " " << j << " " << k << " " << m << ";";
+        Tetrahedron const& tetrahedron = mesh.tetrahedron(idx);
+        size_t const i = tetrahedron.i() + 1u;
+        size_t const j = tetrahedron.j() + 1u;
+        size_t const k = tetrahedron.k() + 1u;
+        size_t const m = tetrahedron.m() + 1u;
+        file << " " << i << " " << j << " " << k << " " << m << ";";
     }
     file << " ];" << std::endl;
 
     file.flush();
     file.close();
-  }
+}
 
-  template
-  void write_matlab<float>(
-                    std::string const & filename
-                    , T4Mesh const & mesh
-                    , VertexAttribute<float,T4Mesh> const & X
-                    , VertexAttribute<float,T4Mesh> const & Y
-                    , VertexAttribute<float,T4Mesh> const & Z
-                    );
+template void write_matlab<float>(std::string const& filename, T4Mesh const& mesh,
+                                  VertexAttribute<float, T4Mesh> const& X, VertexAttribute<float, T4Mesh> const& Y,
+                                  VertexAttribute<float, T4Mesh> const& Z);
 
-  template
-  void write_matlab<double>(
-                    std::string const & filename
-                    , T4Mesh const & mesh
-                    , VertexAttribute<double,T4Mesh> const & X
-                    , VertexAttribute<double,T4Mesh> const & Y
-                    , VertexAttribute<double,T4Mesh> const & Z
-                    );
+template void write_matlab<double>(std::string const& filename, T4Mesh const& mesh,
+                                   VertexAttribute<double, T4Mesh> const& X, VertexAttribute<double, T4Mesh> const& Y,
+                                   VertexAttribute<double, T4Mesh> const& Z);
 
 } // end namespace mesh_array
-

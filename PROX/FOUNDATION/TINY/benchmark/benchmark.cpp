@@ -3,9 +3,7 @@
 
 int main()
 {
-  vector_benchmark::run<8>();
-  matrix_benchmark::run<6,6>();
-  return 0;
+    vector_benchmark::run<8>();
+    matrix_benchmark::run<6, 6>();
+    return 0;
 }
-
-

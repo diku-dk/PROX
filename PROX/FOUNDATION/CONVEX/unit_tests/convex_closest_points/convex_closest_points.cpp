@@ -21,310 +21,224 @@ BOOST_AUTO_TEST_SUITE(convex_compute_closest_points);
 
 BOOST_AUTO_TEST_CASE(sphere_box_compile_test)
 {
-  {
-    geometry::Sphere<T>  B;
-    geometry::Box<V>     A;
+    {
+        geometry::Sphere<T> B;
+        geometry::Box<V> A;
 
-    B.radius()      = 0.5;
-    A.half_extent() = V::make(50, .5, 50);
+        B.radius() = 0.5;
+        A.half_extent() = V::make(50, .5, 50);
 
-    C X_A;
-    C X_B;
+        C X_A;
+        C X_B;
 
-    V p_A = V::zero();
-    V p_B = V::zero();
+        V p_A = V::zero();
+        V p_B = V::zero();
 
-    X_A = C::identity();
+        X_A = C::identity();
 
-    X_B.T() = V::make(0, 1.2, 0);
-    X_B.Q() = Q::identity();
+        X_B.T() = V::make(0, 1.2, 0);
+        X_B.Q() = Q::identity();
 
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B);
+    }
+    {
 
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      );
-  }
-  {
+        geometry::Box<V> A;
+        convex::Capsule<M> B;
 
-    geometry::Box<V>       A;
-    convex::Capsule<M>     B;
+        A.half_extent() = V::make(50, 1, 50);
+        B.radius() = 0.5;
 
-    A.half_extent() = V::make(50, 1, 50);
-    B.radius()      = 0.5;
+        C X_A;
+        C X_B;
 
-    C X_A;
-    C X_B;
+        V p_A = V::zero();
+        V p_B = V::zero();
 
-    V p_A = V::zero();
-    V p_B = V::zero();
+        X_A = C::identity();
 
-    X_A = C::identity();
+        X_B.T() = V::make(0, 1.5, 0);
+        X_B.Q() = Q::identity();
 
-    X_B.T() = V::make(0, 1.5, 0);
-    X_B.Q() = Q::identity();
-
-
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      );
-
-  }
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(sphere_sphere_testing)
 {
-  geometry::Sphere<T> const A;
-  geometry::Sphere<T> const B;
+    geometry::Sphere<T> const A;
+    geometry::Sphere<T> const B;
 
-  size_t const max_iterations       = 100u;
-  T      const absolute_tolerance   = VT::numeric_cast(10e-6);
-  T      const relative_tolerance   = VT::numeric_cast(10e-6);
-  T      const stagnation_tolerance = VT::numeric_cast(10e-15);
+    size_t const max_iterations = 100u;
+    T const absolute_tolerance = VT::numeric_cast(10e-6);
+    T const relative_tolerance = VT::numeric_cast(10e-6);
+    T const stagnation_tolerance = VT::numeric_cast(10e-15);
 
   // Two unit-spheres placed ontop of each other
-  {
-    C X_A;
-    C X_B;
+    {
+        C X_A;
+        C X_B;
 
-    V p_A;
-    V p_B;
-    size_t iterations  = 0u;
-    size_t status      = 0u;
-    T      distance    = std::numeric_limits<T>::max();
+        V p_A;
+        V p_B;
+        size_t iterations = 0u;
+        size_t status = 0u;
+        T distance = std::numeric_limits<T>::max();
 
+        X_A = C::identity();
+        X_B = C::identity();
+        X_B.T() = V::make(0, 2, 0);
 
-    X_A = C::identity();
-    X_B = C::identity();
-    X_B.T() = V::make(0, 2, 0);
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B, distance, iterations, status, absolute_tolerance,
+                                          relative_tolerance, stagnation_tolerance, max_iterations);
 
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      , distance
-                                      , iterations
-                                      , status
-                                      , absolute_tolerance
-                                      , relative_tolerance
-                                      , stagnation_tolerance
-                                      , max_iterations
-                                      );
+        T true_distance = tiny::norm(X_A.T() - X_B.T()) - 2;
 
-    T true_distance = tiny::norm( X_A.T() - X_B.T() ) - 2;
+        BOOST_CHECK(fabs(distance - true_distance) < 10e-6);
 
-    BOOST_CHECK( fabs(distance - true_distance) < 10e-6);
+        BOOST_CHECK(p_A(0) == 0);
+        BOOST_CHECK(p_A(1) == 1);
+        BOOST_CHECK(p_A(2) == 0);
 
-    BOOST_CHECK( p_A(0) == 0 );
-    BOOST_CHECK( p_A(1) == 1 );
-    BOOST_CHECK( p_A(2) == 0 );
-
-    BOOST_CHECK( p_B(0) == 0 );
-    BOOST_CHECK( p_B(1) == 1  );
-    BOOST_CHECK( p_B(2) == 0 );
-  }
+        BOOST_CHECK(p_B(0) == 0);
+        BOOST_CHECK(p_B(1) == 1);
+        BOOST_CHECK(p_B(2) == 0);
+    }
   // Two unit-spheres overlapping but both placed on the x-axis
-  {
-    C X_A;
-    C X_B;
+    {
+        C X_A;
+        C X_B;
 
-    V p_A;
-    V p_B;
-    size_t iterations  = 0u;
-    size_t status      = 0u;
-    T      distance    = std::numeric_limits<T>::max();
+        V p_A;
+        V p_B;
+        size_t iterations = 0u;
+        size_t status = 0u;
+        T distance = std::numeric_limits<T>::max();
 
-    X_A = C::identity();
-    X_B = C::identity();
-    X_B.T()(0) = VT::numeric_cast(2.5);
+        X_A = C::identity();
+        X_B = C::identity();
+        X_B.T()(0) = VT::numeric_cast(2.5);
 
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      , distance
-                                      , iterations
-                                      , status
-                                      , absolute_tolerance
-                                      , relative_tolerance
-                                      , stagnation_tolerance
-                                      , max_iterations
-                                      );
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B, distance, iterations, status, absolute_tolerance,
+                                          relative_tolerance, stagnation_tolerance, max_iterations);
 
-    T true_distance = tiny::norm( X_A.T() - X_B.T() ) - 2;
+        T true_distance = tiny::norm(X_A.T() - X_B.T()) - 2;
 
-    BOOST_CHECK( fabs(distance - true_distance) < 10e-6);
+        BOOST_CHECK(fabs(distance - true_distance) < 10e-6);
 
-    BOOST_CHECK( p_A(0) == 1  );
-    BOOST_CHECK( p_A(1) == 0 );
-    BOOST_CHECK( p_A(2) == 0 );
+        BOOST_CHECK(p_A(0) == 1);
+        BOOST_CHECK(p_A(1) == 0);
+        BOOST_CHECK(p_A(2) == 0);
 
-    BOOST_CHECK( p_B(0) == VT::numeric_cast(1.5)  );
-    BOOST_CHECK( p_B(1) == 0 );
-    BOOST_CHECK( p_B(2) == 0 );
-  }
+        BOOST_CHECK(p_B(0) == VT::numeric_cast(1.5));
+        BOOST_CHECK(p_B(1) == 0);
+        BOOST_CHECK(p_B(2) == 0);
+    }
   // Two unit-spheres exactly touching in one point (= one intersection point) and but both placed on the x-axis
-  {
-    C X_A;
-    C X_B;
+    {
+        C X_A;
+        C X_B;
 
-    V p_A;
-    V p_B;
-    size_t iterations  = 0u;
-    size_t status      = 0u;
-    T      distance    = std::numeric_limits<T>::max();
+        V p_A;
+        V p_B;
+        size_t iterations = 0u;
+        size_t status = 0u;
+        T distance = std::numeric_limits<T>::max();
 
-    X_A.T().clear();
-    X_A.T()(0) = -2.0;
-    X_A.Q() = Q::identity();
-    X_B.T().clear();
-    X_B.Q() = Q::identity();
+        X_A.T().clear();
+        X_A.T()(0) = -2.0;
+        X_A.Q() = Q::identity();
+        X_B.T().clear();
+        X_B.Q() = Q::identity();
 
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      , distance
-                                      , iterations
-                                      , status
-                                      , absolute_tolerance
-                                      , relative_tolerance
-                                      , stagnation_tolerance
-                                      , max_iterations
-                                      );
-
-  }
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B, distance, iterations, status, absolute_tolerance,
+                                          relative_tolerance, stagnation_tolerance, max_iterations);
+    }
   // Two unit-spheres non-overlapping but both placed on the x-axis
-  {
-    C X_A;
-    C X_B;
+    {
+        C X_A;
+        C X_B;
 
-    V p_A;
-    V p_B;
-    size_t iterations  = 0u;
-    size_t status      = 0u;
-    T      distance    = std::numeric_limits<T>::max();
+        V p_A;
+        V p_B;
+        size_t iterations = 0u;
+        size_t status = 0u;
+        T distance = std::numeric_limits<T>::max();
 
-    X_A.T().clear();
-    X_A.T()(0) = -2.5;
-    X_A.Q() = Q::identity();
-    X_B.T().clear();
-    X_B.Q() = Q::identity();
+        X_A.T().clear();
+        X_A.T()(0) = -2.5;
+        X_A.Q() = Q::identity();
+        X_B.T().clear();
+        X_B.Q() = Q::identity();
 
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      , distance
-                                      , iterations
-                                      , status
-                                      , absolute_tolerance
-                                      , relative_tolerance
-                                      , stagnation_tolerance
-                                      , max_iterations
-                                      );
-
-  }
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B, distance, iterations, status, absolute_tolerance,
+                                          relative_tolerance, stagnation_tolerance, max_iterations);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(random_test)
 {
-  geometry::Sphere<T> const A;
-  geometry::Sphere<T> const B;
+    geometry::Sphere<T> const A;
+    geometry::Sphere<T> const B;
 
-  size_t const max_iterations       = 100u;
-  T      const absolute_tolerance   = VT::numeric_cast(10e-6);
-  T      const relative_tolerance   = VT::numeric_cast(10e-10);
-  T      const stagnation_tolerance = VT::numeric_cast(0.0);
+    size_t const max_iterations = 100u;
+    T const absolute_tolerance = VT::numeric_cast(10e-6);
+    T const relative_tolerance = VT::numeric_cast(10e-10);
+    T const stagnation_tolerance = VT::numeric_cast(0.0);
 
-  for(size_t i=0;i<100u;++i)
-  {
-    C X_A;
-    C X_B;
-
-    V p_A;
-    V p_B;
-    size_t iterations  = 0u;
-    size_t status      = 0u;
-    T      distance    = std::numeric_limits<T>::max();
-
-    X_A.T() = V::random( -2.0, 2.0 );
-    X_A.Q() = tiny::unit( Q::random() );
-    X_B.T() = V::random( -2.0, 2.0 );
-    X_B.Q() = tiny::unit( Q::random() );
-
-    convex::compute_closest_points<M>(
-                                      X_A
-                                      , &A
-                                      , X_B
-                                      , &B
-                                      , p_A
-                                      , p_B
-                                      , distance
-                                      , iterations
-                                      , status
-                                      , absolute_tolerance
-                                      , relative_tolerance
-                                      , stagnation_tolerance
-                                      , max_iterations
-                                      );
-
-    T const true_distance = tiny::norm( X_A.T() - X_B.T() ) - 2;
-
-    if(  true_distance > absolute_tolerance )
+    for (size_t i = 0; i < 100u; ++i)
     {
-      BOOST_CHECK_CLOSE( true_distance, distance, 0.05 );
+        C X_A;
+        C X_B;
 
-      BOOST_CHECK( status != convex::ABSOLUTE_CONVERGENCE );            // Would indicate penetration
-      BOOST_CHECK( status != convex::INTERSECTION );                    // Would indicate penetration
-      BOOST_CHECK( status != convex::ITERATING );                       // Would indicate internal error in CONVEX
-      BOOST_CHECK( status != convex::EXCEEDED_MAX_ITERATIONS_LIMIT );   // Would indicate internal error in CONVEX
-      BOOST_CHECK( status != convex::NON_DESCEND_DIRECTION );           // Would indicate internal error in CONVEX
+        V p_A;
+        V p_B;
+        size_t iterations = 0u;
+        size_t status = 0u;
+        T distance = std::numeric_limits<T>::max();
 
-      //BOOST_CHECK( status != convex::RELATIVE_CONVERGENCE );          // Would indicate convergence to positive distance
-      //BOOST_CHECK( status != convex::SIMPLEX_EXPANSION_FAILED );      // Would indicate convergence to positive distance
-      //BOOST_CHECK( status != convex::STAGNATION );                    // Would indicate convergence to positive distance
-      //BOOST_CHECK( status != convex::LOWER_ERROR_BOUND_CONVERGENCE ); // Would indicate convergence to positive distance
+        X_A.T() = V::random(-2.0, 2.0);
+        X_A.Q() = tiny::unit(Q::random());
+        X_B.T() = V::random(-2.0, 2.0);
+        X_B.Q() = tiny::unit(Q::random());
+
+        convex::compute_closest_points<M>(X_A, &A, X_B, &B, p_A, p_B, distance, iterations, status, absolute_tolerance,
+                                          relative_tolerance, stagnation_tolerance, max_iterations);
+
+        T const true_distance = tiny::norm(X_A.T() - X_B.T()) - 2;
+
+        if (true_distance > absolute_tolerance)
+        {
+            BOOST_CHECK_CLOSE(true_distance, distance, 0.05);
+
+            BOOST_CHECK(status != convex::ABSOLUTE_CONVERGENCE);            // Would indicate penetration
+            BOOST_CHECK(status != convex::INTERSECTION);                    // Would indicate penetration
+            BOOST_CHECK(status != convex::ITERATING);                       // Would indicate internal error in CONVEX
+            BOOST_CHECK(status != convex::EXCEEDED_MAX_ITERATIONS_LIMIT);   // Would indicate internal error in CONVEX
+            BOOST_CHECK(status != convex::NON_DESCEND_DIRECTION);           // Would indicate internal error in CONVEX
+
+            //BOOST_CHECK( status != convex::RELATIVE_CONVERGENCE );          // Would indicate convergence to positive distance
+            //BOOST_CHECK( status != convex::SIMPLEX_EXPANSION_FAILED );      // Would indicate convergence to positive distance
+            //BOOST_CHECK( status != convex::STAGNATION );                    // Would indicate convergence to positive distance
+            //BOOST_CHECK( status != convex::LOWER_ERROR_BOUND_CONVERGENCE ); // Would indicate convergence to positive distance
+        }
+        else
+        {
+            BOOST_CHECK(0.0 <= distance);
+            BOOST_CHECK(distance <= absolute_tolerance);
+
+            BOOST_CHECK(status != convex::STAGNATION); // Can only occur in case of positive distance
+            BOOST_CHECK(status != convex::LOWER_ERROR_BOUND_CONVERGENCE); // Can only occur in case of positive distance
+            BOOST_CHECK(status != convex::RELATIVE_CONVERGENCE); // Can only occur in case of positive distance
+            BOOST_CHECK(status != convex::SIMPLEX_EXPANSION_FAILED); // Can only occur in case of positive distance
+            BOOST_CHECK(status != convex::ITERATING); // Would indicate internal error in CONVEX
+            BOOST_CHECK(status != convex::EXCEEDED_MAX_ITERATIONS_LIMIT); // Would indicate internal error in CONVEX
+            BOOST_CHECK(status != convex::NON_DESCEND_DIRECTION); // Would indicate internal error in CONVEX
+
+            //BOOST_CHECK( status != convex::ABSOLUTE_CONVERGENCE );         // Indicates penetration
+            //BOOST_CHECK( status != convex::INTERSECTION );                 // Indicates penetration
+        }
     }
-    else
-    {
-      BOOST_CHECK( 0.0 <= distance );
-      BOOST_CHECK( distance <= absolute_tolerance );
-
-      BOOST_CHECK( status != convex::STAGNATION );                     // Can only occur in case of positive distance
-      BOOST_CHECK( status != convex::LOWER_ERROR_BOUND_CONVERGENCE );  // Can only occur in case of positive distance
-      BOOST_CHECK( status != convex::RELATIVE_CONVERGENCE );           // Can only occur in case of positive distance
-      BOOST_CHECK( status != convex::SIMPLEX_EXPANSION_FAILED );       // Can only occur in case of positive distance
-      BOOST_CHECK( status != convex::ITERATING );                      // Would indicate internal error in CONVEX
-      BOOST_CHECK( status != convex::EXCEEDED_MAX_ITERATIONS_LIMIT );  // Would indicate internal error in CONVEX
-      BOOST_CHECK( status != convex::NON_DESCEND_DIRECTION );          // Would indicate internal error in CONVEX
-
-      //BOOST_CHECK( status != convex::ABSOLUTE_CONVERGENCE );         // Indicates penetration
-      //BOOST_CHECK( status != convex::INTERSECTION );                 // Indicates penetration
-    }
-
-  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

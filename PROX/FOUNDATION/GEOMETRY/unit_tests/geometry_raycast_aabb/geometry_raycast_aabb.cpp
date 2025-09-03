@@ -7,192 +7,183 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(raycast_aabb)
 {
-  using std::sqrt;
+    using std::sqrt;
 
-  typedef tiny::MathTypes<double>   MT;
-  typedef MT::vector3_type          V;
-  typedef MT::real_type             T;
-  typedef MT::value_traits          VT;
+    typedef tiny::MathTypes<double> MT;
+    typedef MT::vector3_type V;
+    typedef MT::real_type T;
+    typedef MT::value_traits VT;
 
+    V const min_coord = V::make(-1.0, -1.0, -1.0);
+    V const max_coord = V::make(1.0, 1.0, 1.0);
 
-  V const min_coord = V::make(-1.0,-1.0,-1.0);
-  V const max_coord = V::make( 1.0, 1.0, 1.0);
+    geometry::AABB<V> aabb = geometry::make_aabb(min_coord, max_coord);
 
-  geometry::AABB<V> aabb = geometry::make_aabb(min_coord, max_coord);
-
-  BOOST_CHECK(geometry::is_valid(aabb));
+    BOOST_CHECK(geometry::is_valid(aabb));
 
   // Hit straigth on
-  {
-    V const r      = V::make( 0.0, 0.0, 1.0);
-    V const p      = V::make( 0.0, 0.0,-3.0);
+    {
+        V const r = V::make(0.0, 0.0, 1.0);
+        V const p = V::make(0.0, 0.0, -3.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( hit );
+        BOOST_CHECK(hit);
 
-    BOOST_CHECK_CLOSE( length, 2.0, 0.01);
-    BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2), -1.0, 0.01);
-  }
+        BOOST_CHECK_CLOSE(length, 2.0, 0.01);
+        BOOST_CHECK_CLOSE(q(0), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), -1.0, 0.01);
+    }
 
   // Hit straigth on corner
-  {
-    V const r      = V::make( 0.0, 0.0, 1.0);
-    V const p      = V::make( -1.0, -1.0,-3.0);
+    {
+        V const r = V::make(0.0, 0.0, 1.0);
+        V const p = V::make(-1.0, -1.0, -3.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( hit );
+        BOOST_CHECK(hit);
 
-    BOOST_CHECK_CLOSE( length, 2.0, 0.01);
-    BOOST_CHECK_CLOSE( q(0), -1.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1), -1.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2), -1.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, 2.0, 0.01);
+        BOOST_CHECK_CLOSE(q(0), -1.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), -1.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), -1.0, 0.01);
+    }
 
   // Hit straigth on edge
-  {
-    V const r      = V::make( 0.0, 0.0, 1.0);
-    V const p      = V::make( 0.0, -1.0,-3.0);
+    {
+        V const r = V::make(0.0, 0.0, 1.0);
+        V const p = V::make(0.0, -1.0, -3.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( hit );
+        BOOST_CHECK(hit);
 
-    BOOST_CHECK_CLOSE( length, 2.0, 0.01);
-    BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1), -1.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2), -1.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, 2.0, 0.01);
+        BOOST_CHECK_CLOSE(q(0), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), -1.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), -1.0, 0.01);
+    }
 
   // Aligned ray no hitting
-  {
-    V const r      = V::make( 0.0, 0.0, 1.0);
-    V const p      = V::make( -2.0, 0.0,-3.0);
+    {
+        V const r = V::make(0.0, 0.0, 1.0);
+        V const p = V::make(-2.0, 0.0, -3.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( !hit );
+        BOOST_CHECK(!hit);
 
-    BOOST_CHECK_CLOSE( length, std::numeric_limits<T>::max(), 0.01);
-    BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2),  0.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, std::numeric_limits<T>::max(), 0.01);
+        BOOST_CHECK_CLOSE(q(0), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), 0.0, 0.01);
+    }
 
   // Obligue ray no hitting
-  {
-    V const r      = V::make( 1.0, 1.0, 1.0);
-    V const p      = V::make( 0.0, 0.0,-10.0);
+    {
+        V const r = V::make(1.0, 1.0, 1.0);
+        V const p = V::make(0.0, 0.0, -10.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( !hit );
+        BOOST_CHECK(!hit);
 
-    BOOST_CHECK_CLOSE( length, std::numeric_limits<T>::max(), 0.01);
-    BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2),  0.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, std::numeric_limits<T>::max(), 0.01);
+        BOOST_CHECK_CLOSE(q(0), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), 0.0, 0.01);
+    }
 
   // Obligue ray central hit
-  {
-    V const r      = V::make( 1.0,  1.0,  1.0);
-    V const p      = V::make(-2.0, -2.0, -3.0);
+    {
+        V const r = V::make(1.0, 1.0, 1.0);
+        V const p = V::make(-2.0, -2.0, -3.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( hit );
+        BOOST_CHECK(hit);
 
-    BOOST_CHECK_CLOSE( length, 2*1.732050807568877, 0.01);
-    BOOST_CHECK_CLOSE( q(0),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2), -1.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, 2 * 1.732050807568877, 0.01);
+        BOOST_CHECK_CLOSE(q(0), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), -1.0, 0.01);
+    }
 
   // Obligue ray corner hit
-  {
-    V const r      = V::make( 1.0,  1.0,  1.0);
-    V const p      = V::make( 0.0,  0.0, -2.0);
+    {
+        V const r = V::make(1.0, 1.0, 1.0);
+        V const p = V::make(0.0, 0.0, -2.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( hit );
+        BOOST_CHECK(hit);
 
-    BOOST_CHECK_CLOSE( length, 1.732050807568877, 0.01);
-    BOOST_CHECK_CLOSE( q(0),  1.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1),  1.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2), -1.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, 1.732050807568877, 0.01);
+        BOOST_CHECK_CLOSE(q(0), 1.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), 1.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), -1.0, 0.01);
+    }
 
   // Obligue ray edge hit
-  {
-    V const r      = V::make( 1.0,  1.0,  1.0);
-    V const p      = V::make( 0.0, -1.0, -2.0);
+    {
+        V const r = V::make(1.0, 1.0, 1.0);
+        V const p = V::make(0.0, -1.0, -2.0);
 
-    geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::Ray<V> const ray = geometry::make_ray(p, r);
 
-    T       length = 0;
-    V       q      = V::zero();
+        T length = 0;
+        V q = V::zero();
 
-    bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
+        bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
-    BOOST_CHECK( hit );
+        BOOST_CHECK(hit);
 
-    BOOST_CHECK_CLOSE( length, 1.732050807568877, 0.01);
-    BOOST_CHECK_CLOSE( q(0),  1.0, 0.01);
-    BOOST_CHECK_CLOSE( q(1),  0.0, 0.01);
-    BOOST_CHECK_CLOSE( q(2), -1.0, 0.01);
-  }
-
+        BOOST_CHECK_CLOSE(length, 1.732050807568877, 0.01);
+        BOOST_CHECK_CLOSE(q(0), 1.0, 0.01);
+        BOOST_CHECK_CLOSE(q(1), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(q(2), -1.0, 0.01);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

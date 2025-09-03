@@ -8,58 +8,51 @@
 
 namespace convex
 {
-  template<typename T>
-  T const & Cone<T>::half_height() const { return this->m_half_height; }
+template <typename T> T const& Cone<T>::half_height() const { return this->m_half_height; }
 
-  template<typename T>
-  T& Cone<T>::half_height()       { return this->m_half_height; }
+template <typename T> T& Cone<T>::half_height() { return this->m_half_height; }
 
-  template<typename T>
-  const T& Cone<T>::base_radius() const { return this->m_base_radius; }
+template <typename T> const T& Cone<T>::base_radius() const { return this->m_base_radius; }
 
-  template<typename T>
-  T& Cone<T>::base_radius()       { return this->m_base_radius; }
+template <typename T> T& Cone<T>::base_radius() { return this->m_base_radius; }
 
-  template<typename T>
-  Cone<T>::Cone()
-      : m_half_height( 1 )
-  , m_base_radius( 1 )
-  {}
+template <typename T>
+Cone<T>::Cone()
+    : m_half_height(1)
+    , m_base_radius(1)
+{
+}
 
-  template<typename T>
-  auto Cone<T>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
-  {
-      using std::sqrt;
+template <typename T> auto Cone<T>::get_support_point(EigenVector3<T> dir) const -> EigenVector3<T>
+{
+    using std::sqrt;
 
+    T const& vx = dir(0);
+    T const& vy = dir(1);
+    T const& vz = dir(2);
 
-      T const & vx = dir(0);
-      T const & vy = dir(1);
-      T const & vz = dir(2);
+    T const vv = vx * vx + vy * vy + vz * vz;
 
-
-
-      T const vv = vx*vx + vy*vy + vz*vz;
-
-      T px = 0;
-      T py = 0;
-      T pz = 0;
+    T px = 0;
+    T py = 0;
+    T pz = 0;
 
       // Test if we have a valid search direction. If not we simply return some boundary point of the cone
-      if (vv <= 0 )
-      {
-          px = 0;
-          py = 0;
-          pz = -this->m_half_height;
+    if (vv <= 0)
+    {
+        px = 0;
+        py = 0;
+        pz = -this->m_half_height;
 
-          assert( is_number(px) || !"NAN encountered");
-          assert( is_number(py) || !"NAN encountered");
-          assert( is_number(pz) || !"NAN encountered");
-          assert( is_finite(px) || !"INF encountered");
-          assert( is_finite(py) || !"INF encountered");
-          assert( is_finite(pz) || !"INF encountered");
+        assert(is_number(px) || !"NAN encountered");
+        assert(is_number(py) || !"NAN encountered");
+        assert(is_number(pz) || !"NAN encountered");
+        assert(is_finite(px) || !"INF encountered");
+        assert(is_finite(py) || !"INF encountered");
+        assert(is_finite(pz) || !"INF encountered");
 
-          return {px,py,pz};
-      }
+        return {px, py, pz};
+    }
 
       /*
     // Now we know that we have a valid search direction. We proceed by
@@ -141,90 +134,89 @@ namespace convex
     // cone is a support point.
     */
 
-      T const sine_alpha = this->m_base_radius / (2*this->m_half_height);
-      assert( is_number(sine_alpha)    || !"NAN encountered");
-      assert( is_finite(sine_alpha)    || !"INF encountered");
-      assert( sine_alpha >= 0 || !"sine(alpha) can not be negative");
-      assert( sine_alpha <= 1  || !"sine(alpha) can not be larger than one");
+    T const sine_alpha = this->m_base_radius / (2 * this->m_half_height);
+    assert(is_number(sine_alpha) || !"NAN encountered");
+    assert(is_finite(sine_alpha) || !"INF encountered");
+    assert(sine_alpha >= 0 || !"sine(alpha) can not be negative");
+    assert(sine_alpha <= 1 || !"sine(alpha) can not be larger than one");
 
-      T const norm_v     = sqrt(vv);
-      assert( is_number(norm_v)    || !"NAN encountered");
-      assert( is_finite(norm_v)    || !"INF encountered");
-      assert( norm_v >= 0 || !"Norm can not be negative");
+    T const norm_v = sqrt(vv);
+    assert(is_number(norm_v) || !"NAN encountered");
+    assert(is_finite(norm_v) || !"INF encountered");
+    assert(norm_v >= 0 || !"Norm can not be negative");
 
       // Test if search direction is in Apex voronoi region
-      if( vz >= norm_v*sine_alpha)
-      {
-          px = 0;
-          py = 0;
-          pz = this->m_half_height;
+    if (vz >= norm_v * sine_alpha)
+    {
+        px = 0;
+        py = 0;
+        pz = this->m_half_height;
 
-          assert( is_number(px) || !"NAN encountered");
-          assert( is_number(py) || !"NAN encountered");
-          assert( is_number(pz) || !"NAN encountered");
-          assert( is_finite(px) || !"INF encountered");
-          assert( is_finite(py) || !"INF encountered");
-          assert( is_finite(pz) || !"INF encountered");
+        assert(is_number(px) || !"NAN encountered");
+        assert(is_number(py) || !"NAN encountered");
+        assert(is_number(pz) || !"NAN encountered");
+        assert(is_finite(px) || !"INF encountered");
+        assert(is_finite(py) || !"INF encountered");
+        assert(is_finite(pz) || !"INF encountered");
 
-          return {px,py,pz};
-      }
+        return {px, py, pz};
+    }
 
-      T const norm_sigma     = sqrt( vx*vx + vy*vy );
-      assert( is_number(norm_sigma)    || !"NAN encountered");
-      assert( is_finite(norm_sigma)    || !"INF encountered");
-      assert( norm_sigma >= 0 || !"Cone::operator(): Norm can not be negative");
+    T const norm_sigma = sqrt(vx * vx + vy * vy);
+    assert(is_number(norm_sigma) || !"NAN encountered");
+    assert(is_finite(norm_sigma) || !"INF encountered");
+    assert(norm_sigma >= 0 || !"Cone::operator(): Norm can not be negative");
 
       // Test if search direction has any radial component
-      if(norm_sigma > 0 )
-      {
-          px = this->m_base_radius*vx/norm_sigma;
-          py = this->m_base_radius*vy/norm_sigma;
-          pz = -(this->m_half_height);
+    if (norm_sigma > 0)
+    {
+        px = this->m_base_radius * vx / norm_sigma;
+        py = this->m_base_radius * vy / norm_sigma;
+        pz = -(this->m_half_height);
 
-          assert( is_number(px) || !"NAN encountered");
-          assert( is_number(py) || !"NAN encountered");
-          assert( is_number(pz) || !"NAN encountered");
-          assert( is_finite(px) || !"INF encountered");
-          assert( is_finite(py) || !"INF encountered");
-          assert( is_finite(pz) || !"INF encountered");
+        assert(is_number(px) || !"NAN encountered");
+        assert(is_number(py) || !"NAN encountered");
+        assert(is_number(pz) || !"NAN encountered");
+        assert(is_finite(px) || !"INF encountered");
+        assert(is_finite(py) || !"INF encountered");
+        assert(is_finite(pz) || !"INF encountered");
 
-          return {px,py,pz};
-      }
+        return {px, py, pz};
+    }
 
       // Search direction must be straight down
-      px = 0;
-      py = 0;
-      pz = -this->m_half_height;
+    px = 0;
+    py = 0;
+    pz = -this->m_half_height;
 
-      assert( is_number(px) || !"NAN encountered");
-      assert( is_number(py) || !"NAN encountered");
-      assert( is_number(pz) || !"NAN encountered");
-      assert( is_finite(px) || !"INF encountered");
-      assert( is_finite(py) || !"INF encountered");
-      assert( is_finite(pz) || !"INF encountered");
+    assert(is_number(px) || !"NAN encountered");
+    assert(is_number(py) || !"NAN encountered");
+    assert(is_number(pz) || !"NAN encountered");
+    assert(is_finite(px) || !"INF encountered");
+    assert(is_finite(py) || !"INF encountered");
+    assert(is_finite(pz) || !"INF encountered");
 
-      return {px,py,pz};
-  }
+    return {px, py, pz};
+}
 
-  template<typename T>
-  T Cone<T>::get_scale() const
-  {
+template <typename T> T Cone<T>::get_scale() const
+{
     using std::min;
 
-    assert( is_number(this->m_half_height)    || !"NAN encountered");
-    assert( is_finite(this->m_half_height)    || !"INF encountered");
-    assert( this->m_half_height >= 0 || !"Negative half height");
-    assert( is_number(this->m_base_radius)    || !"NAN encountered");
-    assert( is_finite(this->m_base_radius)    || !"INF encountered");
-    assert( this->m_base_radius >= 0 || !"Negative base radius");
+    assert(is_number(this->m_half_height) || !"NAN encountered");
+    assert(is_finite(this->m_half_height) || !"INF encountered");
+    assert(this->m_half_height >= 0 || !"Negative half height");
+    assert(is_number(this->m_base_radius) || !"NAN encountered");
+    assert(is_finite(this->m_base_radius) || !"INF encountered");
+    assert(this->m_base_radius >= 0 || !"Negative base radius");
 
     T const d = 2 * ((this->m_base_radius > 0) ? this->m_base_radius : std::numeric_limits<T>::max());
     T const h = 2 * ((this->m_half_height > 0) ? this->m_half_height : std::numeric_limits<T>::max());
 
     return min(h, d);
-  }
+}
 
-  template class Cone<float>;
-  template class Cone<double>;
+template class Cone<float>;
+template class Cone<double>;
 
 } // namespace convex

@@ -9,32 +9,28 @@ namespace gl3
 
 #ifndef NDEBUG
 
-  void check_errors( std::string const & location )
-  {
+void check_errors(std::string const& location)
+{
     util::Log logging;
 
     GLuint error_code;
 
-    while ( (error_code = glGetError()) != 0 )
+    while ((error_code = glGetError()) != 0)
     {
-      logging << glErrorString(error_code);
+        logging << glErrorString(error_code);
 
-      if(!location.empty())
-        logging << " at " << location;
-      logging << util::Log::newline();
+        if (!location.empty()) logging << " at " << location;
+        logging << util::Log::newline();
     }
     return;
-  }
+}
 
 #else
 
-  void check_errors(  )
-  {}
+void check_errors() {}
 
-  void check_errors( std::string const & )
-  {}
+void check_errors(std::string const&) {}
 
 #endif
 
 } // namespace gl3
-

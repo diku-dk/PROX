@@ -13,16 +13,15 @@ BOOST_AUTO_TEST_SUITE(tiny_degrees_and_radians);
 
 BOOST_AUTO_TEST_CASE(conversion)
 {
-  double const degrees180 = 180.0;
-  double const radians180 = VT::convert_to_radians(degrees180);
+    double const degrees180 = 180.0;
+    double const radians180 = VT::convert_to_radians(degrees180);
 
-  BOOST_CHECK_CLOSE( radians180, VT::pi(), 0.1 );
+    BOOST_CHECK_CLOSE(radians180, VT::pi(), 0.1);
 
-  double const radiansPI = VT::pi();
-  double const degreesPI = VT::convert_to_degrees(radiansPI);
+    double const radiansPI = VT::pi();
+    double const degreesPI = VT::convert_to_degrees(radiansPI);
 
-  BOOST_CHECK_CLOSE( degreesPI, 180.0, 0.1 );
-
+    BOOST_CHECK_CLOSE(degreesPI, 180.0, 0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

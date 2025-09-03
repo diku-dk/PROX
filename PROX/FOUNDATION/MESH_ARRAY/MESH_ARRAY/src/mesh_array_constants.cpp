@@ -3,9 +3,6 @@
 namespace mesh_array
 {
 
-  size_t UNASSIGNED()
-  {
-    return 0xFFFFFFFFu;
-  }
+size_t UNASSIGNED() { return 0xFFFFFFFFu; }
 
 }// end namespace mesh_array

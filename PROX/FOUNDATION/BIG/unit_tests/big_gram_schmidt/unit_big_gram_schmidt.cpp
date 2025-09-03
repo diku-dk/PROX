@@ -20,36 +20,35 @@ BOOST_AUTO_TEST_SUITE(big_modified_gram_schmidt);
 
 BOOST_AUTO_TEST_CASE(random_test_case)
 {
-  typedef ublas::compressed_matrix<double> matrix_type;
+    typedef ublas::compressed_matrix<double> matrix_type;
 
-  matrix_type A;
+    matrix_type A;
 
-  for(size_t tst=0;tst<5;++tst)
-  {
-    big::generate_random(10, 10, A);
+    for (size_t tst = 0; tst < 5; ++tst)
+    {
+        big::generate_random(10, 10, A);
 
-    bool not_ortho = !big::is_orthonormal( A );
-    BOOST_CHECK(not_ortho);
+        bool not_ortho = !big::is_orthonormal(A);
+        BOOST_CHECK(not_ortho);
 
-    big::gram_schmidt(A);
+        big::gram_schmidt(A);
 
-    bool did_it = big::is_orthonormal( A );
-    BOOST_CHECK(did_it);
-  }
+        bool did_it = big::is_orthonormal(A);
+        BOOST_CHECK(did_it);
+    }
 
+    {
+        using namespace big;
+        big::fast_generate_PD(10, A);
 
-  {
-    using namespace big;
-    big::fast_generate_PD( 10, A );
+        bool is_ok = big::is_symmetric(A);
+        BOOST_CHECK(is_ok);
 
-    bool is_ok = big::is_symmetric( A );
-    BOOST_CHECK(is_ok);
+        big::generate_PSD(10, A, 0.5);
 
-    big::generate_PSD( 10, A, 0.5 );
-
-    bool is_also_ok = big::is_symmetric( A );
-    BOOST_CHECK(is_also_ok);
-  }
+        bool is_also_ok = big::is_symmetric(A);
+        BOOST_CHECK(is_also_ok);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

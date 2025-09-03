@@ -10,183 +10,182 @@
 namespace mass
 {
   //-------------------------------------------------------------------------
-  template<typename T>
-  Properties<T>::Properties()
-  : m_m( 0)
-  , m_Ixx( 0)
-  , m_Iyy( 0)
-  , m_Izz( 0)
-  , m_Ixy( 0)
-  , m_Ixz( 0)
-  , m_Iyz( 0)
-  , m_x( 0)
-  , m_y( 0)
-  , m_z( 0)
-  , m_Qs( 1)
-  , m_Qx( 0)
-  , m_Qy( 0)
-  , m_Qz( 0)
-  {}
+template <typename T>
+Properties<T>::Properties()
+    : m_m(0)
+    , m_Ixx(0)
+    , m_Iyy(0)
+    , m_Izz(0)
+    , m_Ixy(0)
+    , m_Ixz(0)
+    , m_Iyz(0)
+    , m_x(0)
+    , m_y(0)
+    , m_z(0)
+    , m_Qs(1)
+    , m_Qx(0)
+    , m_Qy(0)
+    , m_Qz(0)
+{
+}
+
   //-------------------------------------------------------------------------
-  template<typename T>
-  Properties<T>::~Properties(){}
+template <typename T> Properties<T>::~Properties() {}
+
   //-------------------------------------------------------------------------
-  template<typename T>
-  Properties<T>::Properties( Properties<T> const & cpy ) { (*this) = cpy; }
+template <typename T> Properties<T>::Properties(Properties<T> const& cpy) { (*this) = cpy; }
+
   //-------------------------------------------------------------------------
-  template<typename T>
-  Properties<T> & Properties<T>::operator=( Properties<T> const & lhs )
-  {
+template <typename T> Properties<T>& Properties<T>::operator=(Properties<T> const& lhs)
+{
     if (this != &lhs)
     {
-      this->m_m   = lhs.m_m;
-      this->m_Ixx = lhs.m_Ixx;
-      this->m_Iyy = lhs.m_Iyy;
-      this->m_Izz = lhs.m_Izz;
-      this->m_Ixy = lhs.m_Ixy;
-      this->m_Ixz = lhs.m_Ixz;
-      this->m_Iyz = lhs.m_Iyz;
-      this->m_x   = lhs.m_x;
-      this->m_y   = lhs.m_y;
-      this->m_z   = lhs.m_z;
-      this->m_Qs  = lhs.m_Qs;
-      this->m_Qx  = lhs.m_Qx;
-      this->m_Qy  = lhs.m_Qy;
-      this->m_Qz  = lhs.m_Qz;
+        this->m_m = lhs.m_m;
+        this->m_Ixx = lhs.m_Ixx;
+        this->m_Iyy = lhs.m_Iyy;
+        this->m_Izz = lhs.m_Izz;
+        this->m_Ixy = lhs.m_Ixy;
+        this->m_Ixz = lhs.m_Ixz;
+        this->m_Iyz = lhs.m_Iyz;
+        this->m_x = lhs.m_x;
+        this->m_y = lhs.m_y;
+        this->m_z = lhs.m_z;
+        this->m_Qs = lhs.m_Qs;
+        this->m_Qx = lhs.m_Qx;
+        this->m_Qy = lhs.m_Qy;
+        this->m_Qz = lhs.m_Qz;
     }
     return *this;
-  }
+}
+
   //-------------------------------------------------------------------------
-  template<typename T>
-  bool Properties<T>::operator==( Properties<T> const & lhs ) const
-  {
-    if( this->m_m   != lhs.m_m   ) return false;
-    if( this->m_Ixx != lhs.m_Ixx ) return false;
-    if( this->m_Iyy != lhs.m_Iyy ) return false;
-    if( this->m_Izz != lhs.m_Izz ) return false;
-    if( this->m_Ixy != lhs.m_Ixy ) return false;
-    if( this->m_Ixz != lhs.m_Ixz ) return false;
-    if( this->m_Iyz != lhs.m_Iyz ) return false;
-    if( this->m_x   != lhs.m_x   ) return false;
-    if( this->m_y   != lhs.m_y   ) return false;
-    if( this->m_z   != lhs.m_z   ) return false;
-    if( this->m_Qs  != lhs.m_Qs  ) return false;
-    if( this->m_Qx  != lhs.m_Qx  ) return false;
-    if( this->m_Qy  != lhs.m_Qy  ) return false;
-    if( this->m_Qz  != lhs.m_Qz  ) return false;
+template <typename T> bool Properties<T>::operator==(Properties<T> const& lhs) const
+{
+    if (this->m_m != lhs.m_m) return false;
+    if (this->m_Ixx != lhs.m_Ixx) return false;
+    if (this->m_Iyy != lhs.m_Iyy) return false;
+    if (this->m_Izz != lhs.m_Izz) return false;
+    if (this->m_Ixy != lhs.m_Ixy) return false;
+    if (this->m_Ixz != lhs.m_Ixz) return false;
+    if (this->m_Iyz != lhs.m_Iyz) return false;
+    if (this->m_x != lhs.m_x) return false;
+    if (this->m_y != lhs.m_y) return false;
+    if (this->m_z != lhs.m_z) return false;
+    if (this->m_Qs != lhs.m_Qs) return false;
+    if (this->m_Qx != lhs.m_Qx) return false;
+    if (this->m_Qy != lhs.m_Qy) return false;
+    if (this->m_Qz != lhs.m_Qz) return false;
 
     return true;
-  }
+}
+
   //-------------------------------------------------------------------------
-  template<typename T>
-  bool Properties<T>::is_body_space() const { return !(this->is_model_space()); }
+template <typename T> bool Properties<T>::is_body_space() const { return !(this->is_model_space()); }
+
   //-------------------------------------------------------------------------
-  template<typename T>
-    bool Properties<T>::is_model_space() const
-  {
+template <typename T> bool Properties<T>::is_model_space() const
+{
     using namespace tiny;
     typedef ValueTraits<T> VT;
 
-    assert( this->m_m    >= 0 || !"Internal error");
-    assert( this->m_Ixx  >= 0 || !"Internal error");
-    assert( this->m_Iyy  >= 0 || !"Internal error");
-    assert( this->m_Izz  >= 0 || !"Internal error");
+    assert(this->m_m >= 0 || !"Internal error");
+    assert(this->m_Ixx >= 0 || !"Internal error");
+    assert(this->m_Iyy >= 0 || !"Internal error");
+    assert(this->m_Izz >= 0 || !"Internal error");
 
-    assert( is_number( this->m_m )     || !"Internal error");
-    assert( is_number( this->m_Ixx )   || !"Internal error");
-    assert( is_number( this->m_Iyy )   || !"Internal error");
-    assert( is_number( this->m_Izz )   || !"Internal error");
-    assert( is_number( this->m_Ixy )   || !"Internal error");
-    assert( is_number( this->m_Ixz )   || !"Internal error");
-    assert( is_number( this->m_Iyz )   || !"Internal error");
-    assert( is_number( this->m_x )     || !"Internal error");
-    assert( is_number( this->m_y )     || !"Internal error");
-    assert( is_number( this->m_z )     || !"Internal error");
-    assert( is_number( this->m_Qs )    || !"Internal error");
-    assert( is_number( this->m_Qx )    || !"Internal error");
-    assert( is_number( this->m_Qy )    || !"Internal error");
-    assert( is_number( this->m_Qz )    || !"Internal error");
+    assert(is_number(this->m_m) || !"Internal error");
+    assert(is_number(this->m_Ixx) || !"Internal error");
+    assert(is_number(this->m_Iyy) || !"Internal error");
+    assert(is_number(this->m_Izz) || !"Internal error");
+    assert(is_number(this->m_Ixy) || !"Internal error");
+    assert(is_number(this->m_Ixz) || !"Internal error");
+    assert(is_number(this->m_Iyz) || !"Internal error");
+    assert(is_number(this->m_x) || !"Internal error");
+    assert(is_number(this->m_y) || !"Internal error");
+    assert(is_number(this->m_z) || !"Internal error");
+    assert(is_number(this->m_Qs) || !"Internal error");
+    assert(is_number(this->m_Qx) || !"Internal error");
+    assert(is_number(this->m_Qy) || !"Internal error");
+    assert(is_number(this->m_Qz) || !"Internal error");
 
-    assert( is_finite( this->m_m )     || !"Internal error");
-    assert( is_finite( this->m_Ixx )   || !"Internal error");
-    assert( is_finite( this->m_Iyy )   || !"Internal error");
-    assert( is_finite( this->m_Izz )   || !"Internal error");
-    assert( is_finite( this->m_Ixy )   || !"Internal error");
-    assert( is_finite( this->m_Ixz )   || !"Internal error");
-    assert( is_finite( this->m_Iyz )   || !"Internal error");
-    assert( is_finite( this->m_x )     || !"Internal error");
-    assert( is_finite( this->m_y )     || !"Internal error");
-    assert( is_finite( this->m_z )     || !"Internal error");
-    assert( is_finite( this->m_Qs )    || !"Internal error");
-    assert( is_finite( this->m_Qx )    || !"Internal error");
-    assert( is_finite( this->m_Qy )    || !"Internal error");
-    assert( is_finite( this->m_Qz )    || !"Internal error");
+    assert(is_finite(this->m_m) || !"Internal error");
+    assert(is_finite(this->m_Ixx) || !"Internal error");
+    assert(is_finite(this->m_Iyy) || !"Internal error");
+    assert(is_finite(this->m_Izz) || !"Internal error");
+    assert(is_finite(this->m_Ixy) || !"Internal error");
+    assert(is_finite(this->m_Ixz) || !"Internal error");
+    assert(is_finite(this->m_Iyz) || !"Internal error");
+    assert(is_finite(this->m_x) || !"Internal error");
+    assert(is_finite(this->m_y) || !"Internal error");
+    assert(is_finite(this->m_z) || !"Internal error");
+    assert(is_finite(this->m_Qs) || !"Internal error");
+    assert(is_finite(this->m_Qx) || !"Internal error");
+    assert(is_finite(this->m_Qy) || !"Internal error");
+    assert(is_finite(this->m_Qz) || !"Internal error");
 
-    if( this->m_Ixy != 0 ) return true;
-    if( this->m_Ixz != 0 ) return true;
-    if( this->m_Iyz != 0 ) return true;
-    if( this->m_x   != 0 ) return true;
-    if( this->m_y   != 0 ) return true;
-    if( this->m_z   != 0 ) return true;
-    if( this->m_Qs  != 1  ) return true;
-    if( this->m_Qx  != 0 ) return true;
-    if( this->m_Qy  != 0 ) return true;
-    if( this->m_Qz  != 0 ) return true;
+    if (this->m_Ixy != 0) return true;
+    if (this->m_Ixz != 0) return true;
+    if (this->m_Iyz != 0) return true;
+    if (this->m_x != 0) return true;
+    if (this->m_y != 0) return true;
+    if (this->m_z != 0) return true;
+    if (this->m_Qs != 1) return true;
+    if (this->m_Qx != 0) return true;
+    if (this->m_Qy != 0) return true;
+    if (this->m_Qz != 0) return true;
 
     return false;
-  }
+}
+
   //-------------------------------------------------------------------------
-  template<typename T>
-  void Properties<T>::clear()
-  {
+template <typename T> void Properties<T>::clear()
+{
     using namespace tiny;
     typedef ValueTraits<T> VT;
 
-    this->m_m   = 0;
+    this->m_m = 0;
     this->m_Ixx = 0;
     this->m_Iyy = 0;
     this->m_Izz = 0;
     this->m_Ixy = 0;
     this->m_Ixz = 0;
     this->m_Iyz = 0;
-    this->m_x   = 0;
-    this->m_y   = 0;
-    this->m_z   = 0;
-    this->m_Qs  = 1;
-    this->m_Qx  = 0;
-    this->m_Qy  = 0;
-    this->m_Qz  = 0;
-  }
+    this->m_x = 0;
+    this->m_y = 0;
+    this->m_z = 0;
+    this->m_Qs = 1;
+    this->m_Qx = 0;
+    this->m_Qy = 0;
+    this->m_Qz = 0;
+}
+
   //-------------------------------------------------------------------------
 
-  template<typename T>
-  std::ostream & operator<< (std::ostream & o, Properties<T> const & P)
-  {
-    o << "  m = " << P.m_m   << std::endl;
+template <typename T> std::ostream& operator<<(std::ostream& o, Properties<T> const& P)
+{
+    o << "  m = " << P.m_m << std::endl;
     o << "Ixx = " << P.m_Ixx << std::endl;
     o << "Iyy = " << P.m_Iyy << std::endl;
     o << "Izz = " << P.m_Izz << std::endl;
     o << "Ixy = " << P.m_Ixy << std::endl;
     o << "Ixz = " << P.m_Ixz << std::endl;
     o << "Iyz = " << P.m_Iyz << std::endl;
-    o << "  x = " << P.m_x   << std::endl;
-    o << "  y = " << P.m_y   << std::endl;
-    o << "  z = " << P.m_z   << std::endl;
-    o << " Qs = " << P.m_Qs  << std::endl;
-    o << " Qx = " << P.m_Qx  << std::endl;
-    o << " Qy = " << P.m_Qy  << std::endl;
-    o << " Qz = " << P.m_Qz  << std::endl;
+    o << "  x = " << P.m_x << std::endl;
+    o << "  y = " << P.m_y << std::endl;
+    o << "  z = " << P.m_z << std::endl;
+    o << " Qs = " << P.m_Qs << std::endl;
+    o << " Qx = " << P.m_Qx << std::endl;
+    o << " Qy = " << P.m_Qy << std::endl;
+    o << " Qz = " << P.m_Qz << std::endl;
     return o;
-  }
+}
   //-------------------------------------------------------------------------
 
-  template class Properties<float>;
-  template class Properties<double>;
+template class Properties<float>;
+template class Properties<double>;
 
-  template
-  std::ostream & operator<< (std::ostream & o, Properties<float> const & P);
+template std::ostream& operator<<(std::ostream& o, Properties<float> const& P);
 
-  template
-  std::ostream & operator<< (std::ostream & o, Properties<double> const & P);
+template std::ostream& operator<<(std::ostream& o, Properties<double> const& P);
 
 } // namespace mass

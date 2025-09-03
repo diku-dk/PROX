@@ -89,10 +89,10 @@ namespace mesh_array
 //    return this->operator()(t);
 //  }
 
-  template class TetrahedronAttribute<bool, T4Mesh>;
-  template class TetrahedronAttribute<float, T4Mesh>;
-  template class TetrahedronAttribute<double, T4Mesh>;
-  template class TetrahedronAttribute<int, T4Mesh>;
-  template class TetrahedronAttribute<unsigned int, T4Mesh>;
+template class TetrahedronAttribute<bool, T4Mesh>;
+template class TetrahedronAttribute<float, T4Mesh>;
+template class TetrahedronAttribute<double, T4Mesh>;
+template class TetrahedronAttribute<int, T4Mesh>;
+template class TetrahedronAttribute<unsigned int, T4Mesh>;
 
 } // end namespace mesh_array

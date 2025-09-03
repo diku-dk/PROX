@@ -10,38 +10,30 @@
 namespace mesh_array
 {
 
-template<typename T>
-void make_sphere(
-    T const & radius
-    , size_t const & slices
-    , size_t const & segments
-    , T3Mesh & mesh
-    , VertexAttribute<T,T3Mesh> & X
-    , VertexAttribute<T,T3Mesh> & Y
-    , VertexAttribute<T,T3Mesh> & Z
-    )
-  {
+template <typename T>
+void make_sphere(T const& radius, size_t const& slices, size_t const& segments, T3Mesh& mesh,
+                 VertexAttribute<T, T3Mesh>& X, VertexAttribute<T, T3Mesh>& Y, VertexAttribute<T, T3Mesh>& Z)
+{
 /*    typedef typename MT::real_type       T;
     typedef typename MT::value_traits    VT;
     typedef typename MT::vector3_type    V;
     typedef typename MT::quaternion_type Q;*/
 
-      std::vector<EigenVector3<T>> profile;
+    std::vector<EigenVector3<T>> profile;
 
-        profile.resize(segments);
+    profile.resize(segments);
 
-      T const dtheta = std::numbers::pi_v<T> / (segments-1);
+    T const dtheta = std::numbers::pi_v<T> / (segments - 1);
 
-        for(size_t i=0;i < segments; ++i )
-        {
-            T const theta = dtheta*i;
+    for (size_t i = 0; i < segments; ++i)
+    {
+        T const theta = dtheta * i;
 
-            const EigenQuaternion<T> R = Rotateu( theta ,EigenVector3<T>(0, 0, 1));
-            profile[ i ] = rotate( R, EigenVector3<T>(  0, -radius, 0 ) );
-        }
+        const EigenQuaternion<T> R = Rotateu(theta, EigenVector3<T>(0, 0, 1));
+        profile[i] = rotate(R, EigenVector3<T>(0, -radius, 0));
+    }
 
-        profile_sweep<T>( profile, slices, mesh, X, Y, Z );
-
+    profile_sweep<T>(profile, slices, mesh, X, Y, Z);
 
 //    typedef typename MT::real_type       T;
 //    typedef typename MT::value_traits    VT;
@@ -117,16 +109,14 @@ void make_sphere(
 //				vertex_offset += 4u;
 //			}
 //		}
-    }
+}
 
-    template void make_sphere<float>(float const& radius, size_t const& slices, size_t const& segments,
-                                   T3Mesh& mesh, VertexAttribute<float, T3Mesh>& X,
-                                   VertexAttribute<float, T3Mesh>& Y,
-                                   VertexAttribute<float, T3Mesh>& Z);
+template void make_sphere<float>(float const& radius, size_t const& slices, size_t const& segments, T3Mesh& mesh,
+                                 VertexAttribute<float, T3Mesh>& X, VertexAttribute<float, T3Mesh>& Y,
+                                 VertexAttribute<float, T3Mesh>& Z);
 
-    template void make_sphere<double>(double const& radius, size_t const& slices, size_t const& segments,
-                                   T3Mesh& mesh, VertexAttribute<double, T3Mesh>& X,
-                                   VertexAttribute<double, T3Mesh>& Y,
-                                   VertexAttribute<double, T3Mesh>& Z);
+template void make_sphere<double>(double const& radius, size_t const& slices, size_t const& segments, T3Mesh& mesh,
+                                  VertexAttribute<double, T3Mesh>& X, VertexAttribute<double, T3Mesh>& Y,
+                                  VertexAttribute<double, T3Mesh>& Z);
 
 } //namespace mesh_array

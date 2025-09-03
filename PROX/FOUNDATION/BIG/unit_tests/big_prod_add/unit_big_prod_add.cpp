@@ -11,51 +11,47 @@ BOOST_AUTO_TEST_SUITE(big_prod_add);
 
 BOOST_AUTO_TEST_CASE(random_test_case)
 {
-  typedef ublas::compressed_matrix<double> matrix_type;
-  typedef ublas::vector<double>            vector_type;
+    typedef ublas::compressed_matrix<double> matrix_type;
+    typedef ublas::vector<double> vector_type;
 
-  matrix_type A;
-  vector_type x;
-  vector_type y;
-  vector_type tst;
+    matrix_type A;
+    vector_type x;
+    vector_type y;
+    vector_type tst;
 
-  A.resize(10,10,false);
-  x.resize(10,false);
-  y.resize(10,false);
-  tst.resize(10,false);
+    A.resize(10, 10, false);
+    x.resize(10, false);
+    y.resize(10, false);
+    tst.resize(10, false);
 
-  big::Random<double> value(0.0,1.0);
+    big::Random<double> value(0.0, 1.0);
 
-  for(size_t iterations = 0;iterations < 100;++iterations)
-  {
-
-    for(size_t i=0;i<A.size1();++i)
+    for (size_t iterations = 0; iterations < 100; ++iterations)
     {
-      x(i) = value();
-      tst(i) = y(i) = value();
-      for(size_t j=0;j<A.size2();++j)
-        A(i,j) = value();
+
+        for (size_t i = 0; i < A.size1(); ++i)
+        {
+            x(i) = value();
+            tst(i) = y(i) = value();
+            for (size_t j = 0; j < A.size2(); ++j) A(i, j) = value();
+        }
+
+        ublas::noalias(tst) += ublas::prod(A, x);
+
+        big::prod_add(A, x, y);
+
+        double tol = 0.01;
+
+        for (size_t i = 0; i < A.size1(); ++i) BOOST_CHECK_CLOSE(double(y(i)), double(tst(i)), tol);
+
+        double s = value();
+
+        ublas::noalias(tst) += ublas::prod(A, x) * s;
+
+        big::prod_add(A, x, s, y);
+
+        for (size_t i = 0; i < A.size1(); ++i) BOOST_CHECK_CLOSE(double(y(i)), double(tst(i)), tol);
     }
-
-    ublas::noalias(tst) += ublas::prod(A,x);
-
-    big::prod_add( A,x,y);
-
-    double tol = 0.01;
-
-    for(size_t i=0;i<A.size1();++i)
-      BOOST_CHECK_CLOSE( double( y(i) ), double( tst(i) ), tol );
-
-    double s = value();
-
-    ublas::noalias(tst) += ublas::prod(A,x)*s;
-
-    big::prod_add( A,x,s,y);
-
-    for(size_t i=0;i<A.size1();++i)
-      BOOST_CHECK_CLOSE( double( y(i) ), double( tst(i) ), tol );
-  }
-
 }
 
 BOOST_AUTO_TEST_SUITE_END();

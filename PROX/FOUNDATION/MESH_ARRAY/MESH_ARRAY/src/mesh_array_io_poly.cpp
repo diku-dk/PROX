@@ -8,20 +8,15 @@
 namespace mesh_array
 {
 
-  template<typename T>
-  void write_poly(
-                  std::string const & filename
-                  , T3Mesh const & mesh
-                  , VertexAttribute<T,T3Mesh> const & X
-                  , VertexAttribute<T,T3Mesh> const & Y
-                  , VertexAttribute<T,T3Mesh> const & Z
-                  )
-  {
-    boost::filesystem::path  mypath(filename);
+template <typename T>
+void write_poly(std::string const& filename, T3Mesh const& mesh, VertexAttribute<T, T3Mesh> const& X,
+                VertexAttribute<T, T3Mesh> const& Y, VertexAttribute<T, T3Mesh> const& Z)
+{
+    boost::filesystem::path mypath(filename);
 
-    std::string const ext = boost::filesystem::extension( mypath );
+    std::string const ext = boost::filesystem::extension(mypath);
 
-    assert( ext == ".poly" || !"read_poly(): illegal file name extension");
+    assert(ext == ".poly" || !"read_poly(): illegal file name extension");
 
     /*
      #Node Section
@@ -36,11 +31,11 @@ namespace mesh_array
 
     size_t const cntV = mesh.vertex_size();
 
-    for(size_t idx = 0u; idx < cntV; ++idx)
+    for (size_t idx = 0u; idx < cntV; ++idx)
     {
-      Vertex const & vertex = mesh.vertex(idx);
+        Vertex const& vertex = mesh.vertex(idx);
 
-      file << idx << " " << X(vertex) << " " << Y(vertex)  << " " << Z(vertex)  << std::endl;
+        file << idx << " " << X(vertex) << " " << Y(vertex) << " " << Z(vertex) << std::endl;
     }
     file << std::endl;
 
@@ -52,20 +47,13 @@ namespace mesh_array
      */
     file << mesh.triangle_size() << " 0" << std::endl;
 
-    for(size_t idx = 0u; idx < mesh.triangle_size(); ++idx)
+    for (size_t idx = 0u; idx < mesh.triangle_size(); ++idx)
     {
-      Triangle const & triangle = mesh.triangle(idx);
+        Triangle const& triangle = mesh.triangle(idx);
 
-      file << 1u << std::endl;
+        file << 1u << std::endl;
 
-      file << 3u
-        << " "
-        << triangle.i()
-        << " "
-        << triangle.j()
-        << " "
-        << triangle.k()
-        << std::endl;
+        file << 3u << " " << triangle.i() << " " << triangle.j() << " " << triangle.k() << std::endl;
     }
 
     /*
@@ -82,24 +70,14 @@ namespace mesh_array
 
     file.flush();
     file.close();
-  }
+}
 
-  template
-  void write_poly<float>(
-                         std::string const & filename
-                         , T3Mesh const & mesh
-                         , VertexAttribute<float,T3Mesh> const & X
-                         , VertexAttribute<float,T3Mesh> const & Y
-                         , VertexAttribute<float,T3Mesh> const & Z
-                         );
+template void write_poly<float>(std::string const& filename, T3Mesh const& mesh,
+                                VertexAttribute<float, T3Mesh> const& X, VertexAttribute<float, T3Mesh> const& Y,
+                                VertexAttribute<float, T3Mesh> const& Z);
 
-  template
-  void write_poly<double>(
-                          std::string const & filename
-                          , T3Mesh const & mesh
-                          , VertexAttribute<double,T3Mesh> const & X
-                          , VertexAttribute<double,T3Mesh> const & Y
-                          , VertexAttribute<double,T3Mesh> const & Z
-                          );
+template void write_poly<double>(std::string const& filename, T3Mesh const& mesh,
+                                 VertexAttribute<double, T3Mesh> const& X, VertexAttribute<double, T3Mesh> const& Y,
+                                 VertexAttribute<double, T3Mesh> const& Z);
 
 } // namespace mesh_array

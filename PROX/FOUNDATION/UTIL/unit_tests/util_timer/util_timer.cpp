@@ -11,20 +11,19 @@ BOOST_AUTO_TEST_SUITE(util);
 BOOST_AUTO_TEST_CASE(timer_test)
 {
 
-  util::Timer timer;
-  timer.start();
+    util::Timer timer;
+    timer.start();
 
-  BOOST_CHECK( timer() == 0.0f );
+    BOOST_CHECK(timer() == 0.0f);
 
-  {
-    float fake = 1.0f;
-    for(size_t i=0u;i< 1000000u;++i)
-      fake *= 2.0f;
-  }
+    {
+        float fake = 1.0f;
+        for (size_t i = 0u; i < 1000000u; ++i) fake *= 2.0f;
+    }
 
-  timer.stop();
+    timer.stop();
 
-  BOOST_CHECK( timer() > 0.0f );
+    BOOST_CHECK(timer() > 0.0f);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -5,34 +5,33 @@
 
 namespace procedural
 {
-  template<typename MT>
-	void make_slide(  content::API * engine
-                  , typename MT::vector3_type const & position
-                  , typename MT::quaternion_type const & orientation
-                  , typename MT::real_type const & degree
-                  , MaterialInfo<typename MT::real_type> mat_info
-                  )
-	{
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type  Q;
-    typedef typename MT::value_traits    VT;
+template <typename MT>
+void make_slide(content::API* engine, typename MT::vector3_type const& position,
+                typename MT::quaternion_type const& orientation, typename MT::real_type const& degree,
+                MaterialInfo<typename MT::real_type> mat_info)
+{
+    typedef typename MT::real_type T;
+    typedef typename MT::vector3_type V;
+    typedef typename MT::quaternion_type Q;
+    typedef typename MT::value_traits VT;
 
-    size_t const mid           = get_material_id<MT>(mat_info, "Stone");
+    size_t const mid = get_material_id<MT>(mat_info, "Stone");
     size_t const stone_density = get_material_density<MT>(mat_info, "Stone");
 
-    T const radians         = degree* (VT::pi()/180);
-    T const radius          = 0.5f;
-    V const hill_extents    = V::make( VT::numeric_cast(6.0), VT::numeric_cast(0.2), 4);
-    V const box_extents     = V::make( radius, radius, radius)*2;
+    T const radians = degree * (VT::pi() / 180);
+    T const radius = 0.5f;
+    V const hill_extents = V::make(VT::numeric_cast(6.0), VT::numeric_cast(0.2), 4);
+    V const box_extents = V::make(radius, radius, radius) * 2;
 
-
-    GeometryHandle<MT> hill   = create_geometry_handle_box<MT>(  engine, hill_extents(0), hill_extents(1), hill_extents(2));
-    GeometryHandle<MT> stone  = create_geometry_handle_box<MT>(  engine, box_extents(0), box_extents(1), box_extents(2) );
+    GeometryHandle<MT> hill = create_geometry_handle_box<MT>(engine, hill_extents(0), hill_extents(1), hill_extents(2));
+    GeometryHandle<MT> stone = create_geometry_handle_box<MT>(engine, box_extents(0), box_extents(1), box_extents(2));
     //  GeometryHandle<MT> sphere = create_geometry_handle_sphere<MT>( engine, radius);
 
     //BF or MF here?
-    V Tm = rotate(Q::Ry(radians), V::make(hill_extents(0)*0.5f, 0, 0));  //V::make(  std::cos(radians)*hill_extents(0)*0.5f, std::sin(radians)*hill_extents(0)*0.5f, 0);
+    V Tm = rotate(
+        Q::Ry(radians),
+        V::make(hill_extents(0) * 0.5f, 0,
+                0));  //V::make(  std::cos(radians)*hill_extents(0)*0.5f, std::sin(radians)*hill_extents(0)*0.5f, 0);
     Q Qm = Q::Rz(radians);
 
     // Body to Model transform
@@ -40,23 +39,16 @@ namespace procedural
     Q Qb = hill.Qb2m();
 
     // Body to World transform
-    V Tw = rotate(Qm,Tb) + Tm;
-    Q Qw = Qm*Qb;
+    V Tw = rotate(Qm, Tb) + Tm;
+    Q Qw = Qm * Qb;
 
     // Apply any user transforms
-    V Tu = rotate(orientation,Tw) + position;
-    Q Qu = orientation*Qw;
+    V Tu = rotate(orientation, Tw) + position;
+    Q Qu = orientation * Qw;
 
-    create_rigid_body<MT>(  engine
-                          , Tu
-                          , Qu
-                          , hill
-                          , mid
-                          , stone_density
-                          , true
-                          );
+    create_rigid_body<MT>(engine, Tu, Qu, hill, mid, stone_density, true);
 
-    V TmB = rotate(Q::Ry(radians), V::make(hill_extents(0)-box_extents(0), (box_extents(1)+hill_extents(1)), 0));
+    V TmB = rotate(Q::Ry(radians), V::make(hill_extents(0) - box_extents(0), (box_extents(1) + hill_extents(1)), 0));
     //V TmB = V::make(  std::cos(radians)*hill_extents(0)*0.5f-box_extents(0)*0.5f
       //              , std::sin(radians)*hill_extents(0)*0.5f+box_extents(1)*0.5f
       //              , radius*2);
@@ -68,19 +60,13 @@ namespace procedural
 
     // Body to World transform
     Tw = rotate(Qm, Tb) + TmB;
-    Qw = Qm*Qb;
+    Qw = Qm * Qb;
 
     // Apply any user transforms
     Tu = rotate(orientation, Tw) + position;
-    Qu = orientation*Qw;
+    Qu = orientation * Qw;
 
-    create_rigid_body<MT>(  engine
-                          , Tu
-                          , Qu
-                          , stone
-                          , mid
-                          , stone_density
-                          );
+    create_rigid_body<MT>(engine, Tu, Qu, stone, mid, stone_density);
     /*
      V TmS = V::make(  std::cos(radians)*hill_extents(0)*0.5f-radius
      , std::sin(radians)*hill_extents(0)*0.5f+radius
@@ -107,13 +93,14 @@ namespace procedural
      , stone_density
      );
      */
-    }
-
-    using MTf = tiny::MathTypes<float>;
-
-    template void make_slide<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                  MTf::quaternion_type const& orientation, MTf::real_type const& pi_frac,
-                                  MaterialInfo<MTf::real_type> mat_info);
-
 }
+
+using MTf = tiny::MathTypes<float>;
+
+template void make_slide<MTf>(content::API* engine, MTf::vector3_type const& position,
+                              MTf::quaternion_type const& orientation, MTf::real_type const& pi_frac,
+                              MaterialInfo<MTf::real_type> mat_info);
+
+} // namespace procedural
+
 //namespace procedural

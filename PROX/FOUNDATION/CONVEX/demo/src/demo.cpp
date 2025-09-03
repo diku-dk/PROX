@@ -10,75 +10,61 @@
 
 void gjk_demo()
 {
-  std::cout << "GJK Demo" << std::endl;
+    std::cout << "GJK Demo" << std::endl;
 
   // Create some math types
-  typedef tiny::MathTypes<double> M;
+    typedef tiny::MathTypes<double> M;
 
-  typedef M::quaternion_type                      Q;
-  typedef M::vector3_type                         V;
+    typedef M::quaternion_type Q;
+    typedef M::vector3_type V;
 //  typedef M::real_type                            T;
-  typedef M::coordsys_type                        C;
-  typedef M::value_traits                         VT;
-
+    typedef M::coordsys_type C;
+    typedef M::value_traits VT;
 
   // Parameters controlling the behaviour of the GJK
-  size_t const max_iterations       = 100u;
-  using T = double;
-  T      const absolute_tolerance   = (10e-6);
-  T      const relative_tolerance   = (10e-6);
-  T      const stagnation_tolerance = (10e-15);
+    size_t const max_iterations = 100u;
+    using T = double;
+    T const absolute_tolerance = (10e-6);
+    T const relative_tolerance = (10e-6);
+    T const stagnation_tolerance = (10e-15);
 
   // Define the geometries
-  geometry::Sphere<T> const A;
-  geometry::Sphere<T> const B;
+    geometry::Sphere<T> const A;
+    geometry::Sphere<T> const B;
 
   // Define the coordinate transformations for the geometries
-  CoordSysEigen<T> X_A;
-  CoordSysEigen<T> X_B;
+    CoordSysEigen<T> X_A;
+    CoordSysEigen<T> X_B;
 
-  X_A.T() = { -2.1,12.0,1.0};
-  X_A.Q() = EigenQuaternion<T>::Identity();
-  X_B.T() = { 4.1,11.3,1.0};
-  X_B.Q() = EigenQuaternion<T>::Identity();
+    X_A.T() = {-2.1, 12.0, 1.0};
+    X_A.Q() = EigenQuaternion<T>::Identity();
+    X_B.T() = {4.1, 11.3, 1.0};
+    X_B.Q() = EigenQuaternion<T>::Identity();
 
   // Create variables to hold results from the computation
-  EigenVector3<T> p_A;
-  EigenVector3<T> p_B;
-  size_t iterations  = 0u;
-  size_t status      = 0u;
-  T      distance    = std::numeric_limits<T>::max();
+    EigenVector3<T> p_A;
+    EigenVector3<T> p_B;
+    size_t iterations = 0u;
+    size_t status = 0u;
+    T distance = std::numeric_limits<T>::max();
 
   // Ask GJK for closest points between the two geometries
 
-  convex::compute_closest_points<T>(
-                              X_A
-                              , &A
-                              , X_B
-                              , &B
-                              , p_A
-                              , p_B
-                              , distance
-                              , iterations
-                              , status
-                              , absolute_tolerance
-                              , relative_tolerance
-                              , stagnation_tolerance
-                              , max_iterations
-                              );
+    convex::compute_closest_points<T>(X_A, &A, X_B, &B, p_A, p_B, distance, iterations, status, absolute_tolerance,
+                                      relative_tolerance, stagnation_tolerance, max_iterations);
 
-  std::cout << "\tstatus = " << convex::get_status_message(status) << std::endl;
-  std::cout << "\tdistance = " << distance << std::endl;
-  std::cout << "\titerations = " << iterations << std::endl;
+    std::cout << "\tstatus = " << convex::get_status_message(status) << std::endl;
+    std::cout << "\tdistance = " << distance << std::endl;
+    std::cout << "\titerations = " << iterations << std::endl;
 
-  std::cout << "Goodbye..." << std::endl;
+    std::cout << "Goodbye..." << std::endl;
 }
 
 void continuous_demo()
 {
-  using std::sqrt;
+    using std::sqrt;
 
-  std::cout << "CONTINUOUS Demo" << std::endl;
+    std::cout << "CONTINUOUS Demo" << std::endl;
 
   // Create some math types
 /*  typedef tiny::MathTypes<double> M;
@@ -88,71 +74,57 @@ void continuous_demo()
   typedef M::real_type                            T;
   typedef M::coordsys_type                        X;
   typedef M::value_traits                         VT;*/
-  using T = double;
+    using T = double;
 
   // Create some geometries
-  convex::Cylinder<T> A;
-  geometry::Sphere<T> B;
+    convex::Cylinder<T> A;
+    geometry::Sphere<T> B;
 
-  A.half_height() = 10.0;
-  A.radius()      =  1.0;
-  B.radius()      =  1.0;
+    A.half_height() = 10.0;
+    A.radius() = 1.0;
+    B.radius() = 1.0;
 
   // Create from and to positions of the geometries
-  CoordSysEigen<T> A_from, A_to;
-  CoordSysEigen<T> B_from, B_to;
+    CoordSysEigen<T> A_from, A_to;
+    CoordSysEigen<T> B_from, B_to;
 
-  A_from.T() = {0.0, 0.0, 2.0};
-  A_from.Q() = EigenQuaternion<T>::Identity();
-  A_to.T()   = {0.0, 0.0, 2.0};
-  A_to.Q()   = Rotatex( -std::numbers::pi_v<T> );
-  T r_max_a = sqrt( A.half_height()*A.half_height() + A.radius()*A.radius() );
+    A_from.T() = {0.0, 0.0, 2.0};
+    A_from.Q() = EigenQuaternion<T>::Identity();
+    A_to.T() = {0.0, 0.0, 2.0};
+    A_to.Q() = Rotatex(-std::numbers::pi_v<T>);
+    T r_max_a = sqrt(A.half_height() * A.half_height() + A.radius() * A.radius());
 
-  B_from.T() = { 0.0, 10.0, 0.0};
-  B_from.Q() = EigenQuaternion<T>::Identity();
-  B_to.T()   = {0.0, 10.0, 0.0};
-  B_to.Q()   = EigenQuaternion<T>::Identity();
-  T r_max_b  = B.radius();
+    B_from.T() = {0.0, 10.0, 0.0};
+    B_from.Q() = EigenQuaternion<T>::Identity();
+    B_to.T() = {0.0, 10.0, 0.0};
+    B_to.Q() = EigenQuaternion<T>::Identity();
+    T r_max_b = B.radius();
 
   // Set up parameters and create variables for results
-  size_t const max_iterations = 100u;
-  T      const epsilon        = 0.0001;
-  T            toi            = 0.0;
-  size_t iterations;
-  EigenVector3<T> p_a;
-  EigenVector3<T> p_b;
+    size_t const max_iterations = 100u;
+    T const epsilon = 0.0001;
+    T toi = 0.0;
+    size_t iterations;
+    EigenVector3<T> p_a;
+    EigenVector3<T> p_b;
 
-  // Call the motion interpolate function to find out if there is an impact and get the estimate of time-of-impact (toi)
-  bool impact = convex::motion_interpolation<T>(
-                                                 A_from
-                                                 , A_to
-                                                 , &A
-                                                 , r_max_a
-                                                 , B_from
-                                                 , B_to
-                                                 , &B
-                                                 , r_max_b
-                                                 , p_a
-                                                 , p_b
-                                                 , toi
-                                                 , iterations
-                                                 , epsilon
-                                                 , max_iterations
-                                                 );
+    // Call the motion interpolate function to find out if there is an impact and get the estimate of time-of-impact (toi)
+    bool impact = convex::motion_interpolation<T>(A_from, A_to, &A, r_max_a, B_from, B_to, &B, r_max_b, p_a, p_b, toi,
+                                                  iterations, epsilon, max_iterations);
 
-  std::cout << "\timpact = " << impact << std::endl;
-  std::cout << "\ttoi = " << toi << std::endl;
-  std::cout << "\tdistance at toi = " << (p_a-p_b).norm() << std::endl;
+    std::cout << "\timpact = " << impact << std::endl;
+    std::cout << "\ttoi = " << toi << std::endl;
+    std::cout << "\tdistance at toi = " << (p_a - p_b).norm() << std::endl;
 
-  std::cout << "Goodbye..." << std::endl;
+    std::cout << "Goodbye..." << std::endl;
 }
 
 int main()
 {
-  std::cout << "CONVEX Library Demo" << std::endl;
+    std::cout << "CONVEX Library Demo" << std::endl;
 
-  gjk_demo();
-  continuous_demo();
+    gjk_demo();
+    continuous_demo();
 
     return 0;
 }
