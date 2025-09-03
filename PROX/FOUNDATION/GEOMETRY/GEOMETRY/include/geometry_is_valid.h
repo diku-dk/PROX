@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_IS_VALID_H
 #define GEOMETRY_IS_VALID_H
 
+#include "types/geometry_capsule.h"
 #include <types/geometry_interval.h>
 #include <types/geometry_dop.h>
 #include <types/geometry_line.h>
@@ -19,10 +20,9 @@
 
 namespace geometry
 {
-  template<typename V>
-  inline bool is_valid(Capsule<V> const & capsule)
+  template<typename T>
+  inline bool is_valid(CapsuleEigen<T> const & capsule)
   {
-    typedef typename V::value_traits  VT;
 
     using std::fabs;
 
@@ -62,11 +62,9 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Cylinder<V> const & cylinder)
+  template<typename T>
+  inline bool is_valid(CylinderEigen<T> const & cylinder)
   {
-    typedef typename V::real_type     T;
-    typedef typename V::value_traits  VT;
 
     using std::fabs;
 
@@ -142,11 +140,9 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Line<V> const & line)
+  template<typename T>
+  inline bool is_valid(Line<T> const & line)
   {
-    typedef typename V::real_type     T;
-    typedef typename V::value_traits  VT;
 
     using std::fabs;
 
@@ -174,17 +170,14 @@ namespace geometry
       return false;
     if(  !is_finite( line.direction()(2) ) )
       return false;
-    if (  fabs( 1 - length(line.direction() ) ) > std::numeric_limits<T>::epsilon()*10 )
+    if (  fabs( 1 - (line.direction() ).length() ) > std::numeric_limits<T>::epsilon()*10 )
       return false;
     return true;
   }
 
-  template<typename MT>
-  inline bool is_valid(OBB<MT> const & obb)
+  template<typename T>
+  inline bool is_valid(OBBEigen<T> const & obb)
   {
-    typedef typename MT::real_type     T;
-    typedef typename MT::value_traits  VT;
-
     using std::fabs;
 
     if( !is_number( obb.center()(0) ) )
@@ -246,11 +239,9 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Plane<V> const & plane)
+  template<typename T>
+  inline bool is_valid(Plane<T> const & plane)
   {
-    typedef typename V::real_type     T;
-    typedef typename V::value_traits  VT;
 
     using std::fabs;
 
@@ -278,12 +269,9 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Ray<V> const & ray)
+  template<typename T>
+  inline bool is_valid(RayEigen<T> const & ray)
   {
-    typedef typename V::real_type     T;
-    typedef typename V::value_traits  VT;
-
     using std::fabs;
 
     if( !is_number( ray.origin()(0) ) )
@@ -317,11 +305,9 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Sphere<V> const & sphere)
+  template<typename T>
+  inline bool is_valid(Sphere<T> const & sphere)
   {
-    typedef typename V::value_traits  VT;
-
     if( !is_number( sphere.center()(0) ) )
       return false;
     if(  !is_finite( sphere.center()(0) ) )
@@ -346,8 +332,8 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Tetrahedron<V> const & tet)
+  template<typename T>
+  inline bool is_valid(TetrahedronEigen<T> const & tet)
   {
     for(unsigned int idx= 0u; idx < 4u;++idx)
     {
@@ -370,8 +356,8 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(Triangle<V> const & tet)
+  template<typename T>
+  inline bool is_valid(Triangle<T> const & tet)
   {
     for(unsigned int idx= 0u; idx < 3u;++idx)
     {
@@ -394,8 +380,8 @@ namespace geometry
     return true;
   }
 
-  template<typename V>
-  inline bool is_valid(AABB<V> const & aabb)
+  template<typename T>
+  inline bool is_valid(AABBEigen<T> const & aabb)
   {
     if( !is_number( aabb.min()(0) ) )
       return false;
