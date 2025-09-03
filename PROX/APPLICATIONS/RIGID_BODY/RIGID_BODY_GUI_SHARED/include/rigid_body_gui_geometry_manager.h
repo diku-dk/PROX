@@ -1,93 +1,74 @@
 #ifndef RIGID_BODY_GUI_GEOMETRY_MANAGER_H
 #define RIGID_BODY_GUI_GEOMETRY_MANAGER_H
 
-#include <rigid_body_gui_geometry.h>
-
 #include <map>
+#include <rigid_body_gui_geometry.h>
 #include <string>
 
 namespace rigid_body
 {
-  namespace gui
-  {
+namespace gui
+{
 
-    class GeometryManager
+class GeometryManager
+{
+public:
+    std::map< unsigned int, Geometry > m_indexed_geometries;
+    std::map< std::string, Geometry > m_named_geometries;
+
+public:
+    void clear()
     {
-    public:
-
-      std::map< unsigned int, Geometry > m_indexed_geometries;
-      std::map< std::string, Geometry >  m_named_geometries;
-
-    public:
-
-      void clear()
-      {
         {
-          std::map< unsigned int, Geometry >::iterator geometry = m_indexed_geometries.begin();
-          std::map< unsigned int, Geometry >::iterator end      = m_indexed_geometries.end();
+            std::map<unsigned int, Geometry>::iterator geometry = m_indexed_geometries.begin();
+            std::map<unsigned int, Geometry>::iterator end = m_indexed_geometries.end();
 
-          for(;geometry!=end;++geometry)
-          {
-            geometry->second.m_vbo.clear();
-            geometry->second.m_solid_vao.clear();
-            geometry->second.m_wire_vao.clear();
-          }
+            for (; geometry != end; ++geometry)
+            {
+                geometry->second.m_vbo.clear();
+                geometry->second.m_solid_vao.clear();
+                geometry->second.m_wire_vao.clear();
+            }
 
-          m_indexed_geometries.clear();
+            m_indexed_geometries.clear();
         }
 
         {
-          std::map< std::string, Geometry >::iterator geometry = m_named_geometries.begin();
-          std::map< std::string, Geometry >::iterator end      = m_named_geometries.end();
+            std::map< std::string, Geometry >::iterator geometry = m_named_geometries.begin();
+            std::map< std::string, Geometry >::iterator end = m_named_geometries.end();
 
-          for(;geometry!=end;++geometry)
-          {
-            geometry->second.m_vbo.clear();
-            geometry->second.m_solid_vao.clear();
-            geometry->second.m_wire_vao.clear();
-          }
+            for (; geometry != end; ++geometry)
+            {
+                geometry->second.m_vbo.clear();
+                geometry->second.m_solid_vao.clear();
+                geometry->second.m_wire_vao.clear();
+            }
 
-          m_named_geometries.clear();
+            m_named_geometries.clear();
         }
+    }
 
-      }
+    void add(Geometry const& geometry)
+    {
+        std::map< unsigned int, Geometry >::iterator lookup = m_indexed_geometries.find(geometry.m_gid);
 
-      void add(Geometry const & geometry)
-      {
-        std::map< unsigned int, Geometry >::iterator lookup = m_indexed_geometries.find( geometry.m_gid );
+        if (lookup == m_indexed_geometries.end()) { m_indexed_geometries[geometry.m_gid] = geometry; }
+    }
 
-        if(lookup == m_indexed_geometries.end())
-        {
-          m_indexed_geometries[ geometry.m_gid] = geometry;
-        }
+    Geometry const& get(unsigned int const& gid) const { return m_indexed_geometries.at(gid); }
 
-      }
+    void add(std::string const& name, Geometry const& geometry)
+    {
+        std::map< std::string, Geometry >::iterator lookup = m_named_geometries.find(name);
 
-      Geometry const & get(unsigned int const & gid) const
-      {
-        return m_indexed_geometries.at(gid);
-      }
+        if (lookup == m_named_geometries.end()) { m_named_geometries[name] = geometry; }
+    }
 
-      void add(std::string const & name, Geometry const & geometry)
-      {
-        std::map< std::string, Geometry >::iterator lookup = m_named_geometries.find( name );
+    Geometry const& get(std::string const& name) const { return m_named_geometries.at(name); }
+};
 
-        if(lookup == m_named_geometries.end())
-        {
-          m_named_geometries[ name ] = geometry;
-        }
-      }
-
-      Geometry const & get(std::string const & name) const
-      {
-        return m_named_geometries.at(name);
-      }
-
-    };
-
-  }//namespace gui
+}//namespace gui
 }//namespace rigid_body
 
 // RIGID_BODY_GUI_GEOMETRY_MANAGER_H
 #endif
-

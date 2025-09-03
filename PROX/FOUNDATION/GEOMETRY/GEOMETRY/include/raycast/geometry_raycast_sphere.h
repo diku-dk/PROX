@@ -2,58 +2,47 @@
 #define GEOMETRY_COMPUTE_RAYCAST_SPHERE_H
 
 #include "tiny_vector_functions.h"
-#include <types/geometry_sphere.h>
-#include <types/geometry_ray.h>
-
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
-
 #include <cmath> // needed for std::sqrt
+#include <tiny_is_finite.h>
+#include <tiny_is_number.h>
+#include <types/geometry_ray.h>
+#include <types/geometry_sphere.h>
 
 namespace geometry
 {
 
-  template<typename V>
-  inline bool compute_raycast_sphere(
-                                   Ray<V> const & ray
-                                   , Sphere<typename V::real_type> const & sphere
-                                   , V & hit_point
-                                   , typename V::real_type & length
-                                   )
-  {
-    typedef typename V::value_traits VT;
-    typedef typename V::real_type    T;
-
+template <typename T>
+inline bool compute_raycast_sphere(RayEigen<T> const& ray, Sphere<T> const& sphere, EigenVector3<T>& hit_point,
+                                   T& length)
+{
     using std::sqrt;
 
-    length       = std::numeric_limits<T>::max();
-    hit_point    = V::zero();
+    length = std::numeric_limits<T>::max();
+    hit_point = EigenVector3<T>(0, 0, 0);
 
-    V const & o = fromEigen(sphere.center());
-    T const & r = sphere.radius();
-    V const & p = ray.origin();
-    V const & u = ray.direction();
+    const EigenVector3<T>& o = (sphere.center());
+    T const& r = sphere.radius();
+    const EigenVector3<T>& p = ray.origin();
+    const EigenVector3<T>& u = ray.direction();
 
-    T const a = tiny::inner_prod( u,   u   );
-    T const b = tiny::inner_prod( p-o, u   )*2;
-    T const c = tiny::inner_prod( p-o, p-o ) - r*r;
+    T const a = dot(u, u);
+    EigenVector3<T> tmp = p - o;
+    T const b = dot(tmp, u) * 2;
+    T const c = dot(tmp, tmp) - r * r;
 
-    assert(a>0 || !"compute_raycast_sphere(): a-coefficent must be positive");
+    assert(a > 0 || !"compute_raycast_sphere(): a-coefficent must be positive");
 
     // Test that ray origin is out-side sphere
-    if (c <= 0)
-    {
-      return false;
-    }
+    if (c <= 0) { return false; }
 
-    const auto D = b*b - 4*a*c;
+    const auto D = b * b - 4 * a * c;
 
     if (D < 0) return false;
 
     T const sqrt_D = sqrt(D);
 
-    T const r1 = ( -b - sqrt_D ) / ( 2*a );
-    T const r2 = ( -b + sqrt_D ) / ( 2*a );
+    T const r1 = (-b - sqrt_D) / (2 * a);
+    T const r2 = (-b + sqrt_D) / (2 * a);
 
     assert(is_finite(r1) || !"compute_raycast_sphere(): r1 is inf");
     assert(is_number(r1) || !"compute_raycast_sphere(): r1 is nan");
@@ -62,22 +51,22 @@ namespace geometry
 
     assert(r1 <= r2 || !"compute_raycast_sphere(): r1 can not be larger than r2");
 
-    if( r1 >= 0 )
+    if (r1 >= 0)
     {
-      length    = r1;
-      hit_point = p + length*u;
-      return true;
+        length = r1;
+        hit_point = p + length * u;
+        return true;
     }
 
-    if( r2 >= 0)
+    if (r2 >= 0)
     {
-      length    = r1;
-      hit_point = p + length*u;
-      return true;
+        length = r1;
+        hit_point = p + length * u;
+        return true;
     }
 
     return false;
-  }
+}
 
 } //namespace geometry
 

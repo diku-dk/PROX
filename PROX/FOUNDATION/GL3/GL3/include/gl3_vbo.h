@@ -103,10 +103,7 @@ namespace gl3
     void clear()
     {
       gl3::check_errors("VBO::clear() invoked");
-      if(m_vbo!=0)
-      {
-        glDeleteBuffers( GL_ARRAY_BUFFER, &m_vbo );
-      }
+      if (m_vbo != 0) { glDeleteBuffers(GL_ARRAY_BUFFER, &m_vbo); }
       if(m_ibo!=0)
       {
         glDeleteBuffers( GL_ELEMENT_ARRAY_BUFFER, &m_ibo );

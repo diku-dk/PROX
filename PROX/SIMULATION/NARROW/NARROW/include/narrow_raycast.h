@@ -83,12 +83,13 @@ namespace narrow
           geometry::Sphere<T> const sphere = geometry::make_sphere<T>( toEigen(shapeAtoWCS.T()), a->radius());
 
           T local_distance = std::numeric_limits<T>::max();
-          V local_point    = V::zero();
+          EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
 
-          bool const did_hit = geometry::compute_raycast_sphere(ray, sphere, local_point, local_distance);
+          bool const did_hit = geometry::compute_raycast_sphere<T>(geometry::convertRayToEigen(ray), sphere,
+                                                                   local_point, local_distance);
 
           distance = did_hit ? local_distance : distance;
-          point    = did_hit ? local_point    : point;
+          point = did_hit ? fromEigen(local_point) : point;
         }
       }
       if (! geoA.m_hulls.empty() )
