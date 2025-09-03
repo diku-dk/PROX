@@ -64,16 +64,16 @@ namespace kdop
         surf[2] = surface_map(mT).m_k;
         surf[3] = surface_map(mT).m_m;
 
-        V p = V::zero();
+        EigenVector3<T> p = EigenVector3<T>(0,0,0);
         T s = std::numeric_limits<T>::max();
 
         geometry::TetrahedronEigen<typename V::real_type> const gT = geometry::make_tetrahedron(toEigen(p0),toEigen(p1),toEigen(p2),toEigen(p3));
 
-        bool const did_hit = geometry::compute_raycast_tetrahedron( ray, gT, p, s, surf);
+        bool const did_hit = geometry::compute_raycast_tetrahedron<T>(geometry::convertRayToEigen( ray), gT, p, s, surf);
 
         if(did_hit)
         {
-          hit_point    = s < length ? p : hit_point;
+            hit_point    = s < length ? fromEigen(p) : hit_point;
           length       = s < length ? s : length;
         }
 
