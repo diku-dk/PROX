@@ -6,29 +6,25 @@
 namespace geometry
 {
 
-  template<typename V>
+  template<typename T>
   class Point
-    : public geometry::SupportMapping<typename V::real_type>
+    : public geometry::SupportMapping<T>
   {
-  public:
-      using T = typename V::real_type;
-      using VT = typename V::value_traits;
-
   protected:
-      V m_coordinates;
+      EigenVector3<T> m_coordinates;
 
   public:
 
-    V const & coord() const   { return this->m_coordinates; }
-    V       & coord()         { return this->m_coordinates; }
+    const EigenVector3<T>& coord() const   { return this->m_coordinates; }
+    EigenVector3<T>& coord()         { return this->m_coordinates; }
 
   public:
 
     Point()
-    : m_coordinates( V::zero() )
+    : m_coordinates(EigenVector3<T>(0,0,0) )
     {}
 
-    Point(V const &  coordinates )
+    Point(const EigenVector3<T>&  coordinates )
     : m_coordinates( coordinates )
     {}
 
@@ -48,13 +44,9 @@ namespace geometry
 
   public:
 
-    V get_support_point(V const & v) const
-    {
-      return this->m_coordinates;
-    }
     EigenVector3<T> get_support_point(EigenVector3<T> dir) const override
     {
-        return toEigen(m_coordinates);
+        return (m_coordinates);
     }
 
 

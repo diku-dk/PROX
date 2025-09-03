@@ -38,12 +38,6 @@ namespace prox
                                               T & lambda_tau
                                               )
         {
-            typedef prox::MathPolicy<T>					              math_policy;
-            typedef typename math_policy::vector3_type        vector3_type;
-            typedef typename math_policy::quaternion_type     quaternion_type;
-            typedef typename math_policy::real_type           real_type;
-            typedef typename math_policy::coordsys_type       transformation_type;
-            typedef typename math_policy::value_traits        value_traits;
 
             if ( lambda_n <= 0 )
             {
@@ -53,9 +47,9 @@ namespace prox
                 return;
             }
 
-            real_type const a = mu_s*lambda_n;
-            real_type const b = mu_t*lambda_n;
-            real_type const c = mu_tau*lambda_n;
+            T const a = mu_s*lambda_n;
+            T const b = mu_t*lambda_n;
+            T const c = mu_tau*lambda_n;
 
             assert( is_number( a ) || !"gjk_ellipsoid(): a was not a number");
             assert( is_number( b ) || !"gjk_ellipsoid(): b was not a number");
@@ -64,18 +58,18 @@ namespace prox
             assert( b > 0       || !"gjk_ellipsoid(): a non-positive");
             assert( c > 0       || !"gjk_ellipsoid(): a non-positive");
 
-            geometry::Point<vector3_type>                       point;
+            geometry::Point<T>                       point;
             convex::Ellipsoid<T>  ellipsoid;
 
-            point.coord() = vector3_type::make( z_s, z_t, z_tau);
+            point.coord() = EigenVector3<T>( z_s, z_t, z_tau);
 
             // TODO: Chek theory
             ellipsoid.setScale({a,b,c});  // TODO check this is how to setup the scale!
 
             size_t    const max_iterations       = 100u;
-            real_type const absolute_tolerance   = value_traits::numeric_cast(10e-6);
-            real_type const relative_tolerance   = value_traits::numeric_cast(10e-6);
-            real_type const stagnation_tolerance = value_traits::numeric_cast(10e-15);
+            T const absolute_tolerance   = boost::numeric_cast<T>(10e-6);
+            T const relative_tolerance   = boost::numeric_cast<T>(10e-6);
+            T const stagnation_tolerance = boost::numeric_cast<T>(10e-15);
 
             CoordSysEigen<T> transformA;
             CoordSysEigen<T> transformB;
@@ -88,7 +82,7 @@ namespace prox
             EigenVector3<T> pb;
             size_t iterations     = 0u;
             size_t status         = 0u;
-            real_type distance    = std::numeric_limits<T>::max();
+            T distance    = std::numeric_limits<T>::max();
 
             convex::compute_closest_points<T>(
                                                                             transformA
