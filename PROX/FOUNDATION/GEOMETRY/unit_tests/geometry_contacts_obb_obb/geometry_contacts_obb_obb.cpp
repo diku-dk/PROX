@@ -55,6 +55,7 @@ public:
 
 
 
+
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)

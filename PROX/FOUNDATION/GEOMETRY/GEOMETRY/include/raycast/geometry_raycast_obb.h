@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_COMPUTE_RAYCAST_OBB_H
 #define GEOMETRY_COMPUTE_RAYCAST_OBB_H
 
+#include "geometry_transform.h"
 #include <types/geometry_obb.h>
 #include <types/geometry_ray.h>
 
@@ -13,29 +14,26 @@
 namespace geometry
 {
 
-  template<typename M>
+  template<typename T>
   inline bool compute_raycast_obb(
-                                   Ray<typename M::vector3_type> const & ray
-                                   , OBB<M> const & obb
-                                   , typename M::vector3_type & q
-                                   , typename M::real_type & length
+                                   RayEigen<T> const & ray
+                                   , OBBEigen<T> const & obb
+                                   , EigenVector3<T>& q
+                                   , T& length
                                    )
   {
-    typedef typename M::value_traits VT;
-    typedef typename M::vector3_type V;
-    typedef typename M::real_type    T;
 
-    q      = V::zero();
+    q      = EigenVector3<T>(0,0,0);
     length = std::numeric_limits<T>::max();
 
 
-    V const p_obb  = transform_to_obb( ray.origin(), obb, TRANSFORM_POINT()     );
-    V const r_obb  = transform_to_obb( ray.direction(), obb, TRANSFORM_VECTOR() );
+    const EigenVector3<T> p_obb  = transform_to_obb( ray.origin(), obb, TRANSFORM_POINT()     );
+    const EigenVector3<T> r_obb  = transform_to_obb( ray.direction(), obb, TRANSFORM_VECTOR() );
 
-    V const aabb_mincoord = -obb.half_extent();
-    V const aabb_maxcoord =  obb.half_extent();
+    const EigenVector3<T> aabb_mincoord = -obb.half_extent();
+    const EigenVector3<T> aabb_maxcoord =  obb.half_extent();
 
-    V q_obb;
+    EigenVector3<T> q_obb;
     T t_obb;
 
     bool const did_hit = compute_raycast_aabb(p_obb, r_obb, aabb_mincoord, aabb_maxcoord, q_obb, t_obb);

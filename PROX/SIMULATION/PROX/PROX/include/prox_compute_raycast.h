@@ -90,14 +90,14 @@ namespace prox
 
       body->get_box( min_x, min_y, min_z, max_x, max_y, max_z );
 
-      V                 const min_coord = V::make( min_x, min_y, min_z );
-      V                 const max_coord = V::make( max_x, max_y, max_z );
-      geometry::AABB<V> const aabb      = geometry::make_aabb( min_coord, max_coord );
+      const EigenVector3<T> min_coord = EigenVector3<T>( min_x, min_y, min_z );
+      const EigenVector3<T> max_coord = EigenVector3<T>( max_x, max_y, max_z );
+      geometry::AABBEigen<T> const aabb      = geometry::make_aabb( min_coord, max_coord );
 
       T       aabb_distance  = std::numeric_limits<T>::max();
-      V       aabb_point     = V::zero();
+      EigenVector3<T> aabb_point     = EigenVector3<T>(0,0,0);
 
-      if ( geometry::compute_raycast_aabb( ray, aabb, aabb_point, aabb_distance) )
+      if ( geometry::compute_raycast_aabb<T>( geometry::convertRayToEigen<V>(ray), (aabb), aabb_point, aabb_distance) )
       {
         T       body_distance  = std::numeric_limits<T>::max();
         V       body_point     = V::zero();

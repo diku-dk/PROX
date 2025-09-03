@@ -121,7 +121,6 @@ namespace geometry
       using std::max;
 
       typedef typename V::real_type                   T;
-      typedef typename V::value_traits                VT;
       typedef typename std::vector<V>::const_iterator iterator;
 
       iterator p   = intersections.begin();

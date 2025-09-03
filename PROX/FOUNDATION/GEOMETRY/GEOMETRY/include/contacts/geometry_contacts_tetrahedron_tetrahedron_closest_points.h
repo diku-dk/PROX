@@ -29,9 +29,8 @@ namespace geometry
     using std::max;
 
     typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
 
-    T const too_far_away      = VT::numeric_cast(0.02); // 2 times the value of the collision envelope
+    T const too_far_away      = (0.02f); // 2 times the value of the collision envelope
     T const too_small         = std::numeric_limits<T>::epsilon()*10;
 
     unsigned int const edge_to_vertex[6][2] = {

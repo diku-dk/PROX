@@ -59,18 +59,18 @@ namespace narrow
       {
         for( box_iterator a = geoA.m_boxes.begin(); a!= geoA.m_boxes.end(); ++a )
         {
-          C const shapeAtobodyA = C(a->transform().T(), a->transform().Q());
-          C const shapeAtoWCS   = tiny::prod(shapeAtobodyA, bodyAtoWCS);
+            const CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T> (toEigen(a->transform().T()), toEigen(a->transform().Q()));
+            const CoordSysEigen<T>  shapeAtoWCS   = prod(shapeAtobodyA, coordSysToEigen(bodyAtoWCS));
 
-          geometry::OBB<M> const obb  = geometry::make_obb<M>( shapeAtoWCS.T(), shapeAtoWCS.Q(), a->half_extent());
+            geometry::OBBEigen<T> const obb  = geometry::make_obb<T>( shapeAtoWCS.T(), shapeAtoWCS.Q(), toEigen(a->half_extent()));
 
           T local_distance = std::numeric_limits<T>::max();
-          V local_point    = V::zero();
+          EigenVector3<T> local_point    = EigenVector3<T>(0,0,0);
 
-          bool const did_hit = geometry::compute_raycast_obb(ray, obb, local_point, local_distance);
+          bool const did_hit = geometry::compute_raycast_obb(geometry::convertRayToEigen(ray), obb, local_point, local_distance);
 
           distance = did_hit ? local_distance : distance;
-          point    = did_hit ? local_point    : point;
+          point    = did_hit ? fromEigen(local_point)    : point;
         }
       }
       if (! geoA.m_spheres.empty() )

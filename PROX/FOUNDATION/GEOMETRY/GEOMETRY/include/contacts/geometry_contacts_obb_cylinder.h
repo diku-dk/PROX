@@ -464,7 +464,7 @@ namespace geometry
                                     OBB<T> const & A
                                     , Cylinder<EigenVector3<T>> const & B
                                     , T const & envelope
-                                    , ContactsCallback<EigenVector3<T>> & callback
+      , ContactsCallback<T> & callback
                                     , bool const flip = false
                                     )
   {

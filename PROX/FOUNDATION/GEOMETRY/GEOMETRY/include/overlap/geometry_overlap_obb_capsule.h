@@ -18,34 +18,30 @@ namespace geometry
   namespace detail
   {
 
-    template<typename MT>
+    template<typename T>
     inline void compute_obb_capsule_sat_axes(
-                                             OBB<MT> const & obb
-                                             , Capsule<typename MT::vector3_type> const & capsule
-                                             , std::vector<typename MT::vector3_type> & axes
+                                             OBBEigen<T> const & obb
+                                             , Capsule<EigenVector3<T>> const & capsule
+                                             , std::vector<EigenVector3<T>> & axes
                                          )
     {
       using std::min;
       using std::max;
       using std::fabs;
 
-      typedef typename MT::vector3_type    V;
-      typedef typename MT::matrix3x3_type  M;
-      typedef typename MT::real_type       T;
+      const EigenMatrix3<T> R(obb.orientation());
 
-      M const R = tiny::make(obb.orientation());
+      const EigenVector3<T> A0  = R.col(0);
+      const EigenVector3<T> A1  = R.col(1);
+      const EigenVector3<T> A2  = R.col(2);
+      const EigenVector3<T> B   = capsule.point1()- capsule.point0();
 
-      V const A0  = R.get_column_copy(0);
-      V const A1  = R.get_column_copy(1);
-      V const A2  = R.get_column_copy(2);
-      V const B   = capsule.point1()- capsule.point0();
-
-      assert( fabs( 1 - inner_prod(A0,A0) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( 1 - inner_prod(A1,A1) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( 1 - inner_prod(A2,A2) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( inner_prod(A0,A1) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( inner_prod(A0,A2) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
-      assert( fabs( inner_prod(A1,A2) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(A0,A0) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(A1,A1) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(A2,A2) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( dot(A0,A1) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( dot(A0,A2) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( dot(A1,A2) ) < std::numeric_limits<T>::epsilon()*10             || !"compute_obb_capsule_sat_axes(): logic error");
 
       axes.resize(7u);
 
@@ -53,14 +49,14 @@ namespace geometry
       axes[1] = A1;
       axes[2] = A2;
       axes[3] = B;
-      axes[4] = tiny::cross(A0, B);
-      axes[5] = tiny::cross(A1, B);
-      axes[6] = tiny::cross(A2, B);
+      axes[4] = cross(A0, B);
+      axes[5] = cross(A1, B);
+      axes[6] = cross(A2, B);
 
-      T const l3 = tiny::norm( axes[3] );
-      T const l4 = tiny::norm( axes[4] );
-      T const l5 = tiny::norm( axes[5] );
-      T const l6 = tiny::norm( axes[6] );
+      T const l3 = norm( axes[3] );
+      T const l4 = norm( axes[4] );
+      T const l5 = norm( axes[5] );
+      T const l6 = norm( axes[6] );
 
       axes[3]    = (l3 > std::numeric_limits<T>::epsilon()*10 ) ? axes[3] / l3 : B;
       axes[4]    = (l4 > std::numeric_limits<T>::epsilon()*10 ) ? axes[4] / l4 : A0;
@@ -73,7 +69,7 @@ namespace geometry
       assert( is_finite( axes[0](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[0](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[0](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[0],axes[0]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[0],axes[0]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[1](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[1](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -81,7 +77,7 @@ namespace geometry
       assert( is_finite( axes[1](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[1](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[1](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[1],axes[1]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[1],axes[1]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[2](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[2](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -89,7 +85,7 @@ namespace geometry
       assert( is_finite( axes[2](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[2](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[2](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[2],axes[2]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[2],axes[2]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[3](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[3](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -97,7 +93,7 @@ namespace geometry
       assert( is_finite( axes[3](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[3](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[3](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[3],axes[3]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[3],axes[3]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[4](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[4](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -105,7 +101,7 @@ namespace geometry
       assert( is_finite( axes[4](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[4](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[4](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[4],axes[4]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[4],axes[4]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[5](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[5](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -113,7 +109,7 @@ namespace geometry
       assert( is_finite( axes[5](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[5](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[5](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[5],axes[5]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[5],axes[5]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
 
       assert( is_number( axes[6](0) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[6](0) ) || !"compute_obb_capsule_sat_axes(): inf");
@@ -121,7 +117,7 @@ namespace geometry
       assert( is_finite( axes[6](1) ) || !"compute_obb_capsule_sat_axes(): inf");
       assert( is_number( axes[6](2) ) || !"compute_obb_capsule_sat_axes(): nan");
       assert( is_finite( axes[6](2) ) || !"compute_obb_capsule_sat_axes(): inf");
-      assert( fabs( 1 - inner_prod(axes[6],axes[6]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
+      assert( fabs( 1 - dot(axes[6],axes[6]) ) < std::numeric_limits<T>::epsilon()*10 || !"compute_obb_capsule_sat_axes(): logic error");
     }
 
   }// end namespace detail
@@ -129,25 +125,21 @@ namespace geometry
   /**
    *
    */
-  template<typename MT>
+  template<typename T>
   inline bool overlap_obb_capsule(
-                                OBB<MT> const & obb
-                              , Capsule<typename MT::vector3_type> const & capsule
+                                OBBEigen<T> const & obb
+                              , Capsule<EigenVector3<T>> const & capsule
                               )
   {
     using std::min;
     using std::max;
     using std::fabs;
 
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
-
-    std::vector<V> axes;
+    std::vector<EigenVector3<T>> axes;
 
     detail::compute_obb_capsule_sat_axes( obb, capsule, axes );
 
-    std::vector<V> a(8u, V::zero());
+    std::vector<EigenVector3<T>> a(8u, EigenVector3<T>(0,0,0));
     a[0] = transform_from_obb( get_local_corner(0, obb), obb );
     a[1] = transform_from_obb( get_local_corner(1, obb), obb );
     a[2] = transform_from_obb( get_local_corner(2, obb), obb );
@@ -167,16 +159,16 @@ namespace geometry
     for(size_t i=0u;i < 7u; ++i)
     {
 
-      for( typename std::vector<V>::const_iterator p_a = a.begin(); p_a != a.end(); ++p_a)
+      for( typename std::vector<EigenVector3<T>>::const_iterator p_a = a.begin(); p_a != a.end(); ++p_a)
       {
-        T const d = inner_prod( (*p_a), axes[i] );
+        T const d = dot( (*p_a), axes[i] );
         a_min[i] = min( a_min[i], d);
         a_max[i] = max( a_max[i], d);
       }
 
       {
-        T const d0 = inner_prod( capsule.point0(), axes[i] );
-        T const d1 = inner_prod( capsule.point1(), axes[i] );
+        T const d0 = dot( capsule.point0(), axes[i] );
+        T const d1 = dot( capsule.point1(), axes[i] );
 
         b_min[i] = min( b_min[i], d0 - capsule.radius());
         b_max[i] = max( b_max[i], d0 + capsule.radius());

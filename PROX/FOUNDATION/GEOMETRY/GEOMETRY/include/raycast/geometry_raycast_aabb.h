@@ -25,26 +25,23 @@ namespace geometry
    *
    * @return             If ray hits AABB then return value is true orhterwise false
    */
-  template<typename V>
+  template<typename T>
   inline bool compute_raycast_aabb(
-                                   V const & p
-                                   , V const & r
-                                   , V const &  min_coord
-                                   , V const &  max_coord
-                                   , V & hit
-                                   , typename V::real_type & length
+                                   const EigenVector3<T>& p
+                                   , const EigenVector3<T>& r
+                                   , const EigenVector3<T>&  min_coord
+                                   , const EigenVector3<T>&  max_coord
+                                   , EigenVector3<T>& hit
+                                   , T& length
                                    )
   {
-    typedef typename V::value_traits VT;
-    typedef typename V::real_type    T;
-
     using std::fabs;
 
     length = std::numeric_limits<T>::max();
-    hit    = V::zero();
+    hit    = EigenVector3<T>(0,0,0);
 
-    V const e =  (max_coord - min_coord)*0.5f;  //--- Compute half extents of box
-    V const d =  p - (e + min_coord);                 //--- Compute vector from center of box to origin of ray
+    const EigenVector3<T> e =  (max_coord - min_coord)*0.5f;  //--- Compute half extents of box
+    const EigenVector3<T> d =  p - (e + min_coord);                 //--- Compute vector from center of box to origin of ray
 
     assert(is_number(e(0)) || !"compute_raycast_aabb() NaN");
     assert(is_finite(e(0)) || !"compute_raycast_aabb() Inf");
@@ -71,7 +68,7 @@ namespace geometry
       return false;
 
     //--- Test if one of three cross producs of the axes and the ray direction is a separation axe
-    V const rXd = cross(r , d);
+    const EigenVector3<T> rXd = cross(r , d);
 
     if ( fabs(rXd(0)) > ( e(1)*fabs(r(2)) + e(2)*fabs(r(1)) ) )
       return false;
@@ -145,12 +142,12 @@ namespace geometry
     return false;
   }
 
-  template<typename V>
+  template<typename T>
   inline bool compute_raycast_aabb(
-                                   Ray<V> const & ray
-                                   , AABB<V> const & aabb
-                                   , V & hit
-                                   , typename V::real_type & length
+                                   RayEigen<T> const & ray
+                                   , AABBEigen<T> const & aabb
+                                   , EigenVector3<T>& hit
+                                   , T& length
                                    )
   {
     return compute_raycast_aabb(

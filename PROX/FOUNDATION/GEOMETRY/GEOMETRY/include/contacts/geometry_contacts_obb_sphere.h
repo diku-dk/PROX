@@ -28,10 +28,6 @@ namespace geometry
                                  )
   {
     typedef typename MT::real_type         T;
-    typedef typename MT::vector3_type      V;
-    typedef typename MT::quaternion_type   Q;
-    typedef typename MT::value_traits      VT;
- //   typedef typename MT::coordsys_type     C;
 
     using std::sqrt;
 
