@@ -38,11 +38,10 @@ size_t make_cannonball_rigid_body(content::API* physics, GeometryHandleEigen<T> 
                                   const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
                                   const EigenVector3<T>& direction, MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_colosseum(content::API* engine, typename MT::vector3_type const& position,
-                    typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-                    typename MT::real_type const& r_inner, size_t const& slices, size_t const& segments,
-                    MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_colosseum(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                    const T& r_outer, const T& r_inner, size_t const& slices, size_t const& segments,
+                    MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_slide(content::API* engine, typename MT::vector3_type const& position,
@@ -55,11 +54,10 @@ void make_temple(content::API* engine, typename MT::vector3_type const& position
                  typename MT::real_type const& pillar_width, size_t const& num_pillars_x, size_t const& num_pillars_z,
                  MaterialInfo<typename MT::real_type> mat_info);
 
-template <typename MT>
-void make_dome(content::API* engine, typename MT::vector3_type const& position,
-               typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-               typename MT::real_type const& r_inner, size_t const& slices, size_t const& segments,
-               MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_dome(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+               const T& r_outer, const T& r_inner, size_t const& slices, size_t const& segments,
+               MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_ground(content::API* engine, typename MT::vector3_type const& position,
@@ -67,17 +65,15 @@ void make_ground(content::API* engine, typename MT::vector3_type const& position
                  typename MT::real_type const& width, typename MT::real_type const& height,
                  typename MT::real_type const& depth);
 
-template <typename MT>
-void make_pantheon(content::API* engine, typename MT::vector3_type const& position,
-                   typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-                   typename MT::real_type const& r_inner, typename MT::real_type const& height, size_t const& slices,
-                   size_t const& segments, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_pantheon(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                   const T& r_outer, const T& r_inner, const T& height, size_t const& slices, size_t const& segments,
+                   MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_tower(content::API* engine, typename MT::vector3_type const& position,
-                typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-                typename MT::real_type const& r_inner, typename MT::real_type const& height, size_t const& slices,
-                size_t const& segments, MaterialInfo<typename MT::real_type> mat_info, bool const& use_cubes);
+template <typename T>
+void make_tower(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                const T& r_outer, const T& r_inner, const T& height, size_t const& slices, size_t const& segments,
+                MaterialInfo<T> mat_info, bool const& use_cubes);
 
 template <typename T>
 void make_wall(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,

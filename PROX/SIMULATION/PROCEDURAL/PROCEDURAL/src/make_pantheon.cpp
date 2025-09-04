@@ -6,31 +6,24 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_pantheon(content::API* engine, typename MT::vector3_type const& position,
-                   typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-                   typename MT::real_type const& r_inner, typename MT::real_type const& height, size_t const& slices,
-                   size_t const& segments, MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_pantheon(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                   const T& r_outer, const T& r_inner, const T& height, size_t const& slices, size_t const& segments,
+                   MaterialInfo<T> mat_info)
 {
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
+    const EigenQuaternion<T> Qw = orientation;
+    EigenVector3<T> pw = rotate(Qw, position);
 
-    Q const Qw = orientation;
-    V pw = rotate(Qw, position);
+    make_tower<T>(engine, pw, Qw, r_outer, r_inner, height, slices * 2, segments, mat_info, false);
 
-    make_tower<MT>(engine, pw, Qw, r_outer, r_inner, height, slices * 2, segments, mat_info, false);
+    pw = pw + rotate(Qw, EigenVector3<T>(0, 0, height));
 
-    pw = pw + rotate(Qw, V::make(0, 0, height));
-
-    make_dome<MT>(engine, pw, Qw, r_outer, r_inner, slices, segments, mat_info);
+    make_dome<T>(engine, pw, Qw, r_outer, r_inner, slices, segments, mat_info);
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_pantheon<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                 MTf::quaternion_type const& orientation, MTf::real_type const& r_outer,
-                                 MTf::real_type const& r_inner, MTf::real_type const& height, size_t const& slices,
-                                 size_t const& segments, MaterialInfo<MTf::real_type> mat_info);
+template void make_pantheon<float>(content::API* engine, const EigenVector3<float>& position,
+                                   const EigenQuaternion<float>& orientation, const float& r_outer,
+                                   const float& r_inner, const float& height, size_t const& slices,
+                                   size_t const& segments, MaterialInfo<float> mat_info);
 
 } //namespace procedural

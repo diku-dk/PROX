@@ -7,16 +7,14 @@
 
 namespace procedural
 {
-template <typename MT>
-void make_colosseum(content::API* engine, typename MT::vector3_type const& position,
-                    typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-                    typename MT::real_type const& r_inner, size_t const& slices, size_t const& segments,
-                    MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_colosseum(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                    const T& r_outer, const T& r_inner, size_t const& slices, size_t const& segments,
+                    MaterialInfo<T> mat_info)
+
 {
     using std::cos;
     using std::sin;
-
-    typedef typename MT::real_type T;
 
     //10-30-14 Sarah: clean up "magic" constants
     T const r_center = (r_outer - r_inner) * .5 + r_inner;
@@ -40,10 +38,9 @@ void make_colosseum(content::API* engine, typename MT::vector3_type const& posit
             T const x = r_center * cos(theta);
             T const z = r_center * sin(theta);
 
-            const EigenVector3<T> arch_position
-                = rotate(toEigen(orientation), (EigenVector3<T>(x, y, z))) + toEigen(position);
+            const EigenVector3<T> arch_position = rotate((orientation), (EigenVector3<T>(x, y, z))) + (position);
             const EigenQuaternion<T> arch_orientation
-                = toEigen(orientation) * Rotatey(std::numbers::pi_v<T> * 0.5f) * Rotatey(-theta);
+                = (orientation)*Rotatey(std::numbers::pi_v<T> * 0.5f) * Rotatey(-theta);
 
             make_arch<T>(engine, arch_position, arch_orientation, r_arch_outer, r_arch_inner, pillar_height,
                          depth * 0.8f, arch_slices, pillar_segments, mat_info);
@@ -51,24 +48,21 @@ void make_colosseum(content::API* engine, typename MT::vector3_type const& posit
 
         y += arch_height;
 
-        const EigenVector3<T> tower_position
-            = rotate(toEigen(orientation), (EigenVector3<T>(0, y, 0))) + toEigen(position);
+        const EigenVector3<T> tower_position = rotate((orientation), (EigenVector3<T>(0, y, 0))) + (position);
 
         const EigenQuaternion<T> tower_orientation
-            = toEigen(orientation) * Rotatey<T>(delta_theta / 2.0) * Rotatex<T>(-std::numbers::pi_v<T> * 0.5);
+            = (orientation)*Rotatey<T>(delta_theta / 2.0) * Rotatex<T>(-std::numbers::pi_v<T> * 0.5);
 
-        make_tower<MT>(engine, fromEigen(tower_position), fromEigen(tower_orientation), r_outer, r_inner, tower_height,
-                       slices, 1, mat_info, false);
+        make_tower<T>(engine, (tower_position), (tower_orientation), r_outer, r_inner, tower_height, slices, 1,
+                      mat_info, false);
 
         y += tower_height;
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_colosseum<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                  MTf::quaternion_type const& orientation, MTf::real_type const& r_outer,
-                                  MTf::real_type const& r_inner, size_t const& slices, size_t const& segments,
-                                  MaterialInfo<MTf::real_type> mat_info);
+template void make_colosseum<float>(content::API* engine, const EigenVector3<float>& position,
+                                    const EigenQuaternion<float>& orientation, const float& r_outer,
+                                    const float& r_inner, size_t const& slices, size_t const& segments,
+                                    MaterialInfo<float> mat_info);
 
 } //namespace procedural

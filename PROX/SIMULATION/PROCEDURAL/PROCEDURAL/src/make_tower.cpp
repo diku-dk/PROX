@@ -5,23 +5,18 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_tower(content::API* engine, typename MT::vector3_type const& position,
-                typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-                typename MT::real_type const& r_inner, typename MT::real_type const& height, size_t const& slices,
-                size_t const& segments, MaterialInfo<typename MT::real_type> mat_info, bool const& use_cubes)
+template <typename T>
+void make_tower(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                const T& r_outer, const T& r_inner, const T& height, size_t const& slices, size_t const& segments,
+                MaterialInfo<T> mat_info, bool const& use_cubes)
 {
-    typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
     T const stone_depth = height / segments;
-    T const delta_theta = 2 * VT::pi() / slices;
+    T const delta_theta = 2 * std::numbers::pi_v<T> / slices;
     T const center_radius = (r_outer + r_inner) * 0.5f;
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
 
     std::vector<EigenVector3<T>> vertices(8u);
     compute_arch_stone_vertices_eigen<T>(delta_theta, stone_depth, r_outer, r_inner, &vertices[0]);
@@ -33,14 +28,14 @@ void make_tower(content::API* engine, typename MT::vector3_type const& position,
     //T const half_width_outer = r_outer * sin( delta_theta*0.5f );
     T const half_depth = stone_depth * 0.5f;
 
-    GeometryHandle<MT> stone_handle;
+    GeometryHandleEigen<T> stone_handle;
 
     if (use_cubes)
     {
         stone_handle
-            = create_geometry_handle_box<MT>(engine, 1.9 * half_width_inner, max_height - min_height, 2 * half_depth);
+            = create_geometry_handle_box<T>(engine, 1.9 * half_width_inner, max_height - min_height, 2 * half_depth);
     }
-    else { stone_handle = geometryHandleFromEigen<MT>(create_geometry_handle_cuboid<T>(engine, &vertices[0])); }
+    else { stone_handle = (create_geometry_handle_cuboid<T>(engine, &vertices[0])); }
 
     for (size_t i = 0u; i < segments; ++i)
     {
@@ -51,30 +46,30 @@ void make_tower(content::API* engine, typename MT::vector3_type const& position,
             T const y = center_radius * sin(theta);
             T const z = (i + 0.5f) * stone_depth;
 
-            V const T_b2m = stone_handle.Tb2m();
-            Q const Q_b2m = stone_handle.Qb2m();
+            const EigenVector3<T> T_b2m = stone_handle.Tb2m();
+            const EigenQuaternion<T> Q_b2m = stone_handle.Qb2m();
 
-            V const T_m2l = V::make(x, y, z);
-            Q const Q_m2l = Q::Ru(theta - VT::pi_half(), V::k());
+            const EigenVector3<T> T_m2l = EigenVector3<T>(x, y, z);
+            const EigenQuaternion<T> Q_m2l = Rotateu<T>(theta - std::numbers::pi_v<T> * 0.5, EigenVector3<T>(0, 0, 1));
 
-            V const T_l2w = position;
-            Q const Q_l2w = orientation;
+            const EigenVector3<T> T_l2w = position;
+            const EigenQuaternion<T> Q_l2w = orientation;
 
-            V T_b2w;
-            Q Q_b2w;
+            EigenVector3<T> T_b2w;
+            EigenQuaternion<T> Q_b2w;
 
-            compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+            compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-            create_rigid_body<MT>(engine, T_b2w, Q_b2w, stone_handle, mid, stone_density);
+            create_rigid_body<T>(engine, T_b2w, Q_b2w, stone_handle, mid, stone_density);
         }
     }
 }
 
 using MTf = tiny::MathTypes<float>;
 
-template void make_tower<MTf>(content::API* engine, MTf::vector3_type const& position,
-                              MTf::quaternion_type const& orientation, MTf::real_type const& r_outer,
-                              MTf::real_type const& r_inner, MTf::real_type const& height, size_t const& slices,
-                              size_t const& segments, MaterialInfo<MTf::real_type> mat_info, bool const& use_cubes);
+template void make_tower<float>(content::API* engine, const EigenVector3<float>& position,
+                                const EigenQuaternion<float>& orientation, const float& r_outer, const float& r_inner,
+                                const float& height, size_t const& slices, size_t const& segments,
+                                MaterialInfo<float> mat_info, bool const& use_cubes);
 
 } //namespace procedural

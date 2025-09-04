@@ -8,16 +8,13 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_dome(content::API* engine, typename MT::vector3_type const& position,
-               typename MT::quaternion_type const& orientation, typename MT::real_type const& r_outer,
-               typename MT::real_type const& r_inner, size_t const& slices, size_t const& segments,
-               MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_dome(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+               const T& r_outer, const T& r_inner, size_t const& slices, size_t const& segments,
+               MaterialInfo<T> mat_info)
 {
     using std::cos;
     using std::sin;
-
-    typedef typename MT::real_type T;
 
     assert(r_inner > 0 || !"invalid inner radius value");
     assert(r_outer > r_inner || !"invalid outer radius value");
@@ -92,8 +89,8 @@ void make_dome(content::API* engine, typename MT::vector3_type const& position,
             const EigenQuaternion<T> Q_m2l = Rotateu(theta, EigenVector3<T>(0, 0, 1));
             const EigenVector3<T> T_m2l = (rotate<T>((Q_m2l), geometric_center)); //V::make( x, y, z );
 
-            const EigenVector3<T> T_l2w = toEigen(position);
-            const EigenQuaternion<T> Q_l2w = toEigen(orientation);
+            const EigenVector3<T> T_l2w = (position);
+            const EigenQuaternion<T> Q_l2w = (orientation);
 
             EigenVector3<T> T_b2w;
             EigenQuaternion<T> Q_b2w;
@@ -105,11 +102,8 @@ void make_dome(content::API* engine, typename MT::vector3_type const& position,
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_dome<MTf>(content::API* engine, MTf::vector3_type const& position,
-                             MTf::quaternion_type const& orientation, MTf::real_type const& r_outer,
-                             MTf::real_type const& r_inner, size_t const& slices, size_t const& segments,
-                             MaterialInfo<MTf::real_type> mat_info);
+template void make_dome<float>(content::API* engine, const EigenVector3<float>& position,
+                               const EigenQuaternion<float>& orientation, const float& r_outer, const float& r_inner,
+                               size_t const& slices, size_t const& segments, MaterialInfo<float> mat_info);
 
 } //namespace procedural

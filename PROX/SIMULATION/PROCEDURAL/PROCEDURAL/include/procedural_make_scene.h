@@ -174,18 +174,8 @@ namespace procedural
       auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
       auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
 
-      procedural::make_tower<MT>(
-                                 engine
-                                 , V::zero()
-                                 , Q::Rx(-VT::pi_half())
-                                 , outer_radius
-                                 , inner_radius
-                                 , height
-                                 , slices
-                                 , segments
-                                 , mat_info
-                                 , true
-                                 );
+      procedural::make_tower<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
+                                inner_radius, height, slices, segments, mat_info, true);
     }
     if (scene.compare("cuboid_tower") == 0)
     {
@@ -205,19 +195,8 @@ namespace procedural
       auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
       auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
 
-      procedural::make_tower<MT>(
-                                 engine
-                                 , V::zero()
-                                 , Q::Rx(-VT::pi_half())
-                                 , outer_radius
-                                 , inner_radius
-                                 , height
-                                 , slices
-                                 , segments
-                                 , mat_info
-                                 , false
-                                 );
-
+      procedural::make_tower<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
+                                inner_radius, height, slices, segments, mat_info, false);
     }
     if (scene.compare("dome") == 0)
     {
@@ -237,16 +216,8 @@ namespace procedural
       auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_3", "10"));
       auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
-      procedural::make_dome<MT>(
-                                engine
-                                , V::zero()
-                                , Q::Rx(-VT::pi_half())
-                                , outer_radius
-                                , inner_radius
-                                , slices
-                                , segments
-                                , mat_info
-                                );
+      procedural::make_dome<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T> * 0.5f), outer_radius,
+                               inner_radius, slices, segments, mat_info);
     }
     if (scene.compare("pantheon") == 0)
     {
@@ -266,17 +237,8 @@ namespace procedural
       auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "11"));
       auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "11"));
 
-      procedural::make_pantheon<MT>(
-                                    engine
-                                    , V::zero()
-                                    , Q::Rx(-VT::pi_half())
-                                    , outer_radius
-                                    , inner_radius
-                                    , height
-                                    , slices
-                                    , segments
-                                    , mat_info
-                                    );
+      procedural::make_pantheon<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
+                                   inner_radius, height, slices, segments, mat_info);
     }
     if (scene.compare("temple") == 0)
     {
@@ -323,16 +285,16 @@ namespace procedural
                                   , outer_radius * 3
                                   );
 
-      procedural::make_colosseum<MT>(
-                                     engine
-                                     , V::zero()
-                                     , Q::identity()
-                                     , outer_radius         // outer radius
-                                     , inner_radius         // inner radius
-                                     , number_of_arches     // number of arches
-                                     , layers_of_archs      // layers of archs
-                                     , mat_info
-                                     );
+      procedural::make_colosseum<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                    outer_radius // outer radius
+                                    ,
+                                    inner_radius // inner radius
+                                    ,
+                                    number_of_arches // number of arches
+                                    ,
+                                    layers_of_archs // layers of archs
+                                    ,
+                                    mat_info);
     }
     if (scene.compare("scripted_motions") == 0)
     {
@@ -544,16 +506,9 @@ namespace procedural
                                   , 2.0f * (colosseum_radius + colosseum_width) + 2.0f
                                   );
 
-      procedural::make_colosseum<MT>(
-                                     engine
-                                     , V::zero()
-                                     , Q::identity()
-                                     , colosseum_radius + colosseum_width
-                                     , colosseum_radius
-                                     , colosseum_arches
-                                     , colosseum_layers
-                                     , mat_info
-                                     );
+      procedural::make_colosseum<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                    colosseum_radius + colosseum_width, colosseum_radius, colosseum_arches,
+                                    colosseum_layers, mat_info);
     }
     if (scene.compare("glass_glasses") == 0)
     {
