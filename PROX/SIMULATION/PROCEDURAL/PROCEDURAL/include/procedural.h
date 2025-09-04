@@ -12,6 +12,7 @@
 #include <procedural_make_cliff_edge.h>
 #include <procedural_make_internal_edge.h>
 
+#include <tiny_math_types.h>
 
 #include <content.h>
 #include <mesh_array.h>
@@ -81,11 +82,10 @@ void make_tower(content::API* engine, typename MT::vector3_type const& position,
                 typename MT::real_type const& r_inner, typename MT::real_type const& height, size_t const& slices,
                 size_t const& segments, MaterialInfo<typename MT::real_type> mat_info, bool const& use_cubes);
 
-template <typename MT>
-void make_wall(content::API* engine, typename MT::vector3_type const& position,
-               typename MT::quaternion_type const& orientation, typename MT::real_type const& width,
-               typename MT::real_type const& height, typename MT::real_type const& depth, size_t const& layers,
-               size_t const& span, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_wall(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+               const T& width, const T& height, const T& depth, size_t const& layers, size_t const& span,
+               MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_greek_pillar(content::API* engine, typename MT::vector3_type const& position,

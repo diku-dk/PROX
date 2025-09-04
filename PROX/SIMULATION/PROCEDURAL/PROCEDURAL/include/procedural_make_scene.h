@@ -153,17 +153,8 @@ namespace procedural
       auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5"));
       auto const span = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5"));
 
-      procedural::make_wall<MT>(
-                                engine
-                                , V::make(-0.5f*width, 0, 0)
-                                , Q::identity()
-                                , width
-                                , height
-                                , depth
-                                , layers
-                                , span
-                                , mat_info);
-
+      procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(), width,
+                               height, depth, layers, span, mat_info);
     }
     if (scene.compare("tower") == 0)
     {
@@ -359,19 +350,20 @@ namespace procedural
       T const layers  = util::to_value<T>( params.get_value( "procedural_param_2", "5.0") );
       T const span    = util::to_value<T>( params.get_value( "procedural_param_3", "5.0") );
 
-      procedural::make_wall<MT>(
-                                engine
-                                , V::make(-0.5f*width, 0, 0)
-                                , Q::identity()
-                                , width      // width
-                                , layers*2.0f      // height
-                                , 2.0f       // depth
-                                , layers    // layers
-                                , span      // span
-                                , mat_info);
+      procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(),
+                               width      // width
+                               ,
+                               layers * 2.0f      // height
+                               ,
+                               2.0f       // depth
+                               ,
+                               layers    // layers
+                               ,
+                               span      // span
+                               ,
+                               mat_info);
 
-
-      size_t const oscillation_motion_idx =  engine->create_oscilation_scripted_motion();
+      size_t const oscillation_motion_idx = engine->create_oscilation_scripted_motion();
 
       engine->set_scripted_oscilation_paramters(
                                                 oscillation_motion_idx
@@ -658,17 +650,18 @@ namespace procedural
       T const layers  = util::to_value<T>( params.get_value( "procedural_param_2", "5.0") );
       T const span    = util::to_value<T>( params.get_value( "procedural_param_3", "5.0") );
 
-      procedural::make_wall<MT>(
-                                engine
-                                , V::make(-0.5f*width, 0, 0)
-                                , Q::identity()
-                                , width      // width
-                                , layers*2.0f      // height
-                                , 2.0f       // depth
-                                , layers    // layers
-                                , span      // span
-                                , mat_info);
-
+      procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(),
+                               width // width
+                               ,
+                               layers * 2.0f // height
+                               ,
+                               2.0f // depth
+                               ,
+                               layers // layers
+                               ,
+                               span // span
+                               ,
+                               mat_info);
 
       std::vector<size_t> pin_indices;
 
