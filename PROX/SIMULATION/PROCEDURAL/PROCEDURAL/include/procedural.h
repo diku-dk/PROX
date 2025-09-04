@@ -27,19 +27,16 @@ void make_arch(content::API* engine, const EigenVector3<T>& position, const Eige
                const T& r_outer, const T& r_inner, const T& pillar_height, const T& stone_depth,
                size_t const& arch_slices, size_t const& pillar_segments, MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_cannonball(content::API* engine, typename MT::real_type const& radius,
-                     typename MT::vector3_type const& position, typename MT::quaternion_type const& orientation,
-                     typename MT::vector3_type const& direction, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_cannonball(content::API* engine, const T& radius, const EigenVector3<T>& position,
+                     const EigenQuaternion<T>& orientation, const EigenVector3<T>& direction, MaterialInfo<T> mat_info);
 
-template <typename MT>
-GeometryHandle<MT> make_cannonball_geometry(content::API* physics, typename MT::real_type const& radius);
+template <typename T> GeometryHandleEigen<T> make_cannonball_geometry(content::API* physics, const T& radius);
 
-template <typename MT>
-size_t
-make_cannonball_rigid_body(content::API* physics, GeometryHandle<MT> const& ball,
-                           typename MT::vector3_type const& position, typename MT::quaternion_type const& orientation,
-                           typename MT::vector3_type const& direction, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+size_t make_cannonball_rigid_body(content::API* physics, GeometryHandleEigen<T> const& ball,
+                                  const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                                  const EigenVector3<T>& direction, MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_colosseum(content::API* engine, typename MT::vector3_type const& position,
@@ -116,11 +113,10 @@ void make_heavy_sphere_light_sphere(content::API* engine, typename MT::vector3_t
                                     typename MT::real_type const& sphere_radius, size_t const& scale,
                                     MaterialInfo<typename MT::real_type> mat_info);
 
-template <typename MT>
-void make_dropping_spheres(content::API* engine, typename MT::vector3_type const& position,
-                           typename MT::quaternion_type const& orientation, typename MT::real_type const& sphere_radius,
-                           size_t const& w, size_t const& h, size_t const& d,
-                           MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_dropping_spheres(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                           const T& sphere_radius, size_t const& w, size_t const& h, size_t const& d,
+                           MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_spheres(content::API* engine, typename MT::vector3_type const& position,

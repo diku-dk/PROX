@@ -303,8 +303,8 @@ static EigenQuaternion<Number> Rotatez ( const Number rad)
     using std::cos;
     using std::sin;
     const Number theta = rad/2;
-    const Number ctheta = numeric_cast( cos(theta) );
-    const Number stheta = numeric_cast( sin(theta) );
+    const Number ctheta = (cos(theta));
+    const Number stheta = (sin(theta));
     return EigenQuaternion<Number>(ctheta, 0, 0, stheta);
 }
 

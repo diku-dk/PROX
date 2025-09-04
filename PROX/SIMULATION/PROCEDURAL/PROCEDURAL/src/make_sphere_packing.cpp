@@ -18,19 +18,16 @@ void make_sphere_packing(content::API* engine, typename MT::vector3_type const& 
     using std::floor;
 
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
-    std::vector< GeometryHandle<MT> > sphere_handle;
+    std::vector< GeometryHandleEigen<T> > sphere_handle;
     sphere_handle.resize(10u);
     for (unsigned int c = 0; c < 10u; ++c)
     {
-        T const radius = (c + 1u) * (max_radius - min_radius) / VT::numeric_cast(10.0) + min_radius;
-        sphere_handle[c] = create_geometry_handle_sphere<MT>(engine, radius);
+        T const radius = (c + 1u) * (max_radius - min_radius) / (10.0f) + min_radius;
+        sphere_handle[c] = create_geometry_handle_sphere<T>(engine, radius);
     }
 
     unsigned int const I = std::floor(width / (max_radius * 2));
@@ -51,21 +48,21 @@ void make_sphere_packing(content::API* engine, typename MT::vector3_type const& 
 
                 int choice = sphere_count % 10;
 
-                V const T_b2m = sphere_handle[choice].Tb2m();
-                Q const Q_b2m = sphere_handle[choice].Qb2m();
+                const EigenVector3<T> T_b2m = sphere_handle[choice].Tb2m();
+                const EigenQuaternion<T> Q_b2m = sphere_handle[choice].Qb2m();
 
-                V const T_m2l = V::make(x, y, z);
-                Q const Q_m2l = Q::Ru(-VT::pi_half(), V::i());
+                const EigenVector3<T> T_m2l = EigenVector3<T>(x, y, z);
+                const EigenQuaternion<T> Q_m2l = Rotateu(-std::numbers::pi_v<T> * 0.5f, EigenVector3<T>(1, 0, 0));
 
-                V const T_l2w = position;
-                Q const Q_l2w = orientation;
+                const EigenVector3<T> T_l2w = toEigen(position);
+                const EigenQuaternion<T> Q_l2w = toEigen(orientation);
 
-                V T_b2w;
-                Q Q_b2w;
+                EigenVector3<T> T_b2w;
+                EigenQuaternion<T> Q_b2w;
 
-                compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+                compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-                create_rigid_body<MT>(engine, T_b2w, Q_b2w, sphere_handle[choice], mid, stone_density);
+                create_rigid_body<T>(engine, T_b2w, Q_b2w, sphere_handle[choice], mid, stone_density);
                 ++sphere_count;
             }
 }

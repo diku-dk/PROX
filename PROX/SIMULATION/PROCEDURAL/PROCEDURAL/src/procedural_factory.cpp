@@ -120,14 +120,8 @@ GeometryHandleEigen<T> create_geometry_handle_convex(content::API* engine, std::
 template GeometryHandleEigen<float> create_geometry_handle_convex(content::API* engine,
                                                                   std::vector<EigenVector3<float>> const& vertices);
 
-template <typename MT>
-GeometryHandle<MT> create_geometry_handle_sphere(content::API* engine, typename MT::real_type const& radius)
+template <typename T> GeometryHandleEigen<T> create_geometry_handle_sphere(content::API* engine, const T& radius)
 {
-    typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
-
     static size_t counter = 0u;
 
     std::string const geom_name = "sphere_" + util::to_string(counter++);
@@ -139,10 +133,11 @@ GeometryHandle<MT> create_geometry_handle_sphere(content::API* engine, typename 
 
     engine->set_sphere_shape(gid, sid, radius);
 
-    return GeometryHandle<MT>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, V::zero(), Q::identity(), gid);
+    return GeometryHandleEigen<T>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, EigenVector3<T>(0, 0, 0),
+                                  EigenQuaternion<T>::Identity(), gid);
 }
 
-template GeometryHandle<MTf> create_geometry_handle_sphere<MTf>(content::API* engine, MTf::real_type const& radius);
+template GeometryHandleEigen<float> create_geometry_handle_sphere<float>(content::API* engine, const float& radius);
 
 template <typename MT>
 GeometryHandle<MT> create_geometry_handle_capsule(content::API* engine, typename MT::real_type const& radius,

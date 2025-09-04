@@ -12,14 +12,11 @@ void make_sphere_layer(content::API* engine, typename MT::vector3_type const& po
                        MaterialInfo<typename MT::real_type> mat_info)
 {
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
     T const stone_density = get_material_density<MT>(mat_info, "Stone");
     size_t const mid = get_material_id<MT>(mat_info, "Stone");
 
-    GeometryHandle<MT> sphere_handle = create_geometry_handle_sphere<MT>(engine, sphere_radius);
+    GeometryHandleEigen<T> sphere_handle = create_geometry_handle_sphere<T>(engine, sphere_radius);
 
     T x = 1;
     T y = sphere_radius;
@@ -32,19 +29,19 @@ void make_sphere_layer(content::API* engine, typename MT::vector3_type const& po
         for (size_t j = 0; j < spheres_length; ++j)
         {
             z = sphere_radius + 2 * j * sphere_radius;
-            V const Tb = sphere_handle.Tb2m();
-            Q const Qb = sphere_handle.Qb2m();
+            const EigenVector3<T> Tb = sphere_handle.Tb2m();
+            const EigenQuaternion<T> Qb = sphere_handle.Qb2m();
 
-            V const Tm = V::make(x, y, z);
-            Q const Qm = Q::Ru(-VT::pi_half(), V::i());
+            const EigenVector3<T> Tm = EigenVector3<T>(x, y, z);
+            const EigenQuaternion<T> Qm = Rotateu(-std::numbers::pi_v<T> * 0.5f, EigenVector3<T>(1, 0, 0));
 
-            V const Tw = rotate(Qm, Tb) + Tm;
-            Q const Qw = Qm * Qb;
+            const EigenVector3<T> Tw = rotate(Qm, Tb) + Tm;
+            const EigenQuaternion<T> Qw = Qm * Qb;
 
-            V const Tu = rotate(orientation, Tw) + position;
-            Q const Qu = orientation * Qw;
+            const EigenVector3<T> Tu = rotate(toEigen(orientation), Tw) + toEigen(position);
+            const EigenQuaternion<T> Qu = toEigen(orientation) * Qw;
 
-            create_rigid_body<MT>(engine, Tu, Qu, sphere_handle, mid, stone_density);
+            create_rigid_body<T>(engine, Tu, Qu, sphere_handle, mid, stone_density);
         }
     }
 }

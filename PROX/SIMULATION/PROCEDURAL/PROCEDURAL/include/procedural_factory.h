@@ -41,11 +41,7 @@ namespace procedural
         , std::vector<typename MT::vector3_type> const &  vertices
         );
 
-  template<typename MT>
-  GeometryHandle<MT> create_geometry_handle_sphere(
-                                                   content::API * engine
-                                                   , typename MT::real_type const & radius
-                                                   );
+  template <typename T> GeometryHandleEigen<T> create_geometry_handle_sphere(content::API* engine, const T& radius);
 
   template<typename MT>
   GeometryHandle<MT> create_geometry_handle_capsule(

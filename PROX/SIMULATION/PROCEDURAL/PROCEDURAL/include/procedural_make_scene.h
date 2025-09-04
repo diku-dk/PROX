@@ -531,14 +531,8 @@ namespace procedural
       auto const colosseum_arches = util::to_value<float>(params.get_value("procedural_param_10", "12"));
       auto const colosseum_layers = util::to_value<float>(params.get_value("procedural_param_11", "3"));
 
-      procedural::make_cannonball<MT>(
-                                      engine
-                                      , radius
-                                      , V::make(pos_x, pos_y, pos_z)
-                                      , Q::identity()
-                                      , V::make(vel_x, vel_y, vel_z)
-                                      , mat_info
-                                      );
+      procedural::make_cannonball<T>(engine, radius, EigenVector3<T>(pos_x, pos_y, pos_z),
+                                     EigenQuaternion<T>::Identity(), EigenVector3<T>(vel_x, vel_y, vel_z), mat_info);
 
       procedural::make_ground<MT>(
                                   engine
@@ -844,16 +838,8 @@ namespace procedural
       auto const height = util::to_value<float>(params.get_value("procedural_param_3", "10.0"));
       auto const depth = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
 
-      procedural::make_dropping_spheres<MT>(
-                                            engine
-                                            , V::make(0, 0, 0)
-                                            , Q::identity()
-                                            , sphere_radius
-                                            , width
-                                            , height
-                                            , depth
-                                            , mat_info
-                                            );
+      procedural::make_dropping_spheres<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                           sphere_radius, width, height, depth, mat_info);
     }
     if (scene.compare("funnel") == 0)
     {

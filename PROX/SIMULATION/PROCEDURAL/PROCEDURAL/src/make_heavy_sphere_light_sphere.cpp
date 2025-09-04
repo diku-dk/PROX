@@ -12,39 +12,36 @@ void make_heavy_sphere_light_sphere(content::API* engine, typename MT::vector3_t
                                     MaterialInfo<typename MT::real_type> mat_info)
 {
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
     T const bottom_stone_density = get_material_density<MT>(mat_info, "Stone");
     T const top_stone_density = bottom_stone_density * scale;
     size_t const mid = get_material_id<MT>(mat_info, "Stone");
 
-    GeometryHandle<MT> sphere_handle = create_geometry_handle_sphere<MT>(engine, sphere_radius);
+    GeometryHandleEigen<T> sphere_handle = create_geometry_handle_sphere<T>(engine, sphere_radius);
 
     // light sphere, on ground
-    V const T_b2m = sphere_handle.Tb2m();
-    Q const Q_b2m = sphere_handle.Qb2m();
+    const EigenVector3<T> T_b2m = sphere_handle.Tb2m();
+    const EigenQuaternion<T> Q_b2m = sphere_handle.Qb2m();
 
-    V T_m2l = V::make(0, sphere_radius, 0);
-    Q const Q_m2l = Q::Ru(-VT::pi_half(), V::i());
+    EigenVector3<T> T_m2l = EigenVector3<T>(0, sphere_radius, 0);
+    const EigenQuaternion<T> Q_m2l = Rotateu(-std::numbers::pi_v<T> * 0.5f, EigenVector3<T>(1, 0, 0));
 
-    V const T_l2w = position;
-    Q const Q_l2w = orientation;
+    const EigenVector3<T> T_l2w = toEigen(position);
+    const EigenQuaternion<T> Q_l2w = toEigen(orientation);
 
-    V T_b2w;
-    Q Q_b2w;
+    EigenVector3<T> T_b2w;
+    EigenQuaternion<T> Q_b2w;
 
-    compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+    compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-    create_rigid_body(engine, T_b2w, Q_b2w, sphere_handle, mid, bottom_stone_density);
+    create_rigid_body<T>(engine, T_b2w, Q_b2w, sphere_handle, mid, bottom_stone_density);
 
     // heavy sphere on top of light sphere
-    T_m2l = V::make(0, 3 * sphere_radius, 0);
+    T_m2l = EigenVector3<T>(0, 3 * sphere_radius, 0);
 
-    compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+    compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-    create_rigid_body<MT>(engine, T_b2w, Q_b2w, sphere_handle, mid, top_stone_density);
+    create_rigid_body<T>(engine, T_b2w, Q_b2w, sphere_handle, mid, top_stone_density);
 }
 
 using MTf = tiny::MathTypes<float>;
