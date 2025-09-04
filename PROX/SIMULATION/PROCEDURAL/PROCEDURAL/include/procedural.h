@@ -137,11 +137,9 @@ void make_obj(content::API* engine, std::string const& name, typename MT::real_t
               std::string const& material = "Stone",
               mesh_array::TetGenSettings = mesh_array::tetgen_default_settings());
 
-template <typename MT>
-void make_box(content::API* engine, typename MT::vector3_type const& position,
-              typename MT::quaternion_type const& orientation, typename MT::real_type const& width,
-              typename MT::real_type const& height, typename MT::real_type const& depth,
-              MaterialInfo<typename MT::real_type> mat_info, bool const fixed = false);
+template <typename T>
+void make_box(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+              const T& width, const T& height, const T& depth, MaterialInfo<T> mat_info, bool const fixed = false);
 
 template <typename MT>
 void make_twisted_stack(content::API* engine, typename MT::vector3_type const& position,
