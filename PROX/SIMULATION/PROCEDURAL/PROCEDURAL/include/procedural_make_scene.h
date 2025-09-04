@@ -773,16 +773,12 @@ namespace procedural
       obj_names.push_back(obj_path + "deer.obj");
       obj_names.push_back(obj_path + "cow.obj");
 
-      procedural::make_box_container<MT>(
-                                         engine
-                                         , V::make( 0.0f, -5.0f, 0.0f )
-                                         , Q::identity()
-                                         , 25.0f     // width x height x depth of space inside box
-                                         , 1.0f
-                                         , 25.0f
-                                         , 1.0f      // wall thickness
-                                         , mat_info
-                                         );
+      procedural::make_box_container<T>(engine, EigenVector3<T>(0.0f, -5.0f, 0.0f), EigenQuaternion<T>::Identity(),
+                                        25.0f // width x height x depth of space inside box
+                                        ,
+                                        1.0f, 25.0f, 1.0f // wall thickness
+                                        ,
+                                        mat_info);
 
       procedural::make_obj_packing<MT>(
                                        engine
@@ -912,19 +908,19 @@ namespace procedural
     {
         auto const number_of_spheres = util::to_value<unsigned int>(params.get_value("procedural_param_1", "10"));
 
-        procedural::make_box_container<MT>(engine, V::zero(), Q::identity(),
-                                           5.0f // width x height x depth of space inside box
-                                           ,
-                                           5.0f, 5.0f, 1.0f // wall thickness
-                                           ,
-                                           mat_info);
+        procedural::make_box_container<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                          5.0f // width x height x depth of space inside box
+                                          ,
+                                          5.0f, 5.0f, 1.0f // wall thickness
+                                          ,
+                                          mat_info);
 
-        procedural::make_box_container<MT>(engine, V::make(0.0f, -5.0f, 0.0f), Q::identity(),
-                                           25.0f // width x height x depth of space inside box
-                                           ,
-                                           1.0f, 25.0f, 1.0f // wall thickness
-                                           ,
-                                           mat_info);
+        procedural::make_box_container<T>(engine, EigenVector3<T>(0.0f, -5.0f, 0.0f), EigenQuaternion<T>::Identity(),
+                                          25.0f // width x height x depth of space inside box
+                                          ,
+                                          1.0f, 25.0f, 1.0f // wall thickness
+                                          ,
+                                          mat_info);
 
         procedural::make_sphere_packing<MT>(engine, V::zero(), Q::identity(), 0.1f // minimum sphere radius
                                             ,

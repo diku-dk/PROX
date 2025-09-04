@@ -71,16 +71,8 @@ namespace rigid_body
         float const container_depth  = 1.0f * number_of_grains_in_z  * grain_size;
         float const wall_thickness   = 1.0f * grain_size;
 
-        procedural::make_box_container<MT>(
-                                           engine
-                                           , V::make( 0.0f, 0.0f, 0.0f )
-                                           , Q::identity()
-                                           , container_width
-                                           , container_height
-                                           , container_depth
-                                           , wall_thickness
-                                           , mat_info
-                                           );
+        procedural::make_box_container<T>(engine, EigenVector3<T>(0.0f, 0.0f, 0.0f), EigenQuaternion<T>::Identity(),
+                                          container_width, container_height, container_depth, wall_thickness, mat_info);
 
         bool         const oscillation_on  =  util::to_value<bool>(    params.get_value( "procedural_param_9",  "false") );
         auto const amplitude_vx

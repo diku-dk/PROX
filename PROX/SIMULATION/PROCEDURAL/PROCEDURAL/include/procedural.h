@@ -158,11 +158,10 @@ void make_sphere_layer(content::API* engine, typename MT::vector3_type const& po
                        size_t const& spheres_width, size_t const& spheres_length,
                        MaterialInfo<typename MT::real_type> mat_info);
 
-template <typename MT>
-void make_box_container(content::API* engine, typename MT::vector3_type const& position,
-                        typename MT::quaternion_type const& orientation, typename MT::real_type const& width,
-                        typename MT::real_type const& height, typename MT::real_type const& depth,
-                        typename MT::real_type const& wall_thickness, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_box_container(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                        const T& width, const T& height, const T& depth, const T& wall_thickness,
+                        MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_sphere_packing(content::API* engine, typename MT::vector3_type const& position,
