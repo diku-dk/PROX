@@ -75,10 +75,6 @@ template GeometryHandle<MTf> create_geometry_handle_convex_old(content::API* eng
 template <typename T>
 GeometryHandleEigen<T> create_geometry_handle_convex(content::API* engine, std::vector<EigenVector3<T>> const& vertices)
 {
-/*    typedef typename MT::real_type        T;
-    typedef typename MT::vector3_type     V;
-    typedef typename MT::quaternion_type  Q;
-    typedef typename MT::value_traits     VT;*/
 
     static size_t counter = 0u;
 
@@ -201,14 +197,32 @@ template GeometryHandle<MTf> create_geometry_handle_box<MTf>(content::API* engin
                                                              MTf::real_type const& height, MTf::real_type const& depth);
 
 template <typename T>
+GeometryHandleEigen<T> create_geometry_handle_box(content::API* engine, const T& width, const T& height, const T& depth)
+{
+
+    static size_t counter = 0u;
+
+    std::string const geom_name = "box_" + util::to_string(counter++);
+
+    mass::Properties<T> props = mass::compute_box<T>(1, width / 2, height / 2, depth / 2);
+
+    size_t const gid = engine->create_collision_geometry(geom_name);
+    size_t const sid = engine->create_box_shape(gid);
+
+    engine->set_box_shape(gid, sid, width, height, depth);
+
+    return GeometryHandleEigen<T>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, EigenVector3<T>(0, 0, 0),
+                                  EigenQuaternion<T>::Identity(), gid);
+}
+
+template GeometryHandleEigen<float> create_geometry_handle_box<float>(content::API* engine, const float& width,
+                                                                      const float& height, const float& depth);
+
+template <typename T>
 GeometryHandleEigen<T> create_geometry_handle_tetrahedron(content::API* engine, EigenVector3<T> one,
                                                           EigenVector3<T> two, EigenVector3<T> three,
                                                           EigenVector3<T> four)
 {
-/*    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type  Q;
-    typedef typename MT::value_traits    VT;*/
 
     static size_t counter = 0u;
 
@@ -423,13 +437,11 @@ size_t create_rigid_body(content::API* engine, typename MT::vector3_type const& 
     return rid;
 }
 
-template <typename MT>
-size_t create_rigid_body(content::API* engine, typename MT::vector3_type const& Tb2w,
-                         typename MT::quaternion_type const& Qb2w,
-                         GeometryHandleEigen<typename MT::real_type> const& geometry, size_t const& mid,
-                         typename MT::real_type const& density, bool const fixed, std::string const material_name)
+template <typename T>
+size_t create_rigid_body(content::API* engine, const EigenVector3<T>& Tb2w, const EigenQuaternion<T>& Qb2w,
+                         GeometryHandleEigen<T> const& geometry, size_t const& mid, const T& density, bool const fixed,
+                         std::string const material_name)
 {
-    typedef typename MT::value_traits VT;
 
     static size_t counter = 0u;
 
@@ -443,16 +455,14 @@ size_t create_rigid_body(content::API* engine, typename MT::vector3_type const& 
 
     if (Noise::on())
     {
-        typedef typename MT::vector3_type V;
-
-        V const noise = V::random(-Noise::scale(), Noise::scale());
+        const EigenVector3<T> noise = randomEigen<T>(-Noise::scale(), Noise::scale());
 
           //engine->set_rigid_body_position( rid, Tb2w(0)+ noise(0), Tb2w(1)+ noise(1), Tb2w(2)+ noise(2) );
         engine->set_rigid_body_position(rid, Tb2w(0) + noise(0), Tb2w(1), Tb2w(2) + noise(2));
     }
     else { engine->set_rigid_body_position(rid, Tb2w(0), Tb2w(1), Tb2w(2)); }
 
-    engine->set_rigid_body_orientation(rid, Qb2w.real(), Qb2w.imag()(0), Qb2w.imag()(1), Qb2w.imag()(2));
+    engine->set_rigid_body_orientation(rid, Qb2w.w(), Qb2w.x(), Qb2w.y(), Qb2w.z());
 
     engine->set_rigid_body_mass(rid, geometry.m_m * density);
 
@@ -472,12 +482,10 @@ template size_t create_rigid_body<MTf>(content::API* engine, MTf::vector3_type c
                                        size_t const& mid, MTf::real_type const& density, bool const fixed,
                                        std::string const material_name);
 
-template size_t create_rigid_body<MTf>(content::API* engine, MTf::vector3_type const& Tb2w,
-                                       MTf::quaternion_type const& Qb2w,
-                                       GeometryHandleEigen<typename MTf::real_type> const& geometry, size_t const& mid,
-                                       MTf::real_type const& density, bool const fixed,
-                                       std::string const material_name);
-
+template size_t create_rigid_body<float>(content::API* engine, const EigenVector3<float>& Tb2w,
+                                         const EigenQuaternion<float>& Qb2w, GeometryHandleEigen<float> const& geometry,
+                                         size_t const& mid, const float& density, bool const fixed,
+                                         std::string const material_name);
 template <typename MT>
 void compute_arch_stone_vertices(typename MT::real_type const& theta, typename MT::real_type const& depth,
                                  typename MT::real_type const& r_outer, typename MT::real_type const& r_inner,
@@ -561,11 +569,35 @@ void compute_body_to_world_transform(
     T_body2world = Xb2w.T();
 }
 
+template <typename T>
+void compute_body_to_world_transform(const EigenVector3<T>& T_body2model, const EigenQuaternion<T>& Q_body2model,
+                                     const EigenVector3<T>& T_model2local, const EigenQuaternion<T>& Q_model2local,
+                                     const EigenVector3<T>& T_local2world, const EigenQuaternion<T>& Q_local2world,
+                                     EigenVector3<T>& T_body2world, EigenQuaternion<T>& Q_body2world)
+{
+
+    const CoordSysEigen<T> Xb2m = CoordSysEigen<T>::make(T_body2model, Q_body2model);
+    const CoordSysEigen<T> Xm2l = CoordSysEigen<T>::make(T_model2local, Q_model2local);
+    const CoordSysEigen<T> Xl2w = CoordSysEigen<T>::make(T_local2world, Q_local2world);
+
+    const CoordSysEigen<T> Xb2l = prod(Xm2l, Xb2m);
+    const CoordSysEigen<T> Xb2w = prod(Xl2w, Xb2l);
+
+    Q_body2world = Xb2w.Q();
+    T_body2world = Xb2w.T();
+}
+
 template void compute_body_to_world_transform<MTf>(
     MTf::vector3_type const& body_model_translation, MTf::quaternion_type const& body_model_orientation,
     MTf::vector3_type const& model_local_translation, MTf::quaternion_type const& model_local_orientation,
     MTf::vector3_type const& local_world_translation, MTf::quaternion_type const& local_world_orientation,
     MTf::vector3_type& body_world_translation, MTf::quaternion_type& body_world_orientation);
+
+template void compute_body_to_world_transform<float>(
+    const EigenVector3<float>& T_body2model, const EigenQuaternion<float>& Q_body2model,
+    const EigenVector3<float>& T_model2local, const EigenQuaternion<float>& Q_model2local,
+    const EigenVector3<float>& T_local2world, const EigenQuaternion<float>& Q_local2world,
+    EigenVector3<float>& T_body2world, EigenQuaternion<float>& Q_body2world);
 
 template <typename MT> size_t get_material_id(MaterialInfo<typename MT::real_type> info, std::string const material)
 {
@@ -595,5 +627,31 @@ typename MT::real_type get_material_density(MaterialInfo<typename MT::real_type>
 }
 
 template MTf::real_type get_material_density<MTf>(MaterialInfo<MTf::real_type> info, std::string const material);
+
+template <typename T> size_t get_material_id_eigen(MaterialInfo<T> info, std::string const material)
+{
+    if (material.compare("Stone") == 0) return info.m_stone_mid;
+
+    if (material.compare("Ground") == 0) return info.m_ground_mid;
+
+    if (material.compare("Cannonball") == 0) return info.m_cannonball_mid;
+
+    return 0u;
+}
+
+template size_t get_material_id_eigen<float>(MaterialInfo<float> info, std::string const material);
+
+template <typename T> T get_material_density_eigen(MaterialInfo<T> info, std::string const material)
+{
+    if (material.compare("Stone") == 0) return info.m_stone_density;
+
+    if (material.compare("Ground") == 0) return info.m_ground_density;
+
+    if (material.compare("Cannonball") == 0) return info.m_cannonball_density;
+
+    return 0;
+}
+
+template float get_material_density_eigen<float>(MaterialInfo<float> info, std::string const material);
 
 } //namespace procedural

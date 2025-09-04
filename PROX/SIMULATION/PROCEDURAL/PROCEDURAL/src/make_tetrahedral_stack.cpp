@@ -12,9 +12,6 @@ void make_tetrahedral_stack(content::API* engine, typename MT::vector3_type cons
                             size_t const& sub_divisions, MaterialInfo<typename MT::real_type> mat_info)
 {
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
     T const stone_density = get_material_density<MT>(mat_info, "Stone");
     size_t const mid = get_material_id<MT>(mat_info, "Stone");
@@ -55,37 +52,37 @@ void make_tetrahedral_stack(content::API* engine, typename MT::vector3_type cons
             {
                 z = k * box_depth;
 
-                V const Tb = fromEigen(tetra_handle1.Tb2m());
-                Q const Qb = fromEigen(tetra_handle1.Qb2m());
-                V const Tm = V::make(x, y, z);
-                Q const Qm = Q::identity();
-                V const Tu = rotate(Qm, Tb) + Tm;
-                Q const Qu = Qm * Qb;
-                create_rigid_body<MT>(engine, Tu, Qu, tetra_handle1, mid, stone_density);
+                const EigenVector3<T> Tb = (tetra_handle1.Tb2m());
+                const EigenQuaternion<T> Qb = (tetra_handle1.Qb2m());
+                const EigenVector3<T> Tm = EigenVector3<T>(x, y, z);
+                const EigenQuaternion<T> Qm = EigenQuaternion<T>::Identity();
+                const EigenVector3<T> Tu = rotate(Qm, Tb) + Tm;
+                const EigenQuaternion<T> Qu = Qm * Qb;
+                create_rigid_body<T>(engine, Tu, Qu, tetra_handle1, mid, stone_density);
 
-                V const Tb2 = fromEigen(tetra_handle2.Tb2m());
-                Q const Qb2 = fromEigen(tetra_handle2.Qb2m());
-                V const Tu2 = rotate(Qm, Tb2) + Tm;
-                Q const Qu2 = Qm * Qb2;
-                create_rigid_body<MT>(engine, Tu2, Qu2, tetra_handle2, mid, stone_density);
+                const EigenVector3<T> Tb2 = (tetra_handle2.Tb2m());
+                const EigenQuaternion<T> Qb2 = (tetra_handle2.Qb2m());
+                const EigenVector3<T> Tu2 = rotate(Qm, Tb2) + Tm;
+                const EigenQuaternion<T> Qu2 = Qm * Qb2;
+                create_rigid_body<T>(engine, Tu2, Qu2, tetra_handle2, mid, stone_density);
 
-                V const Tb3 = fromEigen(tetra_handle3.Tb2m());
-                Q const Qb3 = fromEigen(tetra_handle3.Qb2m());
-                V const Tu3 = rotate(Qm, Tb3) + Tm;
-                Q const Qu3 = Qm * Qb3;
-                create_rigid_body<MT>(engine, Tu3, Qu3, tetra_handle3, mid, stone_density);
+                const EigenVector3<T> Tb3 = (tetra_handle3.Tb2m());
+                const EigenQuaternion<T> Qb3 = (tetra_handle3.Qb2m());
+                const EigenVector3<T> Tu3 = rotate(Qm, Tb3) + Tm;
+                const EigenQuaternion<T> Qu3 = Qm * Qb3;
+                create_rigid_body<T>(engine, Tu3, Qu3, tetra_handle3, mid, stone_density);
 
-                V const Tb4 = fromEigen(tetra_handle4.Tb2m());
-                Q const Qb4 = fromEigen(tetra_handle4.Qb2m());
-                V const Tu4 = rotate(Qm, Tb4) + Tm;
-                Q const Qu4 = Qm * Qb4;
-                create_rigid_body<MT>(engine, Tu4, Qu4, tetra_handle4, mid, stone_density);
+                const EigenVector3<T> Tb4 = (tetra_handle4.Tb2m());
+                const EigenQuaternion<T> Qb4 = (tetra_handle4.Qb2m());
+                const EigenVector3<T> Tu4 = rotate(Qm, Tb4) + Tm;
+                const EigenQuaternion<T> Qu4 = Qm * Qb4;
+                create_rigid_body<T>(engine, Tu4, Qu4, tetra_handle4, mid, stone_density);
 
-                V const Tb5 = fromEigen(tetra_handle5.Tb2m());
-                Q const Qb5 = fromEigen(tetra_handle5.Qb2m());
-                V const Tu5 = rotate(Qm, Tb5) + Tm;
-                Q const Qu5 = Qm * Qb5;
-                create_rigid_body<MT>(engine, Tu5, Qu5, tetra_handle5, mid, stone_density);
+                const EigenVector3<T> Tb5 = (tetra_handle5.Tb2m());
+                const EigenQuaternion<T> Qb5 = (tetra_handle5.Qb2m());
+                const EigenVector3<T> Tu5 = rotate(Qm, Tb5) + Tm;
+                const EigenQuaternion<T> Qu5 = Qm * Qb5;
+                create_rigid_body<T>(engine, Tu5, Qu5, tetra_handle5, mid, stone_density);
             }
         }
     }

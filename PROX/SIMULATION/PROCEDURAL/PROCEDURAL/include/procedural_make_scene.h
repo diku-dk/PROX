@@ -56,19 +56,19 @@ namespace procedural
                                   , 10.0f
                                   );
 
-      procedural::make_arch<MT>(
-                                engine
-                                , V::zero()
-                                , Q::identity()
-                                , 2      // r outer
-                                , 1.5    // r innter
-                                , 2      // pillar height
-                                , 2.0    // stone depth
-                                , 7      // arch slices
-                                , 3      // pillar segments
-                                , mat_info
-                                );
-
+      procedural::make_arch<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), 2      // r outer
+                               ,
+                               1.5    // r innter
+                               ,
+                               2      // pillar height
+                               ,
+                               2.0    // stone depth
+                               ,
+                               7      // arch slices
+                               ,
+                               3      // pillar segments
+                               ,
+                               mat_info);
     }
     if (scene.compare("pillar") == 0)
     {

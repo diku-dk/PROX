@@ -29,15 +29,11 @@ namespace procedural
     using std::ceil;
 
     typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits    VT;
 
-    T      const stone_density	 = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid		      	 = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
-
-    T const H = 6.0*scene_size / 50.0;
+    T const H = 6.0 * scene_size / 50.0;
     T const B = 2.0*scene_size / 50.0;
 
     if(use_spike)
@@ -53,74 +49,42 @@ namespace procedural
       GeometryHandleEigen<T> const spike = create_geometry_handle_convex<T>(engine, spike_vertices);
 
       {
-          V const T_b2m = fromEigen(spike.Tb2m());
-          Q const Q_b2m = fromEigen(spike.Qb2m());
+          const EigenVector3<T> T_b2m = (spike.Tb2m());
+          const EigenQuaternion<T> Q_b2m = (spike.Qb2m());
 
-        V const T_m2l = V::make( H, H, 0.0 );
-        Q const Q_m2l = Q::Rx( VT::pi()  );
+          const EigenVector3<T> T_m2l = EigenVector3<T>(H, H, 0.0);
+          const EigenQuaternion<T> Q_m2l = Rotatex(std::numbers::pi_v<T>);
 
-        V const T_l2w = position;
-        Q const Q_l2w = orientation;
+          const EigenVector3<T> T_l2w = toEigen(position);
+          const EigenQuaternion<T> Q_l2w = toEigen(orientation);
 
-        V T_b2w;
-        Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-        compute_body_to_world_transform<MT>(
-                                            T_b2m
-                                            , Q_b2m
-                                            , T_m2l
-                                            , Q_m2l
-                                            , T_l2w
-                                            , Q_l2w
-                                            , T_b2w
-                                            , Q_b2w
-                                            );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-        size_t const rid = create_rigid_body<MT>(
-                                                 engine
-                                                 , T_b2w
-                                                 , Q_b2w
-                                                 , spike
-                                                 , mid
-                                                 , stone_density
-                                                 );
+          size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, spike, mid, stone_density);
 
-        engine->set_rigid_body_velocity(rid, -H/2.0, -H*2.0, 0.0);
+          engine->set_rigid_body_velocity(rid, -H / 2.0, -H * 2.0, 0.0);
       }
       {
-          V const T_b2m = fromEigen(spike.Tb2m());
-          Q const Q_b2m = fromEigen(spike.Qb2m());
+          EigenVector3<T> const T_b2m = (spike.Tb2m());
+          EigenQuaternion<T> const Q_b2m = (spike.Qb2m());
 
-        V const T_m2l = V::make( H, -H, 0.0 );
-        Q const Q_m2l = Q::identity();
+          EigenVector3<T> const T_m2l = EigenVector3<T>(H, -H, 0.0);
+          EigenQuaternion<T> const Q_m2l = EigenQuaternion<T>::Identity();
 
-        V const T_l2w = position;
-        Q const Q_l2w = orientation;
+          EigenVector3<T> const T_l2w = toEigen(position);
+          EigenQuaternion<T> const Q_l2w = toEigen(orientation);
 
-        V T_b2w;
-        Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-        compute_body_to_world_transform<MT>(
-                                            T_b2m
-                                            , Q_b2m
-                                            , T_m2l
-                                            , Q_m2l
-                                            , T_l2w
-                                            , Q_l2w
-                                            , T_b2w
-                                            , Q_b2w
-                                            );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-        size_t const rid = create_rigid_body<MT>(
-                                                 engine
-                                                 , T_b2w
-                                                 , Q_b2w
-                                                 , spike
-                                                 , mid
-                                                 , stone_density
-                                                 );
+          size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, spike, mid, stone_density);
 
-        engine->set_rigid_body_fixed(rid, true);
+          engine->set_rigid_body_fixed(rid, true);
       }
     }
 
@@ -137,39 +101,23 @@ namespace procedural
       GeometryHandleEigen<T> const spike = create_geometry_handle_convex<T>(engine, spike_vertices);
 
       {
-          V const T_b2m = fromEigen(spike.Tb2m());
-          Q const Q_b2m = fromEigen(spike.Qb2m());
+          EigenVector3<T> const T_b2m = (spike.Tb2m());
+          EigenQuaternion<T> const Q_b2m = (spike.Qb2m());
 
-        V const T_m2l = V::make( 0, H, 0.0 );
-        Q const Q_m2l = Q::Rx( VT::pi()  );
+          EigenVector3<T> const T_m2l = EigenVector3<T>(0, H, 0.0);
+          EigenQuaternion<T> const Q_m2l = Rotatex(std::numbers::pi_v<T>);
 
-        V const T_l2w = position;
-        Q const Q_l2w = orientation;
+          EigenVector3<T> const T_l2w = toEigen(position);
+          EigenQuaternion<T> const Q_l2w = toEigen(orientation);
 
-        V T_b2w;
-        Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-        compute_body_to_world_transform<MT>(
-                                            T_b2m
-                                            , Q_b2m
-                                            , T_m2l
-                                            , Q_m2l
-                                            , T_l2w
-                                            , Q_l2w
-                                            , T_b2w
-                                            , Q_b2w
-                                            );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-        size_t const rid = create_rigid_body<MT>(
-                                                 engine
-                                                 , T_b2w
-                                                 , Q_b2w
-                                                 , spike
-                                                 , mid
-                                                 , stone_density
-                                                 );
+          size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, spike, mid, stone_density);
 
-        engine->set_rigid_body_velocity(rid, -H/2.0, -H*2.0, 0.0);
+          engine->set_rigid_body_velocity(rid, -H / 2.0, -H * 2.0, 0.0);
       }
 
       std::vector<EigenVector3<T>> wedge_vertices;
@@ -185,39 +133,23 @@ namespace procedural
       GeometryHandleEigen<T> const wedge = create_geometry_handle_convex<T>(engine, wedge_vertices);
 
       {
-          V const T_b2m = fromEigen(wedge.Tb2m());
-          Q const Q_b2m = fromEigen(wedge.Qb2m());
+          EigenVector3<T> const T_b2m = (wedge.Tb2m());
+          EigenQuaternion<T> const Q_b2m = (wedge.Qb2m());
 
-        V const T_m2l = V::make( 0, -H, 0.0 );
-        Q const Q_m2l = Q::identity();
+          EigenVector3<T> const T_m2l = EigenVector3<T>(0, -H, 0.0);
+          EigenQuaternion<T> const Q_m2l = EigenQuaternion<T>::Identity();
 
-        V const T_l2w = position;
-        Q const Q_l2w = orientation;
+          EigenVector3<T> const T_l2w = toEigen(position);
+          EigenQuaternion<T> const Q_l2w = toEigen(orientation);
 
-        V T_b2w;
-        Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-        compute_body_to_world_transform<MT>(
-                                            T_b2m
-                                            , Q_b2m
-                                            , T_m2l
-                                            , Q_m2l
-                                            , T_l2w
-                                            , Q_l2w
-                                            , T_b2w
-                                            , Q_b2w
-                                            );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-        size_t const rid = create_rigid_body<MT>(
-                                                 engine
-                                                 , T_b2w
-                                                 , Q_b2w
-                                                 , wedge
-                                                 , mid
-                                                 , stone_density
-                                                 );
+          size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, wedge, mid, stone_density);
 
-        engine->set_rigid_body_fixed(rid, true);
+          engine->set_rigid_body_fixed(rid, true);
       }
 
     }
@@ -239,74 +171,42 @@ namespace procedural
       GeometryHandleEigen<T> const wedge = create_geometry_handle_convex<T>(engine, wedge_vertices);
 
       {
-          V const T_b2m = fromEigen(wedge.Tb2m());
-          Q const Q_b2m = fromEigen(wedge.Qb2m());
+          EigenVector3<T> const T_b2m = (wedge.Tb2m());
+          EigenQuaternion<T> const Q_b2m = (wedge.Qb2m());
 
-        V const T_m2l = V::make( -H, H, 0.0 );
-        Q const Q_m2l = Q::Rx( VT::pi()  );
+          EigenVector3<T> const T_m2l = EigenVector3<T>(-H, H, 0.0);
+          EigenQuaternion<T> const Q_m2l = Rotatex(std::numbers::pi_v<T>);
 
-        V const T_l2w = position;
-        Q const Q_l2w = orientation;
+          EigenVector3<T> const T_l2w = toEigen(position);
+          EigenQuaternion<T> const Q_l2w = toEigen(orientation);
 
-        V T_b2w;
-        Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-        compute_body_to_world_transform<MT>(
-                                            T_b2m
-                                            , Q_b2m
-                                            , T_m2l
-                                            , Q_m2l
-                                            , T_l2w
-                                            , Q_l2w
-                                            , T_b2w
-                                            , Q_b2w
-                                            );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-        size_t const rid = create_rigid_body<MT>(
-                                                 engine
-                                                 , T_b2w
-                                                 , Q_b2w
-                                                 , wedge
-                                                 , mid
-                                                 , stone_density
-                                                 );
+          size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, wedge, mid, stone_density);
 
-        engine->set_rigid_body_velocity(rid, H/2.0, -H*2.0, 0.0);
+          engine->set_rigid_body_velocity(rid, H / 2.0, -H * 2.0, 0.0);
       }
       {
-          V const T_b2m = fromEigen(wedge.Tb2m());
-          Q const Q_b2m = fromEigen(wedge.Qb2m());
+          EigenVector3<T> const T_b2m = (wedge.Tb2m());
+          EigenQuaternion<T> const Q_b2m = (wedge.Qb2m());
 
-        V const T_m2l = V::make( -H, -H, 0.0 );
-        Q const Q_m2l = Q::identity();
+          EigenVector3<T> const T_m2l = EigenVector3<T>(-H, -H, 0.0);
+          EigenQuaternion<T> const Q_m2l = EigenQuaternion<T>::Identity();
 
-        V const T_l2w = position;
-        Q const Q_l2w = orientation;
+          EigenVector3<T> const T_l2w = toEigen(position);
+          EigenQuaternion<T> const Q_l2w = toEigen(orientation);
 
-        V T_b2w;
-        Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-        compute_body_to_world_transform<MT>(
-                                            T_b2m
-                                            , Q_b2m
-                                            , T_m2l
-                                            , Q_m2l
-                                            , T_l2w
-                                            , Q_l2w
-                                            , T_b2w
-                                            , Q_b2w
-                                            );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-        size_t const rid = create_rigid_body<MT>(
-                                                 engine
-                                                 , T_b2w
-                                                 , Q_b2w
-                                                 , wedge
-                                                 , mid
-                                                 , stone_density
-                                                 );
+          size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, wedge, mid, stone_density);
 
-        engine->set_rigid_body_fixed(rid, true);
+          engine->set_rigid_body_fixed(rid, true);
       }
 
     }

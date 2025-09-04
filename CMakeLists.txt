@@ -1,6 +1,7 @@
 #add_compile_options(-Wall -Wextra -Wpedantic -Werror -Wno-error=unused-parameter -Wno-error=unused-result -Wno-error=unused-local-typedefs -Wno-error=unused-but-set-variable -Wno-error=deprecated-copy -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=deprecated-declarations -fno-omit-frame-pointer -fsanitize=address)
 add_compile_options(-fno-omit-frame-pointer -fsanitize=address)
 add_link_options(-fno-omit-frame-pointer -fsanitize=address)
+add_compile_options(-Wno-error=deprecated-enum-enum-conversion)
 
 IF(COMMAND cmake_policy)
   CMAKE_POLICY(SET CMP0003 NEW)

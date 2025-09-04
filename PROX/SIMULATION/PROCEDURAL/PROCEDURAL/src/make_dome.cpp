@@ -18,16 +18,13 @@ void make_dome(content::API* engine, typename MT::vector3_type const& position,
     using std::sin;
 
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
     assert(r_inner > 0 || !"invalid inner radius value");
     assert(r_outer > r_inner || !"invalid outer radius value");
     assert(slices > 2u || !"at last three slices  must be used");
     assert(segments > 0u || !"at last one segment must be used");
 
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
         // The dome is created using spherical coordinates as defined here
         //
@@ -40,10 +37,10 @@ void make_dome(content::API* engine, typename MT::vector3_type const& position,
         // Initially the up-direction of the dome corresponds to the positive z-axis.
 
     T const offset_theta = 0;
-    T const delta_theta = 2 * VT::pi() / VT::numeric_cast(slices);
-    T const delta_phi = VT::pi_half() / VT::numeric_cast(segments + 1u);
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
-    T phi = delta_phi * VT::numeric_cast(1.5f);
+    T const delta_theta = 2 * std::numbers::pi_v<T> / boost::numeric_cast<T>(slices);
+    T const delta_phi = (std::numbers::pi_v<T> * 0.5f) / boost::numeric_cast<T>(segments + 1u);
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    T phi = delta_phi * boost::numeric_cast<T>(1.5f);
 
     for (size_t v = 0u; v < segments; ++v, phi += delta_phi)
     {
@@ -89,21 +86,21 @@ void make_dome(content::API* engine, typename MT::vector3_type const& position,
         T theta = offset_theta;
         for (size_t h = 0u; h < slices; ++h, theta += delta_theta)
         {
-            V const T_b2m = fromEigen(stone_handle.Tb2m());
-            Q const Q_b2m = fromEigen(stone_handle.Qb2m());
+            const EigenVector3<T> T_b2m = (stone_handle.Tb2m());
+            const EigenQuaternion<T> Q_b2m = (stone_handle.Qb2m());
 
-            Q const Q_m2l = Q::Ru(theta, V::k());
-            V const T_m2l = fromEigen(rotate(toEigen(Q_m2l), geometric_center)); //V::make( x, y, z );
+            const EigenQuaternion<T> Q_m2l = Rotateu(theta, EigenVector3<T>(0, 0, 1));
+            const EigenVector3<T> T_m2l = (rotate<T>((Q_m2l), geometric_center)); //V::make( x, y, z );
 
-            V const T_l2w = position;
-            Q const Q_l2w = orientation;
+            const EigenVector3<T> T_l2w = toEigen(position);
+            const EigenQuaternion<T> Q_l2w = toEigen(orientation);
 
-            V T_b2w;
-            Q Q_b2w;
+            EigenVector3<T> T_b2w;
+            EigenQuaternion<T> Q_b2w;
 
-            compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+            compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-            create_rigid_body<MT>(engine, T_b2w, Q_b2w, stone_handle, mid, stone_density);
+            create_rigid_body<T>(engine, T_b2w, Q_b2w, stone_handle, mid, stone_density);
         }
     }
 }

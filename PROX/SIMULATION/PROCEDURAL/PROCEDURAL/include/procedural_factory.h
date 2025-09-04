@@ -24,16 +24,10 @@ namespace procedural
                            , std::string const visual_material = "Visualizer/stone"
                            );
 
-template<typename MT>
-size_t create_rigid_body(  content::API *  engine
-                         , typename MT::vector3_type const & Tb2w
-                         , typename MT::quaternion_type const & Qb2w
-                           , GeometryHandleEigen<typename MT::real_type>  const & geometry
-                         , size_t const & mid
-                         , typename MT::real_type const & density
-                         , bool const fixed = false
-                         , std::string const visual_material = "Visualizer/stone"
-                         );
+  template <typename T>
+  size_t create_rigid_body(content::API* engine, const EigenVector3<T>& Tb2w, const EigenQuaternion<T>& Qb2w,
+                           GeometryHandleEigen<T> const& geometry, size_t const& mid, const T& density,
+                           bool const fixed = false, std::string const material_name = "Visualizer/stone");
 
   template<typename T>
   GeometryHandleEigen<T> create_geometry_handle_convex(
@@ -67,6 +61,10 @@ size_t create_rigid_body(  content::API *  engine
                                                 , typename MT::real_type  const & height
                                                 , typename MT::real_type  const & depth
                                                 );
+
+  template <typename T>
+  GeometryHandleEigen<T> create_geometry_handle_box(content::API* engine, const T& width, const T& height,
+                                                    const T& depth);
 
   template<typename T>
   GeometryHandleEigen<T> create_geometry_handle_cuboid(
@@ -121,12 +119,13 @@ size_t create_rigid_body(  content::API *  engine
                                    , typename MT::quaternion_type & Qb2w
                                    );
 
+  template <typename T>
+  void compute_body_to_world_transform(const EigenVector3<T>& Tb2m, const EigenQuaternion<T>& Qb2m,
+                                       const EigenVector3<T>& Tm2l, const EigenQuaternion<T>& Qm2l,
+                                       const EigenVector3<T>& Tl2w, const EigenQuaternion<T>& Ql2w,
+                                       EigenVector3<T>& Tb2w, EigenQuaternion<T>& Qb2w);
 
-  template<typename MT>
-  size_t get_material_id(
-                         MaterialInfo<typename MT::real_type> info
-                         , std::string const material
-                         );
+  template <typename MT> size_t get_material_id(MaterialInfo<typename MT::real_type> info, std::string const material);
 
   template<typename MT>
   typename MT::real_type get_material_density(
@@ -134,6 +133,9 @@ size_t create_rigid_body(  content::API *  engine
                                               , std::string const material
                                               );
 
+  template <typename T> size_t get_material_id_eigen(MaterialInfo<T> info, std::string const material);
+
+  template <typename T> T get_material_density_eigen(MaterialInfo<T> info, std::string const material);
 
 } // end of namespace procedural
 

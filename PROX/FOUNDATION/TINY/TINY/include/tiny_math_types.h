@@ -1,17 +1,16 @@
 #ifndef TINY_MATH_TYPES_H
 #define TINY_MATH_TYPES_H
 
-#include <tiny_vector.h>
+#include <eigen3/Eigen/Dense>
+#include <numbers>
+#include <random>
+#include <tiny_coordsys.h>
 #include <tiny_matrix.h>
 #include <tiny_quaternion.h>
-#include <tiny_coordsys.h>
-#include <tiny_value_traits.h>
 #include <tiny_type_traits.h>
-
+#include <tiny_value_traits.h>
+#include <tiny_vector.h>
 #include <type_traits>
-#include <numbers>
-
-#include <eigen3/Eigen/Dense>
 
 namespace tiny
 {
@@ -203,10 +202,9 @@ public:
     const EigenQuaternion<Number>& Q() const { return m_Q; }
 
 public:
-
     CoordSysEigen()
-        : m_T( 0 )
-        , m_Q( 1, 0, 0, 0)
+        : m_T({0, 0, 0})
+        , m_Q({1, 0, 0, 0})
     {}
 
     CoordSysEigen(const CoordSysEigen& X)
@@ -490,6 +488,17 @@ static T convert_to_radians_eigen(T const & degrees)
 {
     return degrees*boost::numeric_cast<T>(0.017453292519943295769236907684886);
 }
+
+template <typename T> inline EigenVector3<T> randomEigen(const T& lower, const T& upper)
+{
+    std::random_device rd;
+    std::uniform_real_distribution<T> dist(lower, upper);
+
+    EigenVector3<T> v(dist(rd), dist(rd), dist(rd));
+    return v;
+}
+
+template <typename T> inline EigenVector3<T> randomEigen() { return randomEigen(0, 1); }
 
 //TINY_MATH_TYPES_H
 #endif

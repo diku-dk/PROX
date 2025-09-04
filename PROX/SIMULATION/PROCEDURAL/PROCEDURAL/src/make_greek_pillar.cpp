@@ -13,21 +13,18 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
                        MaterialInfo<typename MT::real_type> mat_info, mesh_array::TetGenSettings tetset)
 {
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
-    std::vector<V> segment_vertices(pillar_slices * 2u + 2u);
+    std::vector<EigenVector3<T>> segment_vertices(pillar_slices * 2u + 2u);
 
         /// pillar element height ratios, must sum to one
-    T const b_box_ratio = VT::numeric_cast(0.06f);
-    T const b_conical_ratio = VT::numeric_cast(0.06f);
-    T const c_pillar_ratio = VT::numeric_cast(0.80f);
-    T const t_conical_ratio = VT::numeric_cast(0.05f);
-    T const t_box_ratio = VT::numeric_cast(0.03f);
+    T const b_box_ratio = (0.06f);
+    T const b_conical_ratio = (0.06f);
+    T const c_pillar_ratio = (0.80f);
+    T const t_conical_ratio = (0.05f);
+    T const t_box_ratio = (0.03f);
 
     // element heigths
     T const b_box_height = pillar_height * b_box_ratio;
@@ -38,30 +35,30 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
 
     T y = b_box_height * 0.5f;
     {
-        GeometryHandle<MT> bottom_box
-            = create_geometry_handle_box<MT>(engine, pillar_width, b_box_height, pillar_depth);
+        GeometryHandleEigen<T> bottom_box
+            = create_geometry_handle_box<T>(engine, pillar_width, b_box_height, pillar_depth);
 
-        V const local_translation = V::make(0, y, 0);
+        const EigenVector3<T> local_translation = EigenVector3<T>(0, y, 0);
 
-        V body_to_world_translation;
-        Q body_to_world_orientation;
+        EigenVector3<T> body_to_world_translation;
+        EigenQuaternion<T> body_to_world_orientation;
 
-        compute_body_to_world_transform<MT>(bottom_box.Tb2m()    // body to model
-                                            ,
-                                            bottom_box.Qb2m()    // body to model
-                                            ,
-                                            local_translation   // model to local
-                                            ,
-                                            Q::identity()       // model to local
-                                            ,
-                                            position            // local to wolrd
-                                            ,
-                                            orientation         // local to world
-                                            ,
-                                            body_to_world_translation, body_to_world_orientation);
+        compute_body_to_world_transform<T>(bottom_box.Tb2m()    // body to model
+                                           ,
+                                           bottom_box.Qb2m()    // body to model
+                                           ,
+                                           local_translation   // model to local
+                                           ,
+                                           EigenQuaternion<T>::Identity()       // model to local
+                                           ,
+                                           toEigen(position)            // local to wolrd
+                                           ,
+                                           toEigen(orientation)         // local to world
+                                           ,
+                                           body_to_world_translation, body_to_world_orientation);
 
-        create_rigid_body<MT>(engine, body_to_world_translation, body_to_world_orientation, bottom_box, mid,
-                              stone_density);
+        create_rigid_body<T>(engine, body_to_world_translation, body_to_world_orientation, bottom_box, mid,
+                             stone_density);
     }
 
     y += 0.5f * b_box_height;
@@ -70,27 +67,27 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
         GeometryHandleEigen<T> pillar_segment = create_geometry_handle_pillar_segment<T>(
             engine, (0.5f * pillar_width), ((0.5f * pillar_width) * .8f), b_conical_height, pillar_slices, tetset);
 
-        V const local_translation = V::make(0, y, 0);
+        const EigenVector3<T> local_translation = EigenVector3<T>(0, y, 0);
 
-        V body_to_world_translation;
-        Q body_to_world_orientation;
+        EigenVector3<T> body_to_world_translation;
+        EigenQuaternion<T> body_to_world_orientation;
 
-        compute_body_to_world_transform<MT>(fromEigen(pillar_segment.Tb2m())       // body 2 model
-                                            ,
-                                            fromEigen(pillar_segment.Qb2m())       // body 2 model
-                                            ,
-                                            local_translation           // model 2 local
-                                            ,
-                                            Q::identity()               // model 2 local
-                                            ,
-                                            position                    // local 2 world
-                                            ,
-                                            orientation                 // local 2 world
-                                            ,
-                                            body_to_world_translation, body_to_world_orientation);
+        compute_body_to_world_transform<T>((pillar_segment.Tb2m())       // body 2 model
+                                           ,
+                                           (pillar_segment.Qb2m())       // body 2 model
+                                           ,
+                                           local_translation           // model 2 local
+                                           ,
+                                           EigenQuaternion<T>::Identity()               // model 2 local
+                                           ,
+                                           toEigen(position)                    // local 2 world
+                                           ,
+                                           toEigen(orientation)                 // local 2 world
+                                           ,
+                                           body_to_world_translation, body_to_world_orientation);
 
-        create_rigid_body<MT>(engine, body_to_world_translation, body_to_world_orientation, pillar_segment, mid,
-                              stone_density);
+        create_rigid_body<T>(engine, body_to_world_translation, body_to_world_orientation, pillar_segment, mid,
+                             stone_density);
     }
 
     y += b_conical_height;
@@ -98,8 +95,8 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
     {
 
         T const pillar_segment_height = c_pillar_height / pillar_segments;
-        T const s_bottom_radius = VT::numeric_cast(0.8f) * (pillar_width * 0.5f);
-        T top_radius = VT::numeric_cast(0.6f) * (pillar_width * 0.5f);
+        T const s_bottom_radius = (0.8f) * (pillar_width * 0.5f);
+        T top_radius = (0.6f) * (pillar_width * 0.5f);
         T bottom_radius = s_bottom_radius;
         T const alpha = (top_radius - bottom_radius) / c_pillar_height;
 
@@ -110,27 +107,27 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
             GeometryHandleEigen<T> c_pillar_segment = create_geometry_handle_pillar_segment<T>(
                 engine, bottom_radius, top_radius, pillar_segment_height, pillar_slices, tetset);
 
-            V const local_translation = V::make(0, y, 0);
+            const EigenVector3<T> local_translation = EigenVector3<T>(0, y, 0);
 
-            V body_to_world_translation;
-            Q body_to_world_orientation;
+            EigenVector3<T> body_to_world_translation;
+            EigenQuaternion<T> body_to_world_orientation;
 
-            compute_body_to_world_transform<MT>(fromEigen(c_pillar_segment.Tb2m())  // body to model
-                                                ,
-                                                fromEigen(c_pillar_segment.Qb2m())  // body to model
-                                                ,
-                                                local_translation        // model to local
-                                                ,
-                                                Q::identity()            // model to local
-                                                ,
-                                                position                 // local to world
-                                                ,
-                                                orientation              // local to world
-                                                ,
-                                                body_to_world_translation, body_to_world_orientation);
+            compute_body_to_world_transform<T>((c_pillar_segment.Tb2m())  // body to model
+                                               ,
+                                               (c_pillar_segment.Qb2m())  // body to model
+                                               ,
+                                               local_translation        // model to local
+                                               ,
+                                               EigenQuaternion<T>::Identity()            // model to local
+                                               ,
+                                               toEigen(position)                 // local to world
+                                               ,
+                                               toEigen(orientation)              // local to world
+                                               ,
+                                               body_to_world_translation, body_to_world_orientation);
 
-            create_rigid_body<MT>(engine, body_to_world_translation, body_to_world_orientation, c_pillar_segment, mid,
-                                  stone_density);
+            create_rigid_body<T>(engine, body_to_world_translation, body_to_world_orientation, c_pillar_segment, mid,
+                                 stone_density);
 
             bottom_radius = top_radius;
             y += pillar_segment_height;
@@ -141,57 +138,56 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
     {
 
         GeometryHandleEigen<T> pillar_segment = create_geometry_handle_pillar_segment<T>(
-            engine, VT::numeric_cast((0.5f * pillar_width)), VT::numeric_cast(0.6f * (0.5f * pillar_width)),
-            t_conical_height, pillar_slices, tetset);
+            engine, ((0.5f * pillar_width)), (0.6f * (0.5f * pillar_width)), t_conical_height, pillar_slices, tetset);
 
-        V const local_translation = V::make(0, y, 0);
+        const EigenVector3<T> local_translation = EigenVector3<T>(0, y, 0);
 
-        V body_to_world_translation;
-        Q body_to_world_orientation;
+        EigenVector3<T> body_to_world_translation;
+        EigenQuaternion<T> body_to_world_orientation;
 
-        compute_body_to_world_transform<MT>(fromEigen(pillar_segment.Tb2m())      // body to model
-                                            ,
-                                            fromEigen(pillar_segment.Qb2m())      // body to model
-                                            ,
-                                            local_translation          // model to local
-                                            ,
-                                            Q::Ru(VT::pi(), V::i())  // model to local
-                                            ,
-                                            position                   // local to world
-                                            ,
-                                            orientation                // local to world
-                                            ,
-                                            body_to_world_translation, body_to_world_orientation);
+        compute_body_to_world_transform<T>((pillar_segment.Tb2m())      // body to model
+                                           ,
+                                           (pillar_segment.Qb2m())      // body to model
+                                           ,
+                                           local_translation          // model to local
+                                           ,
+                                           Rotateu(std::numbers::pi_v<T>, EigenVector3<T>(1, 0, 0))  // model to local
+                                           ,
+                                           toEigen(position)                   // local to world
+                                           ,
+                                           toEigen(orientation)                // local to world
+                                           ,
+                                           body_to_world_translation, body_to_world_orientation);
 
-        create_rigid_body<MT>(engine, body_to_world_translation, body_to_world_orientation, pillar_segment, mid,
-                              stone_density);
+        create_rigid_body<T>(engine, body_to_world_translation, body_to_world_orientation, pillar_segment, mid,
+                             stone_density);
     }
 
     y += 0.5f * t_box_height;
     {
-        GeometryHandle<MT> top_box = create_geometry_handle_box<MT>(engine, pillar_width, t_box_height, pillar_depth);
+        GeometryHandleEigen<T> top_box
+            = create_geometry_handle_box<T>(engine, pillar_width, t_box_height, pillar_depth);
 
-        V const local_translation = V::make(0, y, 0);
+        const EigenVector3<T> local_translation = EigenVector3<T>(0, y, 0);
 
-        V body_to_world_translation;
-        Q body_to_world_orientation;
+        EigenVector3<T> body_to_world_translation;
+        EigenQuaternion<T> body_to_world_orientation;
 
-        compute_body_to_world_transform<MT>(top_box.Tb2m()              // body to model
-                                            ,
-                                            top_box.Qb2m()              // body to model
-                                            ,
-                                            local_translation           // model to local
-                                            ,
-                                            Q::identity()               // model to local
-                                            ,
-                                            position                    // local to world
-                                            ,
-                                            orientation                 // local to world
-                                            ,
-                                            body_to_world_translation, body_to_world_orientation);
+        compute_body_to_world_transform<T>(top_box.Tb2m()              // body to model
+                                           ,
+                                           top_box.Qb2m()              // body to model
+                                           ,
+                                           local_translation           // model to local
+                                           ,
+                                           EigenQuaternion<T>::Identity()               // model to local
+                                           ,
+                                           toEigen(position)                    // local to world
+                                           ,
+                                           toEigen(orientation)                 // local to world
+                                           ,
+                                           body_to_world_translation, body_to_world_orientation);
 
-        create_rigid_body<MT>(engine, body_to_world_translation, body_to_world_orientation, top_box, mid,
-                              stone_density);
+        create_rigid_body<T>(engine, body_to_world_translation, body_to_world_orientation, top_box, mid, stone_density);
     }
 }
 

@@ -12,31 +12,28 @@ void make_tetrahedron(content::API* engine, typename MT::vector3_type const& one
                       MaterialInfo<typename MT::real_type> mat_info, bool const fixed = false)
 {
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
     GeometryHandleEigen<T> tet_handle
         = create_geometry_handle_tetrahedron<T>(engine, toEigen(one), toEigen(two), toEigen(three), toEigen(four));
 
-    V const T_b2m = fromEigen(tet_handle.Tb2m());
-    Q const Q_b2m = fromEigen(tet_handle.Qb2m());
+    const EigenVector3<T> T_b2m = (tet_handle.Tb2m());
+    const EigenQuaternion<T> Q_b2m = (tet_handle.Qb2m());
 
-    V const T_m2l = V::make(0, 0, 0);
-    Q const Q_m2l = Q::identity();
+    const EigenVector3<T> T_m2l = EigenVector3<T>(0, 0, 0);
+    const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
-    V const T_l2w = position;
-    Q const Q_l2w = orientation;
+    const EigenVector3<T> T_l2w = toEigen(position);
+    const EigenQuaternion<T> Q_l2w = toEigen(orientation);
 
-    V T_b2w;
-    Q Q_b2w;
+    EigenVector3<T> T_b2w;
+    EigenQuaternion<T> Q_b2w;
 
-    compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+    compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-    create_rigid_body<MT>(engine, T_b2w, Q_b2w, tet_handle, mid, stone_density, fixed);
+    create_rigid_body<T>(engine, T_b2w, Q_b2w, tet_handle, mid, stone_density, fixed);
 }
 
 using MTf = tiny::MathTypes<float>;

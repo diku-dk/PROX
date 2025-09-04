@@ -17,22 +17,19 @@ void make_colosseum(content::API* engine, typename MT::vector3_type const& posit
     using std::sin;
 
     typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
 
     //10-30-14 Sarah: clean up "magic" constants
     T const r_center = (r_outer - r_inner) * .5 + r_inner;
-    T const delta_theta = 2 * VT::pi() / slices;
+    T const delta_theta = 2 * std::numbers::pi_v<T> / slices;
     T const r_arch_outer = r_inner * sin(delta_theta * 0.5f);
-    T const r_arch_inner = r_arch_outer * VT::numeric_cast(0.6f);
+    T const r_arch_inner = r_arch_outer * (0.6f);
     T const pillar_height = 1 * r_arch_outer;
     size_t const arch_slices = 7u;
     size_t const pillar_segments = 5u;
     T const depth = r_outer - r_inner;
 
     T const arch_height = r_arch_outer + pillar_height;
-    T const tower_height = VT::numeric_cast(0.2f) * arch_height;
+    T const tower_height = (0.2f) * arch_height;
     T y = 0;
 
     for (size_t i = 0u; i < segments; ++i)
@@ -43,21 +40,25 @@ void make_colosseum(content::API* engine, typename MT::vector3_type const& posit
             T const x = r_center * cos(theta);
             T const z = r_center * sin(theta);
 
-            V const arch_position = rotate(orientation, (V::make(x, y, z))) + position;
-            Q const arch_orientation = orientation * Q::Ry(VT::pi_half()) * Q::Ry(-theta);
+            const EigenVector3<T> arch_position
+                = rotate(toEigen(orientation), (EigenVector3<T>(x, y, z))) + toEigen(position);
+            const EigenQuaternion<T> arch_orientation
+                = toEigen(orientation) * Rotatey(std::numbers::pi_v<T> * 0.5f) * Rotatey(-theta);
 
-            make_arch<MT>(engine, arch_position, arch_orientation, r_arch_outer, r_arch_inner, pillar_height,
-                          depth * 0.8f, arch_slices, pillar_segments, mat_info);
+            make_arch<T>(engine, arch_position, arch_orientation, r_arch_outer, r_arch_inner, pillar_height,
+                         depth * 0.8f, arch_slices, pillar_segments, mat_info);
         }
 
         y += arch_height;
 
-        V const tower_position = rotate(orientation, (V::make(0, y, 0))) + position;
+        const EigenVector3<T> tower_position
+            = rotate(toEigen(orientation), (EigenVector3<T>(0, y, 0))) + toEigen(position);
 
-        Q const tower_orientation = orientation * Q::Ry(delta_theta / 2.0) * Q::Rx(-VT::pi_half());
+        const EigenQuaternion<T> tower_orientation
+            = toEigen(orientation) * Rotatey<T>(delta_theta / 2.0) * Rotatex<T>(-std::numbers::pi_v<T> * 0.5);
 
-        make_tower<MT>(engine, tower_position, tower_orientation, r_outer, r_inner, tower_height, slices, 1, mat_info,
-                       false);
+        make_tower<MT>(engine, fromEigen(tower_position), fromEigen(tower_orientation), r_outer, r_inner, tower_height,
+                       slices, 1, mat_info, false);
 
         y += tower_height;
     }
