@@ -46,29 +46,22 @@ namespace procedural
 
     if (scene.compare("arch") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      procedural::make_arch<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), 2      // r outer
-                               ,
-                               1.5    // r innter
-                               ,
-                               2      // pillar height
-                               ,
-                               2.0    // stone depth
-                               ,
-                               7      // arch slices
-                               ,
-                               3      // pillar segments
-                               ,
-                               mat_info);
+        procedural::make_arch<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), 2      // r outer
+                                 ,
+                                 1.5    // r innter
+                                 ,
+                                 2      // pillar height
+                                 ,
+                                 2.0    // stone depth
+                                 ,
+                                 7      // arch slices
+                                 ,
+                                 3      // pillar segments
+                                 ,
+                                 mat_info);
     }
     if (scene.compare("pillar") == 0)
     {
@@ -76,10 +69,11 @@ namespace procedural
         auto const pillar_height = util::to_value<float>(params.get_value("procedural_param_2", "3.5"));
         auto const pillar_width = util::to_value<float>(params.get_value("procedural_param_3", "0.5"));
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width,
-                                    ground_width / 10.0  // ground height
-                                    ,
-                                    ground_width);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width,
+                                   ground_width / 10.0  // ground height
+                                   ,
+                                   ground_width);
 
         if (tetset.m_maximum_volume > 0.0) tetset.m_maximum_volume /= 1000.0;
 
@@ -88,185 +82,104 @@ namespace procedural
     }
     if (scene.compare("twist") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
-      auto const degree = util::to_value<float>(params.get_value("procedural_param_2", "25.0"));
+        auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
+        auto const degree = util::to_value<float>(params.get_value("procedural_param_2", "25.0"));
 
-      procedural::make_twisted_stack<MT>(
-                                         engine
-                                         , V::make(0, 0, 0)
-                                         , Q::identity()
-                                         , 1
-                                         , layers
-                                         , degree
-                                         , mat_info
-                                         );
-
+        procedural::make_twisted_stack<MT>(engine, V::make(0, 0, 0), Q::identity(), 1, layers, degree, mat_info);
     }
     if (scene.compare("stack") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
+        auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
 
-      procedural::make_stack<MT>(
-                                 engine
-                                 , V::make(0, 0, 0)
-                                 , Q::identity()
-                                 , 1
-                                 , layers
-                                 , mat_info
-                                 );
+        procedural::make_stack<MT>(engine, V::make(0, 0, 0), Q::identity(), 1, layers, mat_info);
     }
     if (scene.compare("wall") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T            const width  = util::to_value<T>(            params.get_value( "procedural_param_1", "5.0") );
-      T            const height = util::to_value<T>(            params.get_value( "procedural_param_2", "4.0") );
-      T            const depth  = util::to_value<T>(            params.get_value( "procedural_param_3", "1.0") );
-      auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5"));
-      auto const span = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5"));
+        T const width = util::to_value<T>(params.get_value("procedural_param_1", "5.0"));
+        T const height = util::to_value<T>(params.get_value("procedural_param_2", "4.0"));
+        T const depth = util::to_value<T>(params.get_value("procedural_param_3", "1.0"));
+        auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_4", "5"));
+        auto const span = util::to_value<unsigned int>(params.get_value("procedural_param_5", "5"));
 
-      procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(), width,
-                               height, depth, layers, span, mat_info);
+        procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(), width,
+                                 height, depth, layers, span, mat_info);
     }
     if (scene.compare("tower") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
-      T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
-      T const height              = util::to_value<T>(            params.get_value( "procedural_param_3", "3.0") );
-      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
-      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
+        T const outer_radius = util::to_value<T>(params.get_value("procedural_param_1", "3.0"));
+        T const inner_radius = util::to_value<T>(params.get_value("procedural_param_2", "2.5"));
+        T const height = util::to_value<T>(params.get_value("procedural_param_3", "3.0"));
+        auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
+        auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
 
-      procedural::make_tower<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
-                                inner_radius, height, slices, segments, mat_info, true);
+        procedural::make_tower<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
+                                  inner_radius, height, slices, segments, mat_info, true);
     }
     if (scene.compare("cuboid_tower") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
-      T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
-      T const height              = util::to_value<T>(            params.get_value( "procedural_param_3", "3.0") );
-      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
-      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
+        T const outer_radius = util::to_value<T>(params.get_value("procedural_param_1", "3.0"));
+        T const inner_radius = util::to_value<T>(params.get_value("procedural_param_2", "2.5"));
+        T const height = util::to_value<T>(params.get_value("procedural_param_3", "3.0"));
+        auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "12"));
+        auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "4"));
 
-      procedural::make_tower<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
-                                inner_radius, height, slices, segments, mat_info, false);
+        procedural::make_tower<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
+                                  inner_radius, height, slices, segments, mat_info, false);
     }
     if (scene.compare("dome") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
+        T const outer_radius = util::to_value<T>(params.get_value("procedural_param_1", "3.0"));
+        T const inner_radius = util::to_value<T>(params.get_value("procedural_param_2", "2.5"));
+        auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_3", "10"));
+        auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
-      T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
-      T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
-      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_3", "10"));
-      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
-
-      procedural::make_dome<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T> * 0.5f), outer_radius,
-                               inner_radius, slices, segments, mat_info);
+        procedural::make_dome<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T> * 0.5f), outer_radius,
+                                 inner_radius, slices, segments, mat_info);
     }
     if (scene.compare("pantheon") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T const outer_radius        = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
-      T const inner_radius        = util::to_value<T>(            params.get_value( "procedural_param_2", "2.5") );
-      T const height              = util::to_value<T>(            params.get_value( "procedural_param_3", "2.0") );
-      auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "11"));
-      auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "11"));
+        T const outer_radius = util::to_value<T>(params.get_value("procedural_param_1", "3.0"));
+        T const inner_radius = util::to_value<T>(params.get_value("procedural_param_2", "2.5"));
+        T const height = util::to_value<T>(params.get_value("procedural_param_3", "2.0"));
+        auto const slices = util::to_value<unsigned int>(params.get_value("procedural_param_4", "11"));
+        auto const segments = util::to_value<unsigned int>(params.get_value("procedural_param_5", "11"));
 
-      procedural::make_pantheon<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
-                                   inner_radius, height, slices, segments, mat_info);
+        procedural::make_pantheon<T>(engine, EigenVector3<T>(0, 0, 0), Rotatex(-std::numbers::pi_v<T>), outer_radius,
+                                     inner_radius, height, slices, segments, mat_info);
     }
     if (scene.compare("temple") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T            const temple_height = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
-      T            const pillar_width  = util::to_value<T>(            params.get_value( "procedural_param_2", "0.5") );
-      auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
-      auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
+        T const temple_height = util::to_value<T>(params.get_value("procedural_param_1", "3.0"));
+        T const pillar_width = util::to_value<T>(params.get_value("procedural_param_2", "0.5"));
+        auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
+        auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
-      procedural::make_temple<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , temple_height
-                                  , pillar_width
-                                  , cnt_pillars_x
-                                  , cnt_pillars_y
-                                  , mat_info
-                                  );
+        procedural::make_temple<MT>(engine, V::zero(), Q::identity(), temple_height, pillar_width, cnt_pillars_x,
+                                    cnt_pillars_y, mat_info);
     }
     if(scene.compare("colosseum") == 0)
     {
@@ -275,15 +188,8 @@ namespace procedural
       auto const number_of_arches = util::to_value<unsigned int>(params.get_value("procedural_param_3", "14"));
       auto const layers_of_archs = util::to_value<unsigned int>(params.get_value("procedural_param_4", "3"));
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , outer_radius * 3
-                                  , 1.0f
-                                  , outer_radius * 3
-                                  );
+      procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                 outer_radius * 3, 1.0f, outer_radius * 3);
 
       procedural::make_colosseum<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
                                     outer_radius // outer radius
@@ -298,100 +204,103 @@ namespace procedural
     }
     if (scene.compare("scripted_motions") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T const width   = util::to_value<T>( params.get_value( "procedural_param_1", "5.0") );
-      T const layers  = util::to_value<T>( params.get_value( "procedural_param_2", "5.0") );
-      T const span    = util::to_value<T>( params.get_value( "procedural_param_3", "5.0") );
+        T const width = util::to_value<T>(params.get_value("procedural_param_1", "5.0"));
+        T const layers = util::to_value<T>(params.get_value("procedural_param_2", "5.0"));
+        T const span = util::to_value<T>(params.get_value("procedural_param_3", "5.0"));
 
-      procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(),
-                               width      // width
-                               ,
-                               layers * 2.0f      // height
-                               ,
-                               2.0f       // depth
-                               ,
-                               layers    // layers
-                               ,
-                               span      // span
-                               ,
-                               mat_info);
+        procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(),
+                                 width      // width
+                                 ,
+                                 layers * 2.0f      // height
+                                 ,
+                                 2.0f       // depth
+                                 ,
+                                 layers    // layers
+                                 ,
+                                 span      // span
+                                 ,
+                                 mat_info);
 
-      size_t const oscillation_motion_idx = engine->create_oscilation_scripted_motion();
+        size_t const oscillation_motion_idx = engine->create_oscilation_scripted_motion();
 
-      engine->set_scripted_oscilation_paramters(
-                                                oscillation_motion_idx
-                                                , width*2.0f           // amplitude
-                                                , (VT::pi()*2.0)/2.5f  // frequency   omega = 2 pi / T; where T is the period
-                                                , 0.0                  // phase
-                                                , 1.0                  // dir x
-                                                , 1.0                  // dir y
-                                                , 0.0                  // dir z
-                                                , 0.0                  // ref x
-                                                , 0.0                  // ref y
-                                                , 0.0                  // ref z
-                                                );
+        engine->set_scripted_oscilation_paramters(
+            oscillation_motion_idx, width * 2.0f           // amplitude
+            ,
+            (VT::pi() * 2.0) / 2.5f  // frequency   omega = 2 pi / T; where T is the period
+            ,
+            0.0                  // phase
+            ,
+            1.0                  // dir x
+            ,
+            1.0                  // dir y
+            ,
+            0.0                  // dir z
+            ,
+            0.0                  // ref x
+            ,
+            0.0                  // ref y
+            ,
+            0.0                  // ref z
+        );
 
-      size_t const keyframe_motion_idx    =  engine->create_key_frame_scripted_motion();
+        size_t const keyframe_motion_idx = engine->create_key_frame_scripted_motion();
 
+        engine->set_scripted_key_position(keyframe_motion_idx, 0.0f   // time
+                                          ,
+                                          -width // x
+                                          ,
+                                          0.0f   // y
+                                          ,
+                                          0.0f   // z
+        );
 
-      engine->set_scripted_key_position(
-                                          keyframe_motion_idx
-                                        , 0.0f   // time
-                                        , -width // x
-                                        , 0.0f   // y
-                                        , 0.0f   // z
-                                        );
+        engine->set_scripted_key_position(keyframe_motion_idx, 1.0f   // time
+                                          ,
+                                          width  // x
+                                          ,
+                                          0.0f   // y
+                                          ,
+                                          0.0f   // z
+        );
 
-      engine->set_scripted_key_position(
-                                        keyframe_motion_idx
-                                        , 1.0f   // time
-                                        , width  // x
-                                        , 0.0f   // y
-                                        , 0.0f   // z
-                                        );
+        engine->set_scripted_key_position(keyframe_motion_idx, 2.0f        // time
+                                          ,
+                                          width       // x
+                                          ,
+                                          2.0f * width  // y
+                                          ,
+                                          0.0f        // z
+        );
 
-      engine->set_scripted_key_position(
-                                        keyframe_motion_idx
-                                        , 2.0f        // time
-                                        , width       // x
-                                        , 2.0f*width  // y
-                                        , 0.0f        // z
-                                        );
+        engine->set_scripted_key_position(keyframe_motion_idx, 3.0f        // time
+                                          ,
+                                          -width      // x
+                                          ,
+                                          2.0f * width  // y
+                                          ,
+                                          0.0f        // z
+        );
 
-      engine->set_scripted_key_position(
-                                        keyframe_motion_idx
-                                        , 3.0f        // time
-                                        , -width      // x
-                                        , 2.0f*width  // y
-                                        , 0.0f        // z
-                                        );
+        engine->set_scripted_key_position(keyframe_motion_idx, 4.0f    // time
+                                          ,
+                                          -width  // x
+                                          ,
+                                          0.0f    // y
+                                          ,
+                                          0.0f    // z
+        );
 
-      engine->set_scripted_key_position(
-                                        keyframe_motion_idx
-                                        , 4.0f    // time
-                                        , -width  // x
-                                        , 0.0f    // y
-                                        , 0.0f    // z
-                                        );
+        std::vector<size_t> rids;
 
+        rids.resize(engine->get_number_of_rigid_bodies());
 
-      std::vector<size_t> rids;
+        engine->get_rigid_body_indices(&rids[0]);
 
-      rids.resize(engine->get_number_of_rigid_bodies());
-
-      engine->get_rigid_body_indices( &rids[0] );
-
-      engine->connect_scripted_motion(rids[rids.size()-1u], keyframe_motion_idx);
-      engine->connect_scripted_motion(rids[rids.size()-2u], oscillation_motion_idx);
+        engine->connect_scripted_motion(rids[rids.size() - 1u], keyframe_motion_idx);
+        engine->connect_scripted_motion(rids[rids.size() - 2u], oscillation_motion_idx);
     }
     if(scene.compare("funnel_dims") == 0)
     {
@@ -404,7 +313,8 @@ namespace procedural
         auto const number_of_objects_in_y = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
         auto const number_of_objects_in_z = util::to_value<float>(params.get_value("procedural_param_8", "20.0"));
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_size, 1.0f, ground_size);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_size, 1.0f, ground_size);
 
         // A funnel is 1.0x0.34x1.0
         // It is also upside-down.
@@ -421,61 +331,36 @@ namespace procedural
     }
     if (scene.compare("earthquake") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T            const temple_height = util::to_value<T>(            params.get_value( "procedural_param_1", "3.0") );
-      T            const pillar_width  = util::to_value<T>(            params.get_value( "procedural_param_2", "0.5") );
-      auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
-      auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
+        T const temple_height = util::to_value<T>(params.get_value("procedural_param_1", "3.0"));
+        T const pillar_width = util::to_value<T>(params.get_value("procedural_param_2", "0.5"));
+        auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
+        auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
-      procedural::make_temple<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , temple_height
-                                  , pillar_width
-                                  , cnt_pillars_x
-                                  , cnt_pillars_y
-                                  , mat_info
-                                  );
+        procedural::make_temple<MT>(engine, V::zero(), Q::identity(), temple_height, pillar_width, cnt_pillars_x,
+                                    cnt_pillars_y, mat_info);
 
-      size_t const oscillation_motion_idx =  engine->create_oscilation_scripted_motion();
+        size_t const oscillation_motion_idx = engine->create_oscilation_scripted_motion();
 
-      T const amplitude  = util::to_value<T>(            params.get_value( "procedural_param_5", "0.01") );
-      T const frequency  = util::to_value<T>(            params.get_value( "procedural_param_6", "3.0") );
-      T const phase      = util::to_value<T>(            params.get_value( "procedural_param_7", "0.0") );
-      T const dir_x      = util::to_value<T>(            params.get_value( "procedural_param_8", "1.0") );
-      T const dir_y      = util::to_value<T>(            params.get_value( "procedural_param_9", "0.0") );
-      T const dir_z      = util::to_value<T>(            params.get_value( "procedural_param_10", "0.0") );
-      T const ref_x      = util::to_value<T>(            params.get_value( "procedural_param_11", "0.0") );
-      T const ref_y      = util::to_value<T>(            params.get_value( "procedural_param_12", "0.0") );
-      T const ref_z      = util::to_value<T>(            params.get_value( "procedural_param_13", "0.0") );
+        T const amplitude = util::to_value<T>(params.get_value("procedural_param_5", "0.01"));
+        T const frequency = util::to_value<T>(params.get_value("procedural_param_6", "3.0"));
+        T const phase = util::to_value<T>(params.get_value("procedural_param_7", "0.0"));
+        T const dir_x = util::to_value<T>(params.get_value("procedural_param_8", "1.0"));
+        T const dir_y = util::to_value<T>(params.get_value("procedural_param_9", "0.0"));
+        T const dir_z = util::to_value<T>(params.get_value("procedural_param_10", "0.0"));
+        T const ref_x = util::to_value<T>(params.get_value("procedural_param_11", "0.0"));
+        T const ref_y = util::to_value<T>(params.get_value("procedural_param_12", "0.0"));
+        T const ref_z = util::to_value<T>(params.get_value("procedural_param_13", "0.0"));
 
-      engine->set_scripted_oscilation_paramters(
-                                                oscillation_motion_idx
-                                                , amplitude
-                                                , frequency
-                                                , phase
-                                                , dir_x
-                                                , dir_y
-                                                , dir_z
-                                                , ref_x
-                                                , ref_y
-                                                , ref_z
-                                                );
+        engine->set_scripted_oscilation_paramters(oscillation_motion_idx, amplitude, frequency, phase, dir_x, dir_y,
+                                                  dir_z, ref_x, ref_y, ref_z);
 
-      std::vector<size_t> rids;
-      rids.resize(engine->get_number_of_rigid_bodies());
-      engine->get_rigid_body_indices( &rids[0] );
-      engine->connect_scripted_motion(rids[0u], oscillation_motion_idx);
+        std::vector<size_t> rids;
+        rids.resize(engine->get_number_of_rigid_bodies());
+        engine->get_rigid_body_indices(&rids[0]);
+        engine->connect_scripted_motion(rids[0u], oscillation_motion_idx);
     }
     if(scene.compare("shoot") == 0)
     {
@@ -496,15 +381,9 @@ namespace procedural
       procedural::make_cannonball<T>(engine, radius, EigenVector3<T>(pos_x, pos_y, pos_z),
                                      EigenQuaternion<T>::Identity(), EigenVector3<T>(vel_x, vel_y, vel_z), mat_info);
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 2.0f * (colosseum_radius + colosseum_width) + 2.0f
-                                  , 1.0f
-                                  , 2.0f * (colosseum_radius + colosseum_width) + 2.0f
-                                  );
+      procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                 2.0f * (colosseum_radius + colosseum_width) + 2.0f, 1.0f,
+                                 2.0f * (colosseum_radius + colosseum_width) + 2.0f);
 
       procedural::make_colosseum<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
                                     colosseum_radius + colosseum_width, colosseum_radius, colosseum_arches,
@@ -522,7 +401,8 @@ namespace procedural
         auto const glass_spacing = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
         auto const ground_width = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, 1.0f, ground_width);
 
         // A glass is 0.89x1.0x0.89
         // Draw glass second because it may be see through and will blend only
@@ -551,7 +431,8 @@ namespace procedural
         auto const dims_spacing = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
         auto const ground_width = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, 1.0f, ground_width);
 
         // A glass is 0.89x1.0x0.89
         // Draw glass second because it may be see through and will blend only
@@ -580,83 +461,62 @@ namespace procedural
         procedural::make_obj<MT>(engine, obj_path + "glass.obj", glass_scale, V::make(0, 0.5 * glass_scale, 0),
                                  Q::identity(), mat_info, true, false, "Cannonball", tetset);
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
-
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, 1.0f, ground_width);
     }
     if (scene.compare("wall_pins") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T const width   = util::to_value<T>( params.get_value( "procedural_param_1", "5.0") );
-      T const layers  = util::to_value<T>( params.get_value( "procedural_param_2", "5.0") );
-      T const span    = util::to_value<T>( params.get_value( "procedural_param_3", "5.0") );
+        T const width = util::to_value<T>(params.get_value("procedural_param_1", "5.0"));
+        T const layers = util::to_value<T>(params.get_value("procedural_param_2", "5.0"));
+        T const span = util::to_value<T>(params.get_value("procedural_param_3", "5.0"));
 
-      procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(),
-                               width // width
-                               ,
-                               layers * 2.0f // height
-                               ,
-                               2.0f // depth
-                               ,
-                               layers // layers
-                               ,
-                               span // span
-                               ,
-                               mat_info);
+        procedural::make_wall<T>(engine, EigenVector3<T>(-0.5f * width, 0, 0), EigenQuaternion<T>::Identity(),
+                                 width // width
+                                 ,
+                                 layers * 2.0f // height
+                                 ,
+                                 2.0f // depth
+                                 ,
+                                 layers // layers
+                                 ,
+                                 span // span
+                                 ,
+                                 mat_info);
 
-      std::vector<size_t> pin_indices;
+        std::vector<size_t> pin_indices;
 
-      pin_indices.push_back( engine->create_pin_force() );
-      pin_indices.push_back( engine->create_pin_force() );
+        pin_indices.push_back(engine->create_pin_force());
+        pin_indices.push_back(engine->create_pin_force());
 
-      engine->set_pin_target(pin_indices[0],  10, 10, 0);
-      engine->set_pin_target(pin_indices[1], -10, 10, 0);
+        engine->set_pin_target(pin_indices[0], 10, 10, 0);
+        engine->set_pin_target(pin_indices[1], -10, 10, 0);
 
-      std::vector<size_t> rids;
-      rids.resize(engine->get_number_of_rigid_bodies());
-      engine->get_rigid_body_indices( &rids[0] );
+        std::vector<size_t> rids;
+        rids.resize(engine->get_number_of_rigid_bodies());
+        engine->get_rigid_body_indices(&rids[0]);
 
-      for(size_t i = 0u; i < rids.size(); ++i)
-      {
-        size_t const rid = rids[i];
+        for (size_t i = 0u; i < rids.size(); ++i)
+        {
+            size_t const rid = rids[i];
 
-        if (engine->get_rigid_body_fixed(rid))
-          continue;
+            if (engine->get_rigid_body_fixed(rid)) continue;
 
-        size_t const pin_idx = pin_indices[i%2];
+            size_t const pin_idx = pin_indices[i % 2];
 
-        engine->connect_force(rid, pin_idx);
-      }
+            engine->connect_force(rid, pin_idx);
+        }
     }
     if (scene.compare("slide") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T const degree      = util::to_value<T>( params.get_value( "procedural_param_1", "25.0") );
+        T const degree = util::to_value<T>(params.get_value("procedural_param_1", "25.0"));
 
-      procedural::make_slide<MT>(
-                                 engine
-                                 , V::zero()
-                                 , Q::identity()
-                                 , degree
-                                 , mat_info
-                                 );
+        procedural::make_slide<MT>(engine, V::zero(), Q::identity(), degree, mat_info);
     }
     if (scene.compare("bunny_boxes") == 0)
     {
@@ -673,7 +533,8 @@ namespace procedural
         std::string const obstacle_obj_filename = params.get_value("procedural_param_9", obj_path + "bunny.obj");
         std::string const objects_obj_filename = params.get_value("procedural_param_10", obj_path + "box.obj");
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_size, 1.0f, ground_size);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_size, 1.0f, ground_size);
 
         procedural::make_obj<MT>(engine, obstacle_obj_filename, obstacle_scale, V::make(0, obstacle_height, 0),
                                  Q::Rz(0), mat_info, false, false, "Cannonball", tetset);
@@ -692,27 +553,13 @@ namespace procedural
     }
     if (scene.compare("sphere_cube") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      T            const sphere_radius      = util::to_value<T>( params.get_value( "procedural_param_1", "0.5") );
-      auto const number_of_spheres = util::to_value<unsigned int>(params.get_value("procedural_param_2", "4"));
+        T const sphere_radius = util::to_value<T>(params.get_value("procedural_param_1", "0.5"));
+        auto const number_of_spheres = util::to_value<unsigned int>(params.get_value("procedural_param_2", "4"));
 
-      procedural::make_sphere_cube<MT>(
-                                       engine
-                                       , V::zero()
-                                       , Q::identity()
-                                       , sphere_radius
-                                       , number_of_spheres
-                                       , mat_info
-                                       );
+        procedural::make_sphere_cube<MT>(engine, V::zero(), Q::identity(), sphere_radius, number_of_spheres, mat_info);
     }
     if (scene.compare("pile") == 0)
     {
@@ -750,86 +597,43 @@ namespace procedural
     }
     if (scene.compare("heavy_light") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
-      auto const scale = util::to_value<float>(params.get_value("procedural_param_2", "1000.0"));
+        auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
+        auto const scale = util::to_value<float>(params.get_value("procedural_param_2", "1000.0"));
 
-      procedural::make_heavy_sphere_light_sphere<MT>(
-                                                     engine
-                                                     , V::make(0, 0, 0)
-                                                     , Q::identity()
-                                                     , sphere_radius
-                                                     , scale
-                                                     , mat_info
-                                                     );
+        procedural::make_heavy_sphere_light_sphere<MT>(engine, V::make(0, 0, 0), Q::identity(), sphere_radius, scale,
+                                                       mat_info);
     }
     if (scene.compare("dropping") == 0)
     {
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.15"));
-      auto const width = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
-      auto const height = util::to_value<float>(params.get_value("procedural_param_3", "10.0"));
-      auto const depth = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
+        auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.15"));
+        auto const width = util::to_value<float>(params.get_value("procedural_param_2", "10.0"));
+        auto const height = util::to_value<float>(params.get_value("procedural_param_3", "10.0"));
+        auto const depth = util::to_value<float>(params.get_value("procedural_param_4", "10.0"));
 
-      procedural::make_dropping_spheres<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
-                                           sphere_radius, width, height, depth, mat_info);
+        procedural::make_dropping_spheres<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                             sphere_radius, width, height, depth, mat_info);
     }
     if (scene.compare("funnel") == 0)
     {
 
-      procedural::make_ground<MT>(
-                                  engine
-                                  , V::zero()
-                                  , Q::identity()
-                                  , mat_info
-                                  , 10.0f
-                                  , 1.0f
-                                  , 10.0f
-                                  );
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
+                                   1.0f, 10.0f);
 
-      procedural::make_obj<MT>(
-                               engine
-                               , obj_path + "funnel.obj"
-                               , 4.25
-                               , V::make(0, 5, 0)
-                               , Q::Rz(VT::pi())
-                               , mat_info
-                               , true
-                               , false
-                               , "Stone"
-                               , tetset);
+        procedural::make_obj<MT>(engine, obj_path + "funnel.obj", 4.25, V::make(0, 5, 0), Q::Rz(VT::pi()), mat_info,
+                                 true, false, "Stone", tetset);
 
-      auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.2"));
-      auto const spheres_width = util::to_value<unsigned int>(params.get_value("procedural_param_2", "5"));
-      auto const spheres_length = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5"));
+        auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.2"));
+        auto const spheres_width = util::to_value<unsigned int>(params.get_value("procedural_param_2", "5"));
+        auto const spheres_length = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5"));
 
-      procedural::make_sphere_layer<MT>(
-                                        engine
-                                        , V::make(0, 8, 0)
-                                        , Q::identity()
-                                        , sphere_radius
-                                        , spheres_width
-                                        , spheres_length
-                                        , mat_info
-                                        );
+        procedural::make_sphere_layer<MT>(engine, V::make(0, 8, 0), Q::identity(), sphere_radius, spheres_width,
+                                          spheres_length, mat_info);
     }
     if (scene.compare("propella_glass") == 0)
     {
@@ -841,7 +645,8 @@ namespace procedural
         auto const props_spacing = util::to_value<float>(params.get_value("procedural_param_6", "0.1"));
         auto const ground_width = util::to_value<float>(params.get_value("procedural_param_7", "20.0"));
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, 1.0f, ground_width);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, 1.0f, ground_width);
 
         // A glass is 0.89x1.0x0.89
         // Draw glass second because it may be see through and will blend only
@@ -897,8 +702,8 @@ namespace procedural
         float const ground_height = scene_size / 10.0;
         float const ground_depth = scene_size;
 
-        procedural::make_ground<MT>(engine, V::zero(), Q::identity(), mat_info, ground_width, ground_height,
-                                    ground_depth);
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
 
         procedural::make_sliding_point<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info,
                                            use_spike, use_wedge);

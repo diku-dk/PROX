@@ -59,11 +59,9 @@ void make_dome(content::API* engine, const EigenVector3<T>& position, const Eige
                const T& r_outer, const T& r_inner, size_t const& slices, size_t const& segments,
                MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_ground(content::API* engine, typename MT::vector3_type const& position,
-                 typename MT::quaternion_type const& orientation, MaterialInfo<typename MT::real_type> mat_info,
-                 typename MT::real_type const& width, typename MT::real_type const& height,
-                 typename MT::real_type const& depth);
+template <typename T>
+void make_ground(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                 MaterialInfo<T> mat_info, const T& width, const T& height, const T& depth);
 
 template <typename T>
 void make_pantheon(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,

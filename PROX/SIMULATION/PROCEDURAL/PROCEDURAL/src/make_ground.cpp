@@ -5,30 +5,22 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_ground(content::API* engine, typename MT::vector3_type const& position,
-                 typename MT::quaternion_type const& orientation, MaterialInfo<typename MT::real_type> mat_info,
-                 typename MT::real_type const& width, typename MT::real_type const& height,
-                 typename MT::real_type const& depth)
+template <typename T>
+void make_ground(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                 MaterialInfo<T> mat_info, const T& width, const T& height, const T& depth)
 {
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Ground");
 
-    size_t const mid = get_material_id<MT>(mat_info, "Ground");
+    GeometryHandleEigen<T> ground = create_geometry_handle_box<T>(engine, width, height, depth);
 
-    GeometryHandle<MT> ground = create_geometry_handle_box<MT>(engine, width, height, depth);
+    const EigenVector3<T> Pw = rotate(orientation, EigenVector3<T>(0, -height * 0.5f, 0)) + position;
+    const EigenQuaternion<T> Qw = orientation;
 
-    V const Pw = rotate(orientation, V::make(0, -height * 0.5f, 0)) + position;
-    Q const Qw = orientation;
-
-    create_rigid_body<MT>(engine, Pw, Qw, ground, mid, 1, true, "Visualizer/ground");
+    create_rigid_body<T>(engine, Pw, Qw, ground, mid, 1, true, "Visualizer/ground");
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_ground<MTf>(content::API* engine, MTf::vector3_type const& position,
-                               MTf::quaternion_type const& orientation, MaterialInfo<MTf::real_type> mat_info,
-                               MTf::real_type const& width, MTf::real_type const& height, MTf::real_type const& depth);
+template void make_ground<float>(content::API* engine, const EigenVector3<float>& position,
+                                 const EigenQuaternion<float>& orientation, MaterialInfo<float> mat_info,
+                                 const float& width, const float& height, const float& depth);
 
 } //namespace procedural
