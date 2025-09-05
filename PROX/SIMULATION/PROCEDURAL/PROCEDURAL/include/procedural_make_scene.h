@@ -737,7 +737,8 @@ namespace procedural
     {
         auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "20.0"));
 
-        procedural::make_cliff_edge<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info);
+        procedural::make_cliff_edge<T>(engine, EigenVector3<T>(0.0, 0.0, 0.0), EigenQuaternion<T>::Identity(),
+                                       scene_size, mat_info);
     }
     if (scene.compare("internal_edge") == 0)
     {
