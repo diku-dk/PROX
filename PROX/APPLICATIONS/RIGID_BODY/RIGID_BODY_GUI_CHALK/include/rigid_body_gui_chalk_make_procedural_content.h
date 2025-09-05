@@ -35,7 +35,7 @@ namespace rigid_body
         tetset.m_quiet_output       = util::to_value<bool>(params.get_value("tetgen_quiet_output", "true"));
         tetset.m_suppress_splitting = util::to_value<bool>(params.get_value("tetgen_suppress_splitting", "true"));
 
-        procedural::MaterialInfo<T> mat_info = procedural::create_material_info<MT>(engine);
+        procedural::MaterialInfo<T> mat_info = procedural::create_material_info<T>(engine);
 
         std::string  const grain_data_file = params.get_value( "procedural_param_1", "chalk/ellipsoid_50_hard_final.txt");
 

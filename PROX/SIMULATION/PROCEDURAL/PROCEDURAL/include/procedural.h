@@ -167,8 +167,7 @@ template <typename T>
 void make_internal_edge(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
                         const T& scene_size, MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
 
-template <typename MT> MaterialInfo<typename MT::real_type> create_material_info(content::API* engine);
-
+template <typename T> MaterialInfo<T> create_material_info(content::API* engine);
 
 } //namespace procedural
 

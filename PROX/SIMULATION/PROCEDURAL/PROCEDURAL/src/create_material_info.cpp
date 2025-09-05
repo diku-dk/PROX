@@ -12,16 +12,14 @@
 namespace procedural
 {
 
-template <typename MT> MaterialInfo<typename MT::real_type> create_material_info(content::API* engine)
+template <typename T> MaterialInfo<T> create_material_info(content::API* engine)
 {
-    typedef typename MT::real_type T;
-    typedef typename MT::value_traits VT;
 
     MaterialInfo<T> mat_info;
 
     //--- Dummy values till we get more 'correct' ones, drilling is not actually implemented
-    T const drilling_dummy = VT::numeric_cast(
-        0.01f); // set dummy different from zero, as prox_numerical_ellipsoid requires nonzero coefficents
+    T const drilling_dummy
+        = (0.01f); // set dummy different from zero, as prox_numerical_ellipsoid requires nonzero coefficents
 
     //instantiating the three different material types
     mat_info.m_stone_mid = engine->create_material("Stone");
@@ -84,8 +82,6 @@ template <typename MT> MaterialInfo<typename MT::real_type> create_material_info
     return mat_info;
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template MaterialInfo<MTf::real_type> create_material_info<MTf>(content::API* engine);
+template MaterialInfo<float> create_material_info<float>(content::API* engine);
 
 } //namespace procedural
