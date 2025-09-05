@@ -47,11 +47,10 @@ template <typename T>
 void make_slide(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
                 const T& degree, MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_temple(content::API* engine, typename MT::vector3_type const& positionNew,
-                 typename MT::quaternion_type const& orientationNew, typename MT::real_type const& temple_height,
-                 typename MT::real_type const& pillar_width, size_t const& num_pillars_x, size_t const& num_pillars_z,
-                 MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_temple(content::API* engine, const EigenVector3<T>& positionNew, const EigenQuaternion<T>& orientationNew,
+                 const T& temple_height, const T& pillar_width, size_t const& num_pillars_x,
+                 size_t const& num_pillars_z, MaterialInfo<T> mat_info);
 
 template <typename T>
 void make_dome(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,

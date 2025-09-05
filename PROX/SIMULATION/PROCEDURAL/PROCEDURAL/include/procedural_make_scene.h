@@ -179,8 +179,8 @@ namespace procedural
         auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
         auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
-        procedural::make_temple<MT>(engine, V::zero(), Q::identity(), temple_height, pillar_width, cnt_pillars_x,
-                                    cnt_pillars_y, mat_info);
+        procedural::make_temple<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), temple_height,
+                                   pillar_width, cnt_pillars_x, cnt_pillars_y, mat_info);
     }
     if(scene.compare("colosseum") == 0)
     {
@@ -340,8 +340,8 @@ namespace procedural
         auto const cnt_pillars_x = util::to_value<unsigned int>(params.get_value("procedural_param_3", "6"));
         auto const cnt_pillars_y = util::to_value<unsigned int>(params.get_value("procedural_param_4", "8"));
 
-        procedural::make_temple<MT>(engine, V::zero(), Q::identity(), temple_height, pillar_width, cnt_pillars_x,
-                                    cnt_pillars_y, mat_info);
+        procedural::make_temple<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), temple_height,
+                                   pillar_width, cnt_pillars_x, cnt_pillars_y, mat_info);
 
         size_t const oscillation_motion_idx = engine->create_oscilation_scripted_motion();
 

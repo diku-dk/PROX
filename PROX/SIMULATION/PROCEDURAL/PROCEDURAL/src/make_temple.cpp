@@ -6,15 +6,13 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_temple(content::API* engine, typename MT::vector3_type const& positionNew,
-                 typename MT::quaternion_type const& orientationNew, typename MT::real_type const& temple_height,
-                 typename MT::real_type const& pillar_width, size_t const& num_pillars_x, size_t const& num_pillars_z,
-                 MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_temple(content::API* engine, const EigenVector3<T>& positionNew, const EigenQuaternion<T>& orientationNew,
+                 const T& temple_height, const T& pillar_width, size_t const& num_pillars_x,
+                 size_t const& num_pillars_z, MaterialInfo<T> mat_info)
 {
-    typedef typename MT::real_type T;
-    EigenVector3<T> position = toEigen(positionNew);
-    EigenQuaternion<T> orientation = toEigen(orientationNew);
+    EigenVector3<T> position = (positionNew);
+    EigenQuaternion<T> orientation = (orientationNew);
 
     using std::atan;
     using std::floor;
@@ -627,11 +625,9 @@ void make_temple(content::API* engine, typename MT::vector3_type const& position
     } /// top triangles
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_temple<MTf>(content::API* engine, MTf::vector3_type const& position,
-                               MTf::quaternion_type const& orientation, MTf::real_type const& temple_height,
-                               MTf::real_type const& pillar_width, size_t const& num_pillars_x,
-                               size_t const& num_pillars_z, MaterialInfo<MTf::real_type> mat_info);
+template void make_temple<float>(content::API* engine, const EigenVector3<float>& positionNew,
+                                 const EigenQuaternion<float>& orientationNew, const float& temple_height,
+                                 const float& pillar_width, size_t const& num_pillars_x, size_t const& num_pillars_z,
+                                 MaterialInfo<float> mat_info);
 
 } //namespace procedural
