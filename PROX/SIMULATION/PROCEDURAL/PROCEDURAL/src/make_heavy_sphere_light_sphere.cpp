@@ -5,17 +5,15 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_heavy_sphere_light_sphere(content::API* engine, typename MT::vector3_type const& position,
-                                    typename MT::quaternion_type const& orientation,
-                                    typename MT::real_type const& sphere_radius, size_t const& scale,
-                                    MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_heavy_sphere_light_sphere(content::API* engine, const EigenVector3<T>& position,
+                                    const EigenQuaternion<T>& orientation, const T& sphere_radius, size_t const& scale,
+                                    MaterialInfo<T> mat_info)
 {
-    typedef typename MT::real_type T;
 
-    T const bottom_stone_density = get_material_density<MT>(mat_info, "Stone");
+    T const bottom_stone_density = get_material_density_eigen<T>(mat_info, "Stone");
     T const top_stone_density = bottom_stone_density * scale;
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
     GeometryHandleEigen<T> sphere_handle = create_geometry_handle_sphere<T>(engine, sphere_radius);
 
@@ -26,8 +24,8 @@ void make_heavy_sphere_light_sphere(content::API* engine, typename MT::vector3_t
     EigenVector3<T> T_m2l = EigenVector3<T>(0, sphere_radius, 0);
     const EigenQuaternion<T> Q_m2l = Rotateu(-std::numbers::pi_v<T> * 0.5f, EigenVector3<T>(1, 0, 0));
 
-    const EigenVector3<T> T_l2w = toEigen(position);
-    const EigenQuaternion<T> Q_l2w = toEigen(orientation);
+    const EigenVector3<T> T_l2w = (position);
+    const EigenQuaternion<T> Q_l2w = (orientation);
 
     EigenVector3<T> T_b2w;
     EigenQuaternion<T> Q_b2w;
@@ -44,11 +42,9 @@ void make_heavy_sphere_light_sphere(content::API* engine, typename MT::vector3_t
     create_rigid_body<T>(engine, T_b2w, Q_b2w, sphere_handle, mid, top_stone_density);
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_heavy_sphere_light_sphere<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                                  MTf::quaternion_type const& orientation,
-                                                  MTf::real_type const& sphere_radius, size_t const& scale,
-                                                  MaterialInfo<MTf::real_type> mat_info);
+template void make_heavy_sphere_light_sphere<float>(content::API* engine, const EigenVector3<float>& position,
+                                                    const EigenQuaternion<float>& orientation,
+                                                    const float& sphere_radius, size_t const& scale,
+                                                    MaterialInfo<float> mat_info);
 
 } //namespace procedural

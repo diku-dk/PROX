@@ -603,8 +603,8 @@ namespace procedural
         auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "1.0"));
         auto const scale = util::to_value<float>(params.get_value("procedural_param_2", "1000.0"));
 
-        procedural::make_heavy_sphere_light_sphere<MT>(engine, V::make(0, 0, 0), Q::identity(), sphere_radius, scale,
-                                                       mat_info);
+        procedural::make_heavy_sphere_light_sphere<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                                      sphere_radius, scale, mat_info);
     }
     if (scene.compare("dropping") == 0)
     {
