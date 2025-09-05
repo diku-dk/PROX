@@ -676,14 +676,12 @@ namespace geometry
   struct RESTRICTED_SAT {};
   struct MOST_OPPOSING_SURFACES {};
 
-  template< typename V>
-  inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , TRIANGLE_INTERSECTION const & /*algorithm_tag*/
+  template < typename V>
+  inline bool contacts_tetrahedron_tetrahedron(TetrahedronEigen<typename V::real_type> const& A,
+                                               TetrahedronEigen<typename V::real_type> const& B,
+                                               ContactsCallback<V>& callback, std::vector<bool> const& surface_A,
+                                               std::vector<bool> const& surface_B,
+                                               TRIANGLE_INTERSECTION const& /*algorithm_tag*/
   )
   {
       using T = typename V::real_type;

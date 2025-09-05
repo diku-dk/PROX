@@ -196,95 +196,87 @@ namespace kdop
                              , sequential const & /* tag */
                              )
   {
-    typedef typename V::value_traits VT;
 
-    assert( mem_bytes > 0u || !"make_tree(): must have some memory");
+      assert(mem_bytes > 0u || !"make_tree(): must have some memory");
 
-    using std::ceil;
-    using std::floor;
-    using std::min;
-    using std::max;
+      using std::ceil;
+      using std::floor;
+      using std::min;
+      using std::max;
 
-    using namespace details;
+      using namespace details;
 
-    Tree<T,K> tree;
+      Tree<T, K> tree;
 
     //--- Assuming we have reordered a T4Mesh then we may now create subsets for
     //--- leaf nodes simply by chopping up the tetrahedra array into chunks. In
     //--- order to do so we much determine how big chunks we need.
 
-    size_t const node_bytes = sizeof(Node<T,K> );
-    size_t const N_max      = floor( (mem_bytes / node_bytes)* 0.5f );  // Total number of nodes that fit into memory, divided by two because we want two trees simultaneously in memory.
+      size_t const node_bytes = sizeof(Node<T, K>);
+      size_t const N_max = floor(
+          (mem_bytes / node_bytes)
+          * 0.5f); // Total number of nodes that fit into memory, divided by two because we want two trees simultaneously in memory.
 
-    // However, the maximum number of possible nodes may not be a power of 2,
-    // which is needed to create a perfect balanced binary tree.
-    // There is no need to have more than is needed for one full BVH.
-    size_t const N_perfect  =
-            min(tiny::lower_power2(N_max),
-                tiny::upper_power2(mesh.tetrahedron_size() * 2)
-            ) - 1;
-    size_t const L          = (N_perfect + 1)/2;                     // So if we have a single tree of N nodes (assuming binary balanced tree) then how many leaves will such a tree have? The total number of nodes in a perfect binary tree is N = 2 L  - 1 where L is number of leaf nodes
-    size_t const M          = mesh.tetrahedron_size();                        // Total number of tetrahedra
-    size_t       C          = (M+L-1) / L;                         // Total number of chunks to divide the mesh into
-    size_t const H          = max(ceil(log(C) / log(L)), 1.0);                // Total number of chunk levels (C could be 1)
+      // However, the maximum number of possible nodes may not be a power of 2,
+      // which is needed to create a perfect balanced binary tree.
+      // There is no need to have more than is needed for one full BVH.
+      size_t const N_perfect = min(tiny::lower_power2(N_max), tiny::upper_power2(mesh.tetrahedron_size() * 2)) - 1;
+      size_t const L
+          = (N_perfect + 1)
+          / 2; // So if we have a single tree of N nodes (assuming binary balanced tree) then how many leaves will such a tree have? The total number of nodes in a perfect binary tree is N = 2 L  - 1 where L is number of leaf nodes
+      size_t const M = mesh.tetrahedron_size(); // Total number of tetrahedra
+      size_t C = (M + L - 1) / L; // Total number of chunks to divide the mesh into
+      size_t const H = max(ceil(log(C) / log(L)), 1.0); // Total number of chunk levels (C could be 1)
 
+      //--- Create enough branches to hold all subtrees correspodining to --------
+      //--- the chuncks of the mesh. ---------------------------------------------
+      tree.m_chunk_levels.resize(H);
+      tree.branches().resize(C);
 
-    //--- Create enough branches to hold all subtrees correspodining to --------
-    //--- the chuncks of the mesh. ---------------------------------------------
-    tree.m_chunk_levels.resize(H);
-    tree.branches().resize(C);
-
-    //--- Loop over the chunks of the mesh and build subtrees for each chunck --
-    for( size_t c = 0u; c < C;++c)
-    {
-      SubTree<T,K> & branch = tree.branches()[c];
-
-      size_t const first  =  c*L;                             // Index of first tetrahedron in chunk
-      size_t const last   =  min( first+L-1u, M - 1u);        // Index of last tetrahedron in chunk
-
-      MeshChunkInfo<T> geometry( first, last, mesh, X, Y, Z); // Create a wrapper of all mesh information
-
-      branch.m_nodes.resize(N_perfect); // Pre-allocate storge for a full perfect balanced tree
-
-      size_t const root_idx = 0u;
-      size_t       free_idx = 1u;
-
-      make_subtree<V,K,T>( root_idx, free_idx, geometry, branch, branch.m_height );  // Now build the sucker!
-    }
-
-    //--- Do the same for all higher levels covering the next lower one bottom up
-    for(size_t h = H - 1; h >= 1; --h)
-    {
-      C = (C + L - 1) / L;
-
-      tree.super_chunks(h - 1).resize(C);
-
-      for(size_t c = 0; c < C; ++c)
+      //--- Loop over the chunks of the mesh and build subtrees for each chunck --
+      for (size_t c = 0u; c < C; ++c)
       {
-        SubTree<T,K> & super_chunck = tree.super_chunks(h - 1)[c];
+          SubTree<T, K>& branch = tree.branches()[c];
 
-        size_t const first = c * L;
-        size_t const last = min(first + L - 1, tree.super_chunks(h).size() - 1);
+          size_t const first = c * L; // Index of first tetrahedron in chunk
+          size_t const last = min(first + L - 1u, M - 1u); // Index of last tetrahedron in chunk
 
-        super_chunck.m_nodes.resize(N_perfect);
+          MeshChunkInfo<T> geometry(first, last, mesh, X, Y, Z); // Create a wrapper of all mesh information
 
-        size_t const root_idx = 0u;
-        size_t free_idx = 1u;
+          branch.m_nodes.resize(N_perfect); // Pre-allocate storge for a full perfect balanced tree
 
-        make_subtree<V,K,T>(
-                              root_idx
-                            , free_idx
-                            , first
-                            , last
-                            , super_chunck
-                            , super_chunck.m_height
-                            );
+          size_t const root_idx = 0u;
+          size_t free_idx = 1u;
+
+          make_subtree<V, K, T>(root_idx, free_idx, geometry, branch, branch.m_height); // Now build the sucker!
       }
-    }
 
-    refit_tree<V,K,T>(tree, mesh, X, Y, Z, sequential());
+      //--- Do the same for all higher levels covering the next lower one bottom up
+      for (size_t h = H - 1; h >= 1; --h)
+      {
+          C = (C + L - 1) / L;
 
-    return tree;
+          tree.super_chunks(h - 1).resize(C);
+
+          for (size_t c = 0; c < C; ++c)
+          {
+              SubTree<T, K>& super_chunck = tree.super_chunks(h - 1)[c];
+
+              size_t const first = c * L;
+              size_t const last = min(first + L - 1, tree.super_chunks(h).size() - 1);
+
+              super_chunck.m_nodes.resize(N_perfect);
+
+              size_t const root_idx = 0u;
+              size_t free_idx = 1u;
+
+              make_subtree<V, K, T>(root_idx, free_idx, first, last, super_chunck, super_chunck.m_height);
+          }
+      }
+
+      refit_tree<V, K, T>(tree, mesh, X, Y, Z, sequential());
+
+      return tree;
   }
 
 }// namespace kdop

@@ -173,7 +173,7 @@ namespace narrow
 
   };
 
-} //namespace narrow
+  } //namespace narrow
 
 // NARROW_GEOMETRY_H
 #endif
