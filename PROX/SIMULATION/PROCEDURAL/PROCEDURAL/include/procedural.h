@@ -104,10 +104,9 @@ void make_dropping_spheres(content::API* engine, const EigenVector3<T>& position
                            const T& sphere_radius, size_t const& w, size_t const& h, size_t const& d,
                            MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_spheres(content::API* engine, typename MT::vector3_type const& position,
-                  typename MT::quaternion_type const& orientation, typename MT::real_type const& radius,
-                  MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_spheres(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                  const T& radius, MaterialInfo<T> mat_info);
 
 template <typename T>
 void make_tetrahedron(content::API* engine, const EigenVector3<T>& one, const EigenVector3<T>& two,

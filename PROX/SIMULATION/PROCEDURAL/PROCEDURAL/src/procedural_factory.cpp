@@ -19,59 +19,6 @@ namespace procedural
 
 using MTf = tiny::MathTypes<float>;
 
-template <typename MT>
-GeometryHandle<MT> create_geometry_handle_convex_old(content::API* engine,
-                                                     std::vector<typename MT::vector3_type> const& vertices)
-{
-    typedef typename MT::real_type T;
-    typedef typename MT::vector3_type V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits VT;
-
-    static size_t counter = 0u;
-
-    std::string const geom_name = "convex_" + util::to_string(counter++);
-
-    detail::MeshData<T> data;
-
-    //fix vertex sequence
-    mesh_array::make_convex<MT>(vertices, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-
-    mass::Properties<T> props_mf = mass::compute_mesh(T(1), data.m_mesh.triangle_size(), &data);
-    mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
-    mass::Properties<T> props = mass::rotate_to_body_frame(props_bf);
-
-    // Change geometry from model space to body space
-    V const d = -V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z);
-    Q const R = Q(props.m_Qs, props.m_Qx, props.m_Qy, props.m_Qz);
-    mesh_array::translate<MT>(d, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-    mesh_array::rotate<MT>(conj(R), data.m_mesh, data.m_X, data.m_Y, data.m_Z);
-
-    size_t const gid = engine->create_collision_geometry(geom_name);
-    size_t const sid = engine->create_convex_shape(gid);
-    size_t const N = data.m_mesh.vertex_size();
-
-    std::vector<T> coords;
-    coords.resize(3u * N);
-
-    for (size_t i = 0; i < N; ++i)
-    {
-        mesh_array::Vertex const v = data.m_mesh.vertex(i);
-        coords[3 * i] = data.m_X(v);
-        coords[3 * i + 1] = data.m_Y(v);
-        coords[3 * i + 2] = data.m_Z(v);
-    }
-
-    engine->set_convex_shape(gid, sid, N, &coords[0]);
-
-    return GeometryHandle<MT>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz,
-                              V::make(props_mf.m_x, props_mf.m_y, props_mf.m_z),
-                              Q(props.m_Qs, props.m_Qx, props.m_Qy, props.m_Qz), gid);
-}
-
-template GeometryHandle<MTf> create_geometry_handle_convex_old(content::API* engine,
-                                                               std::vector<MTf::vector3_type> const& vertices);
-
 template <typename T>
 GeometryHandleEigen<T> create_geometry_handle_convex(content::API* engine, std::vector<EigenVector3<T>> const& vertices)
 {

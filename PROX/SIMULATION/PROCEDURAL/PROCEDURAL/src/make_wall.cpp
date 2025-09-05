@@ -45,8 +45,6 @@ void make_wall(content::API* engine, const EigenVector3<T>& position, const Eige
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
 template void make_wall<float>(content::API* engine, const EigenVector3<float>& position,
                                const EigenQuaternion<float>& orientation, const float& width, const float& height,
                                const float& depth, size_t const& layers, size_t const& span,
