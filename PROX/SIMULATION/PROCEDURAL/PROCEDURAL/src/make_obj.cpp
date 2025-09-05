@@ -19,27 +19,26 @@ void make_obj(content::API* engine, std::string const& name, typename MT::real_t
     typedef typename MT::quaternion_type Q;
     typedef typename MT::value_traits VT;
 
-    T const stone_density = get_material_density<MT>(mat_info, material);
-    size_t const mid = get_material_id<MT>(mat_info, material);
+    T const stone_density = get_material_density_eigen<T>(mat_info, material);
+    size_t const mid = get_material_id_eigen<T>(mat_info, material);
 
-    GeometryHandle<MT> obj_handle
-        = geometryHandleFromEigen<MT>(create_geometry_handle_obj<T>(engine, name, scale, blind_copy, tetset));
+    GeometryHandleEigen<T> obj_handle = (create_geometry_handle_obj<T>(engine, name, scale, blind_copy, tetset));
 
-    V const T_b2m = obj_handle.Tb2m();
-    Q const Q_b2m = obj_handle.Qb2m();
+    const EigenVector3<T> T_b2m = obj_handle.Tb2m();
+    const EigenQuaternion<T> Q_b2m = obj_handle.Qb2m();
 
-    V const T_m2l = V::make(0, 0.5f, 0);
-    Q const Q_m2l = Q::identity();
+    const EigenVector3<T> T_m2l = EigenVector3<T>(0, 0.5f, 0);
+    const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
-    V const T_l2w = blind_copy ? V::zero() : position;
-    Q const Q_l2w = blind_copy ? Q::identity() : orientation;
+    const EigenVector3<T> T_l2w = blind_copy ? EigenVector3<T>(0, 0, 0) : toEigen(position);
+    const EigenQuaternion<T> Q_l2w = blind_copy ? EigenQuaternion<T>::Identity() : toEigen(orientation);
 
-    V T_b2w;
-    Q Q_b2w;
+    EigenVector3<T> T_b2w;
+    EigenQuaternion<T> Q_b2w;
 
-    compute_body_to_world_transform<MT>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
+    compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-    create_rigid_body<MT>(engine, T_b2w, Q_b2w, obj_handle, mid, stone_density, fixed);
+    create_rigid_body<T>(engine, T_b2w, Q_b2w, obj_handle, mid, stone_density, fixed);
 }
 
 using MTf = tiny::MathTypes<float>;
