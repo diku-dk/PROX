@@ -744,7 +744,8 @@ namespace procedural
     {
         auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "20.0"));
 
-        procedural::make_internal_edge<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info, tetset);
+        procedural::make_internal_edge<T>(engine, EigenVector3<T>(0.0, 0.0, 0.0), EigenQuaternion<T>::Identity(),
+                                          scene_size, mat_info, tetset);
     }
   }
 
