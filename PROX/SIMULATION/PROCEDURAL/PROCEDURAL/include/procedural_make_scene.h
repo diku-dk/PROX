@@ -516,7 +516,7 @@ namespace procedural
 
         T const degree = util::to_value<T>(params.get_value("procedural_param_1", "25.0"));
 
-        procedural::make_slide<MT>(engine, V::zero(), Q::identity(), degree, mat_info);
+        procedural::make_slide<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), degree, mat_info);
     }
     if (scene.compare("bunny_boxes") == 0)
     {

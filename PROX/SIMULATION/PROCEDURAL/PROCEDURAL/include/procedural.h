@@ -43,10 +43,9 @@ void make_colosseum(content::API* engine, const EigenVector3<T>& position, const
                     const T& r_outer, const T& r_inner, size_t const& slices, size_t const& segments,
                     MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_slide(content::API* engine, typename MT::vector3_type const& position,
-                typename MT::quaternion_type const& orientation, typename MT::real_type const& pi_frac,
-                MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_slide(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                const T& degree, MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_temple(content::API* engine, typename MT::vector3_type const& positionNew,
