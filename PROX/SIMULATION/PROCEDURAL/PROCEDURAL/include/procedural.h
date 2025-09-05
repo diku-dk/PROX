@@ -83,10 +83,9 @@ void make_greek_pillar(content::API* engine, const EigenVector3<T>& position, co
                        size_t const& pillar_segments, size_t const& pillar_slices, MaterialInfo<T> mat_info,
                        mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings());
 
-template <typename MT>
-void make_sphere_cube(content::API* engine, typename MT::vector3_type const& position,
-                      typename MT::quaternion_type const& orientation, typename MT::real_type const& sphere_radius,
-                      size_t const& spheres, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_sphere_cube(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                      const T& sphere_radius, size_t const& spheres, MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_tetrahedral_stack(content::API* engine, typename MT::vector3_type const& position,

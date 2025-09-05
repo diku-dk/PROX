@@ -455,8 +455,8 @@ namespace procedural
         auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_3", "0.25"));
         int const cube_width = util::to_value<int>(params.get_value("procedural_param_4", "4"));
 
-        procedural::make_sphere_cube<MT>(engine, V::make(0, glass_scale + sphere_radius * cube_width, 0), Q::identity(),
-                                         sphere_radius, cube_width, mat_info);
+        procedural::make_sphere_cube<T>(engine, EigenVector3<T>(0, glass_scale + sphere_radius * cube_width, 0),
+                                        EigenQuaternion<T>::Identity(), sphere_radius, cube_width, mat_info);
 
         procedural::make_obj<T>(engine, obj_path + "glass.obj", glass_scale, EigenVector3<T>(0, 0.5 * glass_scale, 0),
                                 EigenQuaternion<T>::Identity(), mat_info, true, false, "Cannonball", tetset);
@@ -559,7 +559,8 @@ namespace procedural
         T const sphere_radius = util::to_value<T>(params.get_value("procedural_param_1", "0.5"));
         auto const number_of_spheres = util::to_value<unsigned int>(params.get_value("procedural_param_2", "4"));
 
-        procedural::make_sphere_cube<MT>(engine, V::zero(), Q::identity(), sphere_radius, number_of_spheres, mat_info);
+        procedural::make_sphere_cube<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), sphere_radius,
+                                        number_of_spheres, mat_info);
     }
     if (scene.compare("pile") == 0)
     {
