@@ -22,7 +22,8 @@ void make_obj(content::API* engine, std::string const& name, typename MT::real_t
     T const stone_density = get_material_density<MT>(mat_info, material);
     size_t const mid = get_material_id<MT>(mat_info, material);
 
-    GeometryHandle<MT> obj_handle = create_geometry_handle_obj<MT>(engine, name, scale, blind_copy, tetset);
+    GeometryHandle<MT> obj_handle
+        = geometryHandleFromEigen<MT>(create_geometry_handle_obj<T>(engine, name, scale, blind_copy, tetset));
 
     V const T_b2m = obj_handle.Tb2m();
     Q const Q_b2m = obj_handle.Qb2m();
