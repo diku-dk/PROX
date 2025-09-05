@@ -17,19 +17,6 @@
 
 namespace procedural
 {
-template <typename TypeParameter>
-inline GeometryHandle<TypeParameter>
-geometryHandleFromEigen(GeometryHandleEigen<typename TypeParameter::real_type> input)
-{
-    GeometryHandle<TypeParameter> gH(input.m_m, input.m_Ixx, input.m_Iyy, input.m_Izz, fromEigen(input.m_T),
-                                     fromEigen(input.m_Q), input.m_gid);
-    return gH;
-}
-
-} //namespace procedural
-
-namespace procedural
-{
 template <typename T>
 inline GeometryHandleEigen<T>
 create_geometry_handle_obj(content::API* engine, std::string const& rel_file_name, const T& scale_x, const T& scale_y,
