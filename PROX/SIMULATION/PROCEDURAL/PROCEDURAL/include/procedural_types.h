@@ -88,9 +88,19 @@
        * @return   body to model frame rotation
        */
             const EigenQuaternion<T>& Qb2m() const { return m_Q;  }
-
         };
 
+        template <typename T> class MaterialInfo
+        {
+        public:
+            size_t m_stone_mid;
+            size_t m_ground_mid;
+            size_t m_cannonball_mid;
+
+            T m_stone_density;
+            T m_cannonball_density;
+            T m_ground_density;
+        };
 
         } // end of namespace procedural
 
