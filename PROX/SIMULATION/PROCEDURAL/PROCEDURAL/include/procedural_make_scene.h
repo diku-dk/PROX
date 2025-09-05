@@ -633,8 +633,8 @@ namespace procedural
         auto const spheres_width = util::to_value<unsigned int>(params.get_value("procedural_param_2", "5"));
         auto const spheres_length = util::to_value<unsigned int>(params.get_value("procedural_param_3", "5"));
 
-        procedural::make_sphere_layer<MT>(engine, V::make(0, 8, 0), Q::identity(), sphere_radius, spheres_width,
-                                          spheres_length, mat_info);
+        procedural::make_sphere_layer<T>(engine, EigenVector3<T>(0, 8, 0), EigenQuaternion<T>::Identity(),
+                                         sphere_radius, spheres_width, spheres_length, mat_info);
     }
     if (scene.compare("propella_glass") == 0)
     {

@@ -5,16 +5,14 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_sphere_layer(content::API* engine, typename MT::vector3_type const& position,
-                       typename MT::quaternion_type const& orientation, typename MT::real_type const& sphere_radius,
-                       size_t const& spheres_width, size_t const& spheres_length,
-                       MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_sphere_layer(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                       const T& sphere_radius, size_t const& spheres_width, size_t const& spheres_length,
+                       MaterialInfo<T> mat_info)
 {
-    typedef typename MT::real_type T;
 
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
     GeometryHandleEigen<T> sphere_handle = create_geometry_handle_sphere<T>(engine, sphere_radius);
 
@@ -38,19 +36,17 @@ void make_sphere_layer(content::API* engine, typename MT::vector3_type const& po
             const EigenVector3<T> Tw = rotate(Qm, Tb) + Tm;
             const EigenQuaternion<T> Qw = Qm * Qb;
 
-            const EigenVector3<T> Tu = rotate(toEigen(orientation), Tw) + toEigen(position);
-            const EigenQuaternion<T> Qu = toEigen(orientation) * Qw;
+            const EigenVector3<T> Tu = rotate((orientation), Tw) + (position);
+            const EigenQuaternion<T> Qu = (orientation)*Qw;
 
             create_rigid_body<T>(engine, Tu, Qu, sphere_handle, mid, stone_density);
         }
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_sphere_layer<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                     MTf::quaternion_type const& orientation, MTf::real_type const& sphere_radius,
-                                     size_t const& spheres_width, size_t const& spheres_length,
-                                     MaterialInfo<MTf::real_type> mat_info);
+template void make_sphere_layer<float>(content::API* engine, const EigenVector3<float>& position,
+                                       const EigenQuaternion<float>& orientation, const float& sphere_radius,
+                                       size_t const& spheres_width, size_t const& spheres_length,
+                                       MaterialInfo<float> mat_info);
 
 } //namespace procedural
