@@ -101,14 +101,14 @@ void make_temple(content::API* engine, typename MT::vector3_type const& position
             T const xf = (pillar_width - temple_width) * 0.5f + 2 * i * pillar_width;
             T const zf = (-pillar_width + temple_depth) * 0.5f;
             EigenVector3<T> P = rotate(orientation, EigenVector3<T>(xf, outer_pillar_y, zf)) + position;
-            make_greek_pillar<MT>(engine, fromEigen(P), fromEigen(orientation), pillar_width, pillar_height,
-                                  pillar_width, pillar_segments, 12u, mat_info);
+            make_greek_pillar<T>(engine, (P), (orientation), pillar_width, pillar_height, pillar_width, pillar_segments,
+                                 12u, mat_info);
 
             T const xb = (pillar_width - temple_width) * 0.5f + 2 * i * pillar_width;
             T const zb = (pillar_width - temple_depth) * 0.5f;
             P = rotate(orientation, EigenVector3<T>(xb, outer_pillar_y, zb)) + position;
-            make_greek_pillar<MT>(engine, fromEigen(P), fromEigen(orientation), pillar_width, pillar_height,
-                                  pillar_width, pillar_segments, 12u, mat_info);
+            make_greek_pillar<T>(engine, (P), (orientation), pillar_width, pillar_height, pillar_width, pillar_segments,
+                                 12u, mat_info);
         }
 
             /// side row pillars
@@ -118,14 +118,14 @@ void make_temple(content::API* engine, typename MT::vector3_type const& position
             T const xe = (pillar_width - temple_width) * 0.5f;
             T const ze = (-pillar_width + temple_depth) * 0.5f - 2 * i * pillar_width;
             EigenVector3<T> P = rotate(orientation, EigenVector3<T>(xe, outer_pillar_y, ze)) + position;
-            make_greek_pillar<MT>(engine, fromEigen(P), fromEigen(orientation), pillar_width, pillar_height,
-                                  pillar_width, pillar_segments, 12u, mat_info);
+            make_greek_pillar<T>(engine, (P), (orientation), pillar_width, pillar_height, pillar_width, pillar_segments,
+                                 12u, mat_info);
 
             T const xw = (-pillar_width + temple_width) * 0.5f;
             T const zw = (-pillar_width + temple_depth) * 0.5f - 2 * i * pillar_width;
             P = rotate(orientation, EigenVector3<T>(xw, outer_pillar_y, zw)) + position;
-            make_greek_pillar<MT>(engine, fromEigen(P), fromEigen(orientation), pillar_width, pillar_height,
-                                  pillar_width, pillar_segments, 12u, mat_info);
+            make_greek_pillar<T>(engine, (P), (orientation), pillar_width, pillar_height, pillar_width, pillar_segments,
+                                 12u, mat_info);
         }
     }/// outer pillars
 
@@ -158,8 +158,8 @@ void make_temple(content::API* engine, typename MT::vector3_type const& position
                     T x = (pillar_width - temple_width) * 0.5f + (2 + 2 * j) * pillar_width;
                     EigenVector3<T> P = rotate(orientation, EigenVector3<T>(x, inner_pillar_y, z)) + position;
 
-                    make_greek_pillar<MT>(engine, fromEigen(P), fromEigen(orientation), pillar_width, pillar_height,
-                                          pillar_width, pillar_segments, 12u, mat_info);
+                    make_greek_pillar<T>(engine, (P), (orientation), pillar_width, pillar_height, pillar_width,
+                                         pillar_segments, 12u, mat_info);
                 }
 
                 T const xstart = -0.5f * temple_width + 0.5f * pillar_width;

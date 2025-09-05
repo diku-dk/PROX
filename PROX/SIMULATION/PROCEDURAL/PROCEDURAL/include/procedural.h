@@ -80,12 +80,10 @@ void make_wall(content::API* engine, const EigenVector3<T>& position, const Eige
                const T& width, const T& height, const T& depth, size_t const& layers, size_t const& span,
                MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_greek_pillar(content::API* engine, typename MT::vector3_type const& position,
-                       typename MT::quaternion_type const& orientation, typename MT::real_type const& pillar_width,
-                       typename MT::real_type const& pillar_height, typename MT::real_type const& pillar_depth,
-                       size_t const& pillar_segments, size_t const& pillar_slices,
-                       MaterialInfo<typename MT::real_type> mat_info,
+template <typename T>
+void make_greek_pillar(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                       const T& pillar_width, const T& pillar_height, const T& pillar_depth,
+                       size_t const& pillar_segments, size_t const& pillar_slices, MaterialInfo<T> mat_info,
                        mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings());
 
 template <typename MT>

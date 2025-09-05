@@ -5,14 +5,12 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_greek_pillar(content::API* engine, typename MT::vector3_type const& position,
-                       typename MT::quaternion_type const& orientation, typename MT::real_type const& pillar_width,
-                       typename MT::real_type const& pillar_height, typename MT::real_type const& pillar_depth,
-                       size_t const& pillar_segments, size_t const& pillar_slices,
-                       MaterialInfo<typename MT::real_type> mat_info, mesh_array::TetGenSettings tetset)
+template <typename T>
+void make_greek_pillar(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                       const T& pillar_width, const T& pillar_height, const T& pillar_depth,
+                       size_t const& pillar_segments, size_t const& pillar_slices, MaterialInfo<T> mat_info,
+                       mesh_array::TetGenSettings tetset)
 {
-    typedef typename MT::real_type T;
 
     T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
     size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
@@ -51,9 +49,9 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
                                            ,
                                            EigenQuaternion<T>::Identity()       // model to local
                                            ,
-                                           toEigen(position)            // local to wolrd
+                                           (position)            // local to wolrd
                                            ,
-                                           toEigen(orientation)         // local to world
+                                           (orientation)         // local to world
                                            ,
                                            body_to_world_translation, body_to_world_orientation);
 
@@ -80,9 +78,9 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
                                            ,
                                            EigenQuaternion<T>::Identity()               // model 2 local
                                            ,
-                                           toEigen(position)                    // local 2 world
+                                           (position)                    // local 2 world
                                            ,
-                                           toEigen(orientation)                 // local 2 world
+                                           (orientation)                 // local 2 world
                                            ,
                                            body_to_world_translation, body_to_world_orientation);
 
@@ -120,9 +118,9 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
                                                ,
                                                EigenQuaternion<T>::Identity()            // model to local
                                                ,
-                                               toEigen(position)                 // local to world
+                                               (position)                 // local to world
                                                ,
-                                               toEigen(orientation)              // local to world
+                                               (orientation)              // local to world
                                                ,
                                                body_to_world_translation, body_to_world_orientation);
 
@@ -153,9 +151,9 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
                                            ,
                                            Rotateu(std::numbers::pi_v<T>, EigenVector3<T>(1, 0, 0))  // model to local
                                            ,
-                                           toEigen(position)                   // local to world
+                                           (position)                   // local to world
                                            ,
-                                           toEigen(orientation)                // local to world
+                                           (orientation)                // local to world
                                            ,
                                            body_to_world_translation, body_to_world_orientation);
 
@@ -181,9 +179,9 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
                                            ,
                                            EigenQuaternion<T>::Identity()               // model to local
                                            ,
-                                           toEigen(position)                    // local to world
+                                           (position)                    // local to world
                                            ,
-                                           toEigen(orientation)                 // local to world
+                                           (orientation)                 // local to world
                                            ,
                                            body_to_world_translation, body_to_world_orientation);
 
@@ -191,12 +189,10 @@ void make_greek_pillar(content::API* engine, typename MT::vector3_type const& po
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_greek_pillar<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                     MTf::quaternion_type const& orientation, MTf::real_type const& pillar_width,
-                                     MTf::real_type const& pillar_height, MTf::real_type const& pillar_depth,
-                                     size_t const& pillar_segments, size_t const& pillar_slices,
-                                     MaterialInfo<MTf::real_type> mat_info, mesh_array::TetGenSettings tetset);
+template void make_greek_pillar<float>(content::API* engine, const EigenVector3<float>& position,
+                                       const EigenQuaternion<float>& orientation, const float& pillar_width,
+                                       const float& pillar_height, const float& pillar_depth,
+                                       size_t const& pillar_segments, size_t const& pillar_slices,
+                                       MaterialInfo<float> mat_info, mesh_array::TetGenSettings tetset);
 
 } //namespace procedural

@@ -83,8 +83,8 @@ namespace procedural
 
         if (tetset.m_maximum_volume > 0.0) tetset.m_maximum_volume /= 1000.0;
 
-        procedural::make_greek_pillar<MT>(engine, V::zero(), Q::identity(), pillar_width, pillar_height, pillar_width,
-                                          3, 6, mat_info, tetset);
+        procedural::make_greek_pillar<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), pillar_width,
+                                         pillar_height, pillar_width, 3, 6, mat_info, tetset);
     }
     if (scene.compare("twist") == 0)
     {
