@@ -101,30 +101,27 @@ namespace soft_body
 
       for( ; c != end; ++ c)
       {
-        V const pp = c->get_position();
-        V const nn = c->get_normal();
+          const glm::vec3 p{c->position.x(), c->position.y(), c->position.z()};
+          const auto n = glm::normalize(glm::vec3{c->normal.x(), c->normal.y(), c->normal.z()});
 
-        glm::vec3 const p = glm::vec3( pp(0), pp(1), pp(2) );
-        glm::vec3 const n = glm::normalize( glm::vec3( nn(0), nn(1), nn(2)) );
+          float const cos_theta = glm::dot(up, n);
 
-        float const cos_theta = glm::dot(up, n);
+          glm::vec3 const axis = (fabs(cos_theta) < 0.99) ? glm::cross(up, n) : glm::vec3(1, 0, 0);
 
-        glm::vec3 const axis = (fabs(cos_theta) < 0.99) ? glm::cross(up, n) : glm::vec3(1,0,0);
+          float const radians = acos(cos_theta);
 
-        float const radians = acos(cos_theta);
+          auto const scale = util::to_value<float>(params.get_value("draw_contacts_scaling", "1.0"));
 
-        auto const scale = util::to_value<float>(params.get_value("draw_contacts_scaling", "1.0"));
+          glm::mat4 const scale_matrix = glm::scale(glm::mat4(1.0), glm::vec3(scale, scale, scale));
+          glm::mat4 const rotation_matrix = glm::rotate(glm::mat4(1.0), radians, axis);
+          glm::mat4 const translation_matrix = glm::translate(glm::mat4(1.0), p);
+          glm::mat4 const model_view_matrix = view_matrix * translation_matrix * rotation_matrix * scale_matrix;
 
-        glm::mat4 const scale_matrix = glm::scale(glm::mat4(1.0), glm::vec3(scale,scale,scale));
-        glm::mat4 const rotation_matrix = glm::rotate( glm::mat4(1.0), radians, axis);
-        glm::mat4 const translation_matrix = glm::translate( glm::mat4(1.0), p);
-        glm::mat4 const model_view_matrix =  view_matrix * translation_matrix * rotation_matrix * scale_matrix;
+          program.set_uniform("model_view_matrix", model_view_matrix);
 
-        program.set_uniform( "model_view_matrix", model_view_matrix);
-
-        contact_geometry.m_solid_vao.bind();
-        contact_geometry.m_vbo.draw();
-        contact_geometry.m_solid_vao.unbind();
+          contact_geometry.m_solid_vao.bind();
+          contact_geometry.m_vbo.draw();
+          contact_geometry.m_solid_vao.unbind();
       }
 
       program.stop();

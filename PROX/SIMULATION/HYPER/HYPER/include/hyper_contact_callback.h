@@ -81,13 +81,11 @@ namespace hyper
         assert( this->m_results || !"operator(): results is null");
 
         contact_type contact;
-
-        contact.set_position(point);
-        contact.set_depth(depth);
-        contact.set_normal(normal);
-        contact.set_body_i( this->m_body_i );
-        contact.set_body_j( this->m_body_j );
-
+        contact.position = point;
+        contact.normal = normal;
+        contact.depth = depth;
+        contact.bodyI = m_body_i;
+        contact.bodyJ = m_body_j;
         this->m_results->push_back( contact );
       }
     };
