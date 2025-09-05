@@ -729,8 +729,9 @@ namespace procedural
         bool const use_spike_in_crack = util::to_value<bool>(params.get_value("procedural_param_3", "true"));
         bool const use_wedge_in_crack = util::to_value<bool>(params.get_value("procedural_param_4", "true"));
 
-        procedural::make_point_in_crack<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info,
-                                            obj_path, use_spike_in_hole, use_spike_in_crack, use_wedge_in_crack);
+        procedural::make_point_in_crack<T>(engine, EigenVector3<T>(0.0, 0.0, 0.0), EigenQuaternion<T>::Identity(),
+                                           scene_size, mat_info, obj_path, use_spike_in_hole, use_spike_in_crack,
+                                           use_wedge_in_crack);
     }
     if (scene.compare("cliff_edge") == 0)
     {
