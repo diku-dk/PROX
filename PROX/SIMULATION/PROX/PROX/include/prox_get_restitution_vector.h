@@ -3,6 +3,8 @@
 
 #include <util_log.h>
 
+#include <cstddef>
+
 namespace prox
 {
 
@@ -32,17 +34,17 @@ namespace prox
     size_t k = 0u;
     for(contact_iterator contact = begin;contact!=end;++contact, ++k)
     {
-      size_t const material_i = contact->get_body_i()->get_material_idx();
-      size_t const material_j = contact->get_body_j()->get_material_idx();
+        auto material_i = contact->bodyI->get_material_idx();
+        auto material_j = contact->bodyJ->get_material_idx();
 
-      real_type e_k = properties[material_i][material_j].get_restitution_coefficient();
+        real_type e_k = properties[material_i][material_j].get_restitution_coefficient();
 
-      block4x1_type & b = e( k );
+        block4x1_type& b = e(k);
 
-      b(0) = e_k;
-      b(1) = 0;
-      b(2) = 0;
-      b(3) = 0;
+        b(0) = e_k;
+        b(1) = 0;
+        b(2) = 0;
+        b(3) = 0;
     }
   }
 

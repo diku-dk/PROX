@@ -99,12 +99,11 @@ namespace prox
           assert(this->m_results || !"operator(): results is null");
 
           contact_type contact;
-
-          contact.set_position(point);
-          contact.set_depth(distance);
-          contact.set_normal(normal);
-          contact.set_body_i(this->m_body_i);
-          contact.set_body_j(this->m_body_j);
+          contact.position = point;
+          contact.depth = distance;
+          contact.normal = normal;
+          contact.bodyI = m_body_i;
+          contact.bodyJ = m_body_j;
 
           this->m_results->push_back(contact);
       }
@@ -359,10 +358,7 @@ namespace prox
 
       penetration_monitor->clear();
 
-      for(contact_iterator contact = contacts.begin(); contact != contacts.end(); ++contact)
-      {
-        RECORD("penetration", contact->get_depth() );
-      }
+      for (const auto& contact : contacts) { RECORD("penetration", contact.depth); }
 
       RECORD("average_penetration", penetration_monitor->get_avg() );
       RECORD("minimum_penetration", penetration_monitor->get_min() );

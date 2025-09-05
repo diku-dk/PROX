@@ -52,7 +52,7 @@ namespace prox
     {
       B4x1 & b = g( index );
 
-        b(0) = max( - max_gap,  min<T>( reduction * contact->get_depth(), 0 ) );
+      b(0) = max(-max_gap, min<T>(reduction * contact->depth, 0));
       b(1) = 0;
       b(2) = 0;
       b(3) = 0;

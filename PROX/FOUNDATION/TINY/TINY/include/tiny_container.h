@@ -1,5 +1,6 @@
 #ifndef TINY_CONTAINER_H
 #define TINY_CONTAINER_H
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
 
 #include <tiny_aligned_16.h>
 #include <tiny_accessor.h>

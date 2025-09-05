@@ -69,18 +69,17 @@ namespace prox
     size_t index = 0u;
     for(contact_iterator contact = begin;contact!=end; ++contact, ++index)
     {
-      B4x1       & b            = g( index );
-      B4x1 const & v            = w( index );
-      T    const & d            = contact->get_depth();
-      T    const & v_n          = v(0);
-      bool const add_correction = d <= yield && v_n <= 0;
+        B4x1& b = g(index);
+        B4x1 const& v = w(index);
+        T const& v_n = v(0);
+        bool const add_correction = contact->depth <= yield && v_n <= 0;
 
-      b(0) = add_correction ? max( limit , k * d ) : 0;
-      b(1) = 0;
-      b(2) = 0;
-      b(3) = 0;
+        b(0) = add_correction ? max(limit, k * contact->depth) : 0;
+        b(1) = 0;
+        b(2) = 0;
+        b(3) = 0;
 
-      assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");
+        assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");
     }
   }
 } //namespace prox

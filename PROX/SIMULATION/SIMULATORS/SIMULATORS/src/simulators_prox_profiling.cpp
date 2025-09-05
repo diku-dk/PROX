@@ -20,9 +20,10 @@ void ProxEngine::get_contact_position(size_t const& contact_number, float& x, fl
     assert(contact_number < m_data->m_contacts.size()
            || !"ProxEngine::get_contact_position(): internal error: contact index out of bounds");
 
-    x = m_data->m_contacts[contact_number].get_position()(0);
-    y = m_data->m_contacts[contact_number].get_position()(1);
-    z = m_data->m_contacts[contact_number].get_position()(2);
+    auto [px, py, pz] = m_data->m_contacts[contact_number].position;
+    x = px;
+    y = py;
+    z = pz;
 }
 
 void ProxEngine::get_contact_normal(size_t const& contact_number, float& x, float& y, float& z)
@@ -32,9 +33,10 @@ void ProxEngine::get_contact_normal(size_t const& contact_number, float& x, floa
     assert(contact_number < m_data->m_contacts.size()
            || !"ProxEngine::get_contact_normal(): internal error: contact index out of bounds");
 
-    x = m_data->m_contacts[contact_number].get_normal()(0);
-    y = m_data->m_contacts[contact_number].get_normal()(1);
-    z = m_data->m_contacts[contact_number].get_normal()(2);
+    auto [px, py, pz] = m_data->m_contacts[contact_number].normal;
+    x = px;
+    y = py;
+    z = pz;
 }
 
 void ProxEngine::get_contact_depth(size_t const& contact_number, float& depth)
@@ -44,7 +46,7 @@ void ProxEngine::get_contact_depth(size_t const& contact_number, float& depth)
     assert(contact_number < m_data->m_contacts.size()
            || !"ProxEngine::get_contact_depth(): internal error: contact index out of bounds");
 
-    depth = m_data->m_contacts[contact_number].get_depth();
+    depth = m_data->m_contacts[contact_number].depth;
 }
 
 }// namespace simulators

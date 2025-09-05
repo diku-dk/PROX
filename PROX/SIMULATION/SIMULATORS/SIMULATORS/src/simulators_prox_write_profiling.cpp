@@ -489,25 +489,13 @@ bool ProxEngine::writeRigidBodiesData(std::string const& filename, unsigned int 
     std::vector<unsigned int> A;
     std::vector<unsigned int> B;
 
-    for (unsigned int i = 0u; i < m_data->m_contacts.size(); ++i)
+    for (const auto& contact : m_data->m_contacts)
     {
-        T const cx = m_data->m_contacts[i].get_position()(0);
-        T const cy = m_data->m_contacts[i].get_position()(1);
-        T const cz = m_data->m_contacts[i].get_position()(2);
-        T const nx = m_data->m_contacts[i].get_normal()(0);
-        T const ny = m_data->m_contacts[i].get_normal()(1);
-        T const nz = m_data->m_contacts[i].get_normal()(2);
-        T const d = m_data->m_contacts[i].get_depth();
-        T const ax = m_data->m_contacts[i].get_body_i()->get_position()(0);
-        T const ay = m_data->m_contacts[i].get_body_i()->get_position()(1);
-        T const az = m_data->m_contacts[i].get_body_i()->get_position()(2);
-        T const bx = m_data->m_contacts[i].get_body_j()->get_position()(0);
-        T const by = m_data->m_contacts[i].get_body_j()->get_position()(1);
-        T const bz = m_data->m_contacts[i].get_body_j()->get_position()(2);
-
-        unsigned int const idxA = m_data->m_contacts[i].get_body_i()->get_idx();
-        unsigned int const idxB = m_data->m_contacts[i].get_body_j()->get_idx();
-
+        auto [cx, cy, cz] = contact.position;
+        auto [nx, ny, nz] = contact.normal;
+        auto d = contact.depth;
+        auto [ax, ay, az] = toEigen(contact.bodyI->get_position());
+        auto [bx, by, bz] = toEigen(contact.bodyJ->get_position());
         CX.push_back(cx);
         CY.push_back(cy);
         CZ.push_back(cz);
@@ -521,8 +509,8 @@ bool ProxEngine::writeRigidBodiesData(std::string const& filename, unsigned int 
         BX.push_back(bx);
         BY.push_back(by);
         BZ.push_back(bz);
-        A.push_back(idxA);
-        B.push_back(idxB);
+        A.push_back(contact.bodyI->get_idx());
+        B.push_back(contact.bodyJ->get_idx());
     }
 
     python << "CX_" << frameNumber << " = " << util::python_write_vector(CX) << ";" << std::endl;
@@ -597,25 +585,13 @@ bool ProxEngine::write_contact_data(std::string const& filename, unsigned int co
     std::vector<unsigned int> A;
     std::vector<unsigned int> B;
 
-    for (unsigned int i = 0u; i < m_data->m_contacts.size(); ++i)
+    for (const auto& contact : m_data->m_contacts)
     {
-        T const cx = m_data->m_contacts[i].get_position()(0);
-        T const cy = m_data->m_contacts[i].get_position()(1);
-        T const cz = m_data->m_contacts[i].get_position()(2);
-        T const nx = m_data->m_contacts[i].get_normal()(0);
-        T const ny = m_data->m_contacts[i].get_normal()(1);
-        T const nz = m_data->m_contacts[i].get_normal()(2);
-        T const d = m_data->m_contacts[i].get_depth();
-        T const ax = m_data->m_contacts[i].get_body_i()->get_position()(0);
-        T const ay = m_data->m_contacts[i].get_body_i()->get_position()(1);
-        T const az = m_data->m_contacts[i].get_body_i()->get_position()(2);
-        T const bx = m_data->m_contacts[i].get_body_j()->get_position()(0);
-        T const by = m_data->m_contacts[i].get_body_j()->get_position()(1);
-        T const bz = m_data->m_contacts[i].get_body_j()->get_position()(2);
-
-        unsigned int const idxA = m_data->m_contacts[i].get_body_i()->get_idx();
-        unsigned int const idxB = m_data->m_contacts[i].get_body_j()->get_idx();
-
+        auto [cx, cy, cz] = contact.position;
+        auto [nx, ny, nz] = contact.normal;
+        auto d = contact.depth;
+        auto [ax, ay, az] = toEigen(contact.bodyI->get_position());
+        auto [bx, by, bz] = toEigen(contact.bodyJ->get_position());
         CX.push_back(cx);
         CY.push_back(cy);
         CZ.push_back(cz);
@@ -629,8 +605,8 @@ bool ProxEngine::write_contact_data(std::string const& filename, unsigned int co
         BX.push_back(bx);
         BY.push_back(by);
         BZ.push_back(bz);
-        A.push_back(idxA);
-        B.push_back(idxB);
+        A.push_back(contact.bodyI->get_idx());
+        B.push_back(contact.bodyJ->get_idx());
     }
 
     matlab << "CX_" << frame_number << " = " << util::matlab_write_vector(CX) << ";" << std::endl;

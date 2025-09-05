@@ -1,6 +1,8 @@
 #ifndef PROX_GET_FRICTION_COEFFICIENT_VECTOR_H
 #define PROX_GET_FRICTION_COEFFICIENT_VECTOR_H
 
+#include <cstddef>
+
 namespace prox
 {
 
@@ -23,19 +25,19 @@ namespace prox
     size_t k = 0u;
     for(contact_iterator contact = begin;contact!=end;++contact, ++k)
     {
-      size_t const material_i = contact->get_body_i()->get_material_idx();
-      size_t const material_j = contact->get_body_j()->get_material_idx();
+        auto material_i = contact->bodyI->get_material_idx();
+        auto material_j = contact->bodyJ->get_material_idx();
 
-      real_type const mu_s   = properties[material_i][material_j].get_friction_coefficients()(0);
-      real_type const mu_t   = properties[material_i][material_j].get_friction_coefficients()(1);
-      real_type const mu_tau = properties[material_i][material_j].get_friction_coefficients()(2);
+        real_type const mu_s = properties[material_i][material_j].get_friction_coefficients()(0);
+        real_type const mu_t = properties[material_i][material_j].get_friction_coefficients()(1);
+        real_type const mu_tau = properties[material_i][material_j].get_friction_coefficients()(2);
 
-      block4x1_type & b = mu( k );
+        block4x1_type& b = mu(k);
 
-      b(0) = 0;
-      b(1) = mu_s;
-      b(2) = mu_t;
-      b(3) = mu_tau;
+        b(0) = 0;
+        b(1) = mu_s;
+        b(2) = mu_t;
+        b(3) = mu_tau;
     }
   }
 

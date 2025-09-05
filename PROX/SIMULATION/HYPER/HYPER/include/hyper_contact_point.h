@@ -37,7 +37,7 @@ protected:
     , m_body_j(0)
     {}
 
-    virtual ~ContactPoint(){}
+    virtual ~ContactPoint() final {}
 
     ContactPoint (ContactPoint const & point)
     {
@@ -57,7 +57,8 @@ protected:
       return *this;
     }
 
-    vector3_type const & get_position() const  {  return this->m_position; }
+    vector3_type const& get_position() const { return this->m_position; }
+
     vector3_type const& get_normal() const { return this->m_normal; }
 
     real_type const& get_depth() const { return this->m_depth; }

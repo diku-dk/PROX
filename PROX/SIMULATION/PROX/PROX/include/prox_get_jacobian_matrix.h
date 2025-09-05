@@ -37,43 +37,33 @@ namespace prox
 
     for(contact_iterator contact = begin; contact != end; ++contact, ++k)
     {
-      vector3_type const n_k = contact->get_normal();
-      vector3_type t_k;
-      vector3_type s_k;
+        auto n_k = fromEigen(contact->normal);
+        vector3_type t_k;
+        vector3_type s_k;
 
-      body_type const * const body_i = contact->get_body_i();
-      body_type const * const body_j = contact->get_body_j();
+        size_t const mat_i = contact->bodyI->get_material_idx();
+        size_t const mat_j = contact->bodyJ->get_material_idx();
 
-      size_t const mat_i = body_i->get_material_idx();
-      size_t const mat_j = body_j->get_material_idx();
-
-      property_type const * property =  &(properties[mat_i][mat_j]);
-
+        property_type const* property = &(properties[mat_i][mat_j]);
 
       // 2012-07-15 Kenny code review: For box model it would make sense to have an option
       // that could pick s_t as the sliding direction vector! Not sure how to design prox
       // interfaces to accomodate this?
 
-      if(property->is_isotropic())
-      {
-        tiny::orthonormal_vectors( s_k, t_k, n_k ); // 200X-YY-ZZ Kenny: TODO we might want to do this a little more clever?
-      }
+        if (property->is_isotropic())
+        {
+            tiny::orthonormal_vectors(s_k, t_k,
+                                      n_k); // 200X-YY-ZZ Kenny: TODO we might want to do this a little more clever?
+        }
       else
       {
         assert(false || !"get_jacobian_matrix(): Anisotropic friction is not yet tested");
 
         quaternion_type Q;
         size_t const master = property->get_master_material_idx();
-        if( body_i->get_material_idx() == master )
-        {
-          Q = body_i->get_orientation();
-        }
-        else if( body_j->get_material_idx() == master )
-        {
-          Q = body_j->get_orientation();
-        }else {
-          assert(false || !"get_jacobian_matrix(): master idx was bad");
-        }
+        if (contact->bodyI->get_material_idx() == master) { Q = contact->bodyI->get_orientation(); }
+        else if (contact->bodyJ->get_material_idx() == master) { Q = contact->bodyJ->get_orientation(); }
+        else { assert(false || !"get_jacobian_matrix(): master idx was bad"); }
 
         s_k = tiny::rotate( Q, property->get_s_vector() );	
         float const c = tiny::inner_prod(n_k,s_k);
@@ -89,10 +79,10 @@ namespace prox
         }
       }
 
-      block4x6_type & J_ki = J( k, body_i->get_idx() );
+      block4x6_type& J_ki = J(k, contact->bodyI->get_idx());
 
       // Fill in J_ki
-      vector3_type r_ki = contact->get_position() - body_i->get_position();
+      vector3_type r_ki = fromEigen(contact->position) - contact->bodyI->get_position();
       vector3_type iXn = tiny::cross( r_ki, n_k );
       vector3_type iXt = tiny::cross( r_ki, t_k );
       vector3_type iXs = tiny::cross( r_ki, s_k );
@@ -122,10 +112,10 @@ namespace prox
       J_ki(3,4) = -n_k(1);
       J_ki(3,5) = -n_k(2);
 
-      block4x6_type & J_kj = J( k, body_j->get_idx() );
+      block4x6_type& J_kj = J(k, contact->bodyJ->get_idx());
 
       // Fill in J_kj
-      vector3_type r_kj = contact->get_position() - body_j->get_position();
+      vector3_type r_kj = fromEigen(contact->position) - contact->bodyJ->get_position();
       vector3_type jXn = tiny::cross( r_kj, n_k );
       vector3_type jXt = tiny::cross( r_kj, t_k );
       vector3_type jXs = tiny::cross( r_kj, s_k );

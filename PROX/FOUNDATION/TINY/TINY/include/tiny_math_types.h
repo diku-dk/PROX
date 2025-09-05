@@ -500,5 +500,47 @@ template <typename T> inline EigenVector3<T> randomEigen(const T& lower, const T
 
 template <typename T> inline EigenVector3<T> randomEigen() { return randomEigen(0, 1); }
 
-//TINY_MATH_TYPES_H
-#endif
+namespace Eigen
+{
+
+template <std::size_t Index, typename T>
+T& get(EigenVector3<T>& vec) noexcept
+requires(Index < 3)
+{
+    return vec.data()[Index];
+}
+
+template <std::size_t Index, typename T>
+T&& get(EigenVector3<T>&& vec) noexcept
+requires(Index < 3)
+{
+    return std::move(vec.data()[Index]);
+}
+
+template <std::size_t Index, typename T>
+const T& get(const EigenVector3<T>& vec) noexcept
+requires(Index < 3)
+{
+    return vec.data()[Index];
+}
+
+template <std::size_t Index, typename T>
+const T&& get(const EigenVector3<T>&& vec) noexcept
+requires(Index < 3)
+{
+    return std::move(vec.data()[Index]);
+}
+
+} // namespace Eigen
+
+template <typename T> struct std::tuple_size<EigenVector3<T>> : public std::integral_constant<std::size_t, 3>
+{
+};
+
+template <std::size_t Index, typename T>
+struct std::tuple_element<Index, EigenVector3<T>> : public std::integral_constant<std::size_t, 3>
+{
+    using type = T;
+};
+
+#endif // TINY_MATH_TYPES_H

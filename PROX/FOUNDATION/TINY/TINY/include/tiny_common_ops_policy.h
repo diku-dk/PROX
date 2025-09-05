@@ -1,6 +1,8 @@
 #ifndef TINY_COMMON_OPS_POLICY_H
 #define TINY_COMMON_OPS_POLICY_H
 
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+
 namespace tiny
 {
   namespace detail
