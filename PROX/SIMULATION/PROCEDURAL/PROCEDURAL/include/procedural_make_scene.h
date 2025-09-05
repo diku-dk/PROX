@@ -88,7 +88,8 @@ namespace procedural
         auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
         auto const degree = util::to_value<float>(params.get_value("procedural_param_2", "25.0"));
 
-        procedural::make_twisted_stack<MT>(engine, V::make(0, 0, 0), Q::identity(), 1, layers, degree, mat_info);
+        procedural::make_twisted_stack<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), 1, layers,
+                                          degree, mat_info);
     }
     if (scene.compare("stack") == 0)
     {

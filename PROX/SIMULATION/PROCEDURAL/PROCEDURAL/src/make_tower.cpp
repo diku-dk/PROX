@@ -65,8 +65,6 @@ void make_tower(content::API* engine, const EigenVector3<T>& position, const Eig
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
 template void make_tower<float>(content::API* engine, const EigenVector3<float>& position,
                                 const EigenQuaternion<float>& orientation, const float& r_outer, const float& r_inner,
                                 const float& height, size_t const& slices, size_t const& segments,

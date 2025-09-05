@@ -128,11 +128,9 @@ template <typename T>
 void make_box(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
               const T& width, const T& height, const T& depth, MaterialInfo<T> mat_info, bool const fixed = false);
 
-template <typename MT>
-void make_twisted_stack(content::API* engine, typename MT::vector3_type const& position,
-                        typename MT::quaternion_type const& orientation, typename MT::real_type const& stone_dim,
-                        size_t const& layers, typename MT::real_type const& twist,
-                        MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_twisted_stack(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                        const T& stone_dim, size_t const& layers, const T& degree, MaterialInfo<T> mat_info);
 template <typename T>
 void make_sphere_layer(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
                        const T& sphere_radius, size_t const& spheres_width, size_t const& spheres_length,
