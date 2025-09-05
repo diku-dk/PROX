@@ -54,13 +54,9 @@ namespace kdop
 
     };
 
-    template< typename V, size_t K, typename T>
-    inline void make_subtree( size_t const & parent_idx
-                            , size_t & free_idx
-                            , MeshChunkInfo<T> const & geometry
-                            , SubTree<T,K> & branch
-                            , size_t & height
-                            )
+    template <size_t K, typename T>
+    inline void make_subtree(size_t const& parent_idx, size_t& free_idx, MeshChunkInfo<T> const& geometry,
+                             SubTree<T, K>& branch, size_t& height)
     {
       using namespace details;
       using std::floor;
@@ -100,8 +96,8 @@ namespace kdop
         size_t left_height  = 0u;
         size_t right_height = 0u;
 
-        make_subtree<V,K,T>(left_idx,  free_idx, left_geometry,  branch, left_height);
-        make_subtree<V,K,T>(right_idx, free_idx, right_geometry, branch, right_height);
+        make_subtree<K, T>(left_idx, free_idx, left_geometry, branch, left_height);
+        make_subtree<K, T>(right_idx, free_idx, right_geometry, branch, right_height);
 
         height = max(left_height, right_height) + 1;
 
@@ -120,14 +116,9 @@ namespace kdop
       }
     }
 
-    template< typename V, size_t K, typename T>
-    inline void make_subtree( size_t const & parent_idx
-                            , size_t & free_idx
-                            , size_t first
-                            , size_t last
-                            , SubTree<T,K> & super_chunk
-                            , size_t & height
-                            )
+    template < size_t K, typename T>
+    inline void make_subtree(size_t const& parent_idx, size_t& free_idx, size_t first, size_t last,
+                             SubTree<T, K>& super_chunk, size_t& height)
     {
       size_t const N = last - first + 1;
 
@@ -165,8 +156,8 @@ namespace kdop
         size_t left_height  = 0u;
         size_t right_height = 0u;
 
-        make_subtree<V,K,T>(left_idx, free_idx, first, mid, super_chunk, left_height);
-        make_subtree<V,K,T>(right_idx, free_idx, mid + 1, last, super_chunk, right_height);
+        make_subtree<K, T>(left_idx, free_idx, first, mid, super_chunk, left_height);
+        make_subtree<K, T>(right_idx, free_idx, mid + 1, last, super_chunk, right_height);
 
         height = std::max(left_height, right_height) + 1;
 
@@ -187,14 +178,12 @@ namespace kdop
 
   } // end of namespace details
 
-  template< typename V, size_t K, typename T>
-  inline Tree<T,K> make_tree( size_t const & mem_bytes
-                             , mesh_array::T4Mesh const & mesh
-                             , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
-                             , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
-                             , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                             , sequential const & /* tag */
-                             )
+  template < size_t K, typename T>
+  inline Tree<T, K> make_tree(size_t const& mem_bytes, mesh_array::T4Mesh const& mesh,
+                              mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+                              mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+                              mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z, sequential const& /* tag */
+  )
   {
 
       assert(mem_bytes > 0u || !"make_tree(): must have some memory");
@@ -248,7 +237,7 @@ namespace kdop
           size_t const root_idx = 0u;
           size_t free_idx = 1u;
 
-          make_subtree<V, K, T>(root_idx, free_idx, geometry, branch, branch.m_height); // Now build the sucker!
+          make_subtree<K, T>(root_idx, free_idx, geometry, branch, branch.m_height); // Now build the sucker!
       }
 
       //--- Do the same for all higher levels covering the next lower one bottom up
@@ -270,11 +259,11 @@ namespace kdop
               size_t const root_idx = 0u;
               size_t free_idx = 1u;
 
-              make_subtree<V, K, T>(root_idx, free_idx, first, last, super_chunck, super_chunck.m_height);
+              make_subtree<K, T>(root_idx, free_idx, first, last, super_chunck, super_chunck.m_height);
           }
       }
 
-      refit_tree<V, K, T>(tree, mesh, X, Y, Z, sequential());
+      refit_tree<K, T>(tree, mesh, X, Y, Z, sequential());
 
       return tree;
   }

@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <type_traits>
 
 namespace narrow
 {
@@ -26,19 +27,19 @@ namespace narrow
    *
    * @tparam M     The Math types used.
    */
-  template<typename M>
-  class Geometry
-  {
-  protected:
+template <typename T>
+requires(std::is_floating_point_v<T>)
+class Geometry
+{
+protected:
+    using M = tiny::MathTypes<T>;
 
-    typedef typename M::vector3_type                      V;
+    typedef typename M::vector3_type V;
     typedef typename M::value_traits                      VT;
-    typedef typename M::real_type                         T;
     typedef typename M::coordsys_type                     C;
 
-  public:
-
-    typedef          detail::ShapeTypes<M>           shape_types;
+public:
+    typedef detail::ShapeTypes<M> shape_types;
 
     typedef typename shape_types::Box                box_type;
     typedef typename shape_types::Sphere             sphere_type;
@@ -170,8 +171,7 @@ namespace narrow
       using std::max;
       return max(this->m_radius, this->m_tetramesh.m_mesh_radius);
     }
-
-  };
+};
 
   } //namespace narrow
 

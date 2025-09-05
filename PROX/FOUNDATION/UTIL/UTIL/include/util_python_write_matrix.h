@@ -77,7 +77,7 @@ namespace util
               for (int c = 0; c < N; ++c)
               {
                   std::size_t logical_idx = static_cast<std::size_t>(r * N + c);
-                  ss << m.m_data[logical_idx];
+                  ss << m.data()[logical_idx];
                   if (c + 1 < N) ss << ", ";
               }
               ss << "]";

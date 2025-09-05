@@ -21,20 +21,16 @@ namespace prox
    * Empty time stepper.
    * This essentially does nothing, except for invoking the collision detection system.
    */
-  template< typename M  >
-  inline void empty_stepper(
-                            typename M::real_type const & dt
-                            , std::vector< RigidBody< M > > & bodies
-                            , std::vector< std::vector< Property< M > > > const &  properties
-                            , Gravity< M > const & gravity
-                            , Damping< M > const & damping
-                            , Params<M> const & params
-                            , broad::System<typename M::real_type> & broad_system
-                            , narrow::System<typename M::tiny_types> & narrow_system
-                            , std::vector< ContactPoint<M> > & contacts
-                            , M const & tag
-                            )
-  {
+template < typename T>
+inline void empty_stepper(T dt, std::vector< RigidBody<T> >& bodies,
+                          std::vector< std::vector< Property<T> > > const& properties,
+                          Gravity< T > const& gravity, Damping< T > const& damping,
+                          Params<T> const& params, broad::System<T>& broad_system,
+                          narrow::System<T>& narrow_system,
+                          std::vector< ContactPoint<T> >& contacts)
+{
+    using M = tiny::MathTypes<T>;
+    M tag;
     util::Log logging;
 
     START_TIMER("stepper");
@@ -53,7 +49,7 @@ namespace prox
     logging << "empty_stepper(): Number of contacts = " << number_of_contacts << util::Log::newline();
 
     STOP_TIMER("stepper");
-  }
+}
 
 } //namespace prox
 

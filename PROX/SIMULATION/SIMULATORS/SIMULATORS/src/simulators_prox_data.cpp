@@ -9,6 +9,8 @@
 
 #include <steppers/prox_bind_stepper.h>
 
+#include <prox_rigid_body.h>
+
 #include <cassert>
 
 namespace simulators
@@ -57,8 +59,8 @@ void ProxData::clear()
         for (size_t j = 0u; j < m_number_of_materials; ++j) { m_exist_property[i][j] = false; }
     }
 
-    m_gravity = prox::Gravity<MT>();
-    m_damping = prox::Damping<MT>();
+    m_gravity = {};
+    m_damping = {};
 
     m_force_callbacks.clear();
     m_pin_forces.clear();
@@ -73,14 +75,27 @@ void ProxData::clear()
 
 void ProxData::step_simulation(float const& dt)
 {
-    typedef prox::StepperBinder< MT > stepper_binder_type;
-
     assert(dt > 0.0f || !"step_simulation(): invalid step size");
     assert(dt <= m_time_step || !"step_simulation(): invalid step size");
 
-    stepper_binder_type stepper = prox::bind_stepper< MT >(m_params.stepper_params().stepper());
+    switch (m_params.stepper_params().stepper())
+    {
 
-    stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params, m_broad, m_narrow, m_contacts, MT());
+    case prox::moreau :
+        prox::moreau_time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params,
+                                  m_broad, m_narrow, m_contacts);
+        break;
+
+    case prox::semi_implicit :
+        prox::semi_implicit_time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params,
+                                         m_broad, m_narrow, m_contacts);
+        break;
+
+    case prox::empty :
+        prox::empty_stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params, m_broad,
+                            m_narrow, m_contacts);
+        break;
+    }
 
     T E_kinetic;
     T E_potential;
@@ -174,17 +189,17 @@ void ProxData::get_total_energy(float& kinetic, float& potential)
         if (body.is_scripted()) continue;
 
         float const m = body.get_mass();
-        float const h = tiny::inner_prod(m_gravity.up(), body.get_position());
-        float const v = tiny::norm(body.get_velocity());
+        float const h = dot(m_gravity.up(), body.get_position());
+        float const v = norm(body.get_velocity());
 
-        V const& w = body.get_spin();
-        M const& I_bf = body.get_inertia_bf();
-        M const R = tiny::make(body.get_orientation());
+        auto w = body.get_spin();
+        auto I_bf = body.get_inertia_bf();
+        auto R = body.get_orientation().toRotationMatrix();
 
-        M I;
-        prox::detail::update_inertia_tensor<MT>(R, I_bf, I);
+        EigenMatrix3<float> I;
+        prox::detail::update_inertia_tensor(R, I_bf, I);
 
-        T const wIw = tiny::inner_prod(w, I * w);
+        T const wIw = (w).dot(I * w);
 
         kinetic += 0.5 * (m * v * v + wIw);
         potential += m_gravity.acceleration() * m * h;

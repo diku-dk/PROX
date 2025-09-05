@@ -6,14 +6,12 @@
 namespace prox
 {
 
-  template<typename body_iterator, typename math_policy>
-  inline void get_position_vector(
-                                  body_iterator begin,
-                                  body_iterator end,
-                                  typename math_policy::vector7_type & q,
-                                  math_policy const & /*math_policy_tag*/
-                                  )
-  {
+template <typename body_iterator, typename math_policy>
+inline void get_position_vector(body_iterator begin, body_iterator end,
+                                typename math_policy::vector7_type& q,
+                                math_policy const& /*math_policy_tag*/
+)
+{
     typedef typename math_policy::vector3_type     vector3_type;   // 2009-08-04 Kenny: style clash with vector7_type
     typedef typename math_policy::quaternion_type  quaternion_type;
 
@@ -47,7 +45,7 @@ namespace prox
       b(6) = Q.imag()(2);
 
     }
-  }
+}
 }// namespace prox
 // PROX_GET_POSITION_VECTOR_H
 #endif

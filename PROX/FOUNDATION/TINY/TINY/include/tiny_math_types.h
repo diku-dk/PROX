@@ -67,6 +67,8 @@ namespace tiny
 template <typename Number>
 using EigenVector3 = Eigen::Vector<Number, 3>;
 
+template <typename Number> using EigenVector4 = Eigen::Vector<Number, 4>;
+
 template <typename Number>
 using EigenMatrix3 = Eigen::Matrix<Number, 3, 3>;
 
@@ -533,7 +535,8 @@ requires(Index < 3)
 
 } // namespace Eigen
 
-template <typename T> struct std::tuple_size<EigenVector3<T>> : public std::integral_constant<std::size_t, 3>
+template <typename T>
+struct std::tuple_size<EigenVector3<T>> : public std::integral_constant<std::size_t, 3>
 {
 };
 

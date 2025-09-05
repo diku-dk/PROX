@@ -1,19 +1,15 @@
 #ifndef NARROW_PARAMS_H
 #define NARROW_PARAMS_H
 
+#include <cstddef>
+
 namespace narrow
 {
-  template<typename M>
-  class Params
-  {
-  public:
-
-    typedef typename M::real_type    T;
-    typedef typename M::value_traits VT;
-
-  protected:
-
-    bool   m_use_open_cl;
+template <typename T> class Params
+{
+public:
+protected:
+    bool m_use_open_cl;
     size_t m_open_cl_platform;
     size_t m_open_cl_device;
     bool   m_use_gproximity;
@@ -43,17 +39,17 @@ namespace narrow
     void set_chunk_bytes(size_t const & value)      { this->m_chunk_bytes    = value;   }
 
   public:
-
-    Params()
-    : m_use_open_cl( false )
-    , m_open_cl_platform( 0 )
-    , m_open_cl_device( 0 )
-    , m_use_gproximity( false )
-    , m_use_batching( true )
-    , m_envelope(VT::numeric_cast(0.01))
-    , m_chunk_bytes(8000)
-    {}
-  };
+      Params()
+          : m_use_open_cl(false)
+          , m_open_cl_platform(0)
+          , m_open_cl_device(0)
+          , m_use_gproximity(false)
+          , m_use_batching(true)
+          , m_envelope(0.01)
+          , m_chunk_bytes(8000)
+      {
+      }
+};
 
 } // namespace narrow
 

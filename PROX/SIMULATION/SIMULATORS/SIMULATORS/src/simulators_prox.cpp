@@ -104,7 +104,7 @@ void ProxEngine::set_rigid_body_position(size_t const& body_idx, float const& x,
     assert(body_idx < m_data->m_bodies.size() || !"set_rigid_body_position(): no such rigid body");
     assert((is_number(x) && is_number(y) && is_number(z)) || !"set_rigid_body_position(): NaN or inf value");
 
-    m_data->m_bodies[body_idx].set_position(ProxData::V::make(x, y, z));
+    m_data->m_bodies[body_idx].set_position({x, y, z});
 }
 
 void ProxEngine::set_rigid_body_orientation(size_t const& body_idx, float const& Qs, float const& Qx, float const& Qy,
@@ -114,14 +114,7 @@ void ProxEngine::set_rigid_body_orientation(size_t const& body_idx, float const&
     assert(body_idx < m_data->m_bodies.size() || !"internal error: no such rigid body");
     assert((is_number(Qs) && is_number(Qx) && is_number(Qy) && is_number(Qz)) || !"internal error: NaN or inf value");
 
-    ProxData::MT::quaternion_type Q;
-
-    Q.real() = Qs;
-    Q.imag()(0) = Qx;
-    Q.imag()(1) = Qy;
-    Q.imag()(2) = Qz;
-
-    m_data->m_bodies[body_idx].set_orientation(Q);
+    m_data->m_bodies[body_idx].set_orientation({Qs, Qx, Qy, Qz});
 }
 
 void ProxEngine::set_rigid_body_velocity(size_t const& body_idx, float const& vx, float const& vy, float const& vz)
@@ -130,7 +123,7 @@ void ProxEngine::set_rigid_body_velocity(size_t const& body_idx, float const& vx
     assert(body_idx < m_data->m_bodies.size() || !"internal error: no such rigid body");
     assert((is_number(vx) && is_number(vy) && is_number(vz)) || !"internal error: NaN or inf value");
 
-    m_data->m_bodies[body_idx].set_velocity(ProxData::V::make(vx, vy, vz));
+    m_data->m_bodies[body_idx].set_velocity({vx, vy, vz});
 }
 
 void ProxEngine::set_rigid_body_spin(size_t const& body_idx, float const& wx, float const& wy, float const& wz)
@@ -139,7 +132,7 @@ void ProxEngine::set_rigid_body_spin(size_t const& body_idx, float const& wx, fl
     assert(body_idx < m_data->m_bodies.size() || !"internal error: no such rigid body");
     assert((is_number(wx) && is_number(wy) && is_number(wz)) || !"internal error: NaN or inf value");
 
-    m_data->m_bodies[body_idx].set_spin(ProxData::V::make(wx, wy, wz));
+    m_data->m_bodies[body_idx].set_spin({wx, wy, wz});
 }
 
 void ProxEngine::set_rigid_body_mass(size_t const& body_idx, float const& mass)
@@ -158,10 +151,11 @@ void ProxEngine::set_rigid_body_inertia(size_t const& body_idx, float const& Ixx
     assert((is_number(Ixx) && is_number(Iyy) && is_number(Izz)) || !"internal error: NaN or inf value");
     assert(((0 <= Ixx) && (0 <= Iyy) && (0 <= Izz)) || !"internal error: negative value");
 
-    ProxData::MT::matrix3x3_type I
-        = ProxData::MT::matrix3x3_type::make(Ixx, 0.0f, 0.0f, 0.0f, Iyy, 0.0f, 0.0f, 0.0f, Izz);
-
-    m_data->m_bodies[body_idx].set_inertia_bf(I);
+    m_data->m_bodies[body_idx].set_inertia_bf(EigenMatrix3<float>({
+        { Ixx, 0.0f, 0.0f},
+        {0.0f,  Iyy, 0.0f},
+        {0.0f, 0.0f,  Izz}
+    }));
 }
 
 void ProxEngine::set_rigid_body_active(size_t const& body_idx, bool const& active)
@@ -1217,7 +1211,7 @@ void ProxEngine::get_rigid_body_position(size_t const& body_index, float& x, flo
     assert(m_data || !"internal error: null pointer");
     assert(body_index < m_data->m_bodies.size() || !"internal error: no such rigid body");
 
-    ProxData::V pos = m_data->m_bodies[body_index].get_position();
+    auto pos = m_data->m_bodies[body_index].get_position();
 
     assert((is_number(pos[0]) && is_number(pos[1]) && is_number(pos[2])) || !"internal error: NaN or inf value");
 
@@ -1231,15 +1225,12 @@ void ProxEngine::get_rigid_body_orientation(size_t const& body_index, float& Qs,
     assert(m_data || !"internal error: null pointer");
     assert(body_index < m_data->m_bodies.size() || !"internal error: no such rigid body");
 
-    ProxData::MT::quaternion_type Q = m_data->m_bodies[body_index].get_orientation();
+    auto Q = m_data->m_bodies[body_index].get_orientation();
 
-    assert((is_number(Q.real()) && is_number(Q.imag()(0)) && is_number(Q.imag()(1)) && is_number(Q.imag()(2)))
-           || !"internal error: NaN or inf value");
-
-    Qs = Q.real();
-    Qx = Q.imag()(0);
-    Qy = Q.imag()(1);
-    Qz = Q.imag()(2);
+    Qs = Q.w();
+    Qx = Q.x();
+    Qy = Q.y();
+    Qz = Q.z();
 }
 
 void ProxEngine::get_rigid_body_velocity(size_t const& body_index, float& x, float& y, float& z)
@@ -1247,7 +1238,7 @@ void ProxEngine::get_rigid_body_velocity(size_t const& body_index, float& x, flo
     assert(m_data || !"internal error: null pointer");
     assert(body_index < m_data->m_bodies.size() || !"internal error: no such rigid body");
 
-    ProxData::V vel = m_data->m_bodies[body_index].get_velocity();
+    auto vel = m_data->m_bodies[body_index].get_velocity();
 
     assert((is_number(vel[0]) && is_number(vel[1]) && is_number(vel[2])) || !"internal error: NaN or inf value");
 
@@ -1261,7 +1252,7 @@ void ProxEngine::get_rigid_body_spin(size_t const& body_index, float& x, float& 
     assert(m_data || !"internal error: null pointer");
     assert(body_index < m_data->m_bodies.size() || !"internal error: no such rigid body");
 
-    ProxData::V spin = m_data->m_bodies[body_index].get_spin();
+    auto spin = m_data->m_bodies[body_index].get_spin();
 
     assert((is_number(spin[0]) && is_number(spin[1]) && is_number(spin[2])) || !"internal error: NaN or inf value");
 
@@ -1275,14 +1266,12 @@ void ProxEngine::get_rigid_body_inertia(size_t const& body_index, float& xx, flo
     assert(m_data || !"internal error: null pointer");
     assert(body_index < m_data->m_bodies.size() || !"internal error: no such rigid body");
 
-    ProxData::MT::matrix3x3_type in = m_data->m_bodies[body_index].get_inertia_bf();
-
-    assert((is_number(in(0, 0)) && is_number(in(1, 1)) && is_number(in(2, 2))) || !"internal error: NaN or inf value");
+    auto inertia = m_data->m_bodies[body_index].get_inertia_bf();
 
     // BF -> WCS??
-    xx = in(0, 0);
-    yy = in(1, 1);
-    zz = in(2, 2);
+    xx = inertia(0, 0);
+    yy = inertia(1, 1);
+    zz = inertia(2, 2);
 }
 
 float ProxEngine::get_rigid_body_mass(size_t const& body_index)
@@ -1342,7 +1331,7 @@ void ProxEngine::set_gravity_up(float const& x, float const& y, float const& z)
 {
     assert(m_data || !"internal error: null pointer");
 
-    m_data->m_gravity.up() = V::make(x, y, z);
+    m_data->m_gravity.up() = {x, y, z};
 }
 
 void ProxEngine::set_gravity_acceleration(float const& acceleration)
@@ -1434,7 +1423,7 @@ size_t ProxEngine::create_pin_force() const
 
     size_t const idx = m_data->m_force_callbacks.size();
 
-    m_data->m_pin_forces[idx] = prox::Pin<ProxData::MT>();
+    m_data->m_pin_forces[idx] = {};
 
     m_data->m_pin_forces[idx].set_idx(idx);
 

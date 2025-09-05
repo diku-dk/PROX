@@ -45,17 +45,12 @@ namespace geometry
 
   };
 
-  template<typename iterator, typename V, size_t N>
-  inline DOP<typename V::real_type, N*2u> make_dop(
-                                                   iterator const & begin
-                                                   , iterator const & end
-                                                   , DirectionTable<V,N> const & D
-                                                   )
+  template <typename iterator, typename T, size_t N>
+  inline DOP<T, N * 2u> make_dop(iterator const& begin, iterator const& end,
+                                 DirectionTable<T, N> const& D)
   {
     using std::min;
     using std::max;
-
-    typedef typename V::real_type T;
 
     DOP<T,N*2> kdop;
 
@@ -63,10 +58,10 @@ namespace geometry
     {
       for(iterator p = begin; p!=end; ++p)
       {
-        T const projection = inner_prod( D(k), (*p) );
+          T const projection = D(k).dot(*p);
 
-        kdop(k).lower() = min( kdop(k).lower(), projection );
-        kdop(k).upper() = max( kdop(k).upper(), projection );
+          kdop(k).lower() = min(kdop(k).lower(), projection);
+          kdop(k).upper() = max(kdop(k).upper(), projection);
       }
     }
 
@@ -90,7 +85,7 @@ namespace geometry
       {
           for(iterator p = begin; p!=end; ++p)
           {
-              T const projection = dot( D(k), (*p) );
+              T const projection = D(k).dot(*p);
 
               kdop(k).lower() = min( kdop(k).lower(), projection );
               kdop(k).upper() = max( kdop(k).upper(), projection );

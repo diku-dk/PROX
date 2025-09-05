@@ -43,27 +43,22 @@ namespace prox
   /**
    *
    */
-  template< typename M  >
-  inline void semi_implicit_time_stepper(
-                                          typename M::real_type const & dt
-                                         , std::vector< RigidBody< M > > & bodies
-                                         , std::vector< std::vector< Property< M > > > const &  properties
-                                         , Gravity< M > const & gravity
-                                         , Damping< M > const & damping
-                                         , Params<M> const & params
-                                         , broad::System<typename M::real_type> & broad_system
-                                         , narrow::System<typename M::tiny_types> & narrow_system
-                                         , std::vector< ContactPoint<M> > & contacts
-                                         , M const & tag
-                                         )
-  {
+template < typename T>
+inline void semi_implicit_time_stepper(T dt, std::vector< RigidBody<T> >& bodies,
+                                       std::vector< std::vector< Property<T> > > const& properties,
+                                       Gravity< T > const& gravity, Damping< T > const& damping,
+                                       Params<T> const& params, broad::System<T>& broad_system,
+                                       narrow::System<T>& narrow_system,
+                                       std::vector< ContactPoint<T> >& contacts)
+{
+    using M = prox::MathPolicy<T>;
+    M tag;
     typedef typename M::vector4_type               V4;
     typedef typename M::vector6_type               V6;
     typedef typename M::vector7_type               V7;
     typedef typename M::diagonal6x6_type           D6x6;
     typedef typename M::compressed4x6_type         CSR4x6;
-    typedef typename M::compressed6x4_type         CSR6x4;
-    typedef typename M::real_type                  T;
+    typedef typename M::compressed6x4_type CSR6x4;
     typedef typename M::value_traits               VT;
 
     util::Log logging;
@@ -145,30 +140,15 @@ namespace prox
 
     if( number_of_contacts > 0u )
     {
-      get_jacobian_matrix< RigidBody<M> >(
-                                          contacts.begin()
-                                          , contacts.end()
-                                          , bodies
-                                          , properties
-                                          , J
-                                          , tag
-                                          , number_of_contacts
-                                          );
+        get_jacobian_matrix< RigidBody<T> >(contacts.begin(), contacts.end(), bodies, properties, J,
+                                            tag, number_of_contacts);
 
-      if(params.stepper_params().pre_stabilization())
-      {
-        sparse::prod(J, u, w);
+        if (params.stepper_params().pre_stabilization())
+        {
+            sparse::prod(J, u, w);
 
-        get_pre_stabilization_vector(
-                                     contacts.begin()
-                                     , contacts.end()
-                                     , params.stepper_params()
-                                     , dt
-                                     , w
-                                     , g
-                                     , tag
-                                     , number_of_contacts
-                                     );
+            get_pre_stabilization_vector(contacts.begin(), contacts.end(), params.stepper_params(),
+                                         dt, w, g, tag, number_of_contacts);
       }
       else
       {
@@ -278,8 +258,7 @@ namespace prox
 
       STOP_TIMER("stabilization");
     }
-
-  }
+}
 
 } //namespace prox
 

@@ -7,23 +7,15 @@
 namespace prox
 {
 
-  template<
-  typename body_type
-  , typename contact_iterator
-  , typename body_container
-  , typename math_policy
-  >
-  inline void get_jacobian_matrix(
-                                  contact_iterator begin
-                                  , contact_iterator end
-                                  , body_container const & bodies
-                                  , std::vector< std::vector< Property< math_policy > > > const &  properties
-                                  , typename math_policy::compressed4x6_type & J
-                                  , math_policy const & /*tag*/
-                                  , size_t const K
-                                  )
-  {
-    typedef Property< math_policy >                  property_type;
+template <typename contact_iterator, typename body_container, typename math_policy >
+inline void get_jacobian_matrix(
+    contact_iterator begin, contact_iterator end, body_container const& bodies,
+    std::vector< std::vector< Property< typename math_policy::real_type > > > const& properties,
+    typename math_policy::compressed4x6_type& J, math_policy const& /*tag*/
+    ,
+    size_t const K)
+{
+    typedef Property< typename math_policy::real_type > property_type;
 
     typedef typename math_policy::vector3_type       vector3_type;
     typedef typename math_policy::quaternion_type    quaternion_type;
@@ -145,7 +137,7 @@ namespace prox
       J_kj(3,4) = n_k(1);
       J_kj(3,5) = n_k(2);
     }
-  }
+}
 
 } // namespace prox
 // PROX_GET_JACOBIAN_MATRIX_H

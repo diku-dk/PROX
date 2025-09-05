@@ -441,12 +441,12 @@ bool ProxEngine::writeRigidBodiesData(std::string const& filename, unsigned int 
     auto& bodies = m_data->m_bodies;
 
     std::vector<std::string> objectNames;
-    std::vector<tiny::MathTypes<float>::matrix3x3_type> inertiabfs;
-    std::vector<tiny::MathTypes<float>::real_type> masses;
-    std::vector<tiny::MathTypes<float>::quaternion_type> orientations;
-    std::vector<tiny::MathTypes<float>::vector3_type> positions;
-    std::vector<tiny::MathTypes<float>::vector3_type> spin;
-    std::vector<tiny::MathTypes<float>::vector3_type> velocities;
+    std::vector<EigenMatrix3<float>> inertiabfs;
+    std::vector<float> masses;
+    std::vector<EigenQuaternion<float>> orientations;
+    std::vector<EigenVector3<float>> positions;
+    std::vector<EigenVector3<float>> spin;
+    std::vector<EigenVector3<float>> velocities;
     std::vector<std::string> materialNames;
     for (uint32_t i = 0; i < bodies.size(); ++i)
     {
@@ -494,8 +494,8 @@ bool ProxEngine::writeRigidBodiesData(std::string const& filename, unsigned int 
         auto [cx, cy, cz] = contact.position;
         auto [nx, ny, nz] = contact.normal;
         auto d = contact.depth;
-        auto [ax, ay, az] = toEigen(contact.bodyI->get_position());
-        auto [bx, by, bz] = toEigen(contact.bodyJ->get_position());
+        auto [ax, ay, az] = (contact.bodyI->get_position());
+        auto [bx, by, bz] = (contact.bodyJ->get_position());
         CX.push_back(cx);
         CY.push_back(cy);
         CZ.push_back(cz);
@@ -590,8 +590,8 @@ bool ProxEngine::write_contact_data(std::string const& filename, unsigned int co
         auto [cx, cy, cz] = contact.position;
         auto [nx, ny, nz] = contact.normal;
         auto d = contact.depth;
-        auto [ax, ay, az] = toEigen(contact.bodyI->get_position());
-        auto [bx, by, bz] = toEigen(contact.bodyJ->get_position());
+        auto [ax, ay, az] = (contact.bodyI->get_position());
+        auto [bx, by, bz] = (contact.bodyJ->get_position());
         CX.push_back(cx);
         CY.push_back(cy);
         CZ.push_back(cz);

@@ -1,6 +1,7 @@
 #ifndef PROX_PARAMS_H
 #define PROX_PARAMS_H
 
+#include "tiny_math_types.h"
 #include <solvers/prox_solver_params.h>    // Needed for SolverParams
 #include <steppers/prox_stepper_params.h>  // Needed for StepperParams
 
@@ -15,25 +16,24 @@ namespace prox
    *
    * @tparam   Math types policy
    */
-  template< typename MT >
-  class Params
-  {
-  public:
-      using solver_params_type = SolverParams<MT>;
-      using stepper_params_type = StepperParams<MT>;
+template < typename T > class Params
+{
+public:
+    using MT = tiny::MathTypes<T>;
+    using solver_params_type = SolverParams<MT>;
+    using stepper_params_type = StepperParams<MT>;
 
-  protected:
-      solver_params_type m_solver_params;     ///< Parameters used for prox solvers.
-      stepper_params_type m_stepper_params;    ///< Parameters used for prox steppers.
+protected:
+    solver_params_type m_solver_params;     ///< Parameters used for prox solvers.
+    stepper_params_type m_stepper_params;    ///< Parameters used for prox steppers.
 
-      bool m_use_all_pair;                   ///< Parameter for controlling if
+    bool m_use_all_pair;                   ///< Parameter for controlling if
                                              ///< all-pair or grid algorithm should
                                              ///< be used for broad phase collision
                                              ///< detetection. Default is false (=off).
 
-  public:
-
-    solver_params_type const & solver_params() const { return this->m_solver_params; }
+public:
+    solver_params_type const& solver_params() const { return this->m_solver_params; }
     solver_params_type       & solver_params()       { return this->m_solver_params; }
 
     stepper_params_type const & stepper_params() const { return this->m_stepper_params; }
@@ -49,7 +49,7 @@ namespace prox
     , m_stepper_params()
     , m_use_all_pair(false)
     {}
-  };
+};
 
 } // namespace prox
 

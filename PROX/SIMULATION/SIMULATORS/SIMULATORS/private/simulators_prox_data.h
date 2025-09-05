@@ -33,16 +33,16 @@ namespace simulators
       using VT = TT::value_traits;
       using M = TT::matrix3x3_type;
 
-      using rigid_body_type = prox::RigidBody<MT>;
-      using contact_type = prox::ContactPoint<MT>;
-      using geometry_type = narrow::Geometry<TT>;
-      using property_type = prox::Property<MT>;
-      using params_type = prox::Params<MT>;
-      using force_callback = prox::ForceCallback<MT>;
+      using rigid_body_type = prox::RigidBody<T>;
+      using contact_type = prox::ContactPoint<T>;
+      using geometry_type = narrow::Geometry<T>;
+      using property_type = prox::Property<T>;
+      using params_type = prox::Params<T>;
+      using force_callback = prox::ForceCallback<T>;
 
   public:
       using broad_phase_type = broad::System<T>;
-      using narrow_phase_type = narrow::System<TT>;
+      using narrow_phase_type = narrow::System<T>;
 
       std::vector< std::string > m_geometry_names;
       std::vector< std::string > m_materials;
@@ -63,16 +63,16 @@ namespace simulators
       params_type m_params;
       bool m_use_only_tetrameshes;
 
-      prox::Gravity<MT> m_gravity;
-      prox::Damping<MT> m_damping;
+      prox::Gravity<T> m_gravity;
+      prox::Damping<T> m_damping;
 
       std::vector< force_callback* > m_force_callbacks;
-      std::map< size_t, prox::Pin<MT> > m_pin_forces;        ///< Container of pin forces. We on
-                                                            ///< purpose use a map here to make
-                                                            ///< sure pointers to elements stay
-                                                            ///< the same when the data structure
-                                                            ///< grows. Otherwise we can not use
-                                                            ///< vectors of points to these elements.
+      std::map< size_t, prox::Pin<T> > m_pin_forces;        ///< Container of pin forces. We on
+          ///< purpose use a map here to make
+          ///< sure pointers to elements stay
+          ///< the same when the data structure
+          ///< grows. Otherwise we can not use
+          ///< vectors of points to these elements.
 
       mesh_array::TetGenSettings m_tetgen_settings;           ///< Tetget settings
 
@@ -223,8 +223,8 @@ namespace simulators
             v = (p1-p0)/dt;
           }
 
-          body.set_position(p);
-          body.set_velocity(v);
+          body.set_position(toEigen(p));
+          body.set_velocity(toEigen(v));
         }
 
         if (! m_orientations.empty())
@@ -274,8 +274,8 @@ namespace simulators
             q =  tiny::slerp(q0, q1, t/dt );
           }
 
-          body.set_orientation(q);
-          body.set_spin(w);
+          body.set_orientation(toEigen(q));
+          body.set_spin(toEigen(w));
         }
 
       }
@@ -303,8 +303,8 @@ namespace simulators
         V const p =  m_amplitude*sin(m_frequency*time + m_phase)*unit(m_direction) + m_origin;
         V const v =  m_amplitude*m_frequency*cos(m_frequency*time + m_phase)*unit(m_direction);
 
-        body.set_position(p);
-        body.set_velocity(v);
+        body.set_position(toEigen(p));
+        body.set_velocity(toEigen(v));
       }
 
     };

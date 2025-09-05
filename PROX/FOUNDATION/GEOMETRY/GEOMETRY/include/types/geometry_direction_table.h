@@ -8,22 +8,19 @@
 namespace geometry
 {
 
-  template<typename V, size_t N>
-  class DirectionTable
-  {
-  protected:
+template <typename T, size_t N> class DirectionTable
+{
+protected:
+    EigenVector3<T> m_directions[N];
 
-    V m_directions[N];
-
-  public:
-
-    V const & operator()(size_t const & idx) const
+public:
+    EigenVector3<T> const& operator()(size_t const& idx) const
     {
       assert( idx < N || !"DirectionTable::operator(): idx was out of range");
       return this->m_directions[idx];
     }
 
-    V       & operator()(size_t const & idx)
+    EigenVector3<T>& operator()(size_t const& idx)
     {
       assert( idx < N || !"DirectionTable::operator(): idx was out of range");
       return this->m_directions[idx];
@@ -35,66 +32,56 @@ namespace geometry
 
     DirectionTable()
     {}
+};
 
-  };
+template <typename T, size_t N1, size_t N2>
+inline DirectionTable<T, N1 + N2> make_union(DirectionTable<T, N1> const& D1,
+                                             DirectionTable<T, N2> const& D2)
+{
+    DirectionTable<T, N1 + N2> D;
 
-  template<typename V, size_t N1, size_t N2>
-  inline DirectionTable<V,N1+N2> make_union( DirectionTable<V,N1> const & D1, DirectionTable<V,N2> const & D2)
-  {
-    DirectionTable<V,N1+N2> D;
+    for (size_t n = 0u; n < N1; ++n) D(n) = D1(n);
+    for (size_t n = 0u; n < N2; ++n) D(n + N1) = D2(n);
 
-    for(size_t n = 0u; n < N1; ++n)
-      D(n)    = D1(n);
-    for(size_t n = 0u; n < N2; ++n)
-      D(n+N1) = D2(n);
+    return D;
+}
+
+template <typename T> inline DirectionTable<T, 3> make3()
+{
+
+    DirectionTable<T, 3> D;
+
+    D(0) = {1, 0, 0};
+    D(1) = {0, 1, 0};
+    D(2) = {0, 0, 1};
 
     return D;
   }
 
-  template<typename V>
-  inline DirectionTable<V,3>  make3()
+  template <typename T> inline DirectionTable<T, 4> make4()
   {
-    typedef typename V::value_traits VT;
+      DirectionTable<T, 4> D;
 
-    DirectionTable<V,3> D;
+      D(0) = EigenVector3<T>(1, 1, 1).normalized();
+      D(1) = EigenVector3<T>(1, 1, -1).normalized();
+      D(2) = EigenVector3<T>(1, -1, 1).normalized();
+      D(3) = EigenVector3<T>(1, -1, -1).normalized();
 
-    D(0) =  V::make( 1,  0, 0 );
-    D(1) =  V::make( 0, 1,  0 );
-    D(2) =  V::make( 0, 0, 1  );
-
-    return D;
+      return D;
   }
 
-  template<typename V>
-  inline DirectionTable<V,4>  make4()
+  template <typename T> inline DirectionTable<T, 6> make6()
   {
-    typedef typename V::value_traits VT;
+      DirectionTable<T, 6> D;
 
-    DirectionTable<V,4> D;
+      D(0) = EigenVector3<T>(1, 1, 0).normalized();
+      D(1) = EigenVector3<T>(1, -1, 0).normalized();
+      D(2) = EigenVector3<T>(1, 0, 1).normalized();
+      D(3) = EigenVector3<T>(0, 1, 1).normalized();
+      D(4) = EigenVector3<T>(-1, 0, 1).normalized();
+      D(5) = EigenVector3<T>(0, -1, 1).normalized();
 
-    D(0) = unit( V::make(  1,  1,  1 ) );
-    D(1) = unit( V::make(  1,  1, -1 ) );
-    D(2) = unit( V::make(  1, -1,  1 ) );
-    D(3) = unit( V::make(  1, -1, -1 ) );
-
-    return D;
-  }
-
-  template<typename V>
-  inline DirectionTable<V,6> make6()
-  {
-    typedef typename V::value_traits VT;
-
-    DirectionTable<V,6> D;
-
-    D(0) = unit( V::make(  1,   1,  0) );
-    D(1) = unit( V::make(  1,  -1,  0) );
-    D(2) = unit( V::make(  1,   0, 1 ) );
-    D(3) = unit( V::make(  0,  1,  1 ) );
-    D(4) = unit( V::make( -1,   0, 1 ) );
-    D(5) = unit( V::make(  0, -1,  1 ) );
-
-    return D;
+      return D;
   }
 
   template<typename V>

@@ -43,21 +43,16 @@ namespace prox
   /**
    *
    */
-  template< typename M  >
-  inline void moreau_time_stepper(
-                                  typename M::real_type const & dt
-                                  , std::vector< RigidBody< M > > & bodies
-                                  , std::vector< std::vector< Property< M > > > const &  properties
-                                  , Gravity< M > const & gravity
-                                  , Damping< M > const & damping
-                                  , Params<M> const & params
-                                  , broad::System<typename M::real_type> & broad_system
-                                  , narrow::System<typename M::tiny_types> & narrow_system
-                                  , std::vector< ContactPoint<M> > & contacts
-                                  , M const & tag
-                                  )
-  {
-    typedef typename M::real_type                  T;
+template < typename T >
+inline void moreau_time_stepper(T dt, std::vector< RigidBody< T > >& bodies,
+                                std::vector< std::vector< Property< T > > > const& properties,
+                                Gravity< T > const& gravity, Damping< T > const& damping,
+                                Params<T> const& params, broad::System<T>& broad_system,
+                                narrow::System<T>& narrow_system,
+                                std::vector< ContactPoint<T> >& contacts)
+{
+    using M = prox::MathPolicy<T>;
+    M tag;
     typedef typename M::value_traits               VT;
     typedef typename M::vector4_type               V4;
     typedef typename M::vector6_type               V6;
@@ -107,14 +102,7 @@ namespace prox
 
     set_position_vector( bodies.begin(), bodies.end(), qM, tag );
 
-    collision_detection(
-                        bodies
-                        , broad_system
-                        , narrow_system
-                        , contacts
-                        , params
-                        , tag
-                        );
+    collision_detection(bodies, broad_system, narrow_system, contacts, params);
 
     unsigned int const number_of_contacts = contacts.size();
 
@@ -127,45 +115,23 @@ namespace prox
                             , tag
                             );
 
-    get_external_forces_vector(
-                               bodies.begin()
-                               , bodies.end()
-                               , gravity
-                               , damping
-                               , h
-                               , tag
-                               );
+    get_external_forces_vector(bodies.begin(), bodies.end(), gravity, damping, h);
 
     sparse::prod(dt, h);
     sparse::prod(W, h, Wdth);        // Wdth = dt M^{-1} f_ext
 
     if( number_of_contacts > 0u )
     {
-      get_jacobian_matrix< RigidBody<M> >(
-                                          contacts.begin()
-                                          , contacts.end()
-                                          , bodies
-                                          , properties
-                                          , J
-                                          , tag
-                                          , number_of_contacts
-                                          );
+        get_jacobian_matrix(contacts.begin(), contacts.end(), bodies, properties, J, tag,
+                            number_of_contacts);
 
-      if(params.stepper_params().pre_stabilization())
-      {
-        sparse::prod(J, u, w);
+        if (params.stepper_params().pre_stabilization())
+        {
+            sparse::prod(J, u, w);
 
-        get_pre_stabilization_vector(
-                                     contacts.begin()
-                                     , contacts.end()
-                                     , params.stepper_params()
-                                     , dt
-                                     , w
-                                     , g
-                                     , tag
-                                     , number_of_contacts
-                                     );
-      }
+            get_pre_stabilization_vector(contacts.begin(), contacts.end(), params.stepper_params(),
+                                         dt, w, g, tag, number_of_contacts);
+        }
       else
       {
         M::make_zero(g, number_of_contacts );
@@ -273,9 +239,7 @@ namespace prox
 
       STOP_TIMER("stabilization");
     }
-
-
-  }
+}
 
 } //namespace prox
 

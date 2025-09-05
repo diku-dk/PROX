@@ -23,23 +23,19 @@ namespace prox
    * @param w                  Current relative contact point velocites, w = J*u
    *
    */
-  template<typename contact_iterator, typename M>
-  inline void get_pre_stabilization_vector(
-                                           contact_iterator begin
-                                           , contact_iterator end
-                                           , StepperParams<M> const & params
-                                           , typename M::real_type const & time_step
-                                           , typename M::vector4_type const & w
-                                           , typename M::vector4_type & g
-                                           , M const & /*tag*/
-                                           , size_t const K
-                                           )
-  {
+template <typename contact_iterator, typename M>
+inline void get_pre_stabilization_vector(contact_iterator begin, contact_iterator end,
+                                         StepperParams<M> const& params,
+                                         typename M::real_type const& time_step,
+                                         const EigenVector4<typename M::real_type>& w,
+                                         typename M::vector4_type& g, M const& /*tag*/
+                                         ,
+                                         size_t const K)
+{
     using std::max;
 
     typedef typename M::real_type        T;
-    typedef typename M::block4x1_type    B4x1;
-    typedef typename M::value_traits     VT;
+    typedef typename M::value_traits VT;
 
     assert( time_step > 0  || !"get_pre_stabilization_vector(): time_step should be positive");
 
@@ -69,8 +65,8 @@ namespace prox
     size_t index = 0u;
     for(contact_iterator contact = begin;contact!=end; ++contact, ++index)
     {
-        B4x1& b = g(index);
-        B4x1 const& v = w(index);
+        auto& b = g(index);
+        auto const& v = w(index);
         T const& v_n = v(0);
         bool const add_correction = contact->depth <= yield && v_n <= 0;
 
@@ -81,7 +77,7 @@ namespace prox
 
         assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");
     }
-  }
+}
 } //namespace prox
 // PROX_GET_PRE_STABILIZATION_VECTOR_H
 #endif

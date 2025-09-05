@@ -13,7 +13,9 @@
 namespace prox
 {
 
-template <typename M> using ContactPoint = geometry::ContactPoint<RigidBody<M>, typename RigidBody<M>::T>;
+template <typename T>
+requires(std::is_floating_point_v<T>)
+using ContactPoint = geometry::ContactPoint<RigidBody<T>, T>;
 
 }// namespace prox
 

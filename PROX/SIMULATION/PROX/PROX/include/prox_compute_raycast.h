@@ -11,25 +11,17 @@
 namespace prox
 {
 
-  template< typename M>
-  inline bool compute_raycast(
-                              geometry::Ray<typename M::vector3_type> const & ray
-                              , std::vector< RigidBody< M > > & bodies
-                              , narrow::System<typename M::tiny_types> & narrow_system
-                              , size_t & body_index
-                              , typename M::vector3_type & point
-                              , typename M::real_type & distance
-                              )
-  {
+template < typename M>
+inline bool compute_raycast(geometry::Ray<typename M::vector3_type> const& ray,
+                            std::vector< RigidBody< typename M::real_type > >& bodies,
+                            narrow::System<typename M::real_type>& narrow_system,
+                            size_t& body_index, typename M::vector3_type& point,
+                            typename M::real_type& distance)
+{
     typedef typename M::tiny_types                                  tiny_types;
     typedef typename M::vector3_type                                V;
     typedef typename M::value_traits                                VT;
     typedef typename M::real_type                                   T;
-    typedef typename prox::RigidBody<M>                             body_type;
-    typedef          std::vector<body_type>                         body_container;
-    typedef typename body_container::iterator                       body_iterator;
-    typedef typename narrow::Geometry<tiny_types>                   geometry_type;
-    typedef typename narrow::System<tiny_types>::geometry_iterator  geometry_iterator;
 
     //--- Initialization -------------------------------------------------------
     point        = V::zero();
@@ -41,20 +33,17 @@ namespace prox
 
     kdop_bvh_update_work_pool.reserve( bodies.size() ); // Make sure all space we may need is pre-allocated.
 
-    for(body_iterator body = bodies.begin(); body != bodies.end(); ++body)
+    for (auto body = bodies.begin(); body != bodies.end(); ++body)
     {
-      geometry_type const & geometry = narrow_system.get_geometry( body->get_geometry_idx() );
+        auto const& geometry = narrow_system.get_geometry(body->get_geometry_idx());
 
-      if(geometry.m_tetramesh.has_data() )
-      {
-        narrow::KDopBvhUpdateWorkItem<tiny_types> work_item = narrow::KDopBvhUpdateWorkItem<tiny_types>(
-                                                                                                        *body
-                                                                                                        , geometry
-                                                                                                        , body->get_position()
-                                                                                                        , body->get_orientation()
-                                                                                                        );
-        kdop_bvh_update_work_pool.push_back( work_item );
-      }
+        if (geometry.m_tetramesh.has_data())
+        {
+            narrow::KDopBvhUpdateWorkItem<tiny_types> work_item
+                = narrow::KDopBvhUpdateWorkItem<tiny_types>(*body, geometry, body->get_position(),
+                                                            body->get_orientation());
+            kdop_bvh_update_work_pool.push_back(work_item);
+        }
     }
 
     if( ! kdop_bvh_update_work_pool.empty() )
@@ -65,21 +54,21 @@ namespace prox
                               );
     }
 
-    for(geometry_iterator geometry = narrow_system.begin(); geometry != narrow_system.end(); ++geometry)
+    for (auto geometry = narrow_system.begin(); geometry != narrow_system.end(); ++geometry)
     {
       geometry->update_radius();
     }
 
-    for(body_iterator body = bodies.begin(); body != bodies.end(); ++body)
+    for (auto body = bodies.begin(); body != bodies.end(); ++body)
     {
-      geometry_type const & geometry = narrow_system.get_geometry( body->get_geometry_idx() );
+        auto const& geometry = narrow_system.get_geometry(body->get_geometry_idx());
 
-      body->set_radius( geometry.get_radius() );
+        body->set_radius(geometry.get_radius());
     }
 
     //--- Test each body for intersection and find the "closest" one -----------
     size_t idx = 0u;
-    for(body_iterator body = bodies.begin(); body != bodies.end(); ++body,++idx)
+    for (auto body = bodies.begin(); body != bodies.end(); ++body, ++idx)
     {
       T min_x = 0;
       T min_y = 0;
@@ -102,7 +91,7 @@ namespace prox
         T       body_distance  = std::numeric_limits<T>::max();
         V       body_point     = V::zero();
 
-        geometry_type const & geometry = narrow_system.get_geometry( body->get_geometry_idx() );
+        auto const& geometry = narrow_system.get_geometry(body->get_geometry_idx());
 
         bool body_hit = narrow::raycast(
                                    ray
@@ -130,7 +119,7 @@ namespace prox
     }
 
     return did_hit;
-  }
+}
 
 } // namespace prox
 

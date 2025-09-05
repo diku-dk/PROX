@@ -7,89 +7,49 @@
 
 #include <cassert>
 #include <vector>
+#include <type_traits>
 
 namespace narrow
 {
 
-  template<typename M>
-  class System
-  {
-  protected:
+template <typename T>
+requires(std::is_floating_point_v<T>)
+class System
+{
+protected:
+    std::vector< Geometry<T> > m_geometries;
+    Params<T> m_params;
 
-    std::vector< Geometry<M> > m_geometries;
-    Params<M>                  m_params;
+public:
+    typedef typename std::vector< Geometry<T> >::iterator geometry_iterator;
 
-  public:
+    geometry_iterator begin() { return m_geometries.begin(); }
 
-    typedef typename std::vector< Geometry<M> >::iterator geometry_iterator;
+    geometry_iterator end() { return m_geometries.end(); }
 
-    geometry_iterator begin()
-    {
-      return m_geometries.begin();
-    }
+    const auto& params() const { return this->m_params; }
 
-    geometry_iterator end()
-    {
-      return m_geometries.end();
-    }
+    auto& params() { return this->m_params; }
 
+public:
+    void clear() { m_geometries.clear(); }
 
-    Params<M> const & params() const { return this->m_params; }
-    Params<M>       & params()       { return this->m_params; }
-
-  public:
-
-    void clear()
-    {
-      m_geometries.clear();
-    }
-
-    size_t size() const
-    {
-      return this->m_geometries.size();
-    }
+    size_t size() const { return this->m_geometries.size(); }
 
     size_t create_geometry()
     {
-      Geometry<M> G = Geometry<M>();
-      this->m_geometries.push_back(G);
-
-      return this->m_geometries.size() - 1u;
+        m_geometries.emplace_back();
+        return m_geometries.size() - 1;
     }
 
-    Geometry<M> const & get_geometry( Object<M> const & obj ) const
-    {
-      size_t const & idx = obj.get_geometry_idx();
+    const auto& get_geometry(Object<T> const& obj) const { return m_geometries.at(obj.get_geometry_idx()); }
 
-      assert( idx < m_geometries.size() || !"get_geometry(): illegal idx");
+    auto& get_geometry(Object<T> const& obj) { return m_geometries.at(obj.get_geometry_idx()); }
 
-      return this->m_geometries[idx];
-    }
+    const auto& get_geometry(size_t const& idx) const { return m_geometries.at(idx); }
 
-    Geometry<M> & get_geometry( Object<M> const & obj )
-    {
-      size_t const & idx = obj.get_geometry_idx();
-
-      assert( idx < m_geometries.size() || !"get_geometry(): illegal idx");
-
-      return this->m_geometries[idx];
-    }
-
-    Geometry<M> const & get_geometry( size_t const & idx ) const
-    {
-      assert( idx < m_geometries.size() || !"get_geometry(): illegal idx");
-
-      return this->m_geometries[idx];
-    }
-
-    Geometry<M> & get_geometry( size_t const & idx  )
-    {
-      assert( idx < m_geometries.size() || !"get_geometry(): illegal idx");
-
-      return this->m_geometries[idx];
-    }
-
-  };
+    auto& get_geometry(size_t const& idx) { return m_geometries.at(idx); }
+};
 
 } // namespace narrow
 

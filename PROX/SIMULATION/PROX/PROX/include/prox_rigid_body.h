@@ -13,46 +13,36 @@
 namespace prox
 {
 
-  template< typename MT >
-  class ForceCallback;           // forward declaration
+template <typename T>
+requires(std::is_floating_point_v<T>)
+class ForceCallback;
 
-  template< typename MT >
-  class RigidBody
-  : public narrow::Object<typename MT::tiny_types >
-  , public broad::Object<typename MT::real_type>
-  {
-  public:
+template < typename T >
+requires(std::is_floating_point_v<T>)
+class RigidBody : public narrow::Object<T>, public broad::Object<T>
+{
+public:
+    using narrow_object = narrow::Object<T>;
+    using broad_object = broad::Object<T>;
 
-    typedef typename MT::base_type             tiny_types;
-    typedef typename MT::real_type             T;
-    typedef typename MT::vector3_type          V;
-    typedef typename MT::matrix3x3_type        M;
-    typedef typename MT::quaternion_type       Q;
-    typedef typename MT::value_traits          VT;
-    typedef narrow::Object< tiny_types  >      narrow_object;
-    typedef broad::Object< T >                 broad_object;
-    typedef ForceCallback<MT>                  force_callback;
-
-  protected:
-
-    bool         m_fixed;         ///< if the body is fixed or not.
+protected:
+    bool m_fixed;         ///< if the body is fixed or not.
     bool         m_scripted;      ///< if the body is scripted or not.
-    V            m_r;             ///< The current position of the node in WCS.
-    Q            m_Q;             ///< The current orientation of the node in WCS.
-    V            m_V;             ///< Linear velocity of CM in WCS.
-    V            m_W;             ///< Angular velocity around CM in WCS .
-    M            m_I_BF;          ///< Inertia tensor wrt CM in BF.
+    EigenVector3<T> m_r;             ///< The current position of the node in WCS.
+    EigenQuaternion<T> m_Q;             ///< The current orientation of the node in WCS.
+    EigenVector3<T> m_V;             ///< Linear velocity of CM in WCS.
+    EigenVector3<T> m_W;             ///< Angular velocity around CM in WCS .
+    EigenMatrix3<T> m_I_BF;          ///< Inertia tensor wrt CM in BF.
     T            m_mass;          ///< Mass.
     size_t       m_material_idx;  ///< The material index of the rigid body.
     size_t       m_idx;           ///< A body index.
     std::string  m_name;          ///< A name
     T            m_radius;        ///< A bounding radius of the rigid body.
 
-    std::vector< force_callback  * >  m_force_callbacks;
+    std::vector< ForceCallback<T>* > m_force_callbacks;
 
-  private:
-
-    void copy (RigidBody const & body)
+private:
+    void copy(RigidBody const& body)
     {
       if(this==&body)
         return;
@@ -101,12 +91,16 @@ namespace prox
     {
       this->m_fixed = false;
       this->m_scripted = false;
-      this->m_r.clear();
-      this->m_Q     = Q::identity();
-      this->m_I_BF  = M::make_diag(1);
+      this->m_r = {0, 0, 0};
+      this->m_Q = EigenQuaternion<T>::Identity();
+      this->m_I_BF = EigenMatrix3<T>({
+          {1, 0, 0},
+          {0, 1, 0},
+          {0, 0, 1}
+      });
       this->m_mass  = 1;
-      this->m_V.clear();
-      this->m_W.clear();
+      this->m_V = {0, 0, 0};
+      this->m_W = {0, 0, 0};
       this->m_material_idx = 0u;
       this->m_idx = 0u;
       this->m_name = "";
@@ -126,23 +120,29 @@ namespace prox
     void set_scripted(bool const & scripted) { this->m_scripted = scripted; }
     bool is_scripted() const { return this->m_scripted; }
 
-    void set_position(V const & r) { this->m_r = r; }
-    V const & get_position() const { return this->m_r; }
+    void set_position(EigenVector3<T> const& r) { this->m_r = r; }
 
-    Q const & get_orientation() const { return this->m_Q; }
-    void set_orientation(Q const & Q) { this->m_Q = tiny::unit(Q); }
+    auto const& get_position() const { return this->m_r; }
 
-    void set_velocity(V const & V) { this->m_V = V; }
-    V const & get_velocity() const { return this->m_V; }
+    auto const& get_orientation() const { return this->m_Q; }
 
-    void set_spin(V const & W) { this->m_W = W; }
-    V const & get_spin() const { return this->m_W; }
+    void set_orientation(EigenQuaternion<T> const& Q) { this->m_Q = Q.normalized(); }
 
-    void set_mass(T const & mass) { this->m_mass = mass; }
-    T const & get_mass() const { return this->m_mass; }
+    void set_velocity(EigenVector3<T> const& V) { this->m_V = V; }
 
-    void set_inertia_bf(M const & I_BF) { this->m_I_BF = I_BF; }
-    M const & get_inertia_bf() const { return this->m_I_BF; }
+    auto const& get_velocity() const { return this->m_V; }
+
+    void set_spin(EigenVector3<T> const& W) { this->m_W = W; }
+
+    auto const& get_spin() const { return this->m_W; }
+
+    void set_mass(T const& mass) { this->m_mass = mass; }
+
+    T const& get_mass() const { return this->m_mass; }
+
+    void set_inertia_bf(EigenMatrix3<T> const& I_BF) { this->m_I_BF = I_BF; }
+
+    auto const& get_inertia_bf() const { return this->m_I_BF; }
 
     void set_name(std::string const & name) { this->m_name = name; }
     std::string const & get_name() const { return this->m_name; }
@@ -172,10 +172,10 @@ namespace prox
       assert( mz < Mz || !"get_box(): min z must be less than max z");
     }
 
-    std::vector< force_callback  *> const & get_force_callbacks() const { return this->m_force_callbacks; }
-    std::vector< force_callback  *>       & get_force_callbacks()       { return this->m_force_callbacks; }
+    const auto& get_force_callbacks() const { return this->m_force_callbacks; }
 
-  };
+    auto& get_force_callbacks() { return this->m_force_callbacks; }
+};
 
 } // namespace prox
 

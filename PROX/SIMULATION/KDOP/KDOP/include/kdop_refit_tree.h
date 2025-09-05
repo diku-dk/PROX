@@ -20,16 +20,13 @@ namespace kdop
   namespace details
   {
 
-    template< typename V, size_t K, typename T>
-    inline void refit_subtree(
-                              SubTree<T,K> & branch
-                              , mesh_array::T4Mesh const & mesh
-                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
-                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
-                              , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                              , geometry::DirectionTable<V,(K/2)> const & DT
-                              )
-    {
+  template <size_t K, typename T>
+  inline void refit_subtree(SubTree<T, K>& branch, mesh_array::T4Mesh const& mesh,
+                            mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+                            mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+                            mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+                            geometry::DirectionTable<T, (K / 2)> const& DT)
+  {
       using namespace mesh_array;
 
       size_t const N = branch.m_nodes.size();
@@ -46,7 +43,7 @@ namespace kdop
           size_t      const tet_idx = node.m_start;
           Tetrahedron const Tet     = mesh.tetrahedron(tet_idx);
 
-          std::vector<V> points;
+          std::vector<EigenVector3<T>> points;
           points.resize(4);
 
           points[0](0) = X(Tet.i());
@@ -76,15 +73,12 @@ namespace kdop
         }
 
       }
+  }
 
-    }
-
-    template< typename V, size_t K, typename T>
-    inline void refit_subtree(
-                              SubTree<T,K> & super_chunk
-                              , std::vector< SubTree<T, K> > const & chunk_children
-                              )
-    {
+  template < size_t K, typename T>
+  inline void refit_subtree(SubTree<T, K>& super_chunk,
+                            std::vector< SubTree<T, K> > const& chunk_children)
+  {
       using namespace mesh_array;
 
       size_t const N = super_chunk.m_nodes.size();
@@ -116,26 +110,25 @@ namespace kdop
 
   } // end of namespace details
 
-  template< typename V, size_t K, typename T>
-  inline void refit_tree(
-                              Tree<T,K> & tree
-                             , mesh_array::T4Mesh const & mesh
-                             , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
-                             , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
-                             , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                             , sequential const & /* tag */
-                             )
+  template < size_t K, typename T>
+  inline void refit_tree(Tree<T, K>& tree, mesh_array::T4Mesh const& mesh,
+                         mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+                         mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+                         mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+                         sequential const& /* tag */
+  )
   {
-    geometry::DirectionTable<V,(K/2)> const DT = geometry::DirectionTableHelper<V,(K/2)>::make();
+      geometry::DirectionTable<T, (K / 2)> const DT
+          = geometry::DirectionTableHelper<T, (K / 2)>::make();
 
-    size_t C = tree.branches().size();
+      size_t C = tree.branches().size();
 
-    for( size_t c = 0u; c < C;++c)
-    {
-      SubTree<T,K> & branch = tree.branches()[c];
+      for (size_t c = 0u; c < C; ++c)
+      {
+          SubTree<T, K>& branch = tree.branches()[c];
 
-      details::refit_subtree<V,K,T>(branch, mesh, X, Y, Z, DT);
-    }
+          details::refit_subtree<K, T>(branch, mesh, X, Y, Z, DT);
+      }
 
     for(size_t h = tree.number_of_levels() - 1; h >= 1; --h)
     {
@@ -147,7 +140,7 @@ namespace kdop
       {
         SubTree<T,K> & super_chunk = tree.super_chunks(h - 1)[c];
 
-        details::refit_subtree<V,K,T>( super_chunk, tree.super_chunks(h) );
+        details::refit_subtree<K, T>(super_chunk, tree.super_chunks(h));
       }
     }
 

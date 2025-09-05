@@ -1,6 +1,8 @@
 #ifndef PROX_GET_EXTERNAL_FORCES_VECTOR_H
 #define PROX_GET_EXTERNAL_FORCES_VECTOR_H
 
+#include "prox_math_policy.h"
+#include "prox_update_inertia_tensor.h"
 #include <prox_force_callbacks.h>
 
 #include <tiny_is_number.h>
@@ -16,20 +18,12 @@ namespace prox
    * @param h      Upon return this parameter contains the total external forces
    *               and torques acting on the bodies in the system
    */
-  template<typename body_iterator, typename MT>
-  inline void get_external_forces_vector(
-                           body_iterator begin
-                           , body_iterator end
-                           , Gravity< MT > const & gravity
-                           , Damping< MT > const & damping
-                           , typename MT::vector6_type & h
-                           , MT const & /*tag*/
-  )
-  {
-    typedef typename MT::vector3_type     V;
-    typedef typename MT::matrix3x3_type   M;
-    typedef typename MT::block6x1_type    B6x1;
-    typedef typename MT::value_traits     VT;
+template <typename body_iterator, typename T>
+inline void get_external_forces_vector(body_iterator begin, body_iterator end,
+                                       Gravity< T > const& gravity, Damping< T > const& damping,
+                                       typename prox::MathPolicy<T>::vector6_type& h)
+{
+    typedef typename prox::MathPolicy<T>::block6x1_type B6x1;
 
     size_t const N = std::distance(begin,end);
     h.resize( N );
@@ -50,11 +44,10 @@ namespace prox
         continue;
       }
 
-      V total_force  = V::zero();
-      V total_torque = V::zero();
-
-      V force  = V::zero();
-      V torque = V::zero();
+      EigenVector3<T> total_force(0, 0, 0);
+      auto total_torque = total_force;
+      auto force = total_force;
+      auto torque = total_torque;
 
       //--- First we add global world gravity force ----------------------------
       gravity.compute_force_and_torque((*body), force, torque);
@@ -69,13 +62,11 @@ namespace prox
       total_torque += torque;
 
       //--- Third we add any local body forces that might be applied -----------
-      typename std::vector<ForceCallback<MT> * >::const_iterator callback      = body->get_force_callbacks().begin();
-      typename std::vector<ForceCallback<MT> * >::const_iterator callback_end  = body->get_force_callbacks().end();
-      for(;callback != callback_end;++callback)
+      for (const auto& callback : body->get_force_callbacks())
       {
-        (*callback)->compute_force_and_torque((*body), force, torque);
-        total_force  += force;
-        total_torque += torque;
+          callback->compute_force_and_torque((*body), force, torque);
+          total_force += force;
+          total_torque += torque;
       }
 
       assert(is_number(total_force(0)) || !"get_external_forces_vector(): Nan");
@@ -98,8 +89,8 @@ namespace prox
       b(1) = total_force(1);
       b(2) = total_force(2);
 
-      V const & w    = body->get_spin();
-      M const & I_bf = body->get_inertia_bf();
+      auto const& w = body->get_spin();
+      auto const& I_bf = body->get_inertia_bf();
 
       assert(is_number(w(0))|| !"get_external_forces_vector(): Nan");
       assert(is_number(w(1))|| !"get_external_forces_vector(): Nan");
@@ -109,12 +100,16 @@ namespace prox
       assert(is_finite(w(1))|| !"get_external_forces_vector(): Inf");
       assert(is_finite(w(2))|| !"get_external_forces_vector(): Inf");
 
-      M const R = tiny::make( body->get_orientation() );
+      auto R = body->get_orientation().toRotationMatrix();
 
-      M I;
-      detail::update_inertia_tensor<MT>( R, I_bf, I );
+      EigenMatrix3<T> I{
+          {1, 0, 0},
+          {0, 1, 0},
+          {0, 0, 1}
+      };
+      detail::update_inertia_tensor(R, I_bf, I);
 
-      V const wIw = tiny::cross( w , I*w);
+      auto const wIw = w.cross(I * w);
 
       assert(is_number(wIw(0)) || !"get_external_forces_vector(): Nan");
       assert(is_number(wIw(1)) || !"get_external_forces_vector(): Nan");
@@ -128,7 +123,7 @@ namespace prox
       b(4) = total_torque(1) - wIw(1);
       b(5) = total_torque(2) - wIw(2);
     }
-  }
+}
 }// namespace prox
 
 // PROX_GET_EXTERNAL_FORCES_VECTOR_H

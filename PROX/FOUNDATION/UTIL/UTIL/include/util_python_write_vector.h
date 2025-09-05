@@ -6,7 +6,7 @@
 #include <vector>
 #include <tiny_vector.h>
 #include <prox_rigid_body.h>
-
+#include <tiny_math_types.h>
 
 namespace util
 {
@@ -50,7 +50,7 @@ namespace util
     return python_write_vector(values, values.size());
   }
 
-  inline std::string python_write_quaternion(std::vector<tiny::MathTypes<float>::quaternion_type> QUAT)
+  inline std::string python_write_quaternion(std::vector<EigenQuaternion<float>> QUAT)
   {
       std::stringstream output;
 
@@ -58,7 +58,8 @@ namespace util
 
       for(size_t i = 0u; i < QUAT.size(); ++i)
       {
-          output << "[" << QUAT[i][0] << ", " << QUAT[i][1] << ", " << QUAT[i][2] << ", " << QUAT[i][3] << "]";
+          output << "[" << QUAT[i].w() << ", " << QUAT[i].x() << ", " << QUAT[i].y() << ", "
+                 << QUAT[i].z() << "]";
           if (i != QUAT.size()-1)
           {
               output << ", ";
