@@ -440,7 +440,7 @@ namespace rigid_body
           procedural::Noise::on()    = util::to_value<bool>(   m_config_file.get_value("procedural_noise_on",    "false") );
           procedural::Noise::scale() = util::to_value<double>( m_config_file.get_value("procedural_noise_scale", "0.001") );
 
-          procedural::make_scene<MT>(m_procedural_scene, m_obj_path, &m_engine, m_config_file);
+          procedural::make_scene<T>(m_procedural_scene, m_obj_path, &m_engine, m_config_file);
         }
 
         //--- Count how big the configuraiton we are simulating is -------------------

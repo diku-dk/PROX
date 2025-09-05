@@ -23,18 +23,10 @@ namespace procedural
    * @param params       Procedural parameter settings for controlling "some" of the name scenes. Parameters
    *                     could be size of scene or number of object, or object types etc..
    */
-  template<typename MT>
-  inline void make_scene(
-                         std::string const & scene
-                         , std::string const & obj_path
-                         , content::API * engine
-                         , util::ConfigFile const & params
-                         )
-  {
-    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+template <typename T>
+inline void make_scene(std::string const& scene, std::string const& obj_path, content::API* engine,
+                       util::ConfigFile const& params)
+{
 
     mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings();
     tetset.m_quality_ratio      = util::to_value<double>(params.get_value("tetgen_quality_ratio", "2.0"));
@@ -229,23 +221,23 @@ namespace procedural
         size_t const oscillation_motion_idx = engine->create_oscilation_scripted_motion();
 
         engine->set_scripted_oscilation_paramters(
-            oscillation_motion_idx, width * 2.0f           // amplitude
+            oscillation_motion_idx, width * 2.0f // amplitude
             ,
-            (VT::pi() * 2.0) / 2.5f  // frequency   omega = 2 pi / T; where T is the period
+            (std::numbers::pi_v<T> * 2.0) / 2.5f // frequency   omega = 2 pi / T; where T is the period
             ,
-            0.0                  // phase
+            0.0 // phase
             ,
-            1.0                  // dir x
+            1.0 // dir x
             ,
-            1.0                  // dir y
+            1.0 // dir y
             ,
-            0.0                  // dir z
+            0.0 // dir z
             ,
-            0.0                  // ref x
+            0.0 // ref x
             ,
-            0.0                  // ref y
+            0.0 // ref y
             ,
-            0.0                  // ref z
+            0.0 // ref z
         );
 
         size_t const keyframe_motion_idx = engine->create_key_frame_scripted_motion();

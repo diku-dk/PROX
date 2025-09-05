@@ -29,11 +29,6 @@
         template<typename T>
         class GeometryHandleEigen
         {
-        public:
-            /*using T = typename MT::real_type;
-            using V = typename MT::vector3_type;
-            using Q = typename MT::quaternion_type;
-            using VT = typename MT::value_traits;*/
 
         public:
             T m_m;    ///< Total mass

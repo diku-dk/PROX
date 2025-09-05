@@ -132,7 +132,7 @@ public:
 
         m_engine.set_parameters_from_config_file(cfg_file);
 
-        procedural::make_scene<MT>(m_procedural_scene, m_obj_path, &m_engine, m_config_file);
+        procedural::make_scene<T>(m_procedural_scene, m_obj_path, &m_engine, m_config_file);
 
         if (m_xml_record)
         {
