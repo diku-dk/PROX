@@ -683,15 +683,16 @@ namespace procedural
                                           ,
                                           mat_info);
 
-        procedural::make_sphere_packing<MT>(engine, V::zero(), Q::identity(), 0.1f // minimum sphere radius
-                                            ,
-                                            0.5f // maximum sphere radius
-                                            ,
-                                            5.0f // width x height x depth of space to fill up
-                                            ,
-                                            5.0f, 5.0f, number_of_spheres // total number of sphere objects
-                                            ,
-                                            mat_info);
+        procedural::make_sphere_packing<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(),
+                                           0.1f // minimum sphere radius
+                                           ,
+                                           0.5f // maximum sphere radius
+                                           ,
+                                           5.0f // width x height x depth of space to fill up
+                                           ,
+                                           5.0f, 5.0f, number_of_spheres // total number of sphere objects
+                                           ,
+                                           mat_info);
     }
     if (scene.compare("sliding_point") == 0)
     {

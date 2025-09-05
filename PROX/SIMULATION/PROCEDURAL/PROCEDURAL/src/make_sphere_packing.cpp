@@ -7,17 +7,13 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_sphere_packing(content::API* engine, typename MT::vector3_type const& position,
-                         typename MT::quaternion_type const& orientation, typename MT::real_type const& min_radius,
-                         typename MT::real_type const& max_radius, typename MT::real_type const& width,
-                         typename MT::real_type const& height, typename MT::real_type const& depth,
-                         size_t const& number_of_spheres, MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_sphere_packing(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                         const T& min_radius, const T& max_radius, const T& width, const T& height, const T& depth,
+                         size_t const& number_of_spheres, MaterialInfo<T> mat_info)
 {
     using std::ceil;
     using std::floor;
-
-    typedef typename MT::real_type T;
 
     T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
     size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
@@ -54,8 +50,8 @@ void make_sphere_packing(content::API* engine, typename MT::vector3_type const& 
                 const EigenVector3<T> T_m2l = EigenVector3<T>(x, y, z);
                 const EigenQuaternion<T> Q_m2l = Rotateu(-std::numbers::pi_v<T> * 0.5f, EigenVector3<T>(1, 0, 0));
 
-                const EigenVector3<T> T_l2w = toEigen(position);
-                const EigenQuaternion<T> Q_l2w = toEigen(orientation);
+                const EigenVector3<T> T_l2w = (position);
+                const EigenQuaternion<T> Q_l2w = (orientation);
 
                 EigenVector3<T> T_b2w;
                 EigenQuaternion<T> Q_b2w;
@@ -67,12 +63,10 @@ void make_sphere_packing(content::API* engine, typename MT::vector3_type const& 
             }
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_sphere_packing<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                       MTf::quaternion_type const& orientation, MTf::real_type const& min_radius,
-                                       MTf::real_type const& max_radius, MTf::real_type const& width,
-                                       MTf::real_type const& height, MTf::real_type const& depth,
-                                       size_t const& number_of_spheres, MaterialInfo<MTf::real_type> mat_info);
+template void make_sphere_packing<float>(content::API* engine, const EigenVector3<float>& position,
+                                         const EigenQuaternion<float>& orientation, const float& min_radius,
+                                         const float& max_radius, const float& width, const float& height,
+                                         const float& depth, size_t const& number_of_spheres,
+                                         MaterialInfo<float> mat_info);
 
 } //namespace procedural

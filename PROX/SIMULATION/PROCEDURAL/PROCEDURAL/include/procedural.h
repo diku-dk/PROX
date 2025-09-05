@@ -148,12 +148,10 @@ void make_box_container(content::API* engine, const EigenVector3<T>& position, c
                         const T& width, const T& height, const T& depth, const T& wall_thickness,
                         MaterialInfo<T> mat_info);
 
-template <typename MT>
-void make_sphere_packing(content::API* engine, typename MT::vector3_type const& position,
-                         typename MT::quaternion_type const& orientation, typename MT::real_type const& min_radius,
-                         typename MT::real_type const& max_radius, typename MT::real_type const& width,
-                         typename MT::real_type const& height, typename MT::real_type const& depth,
-                         size_t const& number_of_spheres, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_sphere_packing(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                         const T& min_radius, const T& max_radius, const T& width, const T& height, const T& depth,
+                         size_t const& number_of_spheres, MaterialInfo<T> mat_info);
 
 template <typename MT>
 void make_sliding_point(content::API* engine, typename MT::vector3_type const& position,
