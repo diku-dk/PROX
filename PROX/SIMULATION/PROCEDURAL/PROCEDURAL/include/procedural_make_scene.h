@@ -97,7 +97,8 @@ namespace procedural
 
         auto const layers = util::to_value<unsigned int>(params.get_value("procedural_param_1", "5"));
 
-        procedural::make_stack<MT>(engine, V::make(0, 0, 0), Q::identity(), 1, layers, mat_info);
+        procedural::make_stack<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), 1, layers,
+                                  mat_info);
     }
     if (scene.compare("wall") == 0)
     {

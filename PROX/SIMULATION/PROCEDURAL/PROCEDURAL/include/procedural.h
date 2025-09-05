@@ -92,10 +92,9 @@ void make_tetrahedral_stack(content::API* engine, typename MT::vector3_type cons
                             typename MT::quaternion_type const& orientation, typename MT::real_type const& cube_width,
                             typename MT::real_type const& cube_height, typename MT::real_type const& cube_depth,
                             size_t const& sub_divisions, MaterialInfo<typename MT::real_type> mat_info);
-template <typename MT>
-void make_stack(content::API* engine, typename MT::vector3_type const& position,
-                typename MT::quaternion_type const& orientation, typename MT::real_type const& stone_dim,
-                size_t const& layers, MaterialInfo<typename MT::real_type> mat_info);
+template <typename T>
+void make_stack(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                const T& stone_dim, size_t const& layers, MaterialInfo<T> mat_info);
 
 template <typename T>
 void make_heavy_sphere_light_sphere(content::API* engine, const EigenVector3<T>& position,
