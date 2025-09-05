@@ -109,16 +109,14 @@ void make_spheres(content::API* engine, typename MT::vector3_type const& positio
                   typename MT::quaternion_type const& orientation, typename MT::real_type const& radius,
                   MaterialInfo<typename MT::real_type> mat_info);
 
-template <typename MT>
-void make_tetrahedron(content::API* engine, typename MT::vector3_type const& one, typename MT::vector3_type const& two,
-                      typename MT::vector3_type const& three, typename MT::vector3_type const& four,
-                      typename MT::vector3_type const& position, typename MT::quaternion_type const& orientation,
-                      MaterialInfo<typename MT::real_type> mat_info, bool const fixed);
+template <typename T>
+void make_tetrahedron(content::API* engine, const EigenVector3<T>& one, const EigenVector3<T>& two,
+                      const EigenVector3<T>& three, const EigenVector3<T>& four, const EigenVector3<T>& position,
+                      const EigenQuaternion<T>& orientation, MaterialInfo<T> mat_info, bool const fixed = false);
 
-template <typename MT>
-void make_tetrahedron(content::API* engine, typename MT::vector3_type const& position,
-                      typename MT::quaternion_type const& orientation, MaterialInfo<typename MT::real_type> mat_info,
-                      bool const fixed = false);
+template <typename T>
+void make_tetrahedron(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                      MaterialInfo<T> mat_info, bool const fixed = false);
 
 template <typename T>
 void make_obj(content::API* engine, std::string const& name, const T& scale, const EigenVector3<T>& position,

@@ -5,19 +5,16 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_tetrahedron(content::API* engine, typename MT::vector3_type const& one, typename MT::vector3_type const& two,
-                      typename MT::vector3_type const& three, typename MT::vector3_type const& four,
-                      typename MT::vector3_type const& position, typename MT::quaternion_type const& orientation,
-                      MaterialInfo<typename MT::real_type> mat_info, bool const fixed = false)
-{
-    typedef typename MT::real_type T;
+template <typename T>
+void make_tetrahedron(content::API* engine, const EigenVector3<T>& one, const EigenVector3<T>& two,
+                      const EigenVector3<T>& three, const EigenVector3<T>& four, const EigenVector3<T>& position,
+                      const EigenQuaternion<T>& orientation, MaterialInfo<T> mat_info, bool const fixed = false)
+{;
 
     T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
     size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
-    GeometryHandleEigen<T> tet_handle
-        = create_geometry_handle_tetrahedron<T>(engine, toEigen(one), toEigen(two), toEigen(three), toEigen(four));
+    GeometryHandleEigen<T> tet_handle = create_geometry_handle_tetrahedron<T>(engine, (one), (two), (three), (four));
 
     const EigenVector3<T> T_b2m = (tet_handle.Tb2m());
     const EigenQuaternion<T> Q_b2m = (tet_handle.Qb2m());
@@ -25,8 +22,8 @@ void make_tetrahedron(content::API* engine, typename MT::vector3_type const& one
     const EigenVector3<T> T_m2l = EigenVector3<T>(0, 0, 0);
     const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
-    const EigenVector3<T> T_l2w = toEigen(position);
-    const EigenQuaternion<T> Q_l2w = toEigen(orientation);
+    const EigenVector3<T> T_l2w = (position);
+    const EigenQuaternion<T> Q_l2w = (orientation);
 
     EigenVector3<T> T_b2w;
     EigenQuaternion<T> Q_b2w;
@@ -36,31 +33,26 @@ void make_tetrahedron(content::API* engine, typename MT::vector3_type const& one
     create_rigid_body<T>(engine, T_b2w, Q_b2w, tet_handle, mid, stone_density, fixed);
 }
 
-using MTf = tiny::MathTypes<float>;
+template void make_tetrahedron<float>(content::API* engine, const EigenVector3<float>& one,
+                                      const EigenVector3<float>& two, const EigenVector3<float>& three,
+                                      const EigenVector3<float>& four, const EigenVector3<float>& position,
+                                      const EigenQuaternion<float>& orientation, MaterialInfo<float> mat_info,
+                                      bool const fixed);
 
-template void make_tetrahedron<MTf>(content::API* engine, typename MTf::vector3_type const& one,
-                                    typename MTf::vector3_type const& two, typename MTf::vector3_type const& three,
-                                    typename MTf::vector3_type const& four, MTf::vector3_type const& position,
-                                    MTf::quaternion_type const& orientation, MaterialInfo<MTf::real_type> mat_info,
-                                    bool const fixed);
-
-template <typename MT>
-void make_tetrahedron(content::API* engine, typename MT::vector3_type const& position,
-                      typename MT::quaternion_type const& orientation, MaterialInfo<typename MT::real_type> mat_info,
-                      bool const fixed = false)
+template <typename T>
+void make_tetrahedron(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                      MaterialInfo<T> mat_info, bool const fixed = false)
 {
-    typedef typename MT::vector3_type V;
+    EigenVector3<T> one = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> two = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> three = EigenVector3<T>(0.0, 0.0, 1.0);
+    EigenVector3<T> four = EigenVector3<T>(0.0, 1.0, 0.0);
 
-    V one = V::make(0.0, 0.0, 0.0);
-    V two = V::make(1.0, 0.0, 0.0);
-    V three = V::make(0.0, 0.0, 1.0);
-    V four = V::make(0.0, 1.0, 0.0);
-
-    make_tetrahedron<MT>(engine, one, two, three, four, position, orientation, mat_info);
+    make_tetrahedron<T>(engine, one, two, three, four, position, orientation, mat_info);
 }
 
-template void make_tetrahedron<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                    MTf::quaternion_type const& orientation, MaterialInfo<MTf::real_type> mat_info,
-                                    bool const fixed);
+template void make_tetrahedron<float>(content::API* engine, const EigenVector3<float>& position,
+                                      const EigenQuaternion<float>& orientation, MaterialInfo<float> mat_info,
+                                      bool const fixed);
 
 } //namespace procedural
