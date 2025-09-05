@@ -43,23 +43,13 @@ namespace procedural
      *                                this number then the parser only reads the
      *                                number of grains in the data file.
      */
-    template<typename MT>
-    void parese_grain_data_file(
-                                content::API *  engine
-                                , std::string                          const & filename
-                                , typename MT::real_type               const & voxel_size
-                                , typename MT::real_type               const & grain_scale
-                                , size_t                               const & max_number_of_grains
-                                , std::vector< GeometryHandle<MT> >          & grains
-                                , typename MT::real_type                     & grain_size
-                                )
-    {
+  template <typename T>
+  void parese_grain_data_file(content::API* engine, std::string const& filename, const T& voxel_size,
+                              const T& grain_scale, size_t const& max_number_of_grains,
+                              std::vector< GeometryHandleEigen<T> >& grains, T& grain_size)
+  {
       using std::floor;
       using std::ceil;
-
-      typedef typename MT::vector3_type     V;
-      typedef typename MT::value_traits     VT;
-      typedef typename MT::real_type        T;
 
       std::ifstream file;
       file.open(filename.c_str());
@@ -77,8 +67,10 @@ namespace procedural
 
       unsigned int i = 0u;  // counter for how many grains have been read so far
 
-      EigenVector3<T> max_coord = EigenVector3<T>( std::numeric_limits<typename MT::real_type>::lowest(),std::numeric_limits<typename MT::real_type>::lowest(),std::numeric_limits<typename MT::real_type>::lowest()    );
-      EigenVector3<T> min_coord = EigenVector3<T>( std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max(),std::numeric_limits<typename MT::real_type>::max() );
+      EigenVector3<T> max_coord = EigenVector3<T>(std::numeric_limits<T>::lowest(), std::numeric_limits<T>::lowest(),
+                                                  std::numeric_limits<T>::lowest());
+      EigenVector3<T> min_coord = EigenVector3<T>(std::numeric_limits<T>::max(), std::numeric_limits<T>::max(),
+                                                  std::numeric_limits<T>::max());
 
       while (!file.eof() && i < max_number_of_grains)
       {
@@ -109,8 +101,10 @@ namespace procedural
         while (!stream.eof())
         {
           EigenVector3<T> p;
-            V pTmp = fromEigen(p);
-            stream >> pTmp;
+          T x, y, z;
+          stream >> x >> y >> z;
+          p = EigenVector3<T>(x, y, z);
+          //stream >> p;
 
           p = p * (voxel_size * grain_scale);
 
@@ -127,8 +121,7 @@ namespace procedural
         }
 
         GeometryHandleEigen<T> const handle = create_geometry_handle_convex<T>(engine, vertices);
-        GeometryHandle<MT> handleG = geometryHandleFromEigen<MT>(handle);
-        grains.push_back(handleG);
+        grains.push_back(handle);
 
         ++i;
       }
@@ -137,56 +130,35 @@ namespace procedural
 
       EigenVector3<T> vec = max_coord - min_coord;
 
-      V const grain_bounding_box = fromEigen(vec);
+      const EigenVector3<T> grain_bounding_box = (vec);
 
-      grain_size = tiny::max( grain_bounding_box );
+      grain_size = (grain_bounding_box).maxCoeff();
 
       {
         util::Log logging;
 
         logging << "parese_grain_data_file(): Grain size = " << grain_size << util::Log::newline();
       }
-    }
+  }
 
   }// end namespace details
 
-  template<typename MT>
-  void make_grain_packing(
-                          content::API *  engine
-                          , typename MT::vector3_type            const & position
-                          , typename MT::quaternion_type         const & orientation
-                          , std::string                          const & filename
-                          , typename MT::real_type               const & voxel_size
-                          , typename MT::real_type               const & grain_scale
-                          , typename MT::real_type               const & number_of_grains_in_x
-                          , typename MT::real_type               const & number_of_grains_in_z
-                          , size_t                               const & total_number_of_grains
-                          , typename MT::real_type               const & grain_density
-                          , MaterialInfo<typename MT::real_type> const & mat_info
-                          , typename MT::real_type                     & grain_size
-                          )
+  template <typename T>
+  void make_grain_packing(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
+                          std::string const& filename, const T& voxel_size, const T& grain_scale,
+                          const T& number_of_grains_in_x, const T& number_of_grains_in_z,
+                          size_t const& total_number_of_grains, const T& grain_density, MaterialInfo<T> const& mat_info,
+                          T& grain_size)
   {
     using std::floor;
     using std::ceil;
 
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type  Q;
-    typedef typename MT::value_traits    VT;
+    std::vector< GeometryHandleEigen<T> > grains;
 
-    std::vector< GeometryHandle<MT> > grains;
+    details::parese_grain_data_file(engine, filename, voxel_size, grain_scale, total_number_of_grains, grains,
+                                    grain_size);
 
-    details::parese_grain_data_file(  engine
-                                    , filename
-                                    , voxel_size
-                                    , grain_scale
-                                    , total_number_of_grains
-                                    , grains
-                                    , grain_size
-                                    );
-
-
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
     unsigned int const I = number_of_grains_in_x;
     unsigned int const K = number_of_grains_in_z;
@@ -207,36 +179,21 @@ namespace procedural
 
           int choice = grain_count % grains.size();
 
-          V const T_b2m = grains[choice].Tb2m();
-          Q const Q_b2m = grains[choice].Qb2m();
+          const EigenVector3<T> T_b2m = grains[choice].Tb2m();
+          const EigenQuaternion<T> Q_b2m = grains[choice].Qb2m();
 
-          V const T_m2l = V::make( x, y, z );
-          Q const Q_m2l = Q::identity();
+          const EigenVector3<T> T_m2l = EigenVector3<T>(x, y, z);
+          const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
-          V const T_l2w = position;
-          Q const Q_l2w = orientation;
+          const EigenVector3<T> T_l2w = position;
+          const EigenQuaternion<T> Q_l2w = orientation;
 
-          V T_b2w;
-          Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-          compute_body_to_world_transform<MT>(
-                                              T_b2m
-                                              , Q_b2m
-                                              , T_m2l
-                                              , Q_m2l
-                                              , T_l2w
-                                              , Q_l2w
-                                              , T_b2w
-                                              , Q_b2w
-                                              );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-          create_rigid_body<MT>(  engine
-                                , T_b2w
-                                , Q_b2w
-                                , grains[choice]
-                                , mid
-                                , grain_density
-                                );
+          create_rigid_body<T>(engine, T_b2w, Q_b2w, grains[choice], mid, grain_density);
           ++grain_count;
         }
   }

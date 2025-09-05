@@ -42,12 +42,12 @@ namespace procedural
     if(number_of_names==0)
       return;
 
-    std::vector< GeometryHandle<MT> > obj_handle;
+    std::vector<GeometryHandleEigen<T>> obj_handle;
     obj_handle.resize(number_of_names);
 
     for (unsigned int c=0;c< number_of_names; ++c)
     {
-      obj_handle[c] = create_geometry_handle_obj<MT>( engine, obj_names[c], object_size, false, tetset);
+        obj_handle[c] = create_geometry_handle_obj<T>(engine, obj_names[c], object_size, false, tetset);
     }
 
     T const width  = number_of_objects_in_x*object_size + (number_of_objects_in_x-1u)*spacing;
@@ -74,8 +74,8 @@ namespace procedural
 
           int choice = obj_count % number_of_names;
 
-          V const T_b2m = obj_handle[choice].Tb2m();
-          Q const Q_b2m = obj_handle[choice].Qb2m();
+          V const T_b2m = fromEigen(obj_handle[choice].Tb2m());
+          Q const Q_b2m = fromEigen(obj_handle[choice].Qb2m());
 
           V const T_m2l = V::make( x, y, z );
           Q const Q_m2l = Q::identity();
@@ -97,14 +97,7 @@ namespace procedural
                                               , Q_b2w
                                               );
 
-          create_rigid_body<MT>(
-                                engine
-                                , T_b2w
-                                , Q_b2w
-                                , obj_handle[choice]
-                                , mid
-                                , stone_density
-                                );
+          create_rigid_body<T>(engine, toEigen(T_b2w), toEigen(Q_b2w), obj_handle[choice], mid, stone_density);
           ++obj_count;
         }
   }

@@ -51,20 +51,9 @@ namespace rigid_body
 
         float grain_size = 1.0f;
 
-        procedural::make_grain_packing<MT>(
-                                           engine
-                                           , V::zero()
-                                           , Q::identity()
-                                           , grain_data_file
-                                           , voxel_size
-                                           , grain_scale
-                                           , number_of_grains_in_x
-                                           , number_of_grains_in_z
-                                           , total_number_of_grains
-                                           , grain_density
-                                           , mat_info
-                                           , grain_size
-                                           );
+        procedural::make_grain_packing<T>(
+            engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), grain_data_file, voxel_size, grain_scale,
+            number_of_grains_in_x, number_of_grains_in_z, total_number_of_grains, grain_density, mat_info, grain_size);
 
         float const container_width  = 1.0f * number_of_grains_in_x  * grain_size;
         float const container_height = 1.0f * number_of_grains_in_y  * grain_size;
