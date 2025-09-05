@@ -18,7 +18,7 @@ namespace geometry
          * @param normal    The contact point normal in WCS.
          * @param distance  The penetration distance measure, negative if overlapping and positive if separation.
          */
-        virtual void operator()(V const& point, V const& normal, const T& distance) final
+        void operator()(const auto& point, const auto& normal, const auto& distance)
         {
             tempParenthesisOperatorImpl(toEigen(point), toEigen(normal), distance);
         }
