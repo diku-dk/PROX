@@ -61,15 +61,12 @@ namespace geometry
 
 
   public:
-    EigenVector3<T> get_support_point(EigenVector3<T> dir) const
-    {
-        auto dirLen = dir.norm();
-        assert(is_number(dirLen) && is_finite(dirLen));
-        if (dirLen > 0)
-        {
-            return (m_radius / dirLen) * dir + (m_center);
-        }
-        return (m_center) + EigenVector3<T>{m_radius, 0, 0};
+      EigenVector3<T> get_support_point(EigenVector3<T> dir) const override
+      {
+          auto dirLen = dir.norm();
+          assert(is_number(dirLen) && is_finite(dirLen));
+          if (dirLen > 0) { return (m_radius / dirLen) * dir + (m_center); }
+          return (m_center) + EigenVector3<T>{m_radius, 0, 0};
     }
 
     T get_scale() const

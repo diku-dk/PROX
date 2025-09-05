@@ -1,6 +1,7 @@
 #ifndef PROX_COLLISION_DETECTION_H
 #define PROX_COLLISION_DETECTION_H
 
+#include "tiny_math_types.h"
 #include <broad.h>
 #include <broad_statistics.h>
 
@@ -91,23 +92,21 @@ namespace prox
        * @param n    The unit normal of the new contact point.
        * @param d    The penetration distance meassure of the contact point.
        */
-      void operator()( V const & p, V const & n, T const & d)
+      void tempParenthesisOperatorImpl(const EigenVector3<T>& point, const EigenVector3<T>& normal, const T& distance)
       {
-        assert( this->m_body_i              || !"operator(): body i is null" );
-        assert( this->m_body_j              || !"operator(): body j is null" );
-        assert( this->m_results             || !"operator(): results is null");
-        assert( tiny::norm(n) > 0  || !"operator(): normal is zero" );
+          assert(this->m_body_i || !"operator(): body i is null");
+          assert(this->m_body_j || !"operator(): body j is null");
+          assert(this->m_results || !"operator(): results is null");
 
+          contact_type contact;
 
-        contact_type contact;
+          contact.set_position(point);
+          contact.set_depth(distance);
+          contact.set_normal(normal);
+          contact.set_body_i(this->m_body_i);
+          contact.set_body_j(this->m_body_j);
 
-        contact.set_position( p );
-        contact.set_depth( d );
-        contact.set_normal( n );
-        contact.set_body_i( this->m_body_i );
-        contact.set_body_j( this->m_body_j );
-
-        this->m_results->push_back( contact );
+          this->m_results->push_back(contact);
       }
     };
 

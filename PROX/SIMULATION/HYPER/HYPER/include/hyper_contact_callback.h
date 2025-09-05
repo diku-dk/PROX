@@ -74,7 +74,7 @@ namespace hyper
        * @param n    The unit normal of the new contact point.
        * @param d    The penetration distance meassure of the contact point.
        */
-      void operator()( V const & p, V const & n, T const & d)
+      void tempParenthesisOperatorImpl(const EigenVector3<T>& point, const EigenVector3<T>& normal, const T& depth)
       {
         assert( this->m_body_i  || !"operator(): body i is null");
         assert( this->m_body_j  || !"operator(): body j is null");
@@ -82,9 +82,9 @@ namespace hyper
 
         contact_type contact;
 
-        contact.set_position( p );
-        contact.set_depth( d );
-        contact.set_normal( n );
+        contact.set_position(point);
+        contact.set_depth(depth);
+        contact.set_normal(normal);
         contact.set_body_i( this->m_body_i );
         contact.set_body_j( this->m_body_j );
 

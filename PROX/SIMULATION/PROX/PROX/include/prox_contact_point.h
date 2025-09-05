@@ -4,9 +4,12 @@
 #include <prox_rigid_body.h>
 
 #include <tiny_precision.h>   // needed for working precision
+#include <tiny_math_types.h>
 
 #include <cmath> // needed for std::fabs
 #include <cassert> // needed for assert
+
+/// TODO: DEDUPLICATE FROM hyper_contact_point.h
 
 namespace prox
 {
@@ -19,9 +22,9 @@ namespace prox
     typedef typename M::real_type       real_type;
     typedef typename M::vector3_type    vector3_type;
     typedef          RigidBody<M>       body_type;
+    using T = real_type;
 
-  protected:
-
+protected:
     vector3_type     m_position;
     vector3_type     m_normal;
     real_type        m_depth;
@@ -64,13 +67,17 @@ namespace prox
 
     vector3_type const & get_position() const  {  return this->m_position; }
     vector3_type const & get_normal()   const  {  return this->m_normal;   }
-    real_type    const & get_depth()    const  {  return this->m_depth;    }
-    body_type    const * get_body_i()    const {  return this->m_body_i;   }
-    body_type    const * get_body_j()    const {  return this->m_body_j;   }
+    real_type const& get_depth() const { return this->m_depth; }
 
-    void set_position(vector3_type const & p)  {  this->m_position = p;    }
-    void set_normal(vector3_type const & n)    {  this->m_normal = n;      }
-    void set_depth(real_type const & d)        {  this->m_depth = d;       }
+    body_type const* get_body_i() const { return this->m_body_i; }
+
+    body_type const* get_body_j() const { return this->m_body_j; }
+
+    void set_position(const EigenVector3<T>& pos) { m_position = fromEigen(pos); }
+
+    void set_normal(const EigenVector3<T>& normal) { m_normal = fromEigen(normal); }
+
+    void set_depth(const T& newDepth) { m_depth = newDepth; }
 
     void set_body_i(body_type const * body_i)
     {
