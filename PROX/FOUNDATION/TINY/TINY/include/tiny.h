@@ -15,7 +15,6 @@
 #include <tiny_functions.h>
 #include <tiny_value_traits.h>
 #include <tiny_compute_contiguous_angle_interval.h>
-#include <tiny_invert4x4.h>
 
 //------------------------------------------------
 #include <tiny_type_traits.h>

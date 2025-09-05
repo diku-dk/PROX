@@ -16,19 +16,6 @@ namespace prox
       using T = typename MT::real_type;
       using VT = typename MT::value_traits;
 
-  protected:
-      stepper_type m_stepper;              ///< The time stepper type.
-      T m_min_gap; ///< The minimum allowable gap (=penetration) that will not cause stabilization to kick in
-      T m_max_gap; ///< The maximum possible gap (=penetration) to correct for during stabilization
-      T m_gap_reduction; ///< The amount of gap (=penetration) to reduce during stabilization
-      bool m_pre_stabilization; ///< Flag to turn pre stabilization on/off
-      bool m_post_stabilization; ///< Flag to turn post stabilization on/off
-      bool
-          m_contact_reduction; ///< Flat to turn on contact filter reduction, post-filter that removed redundant contacts.
-      bool m_bounce_on; ///< Flag to turn bouncing completely off, default bounce is on.
-
-  public:
-
     stepper_type const & stepper()       const { return this->m_stepper; }
 
     T const & min_gap()       const { return this->m_min_gap; }
@@ -93,8 +80,6 @@ namespace prox
       this->m_bounce_on = value;
     }
 
-  public:
-
     StepperParams()
     : m_stepper(semi_implicit)
     , m_min_gap(VT::numeric_cast(0.001f) )
@@ -106,6 +91,16 @@ namespace prox
     , m_bounce_on(true)
     {}
 
+private:
+    stepper_type m_stepper;              ///< The time stepper type.
+    T m_min_gap; ///< The minimum allowable gap (=penetration) that will not cause stabilization to kick in
+    T m_max_gap; ///< The maximum possible gap (=penetration) to correct for during stabilization
+    T m_gap_reduction; ///< The amount of gap (=penetration) to reduce during stabilization
+    bool m_pre_stabilization; ///< Flag to turn pre stabilization on/off
+    bool m_post_stabilization; ///< Flag to turn post stabilization on/off
+    bool
+        m_contact_reduction; ///< Flat to turn on contact filter reduction, post-filter that removed redundant contacts.
+    bool m_bounce_on; ///< Flag to turn bouncing completely off, default bounce is on.
   };
 
 } // namespace prox
