@@ -318,8 +318,8 @@ namespace procedural
 
         // A funnel is 1.0x0.34x1.0
         // It is also upside-down.
-        procedural::make_obj<MT>(engine, obj_path + "funnel.obj", funnel_size, V::make(0, funnel_height, 0),
-                                 Q::Rz(VT::pi()), mat_info, true, false, "Stone", tetset);
+        procedural::make_obj<T>(engine, obj_path + "funnel.obj", funnel_size, EigenVector3<T>(0, funnel_height, 0),
+                                Rotatez(std::numbers::pi_v<T>), mat_info, true, false, "Stone", tetset);
 
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "dims.obj");
@@ -407,9 +407,9 @@ namespace procedural
         // A glass is 0.89x1.0x0.89
         // Draw glass second because it may be see through and will blend only
         // with the rest of the scene if drawn last.
-        procedural::make_obj<MT>(engine, obj_path + "glass.obj", large_glass_size,
-                                 V::make(0, 0.5 * large_glass_size, 0), Q::identity(), mat_info, true, false, "Stone",
-                                 tetset);
+        procedural::make_obj<T>(engine, obj_path + "glass.obj", large_glass_size,
+                                EigenVector3<T>(0, 0.5 * large_glass_size, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                true, false, "Stone", tetset);
 
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "glass.obj");
@@ -437,9 +437,9 @@ namespace procedural
         // A glass is 0.89x1.0x0.89
         // Draw glass second because it may be see through and will blend only
         // with the rest of the scene if drawn last.
-        procedural::make_obj<MT>(engine, obj_path + "glass.obj", large_glass_size,
-                                 V::make(0, 0.5 * large_glass_size, 0), Q::identity(), mat_info, true, false, "Stone",
-                                 tetset);
+        procedural::make_obj<T>(engine, obj_path + "glass.obj", large_glass_size,
+                                EigenVector3<T>(0, 0.5 * large_glass_size, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                true, false, "Stone", tetset);
 
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "dims.obj");
@@ -458,8 +458,8 @@ namespace procedural
         procedural::make_sphere_cube<MT>(engine, V::make(0, glass_scale + sphere_radius * cube_width, 0), Q::identity(),
                                          sphere_radius, cube_width, mat_info);
 
-        procedural::make_obj<MT>(engine, obj_path + "glass.obj", glass_scale, V::make(0, 0.5 * glass_scale, 0),
-                                 Q::identity(), mat_info, true, false, "Cannonball", tetset);
+        procedural::make_obj<T>(engine, obj_path + "glass.obj", glass_scale, EigenVector3<T>(0, 0.5 * glass_scale, 0),
+                                EigenQuaternion<T>::Identity(), mat_info, true, false, "Cannonball", tetset);
 
         procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
                                    ground_width, 1.0f, ground_width);
@@ -536,8 +536,8 @@ namespace procedural
         procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
                                    ground_size, 1.0f, ground_size);
 
-        procedural::make_obj<MT>(engine, obstacle_obj_filename, obstacle_scale, V::make(0, obstacle_height, 0),
-                                 Q::Rz(0), mat_info, false, false, "Cannonball", tetset);
+        procedural::make_obj<T>(engine, obstacle_obj_filename, obstacle_scale, EigenVector3<T>(0, obstacle_height, 0),
+                                Rotatez<T>(0), mat_info, false, false, "Cannonball", tetset);
 
         std::vector<std::string> obj_names;
         obj_names.push_back(objects_obj_filename);
@@ -625,8 +625,8 @@ namespace procedural
         procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info, 10.0f,
                                    1.0f, 10.0f);
 
-        procedural::make_obj<MT>(engine, obj_path + "funnel.obj", 4.25, V::make(0, 5, 0), Q::Rz(VT::pi()), mat_info,
-                                 true, false, "Stone", tetset);
+        procedural::make_obj<T>(engine, obj_path + "funnel.obj", 4.25, EigenVector3<T>(0, 5, 0),
+                                Rotatez(std::numbers::pi_v<T>), mat_info, true, false, "Stone", tetset);
 
         auto const sphere_radius = util::to_value<float>(params.get_value("procedural_param_1", "0.2"));
         auto const spheres_width = util::to_value<unsigned int>(params.get_value("procedural_param_2", "5"));
@@ -651,9 +651,9 @@ namespace procedural
         // A glass is 0.89x1.0x0.89
         // Draw glass second because it may be see through and will blend only
         // with the rest of the scene if drawn last.
-        procedural::make_obj<MT>(engine, obj_path + "glass.obj", large_glass_size,
-                                 V::make(0, 0.5 * large_glass_size, 0), Q::identity(), mat_info, true, false, "Stone",
-                                 tetset);
+        procedural::make_obj<T>(engine, obj_path + "glass.obj", large_glass_size,
+                                EigenVector3<T>(0, 0.5 * large_glass_size, 0), EigenQuaternion<T>::Identity(), mat_info,
+                                true, false, "Stone", tetset);
 
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "propella.obj");

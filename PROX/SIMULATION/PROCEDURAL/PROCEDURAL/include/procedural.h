@@ -125,11 +125,10 @@ void make_tetrahedron(content::API* engine, typename MT::vector3_type const& pos
                       typename MT::quaternion_type const& orientation, MaterialInfo<typename MT::real_type> mat_info,
                       bool const fixed = false);
 
-template <typename MT>
-void make_obj(content::API* engine, std::string const& name, typename MT::real_type const& scale,
-              typename MT::vector3_type const& position, typename MT::quaternion_type const& orientation,
-              MaterialInfo<typename MT::real_type> mat_info, bool const fixed = false, bool const blind_copy = false,
-              std::string const& material = "Stone",
+template <typename T>
+void make_obj(content::API* engine, std::string const& name, const T& scale, const EigenVector3<T>& position,
+              const EigenQuaternion<T>& orientation, MaterialInfo<T> mat_info, bool const fixed = false,
+              bool const blind_copy = false, std::string const& material = "Stone",
               mesh_array::TetGenSettings = mesh_array::tetgen_default_settings());
 
 template <typename T>
