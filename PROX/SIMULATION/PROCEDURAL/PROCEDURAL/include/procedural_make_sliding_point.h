@@ -12,22 +12,15 @@
 namespace procedural
 {
 
-  template<typename MT>
-  inline void make_sliding_point(
-                                 content::API *  engine
-                                 , typename MT::vector3_type const & position
-                                 , typename MT::quaternion_type const & orientation
-                                 , typename MT::real_type const & scene_size
-                                 , MaterialInfo<typename MT::real_type> const & mat_info
-                                 , bool const & use_spike = true
-                                 , bool const & use_wedge = true
-                                 , mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings()
-                                 )
-  {
+template <typename T>
+inline void make_sliding_point(content::API* engine, const EigenVector3<T>& position,
+                               const EigenQuaternion<T>& orientation, const T& scene_size,
+                               MaterialInfo<T> const& mat_info, bool const& use_spike = true,
+                               bool const& use_wedge = true,
+                               mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings())
+{
     using std::floor;
     using std::ceil;
-
-    typedef typename MT::real_type T;
 
     T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
     size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
@@ -53,8 +46,8 @@ namespace procedural
       const EigenVector3<T> T_m2l = EigenVector3<T>(H, H, 0.0);
       const EigenQuaternion<T> Q_m2l = Rotatex(std::numbers::pi_v<T>);
 
-      const EigenVector3<T> T_l2w = toEigen(position);
-      const EigenQuaternion<T> Q_l2w = toEigen(orientation);
+      const EigenVector3<T> T_l2w = (position);
+      const EigenQuaternion<T> Q_l2w = (orientation);
 
       EigenVector3<T> T_b2w;
       EigenQuaternion<T> Q_b2w;
@@ -87,8 +80,8 @@ namespace procedural
       const EigenVector3<T> T_m2l = EigenVector3<T>(-H, H, 0.0);
       const EigenQuaternion<T> Q_m2l = Rotatex(std::numbers::pi_v<T>);
 
-      const EigenVector3<T> T_l2w = toEigen(position);
-      const EigenQuaternion<T> Q_l2w = toEigen(orientation);
+      const EigenVector3<T> T_l2w = (position);
+      const EigenQuaternion<T> Q_l2w = (orientation);
 
       EigenVector3<T> T_b2w;
       EigenQuaternion<T> Q_b2w;
@@ -100,8 +93,7 @@ namespace procedural
       engine->set_rigid_body_velocity(rid, H, 0.0, 0.0);
 
     }
-
-  }
+}
 
 } //namespace procedural
 

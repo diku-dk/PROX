@@ -709,8 +709,8 @@ namespace procedural
         procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), mat_info,
                                    ground_width, ground_height, ground_depth);
 
-        procedural::make_sliding_point<MT>(engine, V::make(0.0, 0.0, 0.0), Q::identity(), scene_size, mat_info,
-                                           use_spike, use_wedge);
+        procedural::make_sliding_point<T>(engine, EigenVector3<T>(0.0, 0.0, 0.0), EigenQuaternion<T>::Identity(),
+                                          scene_size, mat_info, use_spike, use_wedge);
     }
     if (scene.compare("two_points") == 0)
     {
