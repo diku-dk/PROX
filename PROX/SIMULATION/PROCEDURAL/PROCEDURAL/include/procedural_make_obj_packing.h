@@ -12,31 +12,19 @@
 namespace procedural
 {
 
-  template<typename MT>
-  inline void make_obj_packing(
-                               content::API *  engine
-                               , typename MT::vector3_type const & position
-                               , typename MT::quaternion_type const & orientation
-                               , std::vector< std::string> const & obj_names
-                               , unsigned int const & number_of_objects_in_x
-                               , unsigned int const & number_of_objects_in_y
-                               , unsigned int const & number_of_objects_in_z
-                               , typename MT::real_type const & object_size
-                               , typename MT::real_type const & spacing
-                               , MaterialInfo<typename MT::real_type> const & mat_info
-                               , mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings()
-                               )
-  {
+template <typename T>
+inline void make_obj_packing(content::API* engine, const EigenVector3<T>& position,
+                             const EigenQuaternion<T>& orientation, std::vector< std::string> const& obj_names,
+                             unsigned int const& number_of_objects_in_x, unsigned int const& number_of_objects_in_y,
+                             unsigned int const& number_of_objects_in_z, const T& object_size, const T& spacing,
+                             MaterialInfo<T> const& mat_info,
+                             mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings())
+{
     using std::floor;
     using std::ceil;
 
-    typedef typename MT::real_type       T;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
-    typedef typename MT::value_traits    VT;
-
-    T      const stone_density	 = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid		      	 = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
     size_t const number_of_names = obj_names.size();
 
     if(number_of_names==0)
@@ -45,7 +33,7 @@ namespace procedural
     std::vector<GeometryHandleEigen<T>> obj_handle;
     obj_handle.resize(number_of_names);
 
-    for (unsigned int c=0;c< number_of_names; ++c)
+    for (unsigned int c = 0; c < number_of_names; ++c)
     {
         obj_handle[c] = create_geometry_handle_obj<T>(engine, obj_names[c], object_size, false, tetset);
     }
@@ -74,33 +62,24 @@ namespace procedural
 
           int choice = obj_count % number_of_names;
 
-          V const T_b2m = fromEigen(obj_handle[choice].Tb2m());
-          Q const Q_b2m = fromEigen(obj_handle[choice].Qb2m());
+          const EigenVector3<T> T_b2m = (obj_handle[choice].Tb2m());
+          const EigenQuaternion<T> Q_b2m = (obj_handle[choice].Qb2m());
 
-          V const T_m2l = V::make( x, y, z );
-          Q const Q_m2l = Q::identity();
+          const EigenVector3<T> T_m2l = EigenVector3<T>(x, y, z);
+          const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
-          V const T_l2w = position;
-          Q const Q_l2w = orientation;
+          const EigenVector3<T> T_l2w = position;
+          const EigenQuaternion<T> Q_l2w = orientation;
 
-          V T_b2w;
-          Q Q_b2w;
+          EigenVector3<T> T_b2w;
+          EigenQuaternion<T> Q_b2w;
 
-          compute_body_to_world_transform<MT>(
-                                              T_b2m
-                                              , Q_b2m
-                                              , T_m2l
-                                              , Q_m2l
-                                              , T_l2w
-                                              , Q_l2w
-                                              , T_b2w
-                                              , Q_b2w
-                                              );
+          compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l, T_l2w, Q_l2w, T_b2w, Q_b2w);
 
-          create_rigid_body<T>(engine, toEigen(T_b2w), toEigen(Q_b2w), obj_handle[choice], mid, stone_density);
+          create_rigid_body<T>(engine, (T_b2w), (Q_b2w), obj_handle[choice], mid, stone_density);
           ++obj_count;
         }
-  }
+}
 
 } //namespace procedural
 

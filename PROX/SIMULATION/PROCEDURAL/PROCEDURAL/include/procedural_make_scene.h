@@ -326,10 +326,10 @@ namespace procedural
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "dims.obj");
 
-        procedural::make_obj_packing<MT>(engine, V::make(0.0f, funnel_size + funnel_height, 0.0f), Q::identity(),
-                                         obj_names, number_of_objects_in_x, number_of_objects_in_y,
-                                         number_of_objects_in_z, object_size, object_spacing, mat_info, tetset);
-
+        procedural::make_obj_packing<T>(engine, EigenVector3<T>(0.0f, funnel_size + funnel_height, 0.0f),
+                                        EigenQuaternion<T>::Identity(), obj_names, number_of_objects_in_x,
+                                        number_of_objects_in_y, number_of_objects_in_z, object_size, object_spacing,
+                                        mat_info, tetset);
     }
     if (scene.compare("earthquake") == 0)
     {
@@ -416,10 +416,10 @@ namespace procedural
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "glass.obj");
 
-        procedural::make_obj_packing<MT>(engine, V::make(0.0f, large_glass_size * 1.5f, 0.0f), Q::identity(), obj_names,
-                                         number_of_glasses_in_x, number_of_glasses_in_y, number_of_glasses_in_z,
-                                         small_glass_size, glass_spacing, mat_info, tetset);
-
+        procedural::make_obj_packing<T>(engine, EigenVector3<T>(0.0f, large_glass_size * 1.5f, 0.0f),
+                                        EigenQuaternion<T>::Identity(), obj_names, number_of_glasses_in_x,
+                                        number_of_glasses_in_y, number_of_glasses_in_z, small_glass_size, glass_spacing,
+                                        mat_info, tetset);
     }
     if (scene.compare("glass_dims") == 0)
     {
@@ -446,9 +446,10 @@ namespace procedural
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "dims.obj");
 
-        procedural::make_obj_packing<MT>(engine, V::make(0.0f, large_glass_size * 1.5f, 0.0f), Q::identity(), obj_names,
-                                         number_of_dims_in_x, number_of_dims_in_y, number_of_dims_in_z, small_dims_size,
-                                         dims_spacing, mat_info, tetset);
+        procedural::make_obj_packing<T>(engine, EigenVector3<T>(0.0f, large_glass_size * 1.5f, 0.0f),
+                                        EigenQuaternion<T>::Identity(), obj_names, number_of_dims_in_x,
+                                        number_of_dims_in_y, number_of_dims_in_z, small_dims_size, dims_spacing,
+                                        mat_info, tetset);
     }
     if (scene.compare("glass_spheres") == 0)
     {
@@ -544,14 +545,12 @@ namespace procedural
         std::vector<std::string> obj_names;
         obj_names.push_back(objects_obj_filename);
 
-        procedural::make_obj_packing<MT>(
+        procedural::make_obj_packing<T>(
             engine,
-            V::make(0.0f, number_of_objects_in_y * (object_size + object_spacing) + obstacle_scale + obstacle_height,
-                    0.0f),
-            Q::identity(), obj_names, number_of_objects_in_x, number_of_objects_in_y, number_of_objects_in_z,
-            object_size, object_spacing, mat_info, tetset);
-
-
+            EigenVector3<T>(
+                0.0f, number_of_objects_in_y * (object_size + object_spacing) + obstacle_scale + obstacle_height, 0.0f),
+            EigenQuaternion<T>::Identity(), obj_names, number_of_objects_in_x, number_of_objects_in_y,
+            number_of_objects_in_z, object_size, object_spacing, mat_info, tetset);
     }
     if (scene.compare("sphere_cube") == 0)
     {
@@ -585,18 +584,11 @@ namespace procedural
                                         ,
                                         mat_info);
 
-      procedural::make_obj_packing<MT>(
-                                       engine
-                                       , V::zero()
-                                       , Q::identity()
-                                       , obj_names
-                                       , number_of_objects_in_x
-                                       , number_of_objects_in_y
-                                       , number_of_objects_in_z
-                                       , object_size
-                                       , spacing     // total number of objects
-                                       , mat_info
-                                       , tetset);
+      procedural::make_obj_packing<T>(engine, EigenVector3<T>(0, 0, 0), EigenQuaternion<T>::Identity(), obj_names,
+                                      number_of_objects_in_x, number_of_objects_in_y, number_of_objects_in_z,
+                                      object_size, spacing // total number of objects
+                                      ,
+                                      mat_info, tetset);
     }
     if (scene.compare("heavy_light") == 0)
     {
@@ -661,11 +653,10 @@ namespace procedural
         std::vector<std::string> obj_names;
         obj_names.push_back(obj_path + "propella.obj");
 
-        procedural::make_obj_packing<MT>(
-            engine, V::make(0.0f, large_glass_size * 1.5f + number_of_props_in_y * small_props_size, 0.0f),
-            Q::identity(), obj_names, number_of_props_in_x, number_of_props_in_y, number_of_props_in_z,
+        procedural::make_obj_packing<T>(
+            engine, EigenVector3<T>(0.0f, large_glass_size * 1.5f + number_of_props_in_y * small_props_size, 0.0f),
+            EigenQuaternion<T>::Identity(), obj_names, number_of_props_in_x, number_of_props_in_y, number_of_props_in_z,
             small_props_size, props_spacing, mat_info, tetset);
-
     }
     if (scene.compare("packing") == 0)
     {
