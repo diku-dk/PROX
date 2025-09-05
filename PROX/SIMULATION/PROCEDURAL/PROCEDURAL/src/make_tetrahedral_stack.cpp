@@ -5,16 +5,14 @@
 namespace procedural
 {
 
-template <typename MT>
-void make_tetrahedral_stack(content::API* engine, typename MT::vector3_type const& position,
-                            typename MT::quaternion_type const& orientation, typename MT::real_type const& cube_width,
-                            typename MT::real_type const& cube_height, typename MT::real_type const& cube_depth,
-                            size_t const& sub_divisions, MaterialInfo<typename MT::real_type> mat_info)
+template <typename T>
+void make_tetrahedral_stack(content::API* engine, const EigenVector3<T>& position,
+                            const EigenQuaternion<T>& orientation, const T& cube_width, const T& cube_height,
+                            const T& cube_depth, size_t const& sub_divisions, MaterialInfo<T> mat_info)
 {
-    typedef typename MT::real_type T;
 
-    T const stone_density = get_material_density<MT>(mat_info, "Stone");
-    size_t const mid = get_material_id<MT>(mat_info, "Stone");
+    T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
+    size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
 
         //--- Find the size of each of the boxes
     T const box_width = cube_width / sub_divisions;
@@ -88,11 +86,9 @@ void make_tetrahedral_stack(content::API* engine, typename MT::vector3_type cons
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
-template void make_tetrahedral_stack<MTf>(content::API* engine, MTf::vector3_type const& position,
-                                          MTf::quaternion_type const& orientation, MTf::real_type const& cube_width,
-                                          MTf::real_type const& cube_height, MTf::real_type const& cube_depth,
-                                          size_t const& sub_divisions, MaterialInfo<MTf::real_type> mat_info);
+template void make_tetrahedral_stack<float>(content::API* engine, const EigenVector3<float>& position,
+                                            const EigenQuaternion<float>& orientation, const float& cube_width,
+                                            const float& cube_height, const float& cube_depth,
+                                            size_t const& sub_divisions, MaterialInfo<float> mat_info);
 
 } //namespace procedural
