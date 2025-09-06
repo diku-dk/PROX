@@ -49,6 +49,8 @@ TARGET_LINK_LIBRARIES(
   kdop
 )
 
+target_include_directories(prox PRIVATE ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/UTIL/UTIL/include)
+
 IF(HAS_DIKUCL)
   TARGET_LINK_LIBRARIES(prox dikucl)
 ENDIF()

@@ -16,32 +16,27 @@ namespace kdop
   namespace details
   {
 
-    template< typename V, size_t K>
-    inline void raycast(
-                          geometry::Ray<V> const & ray
-                        , size_t const & node_idx
-                        , SubTree<typename V::real_type, K> const & branch
-                        , mesh_array::T4Mesh const & mesh
-                        , mesh_array::VertexAttribute<typename V::real_type,mesh_array::T4Mesh> const & X
-                        , mesh_array::VertexAttribute<typename V::real_type,mesh_array::T4Mesh> const & Y
-                        , mesh_array::VertexAttribute<typename V::real_type,mesh_array::T4Mesh> const & Z
-                        , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,mesh_array::T4Mesh> const & surface_map
-                        , V & hit_point
-                        , typename V::real_type & length
-                        )
-    {
-      typedef typename V::real_type    T;
-      typedef typename V::value_traits VT;
-
-      T const dop_threshold = VT::numeric_cast(0.01);
+  template <typename T, size_t K>
+  inline void raycast(
+      geometry::RayEigen<T> const& ray, size_t const& node_idx,
+      SubTree<T, K> const& branch, mesh_array::T4Mesh const& mesh,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map,
+      EigenVector3<T>& hit_point, T& length)
+  {
+      T const dop_threshold = 0.01;
 
       Node<T,K> const & node = branch.m_nodes[node_idx];
 
       EigenVector3<T> p = EigenVector3<T>(0,0,0);
       T t = std::numeric_limits<T>::max();
 
-      if(! geometry::compute_raycast_dop<typename V::real_type, K>( geometry::convertRayToEigen(ray), node.m_volume, p, t, dop_threshold))
-        return;
+      if (!geometry::compute_raycast_dop<T, K>(ray, node.m_volume, p, t,
+                                               dop_threshold))
+          return;
 
       if(t >= length)
         return;
@@ -52,10 +47,10 @@ namespace kdop
       {
         mesh_array::Tetrahedron const mT = mesh.tetrahedron( node.m_start );
 
-        V const p0 = V::make( X(mT.i()), Y(mT.i()), Z(mT.i()) );
-        V const p1 = V::make( X(mT.j()), Y(mT.j()), Z(mT.j()) );
-        V const p2 = V::make( X(mT.k()), Y(mT.k()), Z(mT.k()) );
-        V const p3 = V::make( X(mT.m()), Y(mT.m()), Z(mT.m()) );
+        EigenVector3<T> p0(X(mT.i()), Y(mT.i()), Z(mT.i()));
+        EigenVector3<T> p1(X(mT.j()), Y(mT.j()), Z(mT.j()));
+        EigenVector3<T> p2(X(mT.k()), Y(mT.k()), Z(mT.k()));
+        EigenVector3<T> p3(X(mT.m()), Y(mT.m()), Z(mT.m()));
 
         std::vector<bool> surf(4u,false);
 
@@ -67,7 +62,8 @@ namespace kdop
         EigenVector3<T> p = EigenVector3<T>(0,0,0);
         T s = std::numeric_limits<T>::max();
 
-        geometry::TetrahedronEigen<typename V::real_type> const gT = geometry::make_tetrahedron(toEigen(p0),toEigen(p1),toEigen(p2),toEigen(p3));
+        geometry::TetrahedronEigen<T> const gT
+            = geometry::make_tetrahedron((p0), (p1), (p2), (p3));
 
         bool const did_hit = geometry::compute_raycast_tetrahedron<T>(geometry::convertRayToEigen( ray), gT, p, s, surf);
 
@@ -83,73 +79,48 @@ namespace kdop
 
         for(size_t idx = node.m_start; idx <= node.m_end; ++idx)
         {
-            raycast<V,K>(
-                         ray
-                         , idx
-                         , branch
-                         , mesh
-                         , X
-                         , Y
-                         , Z
-                         , surface_map
-                         , hit_point
-                         , length
-                         );
+            raycast<T, K>(ray, idx, branch, mesh, X, Y, Z, surface_map,
+                          hit_point, length);
         }
 
       }
-
-    }
+  }
 
   } // end of namespace details
 
-  template< typename V, size_t K>
+  template <typename T, size_t K>
   inline bool raycast(
-                        geometry::Ray<V> const & ray
-                      , Tree<typename V::real_type, K> const & tree
-                      , mesh_array::T4Mesh const & mesh
-                      , mesh_array::VertexAttribute<typename V::real_type,mesh_array::T4Mesh> const & X
-                      , mesh_array::VertexAttribute<typename V::real_type,mesh_array::T4Mesh> const & Y
-                      , mesh_array::VertexAttribute<typename V::real_type,mesh_array::T4Mesh> const & Z
-                      , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,mesh_array::T4Mesh> const & surface_map
-                      , V & hit_point
-                      , typename V::real_type & length
-                      )
+      geometry::RayEigen<T> const& ray, Tree<T, K> const& tree,
+      mesh_array::T4Mesh const& mesh,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map,
+      EigenVector3<T>& hit_point, T& length)
   {
-    typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
+      T const dop_threshold = (0.01f);
 
-    T const dop_threshold = (0.01f);
+      hit_point = {0, 0, 0};
+      length = std::numeric_limits<T>::max();
 
-    hit_point    = V::zero();
-    length       = std::numeric_limits<T>::max();
+      EigenVector3<T> p = EigenVector3<T>(0, 0, 0);
+      T t = std::numeric_limits<T>::max();
 
-    EigenVector3<T> p = EigenVector3<T>(0,0,0);
-    T t = std::numeric_limits<T>::max();
+      if (!geometry::compute_raycast_dop(ray, tree.m_root, p, t, dop_threshold))
+          return false;
 
-    if(!geometry::compute_raycast_dop(geometry::convertRayToEigen(ray), tree.m_root, p, t, dop_threshold)) return false;
+      size_t const C = tree.branches().size();
 
-    size_t const C = tree.branches().size();
+      for (size_t c = 0u; c < C; ++c)
+      {
+          SubTree<T, K> const& branch = tree.branches()[c];
 
-    for( size_t c = 0u; c < C; ++c)
-    {
-      SubTree<T,K> const & branch = tree.branches()[c];
+          details::raycast<T, K>(ray, 0, branch, mesh, X, Y, Z, surface_map,
+                                 hit_point, length);
+      }
 
-      details::raycast<V,K>(
-                            ray
-                            , 0
-                            , branch
-                            , mesh
-                            , X
-                            , Y
-                            , Z
-                            , surface_map
-                            , hit_point
-                            , length
-                            );
-    }
-
-    return length < std::numeric_limits<T>::max();
+      return length < std::numeric_limits<T>::max();
   }
 
 }// namespace kdop

@@ -1,6 +1,8 @@
 #ifndef PROX_GET_PRE_STABILIZATION_VECTOR_H
 #define PROX_GET_PRE_STABILIZATION_VECTOR_H
 
+#include "prox_math.h"
+#include "tiny_math_types.h"
 #include <steppers/prox_stepper_params.h>
 
 #include <tiny_is_number.h>
@@ -13,7 +15,7 @@
 namespace prox
 {
 
-  /**
+/**
    *
    * @param drift_reduction     The procentage of numerical drift reduction that should
    *                            be done. This parameter must be in the range [0..1].
@@ -23,47 +25,41 @@ namespace prox
    * @param w                  Current relative contact point velocites, w = J*u
    *
    */
-template <typename contact_iterator, typename M>
-inline void get_pre_stabilization_vector(contact_iterator begin, contact_iterator end,
-                                         StepperParams<M> const& params,
-                                         typename M::real_type const& time_step,
-                                         const EigenVector4<typename M::real_type>& w,
-                                         typename M::vector4_type& g, M const& /*tag*/
-                                         ,
-                                         size_t const K)
+template <typename T, typename Iterator>
+inline void get_pre_stabilization_vector(Iterator begin, Iterator end,
+                                         const StepperParams<T>& params, T timestep,
+                                         const NCVec4<T>& w, NCVec4<T>& g, size_t K)
 {
-    using std::max;
-
-    typedef typename M::real_type        T;
-    typedef typename M::value_traits VT;
-
-    assert( time_step > 0  || !"get_pre_stabilization_vector(): time_step should be positive");
+    assert(timestep > 0 || !"get_pre_stabilization_vector(): time_step should be positive");
 
     util::Log logging;
 
-    g.resize( K );
+    g.resize(K);
 
-    logging << "get_pre_stabilization_vector(): pre stabilizaiton = " << params.pre_stabilization() << util::Log::newline();
+    logging << "get_pre_stabilization_vector(): pre stabilizaiton = " << params.pre_stabilization()
+            << util::Log::newline();
 
-    if( ! params.pre_stabilization() )
-      return;
+    if (!params.pre_stabilization()) return;
 
+    T const& reduction = params.gap_reduction();
+    T const& min_gap = params.min_gap();
+    T const& max_gap = params.max_gap();
 
-    T const & reduction = params.gap_reduction();
-    T const & min_gap   = params.min_gap();
-    T const & max_gap   = params.max_gap();
+    assert(reduction >= 0
+           || !"get_pre_stabilization_vector(): gap reduction parameter should be positive");
+    assert(reduction <= 1
+           || !"get_pre_stabilization_vector(): gap reduction parameter should be less than or "
+               "equal to one");
+    assert(min_gap >= 0
+           || !"get_pre_stabilization_vector(): min gap correction should be non negative");
+    assert(max_gap > 0 || !"get_pre_stabilization_vector(): max gap correction should be positive");
 
-    assert( reduction >= 0 || !"get_pre_stabilization_vector(): gap reduction parameter should be positive");
-    assert( reduction <= 1  || !"get_pre_stabilization_vector(): gap reduction parameter should be less than or equal to one");
-    assert( min_gap >= 0   || !"get_pre_stabilization_vector(): min gap correction should be non negative");
-    assert( max_gap > 0    || !"get_pre_stabilization_vector(): max gap correction should be positive");
-
-    T const k       =   reduction / time_step;
-    T const limit   = - max_gap / time_step;
-    T const yield   = - min_gap;
+    T const k = reduction / timestep;
+    T const limit = -max_gap / timestep;
+    T const yield = -min_gap;
 
     size_t index = 0u;
-    for(contact_iterator contact = begin;contact!=end; ++contact, ++index)
+    for (auto contact = begin; contact != end; ++contact, ++index)
     {
         auto& b = g(index);
         auto const& v = w(index);
@@ -79,5 +75,6 @@ inline void get_pre_stabilization_vector(contact_iterator begin, contact_iterato
     }
 }
 } //namespace prox
+
 // PROX_GET_PRE_STABILIZATION_VECTOR_H
 #endif

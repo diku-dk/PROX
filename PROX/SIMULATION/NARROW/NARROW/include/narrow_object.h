@@ -21,7 +21,9 @@ namespace narrow
    *
    * @tparam M    The math types
    */
-template <typename T> class Object
+template <typename T>
+requires std::is_floating_point_v<T>
+class Object
 {
 public:
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> m_X;      ///< Deformed (spatial) x-coordinate

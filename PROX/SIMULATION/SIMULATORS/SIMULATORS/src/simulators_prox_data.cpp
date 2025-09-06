@@ -7,11 +7,11 @@
 #include <util_string_helper.h>
 #include <util_log.h>
 
-#include <steppers/prox_bind_stepper.h>
-
 #include <prox_rigid_body.h>
 
 #include <cassert>
+
+#include <steppers/prox_time_stepper.h>
 
 namespace simulators
 {
@@ -78,24 +78,8 @@ void ProxData::step_simulation(float const& dt)
     assert(dt > 0.0f || !"step_simulation(): invalid step size");
     assert(dt <= m_time_step || !"step_simulation(): invalid step size");
 
-    switch (m_params.stepper_params().stepper())
-    {
-
-    case prox::moreau :
-        prox::moreau_time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params,
-                                  m_broad, m_narrow, m_contacts);
-        break;
-
-    case prox::semi_implicit :
-        prox::semi_implicit_time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params,
-                                         m_broad, m_narrow, m_contacts);
-        break;
-
-    case prox::empty :
-        prox::empty_stepper(dt, m_bodies, m_properties, m_gravity, m_damping, m_params, m_broad,
-                            m_narrow, m_contacts);
-        break;
-    }
+    prox::time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping,
+                       m_params, m_broad, m_narrow, m_contacts);
 
     T E_kinetic;
     T E_potential;
@@ -110,16 +94,14 @@ bool ProxData::compute_raycast(float const& p_x, float const& p_y, float const& 
                                float const& ray_y, float const& ray_z, size_t& body_index, float& hit_x, float& hit_y,
                                float& hit_z, float& hit_distance)
 {
+    auto ray = geometry::make_ray(EigenVector3<float>(p_x, p_y, p_z),
+                                  EigenVector3<float>(ray_x, ray_y, ray_z));
 
-    V const ray_origin = V::make(p_x, p_y, p_z);
-    V const ray_direction = V::make(ray_x, ray_y, ray_z);
-
-    geometry::Ray<V> ray = geometry::make_ray(ray_origin, ray_direction);
-
-    V point;
+    EigenVector3<T> point;
     T distance;
 
-    bool const did_hit = prox::compute_raycast<ProxData::MT>(ray, m_bodies, m_narrow, body_index, point, distance);
+    bool const did_hit = prox::compute_raycast<float>(
+        ray, m_bodies, m_narrow, body_index, point, distance);
 
     if (did_hit)
     {

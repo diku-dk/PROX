@@ -1,6 +1,7 @@
 #ifndef PROX_COLLISION_DETECTION_H
 #define PROX_COLLISION_DETECTION_H
 
+#include "prox_math_policy.h"
 #include "tiny_math_types.h"
 #include <broad.h>
 #include <broad_statistics.h>
@@ -129,13 +130,8 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
                                 narrow::System<T>& narrow_system,
                                 std::vector< ContactPoint<T> >& contacts, Params<T> const& params)
 {
-    using M = prox::MathPolicy<T>;
-    typedef typename M::tiny_types tiny_types;
     typedef typename broad::System<T>::overlap_type overlap_type;
-    typedef std::vector< overlap_type > overlap_container;
-    typedef typename overlap_container::iterator overlap_iterator;
-    typedef detail::ContactCallbackFunctor<M> callback_type;
-    typedef typename std::vector< ContactPoint<M> >::iterator contact_iterator;
+    typedef std::vector<overlap_type> overlap_container;
 
     START_TIMER("collision_detection");
 
@@ -146,7 +142,7 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
         //--- Update kDOP BVHs to reflect changes in tetramesh geometry ----------
         START_TIMER("collision_detection_creating_kdop_work_pool");
 
-        std::vector< narrow::KDopBvhUpdateWorkItem< tiny_types > > kdop_bvh_update_work_pool;
+        std::vector<narrow::KDopBvhUpdateWorkItem<T>> kdop_bvh_update_work_pool;
 
         kdop_bvh_update_work_pool.reserve(
             bodies.size()); // Make sure all space we may need is pre-allocated.
@@ -157,9 +153,9 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
 
             if (geometry.m_tetramesh.has_data())
             {
-                narrow::KDopBvhUpdateWorkItem<tiny_types> work_item
-                    = narrow::KDopBvhUpdateWorkItem<tiny_types>(
-                        *body, geometry, body->get_position(), body->get_orientation());
+                auto work_item = narrow::KDopBvhUpdateWorkItem<T>(
+                    *body, geometry, body->get_position(),
+                    body->get_orientation());
                 kdop_bvh_update_work_pool.push_back(work_item);
             }
         }
@@ -267,12 +263,15 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
         //--- Make sure we do not carry any old contact information around. ------
         contacts.clear();
 
-        std::vector< narrow::TestPair<tiny_types> > narrow_test_pairs;
+        std::vector<narrow::TestPair<typename MathPolicy<T>::tiny_types>>
+            narrow_test_pairs;
+        typedef detail::ContactCallbackFunctor<MathPolicy<T>> callback_type;
 
-        std::vector< callback_type >
+        std::vector<callback_type>
             callbacks; // 2014-10-19 Kenny: Argh, I hate this design choice.... really ugly
+        // 2025-09-06: Yup. Absolutely no disagreement, I am completely with you.
         callbacks.resize(overlaps.size());
-        typename std::vector< callback_type >::iterator callback = callbacks.begin();
+        auto callback = callbacks.begin();
 
         for (auto o = overlaps.begin(); o != overlaps.end(); ++o, ++callback)
         {
@@ -287,7 +286,7 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
 
             *callback = callback_type(bodyA, bodyB, contacts);
 
-            narrow::TestPair<tiny_types> narrow_pair = narrow::TestPair<tiny_types>(
+            narrow::TestPair<typename MathPolicy<T>::tiny_types> narrow_pair(
                 *bodyA, *bodyB, bodyA->get_position(), bodyA->get_orientation(),
                 bodyB->get_position(), bodyB->get_orientation(), (*callback));
 

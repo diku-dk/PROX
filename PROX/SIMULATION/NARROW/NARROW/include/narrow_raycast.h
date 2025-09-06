@@ -13,111 +13,97 @@
 namespace narrow
 {
 
-  template<typename M>
-  inline bool raycast(
-                        geometry::Ray<typename M::vector3_type> const & ray
-                      , Object<M>                               const & objA
-                      , Geometry<M>                             const & geoA
-                      , typename M::vector3_type                const & tA
-                      , typename M::quaternion_type             const & qA
-                      , typename M::vector3_type                      & point
-                      , typename M::real_type                         & distance
-                      )
-  {
-    typedef typename M::value_traits    VT;
-    typedef typename M::vector3_type    V;
-    typedef typename M::real_type       T;
-    typedef typename M::coordsys_type   C;
-
-    typedef typename Geometry<M>::box_container::const_iterator      box_iterator;
-    typedef typename Geometry<M>::sphere_container::const_iterator   sphere_iterator;
-    typedef typename Geometry<M>::convex_container::const_iterator   hull_iterator;
-
-    point    = V::zero();
+template <typename T>
+inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
+                    Geometry<T> const& geoA, EigenVector3<T> const& tA,
+                    EigenQuaternion<T> const& qA, EigenVector3<T>& point,
+                    T& distance)
+{
+    point = EigenVector3<T>{0, 0, 0};
     distance = std::numeric_limits<T>::max();
 
-    if ( geoA.m_tetramesh.has_data() )
+    if (geoA.m_tetramesh.has_data())
     {
-      return kdop::raycast<V, 8>(
-                                 ray
-                                 , objA.m_tree
-                                 , geoA.m_tetramesh.m_mesh
-                                 , objA.m_X
-                                 , objA.m_Y
-                                 , objA.m_Z
-                                 , geoA.m_tetramesh.m_surface_map
-                                 , point
-                                 , distance
-                                 );
-
+        return kdop::raycast<8>(
+            ray, objA.m_tree, geoA.m_tetramesh.m_mesh, objA.m_X, objA.m_Y,
+            objA.m_Z, geoA.m_tetramesh.m_surface_map, point, distance);
     }
     else
     {
-      C const bodyAtoWCS = C(tA, qA);
+        auto const bodyAtoWCS = CoordSysEigen<T>(tA, qA);
 
-      if (! geoA.m_boxes.empty() )
-      {
-        for( box_iterator a = geoA.m_boxes.begin(); a!= geoA.m_boxes.end(); ++a )
+        if (!geoA.m_boxes.empty())
         {
-            const CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T> (toEigen(a->transform().T()), toEigen(a->transform().Q()));
-            const CoordSysEigen<T>  shapeAtoWCS   = prod(shapeAtobodyA, coordSysToEigen(bodyAtoWCS));
+            for (auto a = geoA.m_boxes.begin(); a != geoA.m_boxes.end(); ++a)
+            {
+                const CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
+                    toEigen(a->transform().T()), toEigen(a->transform().Q()));
+                const CoordSysEigen<T> shapeAtoWCS
+                    = prod(shapeAtobodyA, coordSysToEigen(bodyAtoWCS));
 
-            geometry::OBBEigen<T> const obb  = geometry::make_obb<T>( shapeAtoWCS.T(), shapeAtoWCS.Q(), toEigen(a->half_extent()));
+                geometry::OBBEigen<T> const obb
+                    = geometry::make_obb<T>(shapeAtoWCS.T(), shapeAtoWCS.Q(),
+                                            toEigen(a->half_extent()));
 
-          T local_distance = std::numeric_limits<T>::max();
-          EigenVector3<T> local_point    = EigenVector3<T>(0,0,0);
+                T local_distance = std::numeric_limits<T>::max();
+                EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
 
-          bool const did_hit = geometry::compute_raycast_obb(geometry::convertRayToEigen(ray), obb, local_point, local_distance);
+                bool const did_hit = geometry::compute_raycast_obb(
+                    geometry::convertRayToEigen(ray), obb, local_point,
+                    local_distance);
 
-          distance = did_hit ? local_distance : distance;
-          point    = did_hit ? fromEigen(local_point)    : point;
+                distance = did_hit ? local_distance : distance;
+                point = did_hit ? fromEigen(local_point) : point;
+            }
         }
-      }
-      if (! geoA.m_spheres.empty() )
-      {
-        for( sphere_iterator a = geoA.m_spheres.begin(); a!= geoA.m_spheres.end(); ++a )
+        if (!geoA.m_spheres.empty())
         {
-          C const shapeAtobodyA = C(a->transform().T(), a->transform().Q());
-          C const shapeAtoWCS   = tiny::prod(shapeAtobodyA, bodyAtoWCS);
+            for (auto a = geoA.m_spheres.begin(); a != geoA.m_spheres.end();
+                 ++a)
+            {
+                auto const shapeAtobodyA
+                    = CoordSysEigen<T>(a->transform().T(), a->transform().Q());
+                auto const shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
 
-          geometry::Sphere<T> const sphere = geometry::make_sphere<T>( toEigen(shapeAtoWCS.T()), a->radius());
+                geometry::Sphere<T> const sphere = geometry::make_sphere<T>(
+                    toEigen(shapeAtoWCS.T()), a->radius());
 
-          T local_distance = std::numeric_limits<T>::max();
-          EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
+                T local_distance = std::numeric_limits<T>::max();
+                EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
 
-          bool const did_hit = geometry::compute_raycast_sphere<T>(geometry::convertRayToEigen(ray), sphere,
-                                                                   local_point, local_distance);
+                bool const did_hit = geometry::compute_raycast_sphere<T>(
+                    geometry::convertRayToEigen(ray), sphere, local_point,
+                    local_distance);
 
-          distance = did_hit ? local_distance : distance;
-          point = did_hit ? fromEigen(local_point) : point;
+                distance = did_hit ? local_distance : distance;
+                point = did_hit ? fromEigen(local_point) : point;
+            }
         }
-      }
-      if (! geoA.m_hulls.empty() )
-      {
-        for( hull_iterator a = geoA.m_hulls.begin(); a!= geoA.m_hulls.end(); ++a )
+        if (!geoA.m_hulls.empty())
         {
-          C const shapeAtobodyA = C(a->transform().T(), a->transform().Q());
-          C const shapeAtoWCS   = tiny::prod(shapeAtobodyA, bodyAtoWCS);
+            for (auto a = geoA.m_hulls.begin(); a != geoA.m_hulls.end(); ++a)
+            {
+                auto const shapeAtobodyA
+                    = CoordSysEigen<T>(a->transform().T(), a->transform().Q());
+                auto const shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
 
-          assert(false || !"not implemented yet");
-          //          geometry::ConvexHull<V> const hull = geometry::make_convex_hull( shapeAtoWCS.T(), a->radius());
+                assert(false || !"not implemented yet");
+                //          geometry::ConvexHull<V> const hull = geometry::make_convex_hull( shapeAtoWCS.T(), a->radius());
 
-          T local_distance = std::numeric_limits<T>::max();
-          V local_point    = V::zero();
+                T local_distance = std::numeric_limits<T>::max();
+                EigenVector3<T> localPoint(0, 0, 0);
 
-          bool const did_hit = false; //geometry::compute_raycast_convex(ray, hull, local_point, local_distance);
+                bool const did_hit
+                    = false; //geometry::compute_raycast_convex(ray, hull, local_point, local_distance);
 
-          distance = did_hit ? local_distance : distance;
-          point    = did_hit ? local_point    : point;
-
+                distance = did_hit ? local_distance : distance;
+                point = did_hit ? localPoint : point;
+            }
         }
-      }
-
     }
 
     return distance < std::numeric_limits<T>::max();
-
-  }
+}
 
 } //namespace narrow
 

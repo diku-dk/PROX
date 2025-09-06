@@ -120,14 +120,10 @@ namespace prox
         }
 
         //compute z = x - R(J W J^T x  + b)  = x - R( A x  + b)
-        static void compute_z(
-                              vector4_type       const & x
-                              , diagonal4x4_type   const & R
-                              , compressed4x6_type const & J
-                              , compressed6x4_type const & WJT
-                              , vector4_type       const & b
-                              , vector4_type             & z
-                              )
+        [[deprecated]]
+        static void compute_z(vector4_type const& x, diagonal4x4_type const& R,
+                              compressed4x6_type const& J, compressed6x4_type const& WJT,
+                              vector4_type const& b, vector4_type& z)
         {
             z.resize(x.size());
 
@@ -142,15 +138,10 @@ namespace prox
             sparse::sub(x, t3, z);          // z  = x-t3
         }
 
-        static void compute_z_k(
-                                block4x1_type        const & x_k
-                                , vector6_type       const & w
-                                , block4x4_type      const & R_k
-                                , compressed4x6_type const & J
-                                , block4x1_type      const & b_k
-                                , block4x1_type            & z_k
-                                , size_t             const & k
-                                )
+        [[deprecated]]
+        static void compute_z_k(block4x1_type const& x_k, vector6_type const& w,
+                                block4x4_type const& R_k, compressed4x6_type const& J,
+                                block4x1_type const& b_k, block4x1_type& z_k, size_t const& k)
         {
             // z_k = x_k - R_kk ( J w + b_k )
             z_k.clear_data();
@@ -206,8 +197,8 @@ namespace prox
             sparse::scalar_prod(nu, R_k);
         }
 
-
-        static real_type compute_norm_inf( vector4_type const& x )
+        [[deprecated]]
+        static real_type compute_norm_inf(vector4_type const& x)
         {
             using std::abs;
 
@@ -319,10 +310,9 @@ namespace prox
                             , unsigned int const & K
                             )
       {
-        v.resize( K );
-        v.clear_data();
+          v.resize(K);
+          v.clear_data();
       }
-
     };
 } // namespace prox
 

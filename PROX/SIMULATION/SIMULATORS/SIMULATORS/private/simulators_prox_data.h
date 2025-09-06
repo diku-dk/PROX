@@ -30,6 +30,7 @@ namespace simulators
       using V = TT::vector3_type;
       using Q = TT::quaternion_type;
       using T = TT::real_type;
+      static_assert(std::is_floating_point_v<T>);
       using VT = TT::value_traits;
       using M = TT::matrix3x3_type;
 

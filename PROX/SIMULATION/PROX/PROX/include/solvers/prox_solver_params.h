@@ -16,27 +16,23 @@ namespace prox
    *
    * @tparam   Math types policy
    */
-  template< typename MT >
-  class SolverParams
-  {
-  public:
-      using T = typename MT::real_type;
-      using VT = typename MT::value_traits;
+template < typename T >
+requires std::is_arithmetic_v<T>
+class SolverParams
+{
+protected:
+    size_t m_max_iterations;           ///< The maximum number of allowed outer iterations.
+    T m_absolute_tolerance;       ///< The absolute tolerance value.
+    T m_relative_tolerance;       ///< The relative tolerance value.
+    bool m_use_warm_starting; ///< Boolean flag that indicates whether warmstarting is used or not.
 
-  protected:
-      size_t m_max_iterations;           ///< The maximum number of allowed outer iterations.
-      T m_absolute_tolerance;       ///< The absolute tolerance value.
-      T m_relative_tolerance;       ///< The relative tolerance value.
-      bool m_use_warm_starting;        ///< Boolean flag that indicates whether warmstarting is used or not.
+    solver_type m_solver; ///< The solver type.
+    strategy_type m_r_factor_strategy; ///< The R-factor strategy type.
+    normal_sub_solver_type m_normal_sub_solver; ///< The normal sub solver type.
+    friction_sub_solver_type m_friction_sub_solver; ///< The friction sub solver type.
 
-      solver_type m_solver;                   ///< The solver type.
-      strategy_type m_r_factor_strategy;        ///< The R-factor strategy type.
-      normal_sub_solver_type m_normal_sub_solver;        ///< The normal sub solver type.
-      friction_sub_solver_type m_friction_sub_solver;      ///< The friction sub solver type.
-
-  public:
-
-    size_t const & max_iterations()     const { return this->m_max_iterations;       }
+public:
+    size_t const& max_iterations() const { return this->m_max_iterations; }
     T      const & absolute_tolerance() const { return this->m_absolute_tolerance;   }
     T      const & relative_tolerance() const { return this->m_relative_tolerance;   }
     bool   const & use_warm_starting()  const { return this->m_use_warm_starting;    }
@@ -105,19 +101,17 @@ namespace prox
     }
 
   public:
-
-    SolverParams()
-    : m_max_iterations(500)
-    , m_absolute_tolerance(VT::numeric_cast(10e-5f) )
-    , m_relative_tolerance(0 )
-    , m_use_warm_starting(false)
-    , m_solver(gauss_seidel)
-    , m_r_factor_strategy(local_strategy)
-    , m_normal_sub_solver(nonnegative)
-    , m_friction_sub_solver(analytical_ellipsoid)
-    {}
-
-  };
+      SolverParams()
+          : m_max_iterations(500)
+          , m_absolute_tolerance(1e-4f)
+          , m_relative_tolerance(0)
+          , m_use_warm_starting(false)
+          , m_solver(gauss_seidel)
+          , m_r_factor_strategy(local_strategy)
+          , m_normal_sub_solver(nonnegative)
+          , m_friction_sub_solver(analytical_ellipsoid)
+      {}
+};
 
 } // namespace prox
 

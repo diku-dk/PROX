@@ -14,14 +14,12 @@ namespace prox
    * Paramters for controlling time steppers, prox solvers and
    * collision detection system.
    *
-   * @tparam   Math types policy
    */
 template < typename T > class Params
 {
 public:
-    using MT = tiny::MathTypes<T>;
-    using solver_params_type = SolverParams<MT>;
-    using stepper_params_type = StepperParams<MT>;
+    using solver_params_type = SolverParams<T>;
+    using stepper_params_type = StepperParams<T>;
 
 protected:
     solver_params_type m_solver_params;     ///< Parameters used for prox solvers.

@@ -1,47 +1,44 @@
 #ifndef PROX_GET_FRICTION_COEFFICIENT_VECTOR_H
 #define PROX_GET_FRICTION_COEFFICIENT_VECTOR_H
 
+#include "prox_math.h"
+#include "prox_property.h"
 #include <cstddef>
 
 namespace prox
 {
 
-  template< typename contact_iterator, typename math_policy >
-  inline void get_friction_coefficient_vector(
-                                                contact_iterator begin
-                                              , contact_iterator end
-                                              , std::vector< std::vector< Property< math_policy > > > const &  properties
-                                              , typename math_policy::vector4_type & mu
-                                              , math_policy const & /*tag*/
-                                              , size_t const K
-                                              )
-  {
-    typedef typename math_policy::block4x1_type block4x1_type;
-    typedef typename math_policy::real_type     real_type;
-    typedef typename math_policy::value_traits  value_traits;
-
-    mu.resize(  K );
+template <typename T, typename Iterator>
+void get_friction_coefficient_vector(
+    Iterator begin, Iterator end,
+    const std::vector<std::vector<Property<T>>>& properties, NCVec4<T>& mu,
+    size_t K)
+{
+    mu.resize(K);
 
     size_t k = 0u;
-    for(contact_iterator contact = begin;contact!=end;++contact, ++k)
+    for (auto contact = begin; contact != end; ++contact, ++k)
     {
         auto material_i = contact->bodyI->get_material_idx();
         auto material_j = contact->bodyJ->get_material_idx();
 
-        real_type const mu_s = properties[material_i][material_j].get_friction_coefficients()(0);
-        real_type const mu_t = properties[material_i][material_j].get_friction_coefficients()(1);
-        real_type const mu_tau = properties[material_i][material_j].get_friction_coefficients()(2);
+        auto const mu_s
+            = properties[material_i][material_j].get_friction_coefficients()(0);
+        auto const mu_t
+            = properties[material_i][material_j].get_friction_coefficients()(1);
+        auto const mu_tau
+            = properties[material_i][material_j].get_friction_coefficients()(2);
 
-        block4x1_type& b = mu(k);
+        auto& b = mu(k);
 
         b(0) = 0;
         b(1) = mu_s;
         b(2) = mu_t;
         b(3) = mu_tau;
     }
-  }
-
+}
 
 } // namespace prox
+
 // PROX_GET_FRICTION_COEFFICIENT_VECTOR_H
 #endif

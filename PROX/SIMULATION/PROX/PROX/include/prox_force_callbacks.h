@@ -65,7 +65,7 @@ public:
                || !"Gravity::compute_force_and_torque(): acceleration must be non-negative");
 
         force = -m_up * (body.get_mass() * this->m_acceleration);
-        torque = 0;
+        torque = {0, 0, 0};
     }
 };
 
