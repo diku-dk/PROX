@@ -80,8 +80,15 @@ void position_update(const NCVec7<T>& q, const NCVec6<T>& u, T dt, NCVec7<T>& qn
         }
       else
       {
-        //--- Just do an infinitesimal rotation update (i.e. a forward euler step)
-        Q = Q.coeffs() + EigenQuaternion<T>(EigenQuaternion<T>(W * Q).coeffs() * dt_half).coeffs();
+          //--- Just do an infinitesimal rotation update (i.e. a forward euler step)
+          // Compute W*Q
+          EigenVector3<T> qimag(Q.x(), Q.y(), Q.z());
+          auto newReal = -dot(W, qimag);
+          EigenVector3<T> newImag = cross(W, qimag) + W * Q.w();
+          Q.w() += newReal * dt * .5f;
+          Q.x() += newImag.x() * dt * .5f;
+          Q.y() += newImag.y() * dt * .5f;
+          Q.z() += newImag.z() * dt * .5f;
       }
 
       //--- To counter-act numerical problems

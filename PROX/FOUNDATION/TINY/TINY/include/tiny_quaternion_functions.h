@@ -142,7 +142,8 @@ namespace tiny
   template<typename T>
   inline Quaternion<T> prod(Vector<3,T> const & a, Quaternion<T> const & b)
   {
-    return Quaternion<T>( - inner_prod(a , b.imag()),  cross(a , b.imag()) + a*b.real()  );
+      return Quaternion<T>(-inner_prod(a, b.imag()),
+                           cross(a, b.imag()) + a * b.real());
   }
 
   template<typename T>
