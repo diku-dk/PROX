@@ -28,7 +28,7 @@ namespace narrow
           const auto& geoA
               = system.get_geometry(elem.obj_a().get_geometry_idx());
           const auto& geoB
-              = system.get_geometry(elem.obj_a().get_geometry_idx());
+              = system.get_geometry(elem.obj_b().get_geometry_idx());
           auto const& boxesA = geoA.m_boxes;
           auto const& spheresA = geoA.m_spheres;
           //convex_container   const & hullsA     = geoA.m_hulls;

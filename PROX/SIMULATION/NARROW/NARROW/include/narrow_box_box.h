@@ -63,7 +63,7 @@ namespace narrow
                   shapeBtoWCS.T(), shapeBtoWCS.Q(), toEigen(b->half_extent()));
 
               geometry::contacts_obb_obb<M>(
-                  A, B, envelope * min(a->scale(), b->scale()), callback);
+                  A, B, envelope * std::min(a->scale(), b->scale()), callback);
         }
       }
     }
