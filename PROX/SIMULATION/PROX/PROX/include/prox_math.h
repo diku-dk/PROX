@@ -59,7 +59,7 @@ template <typename T> T computeInfNorm(const NCVec4<T>& x)
 
 template <typename T>
 void computeZk(const MatrixBlock<4, 1, T>& x_k, const NCVec6<T>& w,
-               const MatrixBlock<4, 1, T>& R_k, const CRMatrix<4, 6, T>& J,
+               const MatrixBlock<4, 4, T>& R_k, const CRMatrix<4, 6, T>& J,
                const MatrixBlock<4, 1, T>& b_k, MatrixBlock<4, 1, T>& z_k,
                const size_t& k)
 {

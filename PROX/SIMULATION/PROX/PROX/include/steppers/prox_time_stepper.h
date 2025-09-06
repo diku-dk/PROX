@@ -26,10 +26,9 @@
 #include <prox_params.h>
 #include <prox_math_policy.h>
 
-#include <solvers/prox_bind_solver.h>
+#include <solvers/prox_solver.h>
 #include <solvers/sub/prox_bind_normal_sub_solver.h>
 #include <solvers/sub/prox_bind_friction_sub_solver.h>
-#include <solvers/strategies/prox_bind_R_strategy.h>
 
 #include <util_profiling.h>
 #include <broad.h>

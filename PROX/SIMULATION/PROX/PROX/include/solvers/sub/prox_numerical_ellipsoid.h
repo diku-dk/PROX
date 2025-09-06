@@ -39,8 +39,6 @@ namespace prox
       using std::max;
       using std::fabs;
 
-      typedef tiny::ValueTraits<T> value_traits;
-
       lambda_s = 0;
       lambda_t = 0;
       lambda_tau = 0;
@@ -231,7 +229,7 @@ namespace prox
       T g0 = (aaxx)/((aa+t0)*(aa+t0)) + (bbyy)/((aa+t0)*(aa+t0)) + (cczz)/((aa+t0)*(aa+t0)) - 1;
       T g1 = (aaxx)/((aa+t1)*(aa+t1)) + (bbyy)/((bb+t1)*(bb+t1)) + (cczz)/((cc+t1)*(cc+t1)) - 1;
 
-      T const expansion = value_traits::numeric_cast(1.5);
+      T const expansion = 1.5f;
       while(g1>0)
       {
         t1 *= expansion;

@@ -34,8 +34,6 @@ namespace prox
       using std::min;
       using std::max;
 
-      typedef tiny::ValueTraits<T> VT;
-
       T const n_s   = mu_s* max<T>( lambda_n, 0 );
       T const n_t   = mu_t* max<T>( lambda_n, 0 );
 

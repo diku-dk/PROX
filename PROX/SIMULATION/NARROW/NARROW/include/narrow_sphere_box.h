@@ -26,18 +26,15 @@ namespace narrow
      * @param results  Upon return any new proximity information will have been added to this container.
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
-    template<typename M>
-    inline void sphere_box(
-                           typename Geometry<M>::sphere_container const & A
-                           , typename Geometry<M>::box_container const & B
-                           , typename M::vector3_type const & tA
-                           , typename M::quaternion_type const & qA
-                           , typename M::vector3_type const & tB
-                           , typename M::quaternion_type const & qB
-                           , typename M::real_type const & envelope
-                           , typename geometry::ContactsCallback<typename M::vector3_type> & callback
-                           )
-    {
+  template <typename M>
+  inline void sphere_box(
+      typename Geometry<typename M::real_type>::sphere_container const& A,
+      typename Geometry<typename M::real_type>::box_container const& B,
+      typename M::vector3_type const& tA, typename M::quaternion_type const& qA,
+      typename M::vector3_type const& tB, typename M::quaternion_type const& qB,
+      typename M::real_type const& envelope,
+      typename geometry::ContactsCallback<typename M::vector3_type>& callback)
+  {
       using std::min;
 
       typedef typename M::value_traits    VT;
@@ -45,8 +42,10 @@ namespace narrow
       typedef typename M::vector3_type    V;
       using T = V::real_type;
 
-      typedef typename Geometry<M>::sphere_container::const_iterator    sphere_iterator;
-      typedef typename Geometry<M>::box_container::const_iterator       box_iterator;
+      typedef typename Geometry<typename M::real_type>::sphere_container::
+          const_iterator sphere_iterator;
+      typedef typename Geometry<
+          typename M::real_type>::box_container::const_iterator box_iterator;
 
       assert( envelope > 0 || !"sphere_box(): collision envelope must be positive");
 

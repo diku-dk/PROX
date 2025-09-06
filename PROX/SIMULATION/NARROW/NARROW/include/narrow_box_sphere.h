@@ -26,27 +26,28 @@ namespace narrow
      * @param results  Upon return any new proximity information will have been added to this container.
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
-    template<typename M>
-    inline void box_sphere(
-                           typename Geometry<M>::box_container const & A
-                           , typename Geometry<M>::sphere_container const & B
-                           , typename M::vector3_type const & tA
-                           , typename M::quaternion_type const & qA
-                           , typename M::vector3_type const & tB
-                           , typename M::quaternion_type const & qB // not needed?
-                           , typename M::real_type const & envelope
-                           , typename geometry::ContactsCallback<typename M::vector3_type> & callback
-                           )
-    {
-        using T = typename M::real_type;
+  template <typename M>
+  inline void box_sphere(
+      typename Geometry<typename M::real_type>::box_container const& A,
+      typename Geometry<typename M::real_type>::sphere_container const& B,
+      typename M::vector3_type const& tA, typename M::quaternion_type const& qA,
+      typename M::vector3_type const& tB,
+      typename M::quaternion_type const& qB // not needed?
+      ,
+      typename M::real_type const& envelope,
+      typename geometry::ContactsCallback<typename M::vector3_type>& callback)
+  {
+      using T = typename M::real_type;
       using std::min;
 
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
       typedef typename M::vector3_type    V;
 
-      typedef typename Geometry<M>::box_container::const_iterator    box_iterator;
-      typedef typename Geometry<M>::sphere_container::const_iterator sphere_iterator;
+      typedef typename Geometry<
+          typename M::real_type>::box_container::const_iterator box_iterator;
+      typedef typename Geometry<typename M::real_type>::sphere_container::
+          const_iterator sphere_iterator;
 
       assert( envelope > 0 || !"box_sphere(): collision envelope must be positive");
 
@@ -76,7 +77,7 @@ namespace narrow
                                         );
         }
       }
-    }
+  }
 
   } // namespace detail
 

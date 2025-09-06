@@ -17,46 +17,34 @@ namespace narrow
   namespace details
   {
 
-    template< typename M>
-    inline void dispatch_tetramesh_tetramesh( System<M> const & system, std::vector< TestPair<M> > & test_pairs )
-    {
+  template <typename M>
+  inline void
+  dispatch_tetramesh_tetramesh(System<typename M::real_type> const& system,
+                               std::vector<TestPair<M>>& test_pairs)
+  {
       assert( ! test_pairs.empty() || !"dispatch_tetramesh_tetramesh : test_pairs are empty" );
 
       typedef typename M::vector3_type                     V;
-      typedef typename M::real_type                        T;
-      typedef typename std::vector<TestPair<M> >::iterator pair_iterator;
+      typedef typename M::real_type T;
       typedef typename kdop::TestPair<V, 8, T>             kdop_pair_type;
-
-      pair_iterator current = test_pairs.begin();
-      pair_iterator end     = test_pairs.end();
 
       std::vector< kdop_pair_type > kdop_test_pairs;
 
-      for(;current!=end;++current)
+      for (auto& current : test_pairs)
       {
-        Object<M> const & objA = current->obj_a();
-        Object<M> const & objB = current->obj_b();
+          const auto& objA = current.obj_a();
+          const auto& objB = current.obj_b();
 
-        Geometry<M> const & geoA = system.get_geometry( objA.get_geometry_idx() );
-        Geometry<M> const & geoB = system.get_geometry( objB.get_geometry_idx() );
+          const auto& geoA = system.get_geometry(objA.get_geometry_idx());
+          const auto& geoB = system.get_geometry(objB.get_geometry_idx());
 
-        kdop_pair_type const test_pair = kdop_pair_type(
-                                                        objA.m_tree
-                                                        , objB.m_tree
-                                                        , geoA.m_tetramesh.m_mesh
-                                                        , geoB.m_tetramesh.m_mesh
-                                                        , objA.m_X
-                                                        , objB.m_X
-                                                        , objA.m_Y
-                                                        , objB.m_Y
-                                                        , objA.m_Z
-                                                        , objB.m_Z
-                                                        , geoA.m_tetramesh.m_surface_map
-                                                        , geoB.m_tetramesh.m_surface_map
-                                                        , current->callback()
-                                                        );
+          kdop_pair_type const test_pair = kdop_pair_type(
+              objA.m_tree, objB.m_tree, geoA.m_tetramesh.m_mesh,
+              geoB.m_tetramesh.m_mesh, objA.m_X, objB.m_X, objA.m_Y, objB.m_Y,
+              objA.m_Z, objB.m_Z, geoA.m_tetramesh.m_surface_map,
+              geoB.m_tetramesh.m_surface_map, current.callback());
 
-        kdop_test_pairs.push_back( test_pair );
+          kdop_test_pairs.push_back(test_pair);
       }
 #ifdef HAS_DIKUCL
 
@@ -89,8 +77,7 @@ namespace narrow
 #ifdef HAS_DIKUCL
       }
 #endif // HAS_DIKUCL
-
-    }
+  }
 
   } // namespace details
 

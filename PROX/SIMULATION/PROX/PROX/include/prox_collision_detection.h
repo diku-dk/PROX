@@ -286,8 +286,10 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
             *callback = callback_type(bodyA, bodyB, contacts);
 
             narrow::TestPair<typename MathPolicy<T>::tiny_types> narrow_pair(
-                *bodyA, *bodyB, bodyA->get_position(), bodyA->get_orientation(),
-                bodyB->get_position(), bodyB->get_orientation(), (*callback));
+                *bodyA, *bodyB, fromEigen(bodyA->get_position()),
+                fromEigen(bodyA->get_orientation()),
+                fromEigen(bodyB->get_position()),
+                fromEigen(bodyB->get_orientation()), (*callback));
 
             narrow_test_pairs.push_back(narrow_pair);
 

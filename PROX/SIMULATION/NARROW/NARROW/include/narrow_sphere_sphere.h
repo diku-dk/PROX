@@ -1,6 +1,7 @@
 #ifndef NARROW_SPHERE_SPHERE_H
 #define NARROW_SPHERE_SPHERE_H
 
+#include "narrow_geometry.h"
 #include <geometry.h>
 
 #include <tiny.h>
@@ -27,25 +28,23 @@ namespace narrow
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
 
-    template<typename M>
-    inline void sphere_sphere(
-                              typename Geometry<M>::sphere_container const & A
-                              , typename Geometry<M>::sphere_container const & B
-                              , typename M::vector3_type const & tA
-                              , typename M::quaternion_type const & qA
-                              , typename M::vector3_type const & tB
-                              , typename M::quaternion_type const & qB
-                              , typename M::real_type const & envelope
-                              , typename geometry::ContactsCallback<typename M::vector3_type> & callback
-                              )
-    {
+  template <typename M>
+  inline void sphere_sphere(
+      typename Geometry<typename M::real_type>::sphere_container const& A,
+      typename Geometry<typename M::real_type>::sphere_container const& B,
+      typename M::vector3_type const& tA, typename M::quaternion_type const& qA,
+      typename M::vector3_type const& tB, typename M::quaternion_type const& qB,
+      typename M::real_type const& envelope,
+      typename geometry::ContactsCallback<typename M::vector3_type>& callback)
+  {
       using std::min;
 
       typedef typename M::value_traits    VT;
       typedef typename M::coordsys_type   C;
       typedef typename M::vector3_type    V;
 
-      typedef typename Geometry<M>::sphere_container::const_iterator sphere_iterator;
+      typedef typename Geometry<typename M::real_type>::sphere_container::
+          const_iterator sphere_iterator;
 
       assert( envelope > 0 || !"sphere_sphere(): collision envelope must be positive");
 
@@ -75,8 +74,7 @@ namespace narrow
                                            );
         }
       }
-    }
-
+  }
 
   } // namespace detail
 

@@ -11,7 +11,7 @@
 namespace narrow
 {
 
-  /**
+/**
    * This class encapsulate information needed for the narrow phase collision
    * detection library to be able to deduce and dispatch the proper collision
    * handler for a pair of objects that needs to be tested for collision
@@ -19,104 +19,98 @@ namespace narrow
    *
    * @tparam M   A typebinder of math types.
    */
-  template< typename M >
-  class TestPair
-  {
-  public:
-
-    typedef typename M::real_type       T;
-    typedef typename M::value_traits    VT;
-    typedef typename M::vector3_type    V;
+template <typename M> class TestPair
+{
+public:
+    typedef typename M::real_type T;
+    typedef typename M::value_traits VT;
+    typedef typename M::vector3_type V;
     typedef typename M::quaternion_type Q;
 
-    typedef geometry::ContactsCallback<V>    callback_type;
+    typedef geometry::ContactsCallback<V> callback_type;
 
-  protected:
-      Object<T> const* m_obj_a;
-      Object<T> const* m_obj_b;
+protected:
+    Object<T> const* m_obj_a;
+    Object<T> const* m_obj_b;
 
-      V m_t_a;
-      V m_t_b;
+    V m_t_a;
+    V m_t_b;
 
-      Q m_Q_a;
-      Q m_Q_b;
+    Q m_Q_a;
+    Q m_Q_b;
 
-      callback_type* m_callback;
+    callback_type* m_callback;
 
-  protected:
-
+protected:
     bool validate() const
     {
-      if (this->m_obj_a==0)
-        return false;
-      if (this->m_obj_b==0)
-        return false;
-      if (this->m_callback==0)
-        return false;
-      return true;
+        if (this->m_obj_a == 0) return false;
+        if (this->m_obj_b == 0) return false;
+        if (this->m_callback == 0) return false;
+        return true;
     }
 
-  public:
-      auto const& obj_a() const
-      {
-          assert(this->validate() || "TestPair::obj_a(): null pointer");
+public:
+    auto const& obj_a() const
+    {
+        assert(this->validate() || "TestPair::obj_a(): null pointer");
 
-          return *(this->m_obj_a);
-      }
+        return *(this->m_obj_a);
+    }
 
-      auto const& obj_b() const
-      {
-          assert(this->validate() || "TestPair::obj_b(): null pointer");
+    auto const& obj_b() const
+    {
+        assert(this->validate() || "TestPair::obj_b(): null pointer");
 
-          return *(this->m_obj_b);
+        return *(this->m_obj_b);
     }
 
     auto const& t_a() const
     {
-      assert(this->validate() || "TestPair::t_a(): null pointer");
+        assert(this->validate() || "TestPair::t_a(): null pointer");
 
-      return this->m_t_a;
+        return this->m_t_a;
     }
 
     auto const& t_b() const
     {
-      assert(this->validate() || "TestPair::t_b(): null pointer");
+        assert(this->validate() || "TestPair::t_b(): null pointer");
 
-      return this->m_t_b;
+        return this->m_t_b;
     }
 
     auto const& Q_a() const
     {
-      assert(this->validate() || "TestPair::Q_a(): null pointer");
+        assert(this->validate() || "TestPair::Q_a(): null pointer");
 
-      return this->m_Q_a;
+        return this->m_Q_a;
     }
 
     auto const& Q_b() const
     {
-      assert(this->validate() || "TestPair::Q_b(): null pointer");
+        assert(this->validate() || "TestPair::Q_b(): null pointer");
 
-      return this->m_Q_b;
+        return this->m_Q_b;
     }
 
     auto& callback()
     {
-      assert(this->validate() || "TestPair::callback(): null pointer");
+        assert(this->validate() || "TestPair::callback(): null pointer");
 
-      return *(this->m_callback);
+        return *(this->m_callback);
     }
 
-  public:
-
+public:
     TestPair()
-    : m_obj_a(0)
-    , m_obj_b(0)
-    , m_t_a()
-    , m_t_b()
-    , m_Q_a()
-    , m_Q_b()
-    , m_callback(0)
-    {}
+        : m_obj_a(0)
+        , m_obj_b(0)
+        , m_t_a()
+        , m_t_b()
+        , m_Q_a()
+        , m_Q_b()
+        , m_callback(0)
+    {
+    }
 
     TestPair(Object<T> const& objA, Object<T> const& objB,
              typename M::vector3_type const& tA,
@@ -131,10 +125,9 @@ namespace narrow
         , m_Q_a(qA)
         , m_Q_b(qB)
         , m_callback(&callback)
-    {}
-
-  };
-
+    {
+    }
+};
 
 } //namespace narrow
 

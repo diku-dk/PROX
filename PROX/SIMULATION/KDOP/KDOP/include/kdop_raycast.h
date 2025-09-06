@@ -65,12 +65,13 @@ namespace kdop
         geometry::TetrahedronEigen<T> const gT
             = geometry::make_tetrahedron((p0), (p1), (p2), (p3));
 
-        bool const did_hit = geometry::compute_raycast_tetrahedron<T>(geometry::convertRayToEigen( ray), gT, p, s, surf);
+        bool const did_hit
+            = geometry::compute_raycast_tetrahedron<T>((ray), gT, p, s, surf);
 
         if(did_hit)
         {
-            hit_point    = s < length ? fromEigen(p) : hit_point;
-          length       = s < length ? s : length;
+            hit_point = s < length ? (p) : hit_point;
+            length = s < length ? s : length;
         }
 
       }

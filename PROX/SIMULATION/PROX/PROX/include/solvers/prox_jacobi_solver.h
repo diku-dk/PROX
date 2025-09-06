@@ -63,7 +63,7 @@ void jacobi_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJT, con
 
     DiagonalMatrix<4, T> R, nu;
 
-    strategy(J, WJT, R, nu);
+    rstrategy(params.r_factor_strategy(), J, WJT, R, nu);
 
     NeedlesslyComplicatedVector<4, T> z;
     bool last_iteration_diverged = false;
@@ -90,10 +90,11 @@ void jacobi_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJT, con
             size_t const t = 2u;
             size_t const tau = 3u;
 
-            normal_solver(z_k(n), x_k_out(n));
+            normalSolver(params.normal_sub_solver(), z_k(n), x_k_out(n));
 
-            friction_solver(z_k(s), z_k(t), z_k(tau), mu_k(s), mu_k(t), mu_k(tau), x_k_in(n),
-                            x_k_out(s), x_k_out(t), x_k_out(tau));
+            frictionSolver(params.friction_sub_solver(), z_k(s), z_k(t),
+                           z_k(tau), mu_k(s), mu_k(t), mu_k(tau), x_k_in(n),
+                           x_k_out(s), x_k_out(t), x_k_out(tau));
         }
 
         //--- Compute residual, residual = lambda^k - lambda^(k+1)

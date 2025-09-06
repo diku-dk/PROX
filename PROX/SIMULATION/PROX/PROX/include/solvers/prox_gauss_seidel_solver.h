@@ -60,7 +60,7 @@ void gauss_seidel_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJ
 
     DiagonalMatrix<4, T> R, nu;
 
-    strategy(J, WJT, R, nu);
+    rstrategy(params.r_factor_strategy(), J, WJT, R, nu);
 
     NCVec6<T> w;
     w.resize(J.ncols());// what is in w???
@@ -73,7 +73,6 @@ void gauss_seidel_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJ
     //--- Gauss--Seidel loops
     for (size_t iteration = 0u; iteration < params.max_iterations(); ++iteration)
     {
-
         //Safety guard:
         int lookup = 1;
         if (R.size() == 1) { lookup = 0; }
@@ -87,7 +86,7 @@ void gauss_seidel_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJ
             auto& x_k = x(k);
             delta_x = x(k); // save old value
 
-            computeZk(x_k, w, R(k), J, b(k), z_k, k);
+            computeZk<T>(x_k, w, R(k), J, b(k), z_k, k);
 
             size_t const n = 0u;
             size_t const s = 1u;
@@ -95,11 +94,12 @@ void gauss_seidel_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJ
             size_t const tau = 3u;
 
             //--- Solve lambda_n = prox_{R^+}( lambda_n - r (A lambda_n + b))
-            normal_solver(z_k(n), x_k(n));
+            normalSolver(params.normal_sub_solver(), z_k(n), x_k(n));
 
             //--- Solve lambda_f = prox_C( lambda_f - r (A lambda_f + b))
-            friction_solver(z_k(s), z_k(t), z_k(tau), mu_k(s), mu_k(t), mu_k(tau), x_k(n), x_k(s),
-                            x_k(t), x_k(tau));
+            frictionSolver(params.friction_sub_solver(), z_k(s), z_k(t),
+                           z_k(tau), mu_k(s), mu_k(t), mu_k(tau), x_k(n),
+                           x_k(s), x_k(t), x_k(tau));
 
             //--- delta_x = x_k_new - x_k_old (saved in delta_x)
             sparse::sub(x_k, delta_x, delta_x);

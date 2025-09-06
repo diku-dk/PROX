@@ -12,22 +12,21 @@ namespace narrow
   namespace detail
   {
 
-    template<typename M>
-    inline void spheres_tetramesh(
-                                    typename Geometry<M>::sphere_container const & A
-                                  , typename M::vector3_type const & tA
-                                  , typename M::quaternion_type const & qA
-                                  , Object<M> const & objB
-                                  , Geometry<M> const & geoB
-                                  , typename geometry::ContactsCallback<typename M::vector3_type> & callback
-                                  , bool const & should_flip
-                                 )
-    {
+  template <typename M>
+  inline void spheres_tetramesh(
+      typename Geometry<typename M::real_type>::sphere_container const& A,
+      typename M::vector3_type const& tA, typename M::quaternion_type const& qA,
+      Object<typename M::real_type> const& objB,
+      Geometry<typename M::real_type> const& geoB,
+      typename geometry::ContactsCallback<typename M::vector3_type>& callback,
+      bool const& should_flip)
+  {
       typedef typename M::coordsys_type   C;
       typedef typename M::vector3_type    V;
       typedef typename M::real_type       T;
 
-      typedef typename Geometry<M>::sphere_container::const_iterator sphere_iterator;
+      typedef typename Geometry<typename M::real_type>::sphere_container::
+          const_iterator sphere_iterator;
 
       if( A.empty() )
         return;
@@ -54,7 +53,7 @@ namespace narrow
                                         , should_flip
                                         );
       }
-    }
+  }
 
   } // namespace detail
 

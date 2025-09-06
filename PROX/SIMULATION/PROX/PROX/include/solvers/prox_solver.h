@@ -6,7 +6,8 @@
 #include <solvers/sub/prox_friction_sub_solver.h>
 
 #include <solvers/prox_solver_params.h>
-
+#include <solvers/prox_gauss_seidel_solver.h>
+#include <solvers/prox_jacobi_solver.h>
 #include <prox_math.h>
 
 namespace prox
@@ -23,34 +24,6 @@ void run_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJT, const 
     default:                        assert(0);
     }
 }
-
-/*
-template <typename T>
-struct SimpleSolver
-{
-    SimpleSolver(        logging << "bind_solver(): using jacobi solver"<< util::Log::newline();
-                 return SolverBinder<M>( &jacobi_solver<M> );
-                 
-                 case gauss_seidel:
-                 logging << "bind_solver(): using gauss seidel solver"<< util::Log::newline();
-                 return SolverBinder<M>( &gauss_seidel_solver<M> );
-)
-*/
-  /**
-   * A solver functor.
-   */
-template <typename M> class NoSuchSolver
-{
-public:
-    virtual void operator()(typename M::compressed4x6_type const&,
-                            typename M::compressed6x4_type const&, typename M::vector4_type const&,
-                            typename M::vector4_type const&, typename M::vector4_type&,
-                            RStrategy<M> const&, NormalSubSolver<typename M::real_type> const&,
-                            FrictionSubSolver<typename M::real_type> const&, SolverParams<M> const&,
-                            M const&) const
-        = 0;
-};
-
 } //namespace prox
 
 // PROX_SOLVER_H

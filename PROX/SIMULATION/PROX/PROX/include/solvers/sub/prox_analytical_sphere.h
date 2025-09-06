@@ -29,7 +29,6 @@ namespace prox
                                               )
     {
       using std::sqrt;
-      typedef tiny::ValueTraits<T> value_traits;
 
       // Special case when cold starting
       if ( lambda_n <= 0 )
