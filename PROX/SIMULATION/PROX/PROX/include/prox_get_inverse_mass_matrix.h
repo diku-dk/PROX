@@ -47,7 +47,7 @@ inline void get_inverse_mass_matrix(Iterator begin, Iterator end, DiagonalMatrix
 
             detail::update_inertia_tensor(R, I_bf, inv_I);
 
-            inv_I = inv_I.inverse();
+            inv_I = inv_I.inverse().eval();
       }
 
       auto& b = W(index);

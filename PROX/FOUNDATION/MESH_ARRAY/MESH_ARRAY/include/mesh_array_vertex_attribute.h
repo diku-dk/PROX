@@ -88,12 +88,12 @@ namespace mesh_array
 
     virtual const_reference operator()(Vertex const & v) const
     {
-      return this->m_data[v.idx()];
+        return this->m_data.at(v.idx());
     }
 
     virtual reference operator()(Vertex const & v)
     {
-      return this->m_data[v.idx()];
+        return this->m_data.at(v.idx());
     }
 
     virtual const_reference operator[](Vertex const & v) const

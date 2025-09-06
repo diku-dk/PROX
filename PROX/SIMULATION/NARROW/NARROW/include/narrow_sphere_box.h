@@ -1,6 +1,7 @@
 #ifndef NARROW_SPHERE_BOX_H
 #define NARROW_SPHERE_BOX_H
 
+#include "narrow_geometry.h"
 #include <geometry.h>
 
 #include <tiny.h>
