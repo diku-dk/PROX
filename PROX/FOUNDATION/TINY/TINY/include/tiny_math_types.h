@@ -546,4 +546,28 @@ struct std::tuple_element<Index, EigenVector3<T>> : public std::integral_constan
     using type = T;
 };
 
+template <typename T>
+void orthonormal_vectors(EigenVector3<T>& i, EigenVector3<T>& j,
+                         const EigenVector3<T>& k)
+{
+    EigenVector3<T> absK(std::abs(k.x()), std::abs(k.y()), std::abs(k.z()));
+
+    if (absK(0) > absK(1))
+    {
+        if (absK(0) > absK(2))
+            i = {0, 1, 0};
+        else
+            i = {1, 0, 0};
+    }
+    else
+    {
+        if (absK(1) > absK(2))
+            i = {0, 0, 1};
+        else
+            i = {1, 0, 0};
+    }
+    j = cross(k, i).normalized();
+    i = cross(j, k);
+}
+
 #endif // TINY_MATH_TYPES_H

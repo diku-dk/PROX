@@ -40,7 +40,9 @@ namespace narrow
          * @return     A reference to the current shape transformation
          */
         C const & transform(  ) const {  return m_transform; }
-        C       & transform(  )       {  return m_transform; }
+        C& transform() { return m_transform; }
+
+        auto eigenTransform() const { return coordSysToEigen(m_transform); }
 
         /**
          * Get a support map function of the shape.

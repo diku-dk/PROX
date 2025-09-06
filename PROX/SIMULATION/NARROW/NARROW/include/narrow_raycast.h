@@ -24,7 +24,7 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
 
     if (geoA.m_tetramesh.has_data())
     {
-        return kdop::raycast<8>(
+        return kdop::raycast<T, 8>(
             ray, objA.m_tree, geoA.m_tetramesh.m_mesh, objA.m_X, objA.m_Y,
             objA.m_Z, geoA.m_tetramesh.m_surface_map, point, distance);
     }
@@ -39,7 +39,7 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
                 const CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
                     toEigen(a->transform().T()), toEigen(a->transform().Q()));
                 const CoordSysEigen<T> shapeAtoWCS
-                    = prod(shapeAtobodyA, coordSysToEigen(bodyAtoWCS));
+                    = prod(shapeAtobodyA, (bodyAtoWCS));
 
                 geometry::OBBEigen<T> const obb
                     = geometry::make_obb<T>(shapeAtoWCS.T(), shapeAtoWCS.Q(),
@@ -49,11 +49,10 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
                 EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
 
                 bool const did_hit = geometry::compute_raycast_obb(
-                    geometry::convertRayToEigen(ray), obb, local_point,
-                    local_distance);
+                    (ray), obb, local_point, local_distance);
 
                 distance = did_hit ? local_distance : distance;
-                point = did_hit ? fromEigen(local_point) : point;
+                point = did_hit ? (local_point) : point;
             }
         }
         if (!geoA.m_spheres.empty())
@@ -61,31 +60,28 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
             for (auto a = geoA.m_spheres.begin(); a != geoA.m_spheres.end();
                  ++a)
             {
-                auto const shapeAtobodyA
-                    = CoordSysEigen<T>(a->transform().T(), a->transform().Q());
-                auto const shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
+                auto const shapeAtobodyA = a->eigenTransform();
+                auto const shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
 
-                geometry::Sphere<T> const sphere = geometry::make_sphere<T>(
-                    toEigen(shapeAtoWCS.T()), a->radius());
+                geometry::Sphere<T> const sphere
+                    = geometry::make_sphere<T>(shapeAtoWCS.T(), a->radius());
 
                 T local_distance = std::numeric_limits<T>::max();
                 EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
 
                 bool const did_hit = geometry::compute_raycast_sphere<T>(
-                    geometry::convertRayToEigen(ray), sphere, local_point,
-                    local_distance);
+                    (ray), sphere, local_point, local_distance);
 
                 distance = did_hit ? local_distance : distance;
-                point = did_hit ? fromEigen(local_point) : point;
+                point = did_hit ? (local_point) : point;
             }
         }
         if (!geoA.m_hulls.empty())
         {
             for (auto a = geoA.m_hulls.begin(); a != geoA.m_hulls.end(); ++a)
             {
-                auto const shapeAtobodyA
-                    = CoordSysEigen<T>(a->transform().T(), a->transform().Q());
-                auto const shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
+                auto const shapeAtobodyA = a->eigenTransform();
+                auto const shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
 
                 assert(false || !"not implemented yet");
                 //          geometry::ConvexHull<V> const hull = geometry::make_convex_hull( shapeAtoWCS.T(), a->radius());

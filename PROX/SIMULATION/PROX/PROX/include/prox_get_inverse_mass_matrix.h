@@ -43,11 +43,11 @@ inline void get_inverse_mass_matrix(Iterator begin, Iterator end, DiagonalMatrix
             assert(inv_mass > 0 || !"get_inverse_mass_matrix(): Negative mass");
 
             auto I_bf = body->get_inertia_bf();
-            auto R = body->get_orientation().GetRotationMatrix();
+            auto R = EigenMatrix3<T>(body->get_orientation());
 
             detail::update_inertia_tensor(R, I_bf, inv_I);
 
-            inv_I = tiny::inverse(inv_I);
+            inv_I = inv_I.inverse();
       }
 
       auto& b = W(index);

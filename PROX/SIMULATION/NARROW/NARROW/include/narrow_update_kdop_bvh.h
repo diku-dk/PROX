@@ -140,7 +140,7 @@ inline void update_kdop_bvh(std::vector<KDopBvhUpdateWorkItem<T>>& work_pool,
                                geometry.m_tetramesh.m_Y0(v),
                                geometry.m_tetramesh.m_Z0(v));
 
-            auto const r = tiny::rotate(q, r0) + p;
+            auto const r = rotate(q, r0) + p;
 
             object.m_X(v) = r(0);
             object.m_Y(v) = r(1);

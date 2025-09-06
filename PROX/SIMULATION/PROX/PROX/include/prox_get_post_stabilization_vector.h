@@ -47,7 +47,7 @@ inline void get_post_stabilization_vector(Iterator begin, Iterator end,
     {
         auto& b = g(index);
 
-        b(0) = max(-max_gap, std::min<T>(reduction * contact->depth, 0));
+        b(0) = std::max(-max_gap, std::min<T>(reduction * contact->depth, 0));
         b(1) = 0;
         b(2) = 0;
         b(3) = 0;

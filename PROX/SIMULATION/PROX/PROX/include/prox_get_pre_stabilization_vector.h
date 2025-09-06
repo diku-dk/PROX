@@ -66,7 +66,7 @@ inline void get_pre_stabilization_vector(Iterator begin, Iterator end,
         T const& v_n = v(0);
         bool const add_correction = contact->depth <= yield && v_n <= 0;
 
-        b(0) = add_correction ? max(limit, k * contact->depth) : 0;
+        b(0) = add_correction ? std::max(limit, k * contact->depth) : 0;
         b(1) = 0;
         b(2) = 0;
         b(3) = 0;

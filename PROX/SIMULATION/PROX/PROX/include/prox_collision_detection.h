@@ -42,11 +42,10 @@ template <typename M>
 class ContactCallbackFunctor : public geometry::ContactsCallback<typename M::vector3_type>
 {
 public:
-    typedef prox::RigidBody<M> body_type;
-    typedef prox::ContactPoint<M> contact_type;
     typedef typename M::real_type T;
+    typedef prox::RigidBody<T> body_type;
+    typedef prox::ContactPoint<T> contact_type;
     typedef typename M::vector3_type V;
-    typedef typename M::value_traits VT;
 
 protected:
     body_type* m_body_i;   ///< A pointer to body i of the contact.
@@ -63,7 +62,7 @@ public:
     }
 
     ContactCallbackFunctor(body_type* A, body_type* B,
-                           std::vector< prox::ContactPoint<M> >& results)
+                           std::vector<prox::ContactPoint<T>>& results)
         : m_body_i(A)
         , m_body_j(B)
         , m_results(&results)
@@ -275,8 +274,8 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
 
         for (auto o = overlaps.begin(); o != overlaps.end(); ++o, ++callback)
         {
-            auto* bodyA = o->first; // 2009-11-25 Kenny: hmm can we not get rid of static casts?
-            auto* bodyB = o->second; // 2009-11-25 Kenny: hmm can we not get rid of static casts?
+            auto* bodyA = dynamic_cast<RigidBody<T>*>(o->first);
+            auto* bodyB = dynamic_cast<RigidBody<T>*>(o->second);
 
             //--- Verify if we need to test the two bodies or if we can skip them --
             if (bodyA->is_fixed() && bodyB->is_fixed()) continue;

@@ -22,7 +22,7 @@ inline void get_jacobian_matrix(ContactIt begin, ContactIt end, const BodyContai
 
     for (auto contact = begin; contact != end; ++contact, ++k)
     {
-        auto n_k = fromEigen(contact->normal);
+        auto n_k = contact->normal;
         EigenVector3<T> t_k, s_k;
 
         size_t const mat_i = contact->bodyI->get_material_idx();
@@ -36,7 +36,7 @@ inline void get_jacobian_matrix(ContactIt begin, ContactIt end, const BodyContai
 
         if (property->is_isotropic())
         {
-            tiny::orthonormal_vectors(
+            orthonormal_vectors(
                 s_k, t_k,
                 n_k); // 200X-YY-ZZ Kenny: TODO we might want to do this a little more clever?
         }
@@ -56,14 +56,14 @@ inline void get_jacobian_matrix(ContactIt begin, ContactIt end, const BodyContai
             }
             else { assert(false || !"get_jacobian_matrix(): master idx was bad"); }
 
-            s_k = tiny::rotate(Q, property->get_s_vector());
-            float const c = tiny::inner_prod(n_k, s_k);
-            s_k = tiny::unit(s_k - n_k * c);
-            float const s_test = tiny::inner_prod(s_k, s_k);
-            if (s_test > 10e-5f) { t_k = tiny::cross(n_k, s_k); }
+            s_k = rotate(Q, property->get_s_vector());
+            float const c = dot(n_k, s_k);
+            s_k = (s_k - n_k * c).normalized();
+            float const s_test = dot(s_k, s_k);
+            if (s_test > 10e-5f) { t_k = cross(n_k, s_k); }
             else
             {
-                tiny::orthonormal_vectors(
+                orthonormal_vectors(
                     s_k, t_k,
                     n_k); // 200X-YY-ZZ Kenny: TODO we might want to do this a little more clever?
             }
@@ -72,10 +72,11 @@ inline void get_jacobian_matrix(ContactIt begin, ContactIt end, const BodyContai
         auto& J_ki = J(k, contact->bodyI->get_idx());
 
         // Fill in J_ki
-        auto r_ki = contact->position - contact->bodyI->get_position();
-        auto iXn = tiny::cross(r_ki, n_k);
-        auto iXt = tiny::cross(r_ki, t_k);
-        auto iXs = tiny::cross(r_ki, s_k);
+        EigenVector3<T> r_ki
+            = contact->position - contact->bodyI->get_position();
+        auto iXn = cross(r_ki, n_k);
+        auto iXt = cross(r_ki, t_k);
+        auto iXs = cross(r_ki, s_k);
 
         J_ki(0, 0) = -n_k(0);
         J_ki(0, 1) = -n_k(1);
@@ -105,10 +106,11 @@ inline void get_jacobian_matrix(ContactIt begin, ContactIt end, const BodyContai
         auto& J_kj = J(k, contact->bodyJ->get_idx());
 
         // Fill in J_kj
-        auto r_kj = contact->position - contact->bodyJ->get_position();
-        auto jXn = tiny::cross(r_kj, n_k);
-        auto jXt = tiny::cross(r_kj, t_k);
-        auto jXs = tiny::cross(r_kj, s_k);
+        EigenVector3<T> r_kj
+            = contact->position - contact->bodyJ->get_position();
+        auto jXn = cross(r_kj, n_k);
+        auto jXt = cross(r_kj, t_k);
+        auto jXs = cross(r_kj, s_k);
 
         J_kj(0, 0) = n_k(0);
         J_kj(0, 1) = n_k(1);

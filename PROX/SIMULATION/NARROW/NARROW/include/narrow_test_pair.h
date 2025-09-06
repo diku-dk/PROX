@@ -32,17 +32,16 @@ namespace narrow
     typedef geometry::ContactsCallback<V>    callback_type;
 
   protected:
+      Object<T> const* m_obj_a;
+      Object<T> const* m_obj_b;
 
-    Object<M> const * m_obj_a;
-    Object<M> const * m_obj_b;
+      V m_t_a;
+      V m_t_b;
 
-    V m_t_a;
-    V m_t_b;
+      Q m_Q_a;
+      Q m_Q_b;
 
-    Q m_Q_a;
-    Q m_Q_b;
-
-    callback_type * m_callback;
+      callback_type* m_callback;
 
   protected:
 
@@ -58,50 +57,49 @@ namespace narrow
     }
 
   public:
+      auto const& obj_a() const
+      {
+          assert(this->validate() || "TestPair::obj_a(): null pointer");
 
-    Object<M> const & obj_a()  const
-    {
-      assert(this->validate() || "TestPair::obj_a(): null pointer");
+          return *(this->m_obj_a);
+      }
 
-      return *(this->m_obj_a);
+      auto const& obj_b() const
+      {
+          assert(this->validate() || "TestPair::obj_b(): null pointer");
+
+          return *(this->m_obj_b);
     }
 
-    Object<M> const & obj_b()  const
-    {
-      assert(this->validate() || "TestPair::obj_b(): null pointer");
-
-      return *(this->m_obj_b);
-    }
-
-    V const & t_a() const
+    auto const& t_a() const
     {
       assert(this->validate() || "TestPair::t_a(): null pointer");
 
       return this->m_t_a;
     }
 
-    V const & t_b() const
+    auto const& t_b() const
     {
       assert(this->validate() || "TestPair::t_b(): null pointer");
 
       return this->m_t_b;
     }
 
-    Q const & Q_a() const
+    auto const& Q_a() const
     {
       assert(this->validate() || "TestPair::Q_a(): null pointer");
 
       return this->m_Q_a;
     }
 
-    Q const & Q_b() const
+    auto const& Q_b() const
     {
       assert(this->validate() || "TestPair::Q_b(): null pointer");
 
       return this->m_Q_b;
     }
 
-    callback_type & callback()
+    auto& callback()
     {
       assert(this->validate() || "TestPair::callback(): null pointer");
 
@@ -120,22 +118,19 @@ namespace narrow
     , m_callback(0)
     {}
 
-    TestPair(
-               Object<M> const & objA
-             , Object<M> const & objB
-             , typename M::vector3_type const & tA
-             , typename M::quaternion_type const & qA
-             , typename M::vector3_type const & tB
-             , typename M::quaternion_type const & qB
-             , geometry::ContactsCallback<typename M::vector3_type> & callback
-             )
-    : m_obj_a(&objA)
-    , m_obj_b(&objB)
-    , m_t_a(tA)
-    , m_t_b(tB)
-    , m_Q_a(qA)
-    , m_Q_b(qB)
-    , m_callback(&callback)
+    TestPair(Object<T> const& objA, Object<T> const& objB,
+             typename M::vector3_type const& tA,
+             typename M::quaternion_type const& qA,
+             typename M::vector3_type const& tB,
+             typename M::quaternion_type const& qB,
+             geometry::ContactsCallback<typename M::vector3_type>& callback)
+        : m_obj_a(&objA)
+        , m_obj_b(&objB)
+        , m_t_a(tA)
+        , m_t_b(tB)
+        , m_Q_a(qA)
+        , m_Q_b(qB)
+        , m_callback(&callback)
     {}
 
   };
