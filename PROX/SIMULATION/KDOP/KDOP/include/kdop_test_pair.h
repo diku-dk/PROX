@@ -12,10 +12,12 @@
 namespace kdop
 {
 
-template <typename V, size_t K, typename T> class TestPair
+template <size_t K, typename T> class TestPair
 {
 public:
-    Tree<T, K> const * m_tree_a;
+    using M = tiny::MathTypes<T>;
+
+    Tree<T, K> const* m_tree_a;
     Tree<T, K> const * m_tree_b;
 
     mesh_array::T4Mesh const * m_mesh_a;
@@ -31,54 +33,55 @@ public:
 
     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const * m_surface_map_a;
     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const * m_surface_map_b;
+    geometry::ContactsCallback<typename M::vector3_type>* m_callback;
 
-    geometry::ContactsCallback<V> * m_callback;
-
-  public:
-      TestPair()
-          : m_tree_a(0)
-          , m_tree_b(0)
-          , m_mesh_a(nullptr)
-          , m_mesh_b(nullptr)
-          , m_x_a(0)
-          , m_x_b(0)
-          , m_y_a(0)
-          , m_y_b(0)
-          , m_z_a(0)
-          , m_z_b(0)
-          , m_surface_map_a(nullptr)
-          , m_surface_map_b(nullptr)
-          , m_callback(0)
-      {}
+public:
+    TestPair()
+        : m_tree_a(0)
+        , m_tree_b(0)
+        , m_mesh_a(nullptr)
+        , m_mesh_b(nullptr)
+        , m_x_a(0)
+        , m_x_b(0)
+        , m_y_a(0)
+        , m_y_b(0)
+        , m_z_a(0)
+        , m_z_b(0)
+        , m_surface_map_a(nullptr)
+        , m_surface_map_b(nullptr)
+        , m_callback(0)
+    {
+    }
 
     TestPair(
-               Tree<T, K> const & tree_A
-             , Tree<T, K> const & tree_B
-             , mesh_array::T4Mesh const & mesh_A
-             , mesh_array::T4Mesh const & mesh_B
-             , mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const & X_A
-             , mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const & X_B
-             , mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const & Y_A
-             , mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const & Y_B
-             , mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const & Z_A
-             , mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const & Z_B
-             , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const & surface_map_a
-             , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const & surface_map_b
-             , geometry::ContactsCallback<V> & callback
-             )
-    : m_tree_a(&tree_A)
-    , m_tree_b(&tree_B)
-    , m_mesh_a(&mesh_A)
-    , m_mesh_b(&mesh_B)
-    , m_x_a(&X_A)
-    , m_x_b(&X_B)
-    , m_y_a(&Y_A)
-    , m_y_b(&Y_B)
-    , m_z_a(&Z_A)
-    , m_z_b(&Z_B)
-    , m_surface_map_a(&surface_map_a)
-    , m_surface_map_b(&surface_map_b)
-    , m_callback(&callback)
+        Tree<T, K> const& tree_A, Tree<T, K> const& tree_B,
+        mesh_array::T4Mesh const& mesh_A, mesh_array::T4Mesh const& mesh_B,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_A,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_B,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_A,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_B,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_A,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_B,
+        mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                         mesh_array::T4Mesh> const&
+            surface_map_a,
+        mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                         mesh_array::T4Mesh> const&
+            surface_map_b,
+        geometry::ContactsCallback<typename M::vector3_type>& callback)
+        : m_tree_a(&tree_A)
+        , m_tree_b(&tree_B)
+        , m_mesh_a(&mesh_A)
+        , m_mesh_b(&mesh_B)
+        , m_x_a(&X_A)
+        , m_x_b(&X_B)
+        , m_y_a(&Y_A)
+        , m_y_b(&Y_B)
+        , m_z_a(&Z_A)
+        , m_z_b(&Z_B)
+        , m_surface_map_a(&surface_map_a)
+        , m_surface_map_b(&surface_map_b)
+        , m_callback(&callback)
     {}
 };
 

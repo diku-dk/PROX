@@ -15,26 +15,25 @@ namespace kdop
 {
   namespace details
   {
-
-    template< typename V, size_t K, typename T>
-    inline void traversal(
-                          size_t const & node_idx_A
-                          , SubTree<T,K> const & branch_A
-                          , mesh_array::T4Mesh const & mesh_A
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X_A
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y_A
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z_A
-                          , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,mesh_array::T4Mesh> const & surface_map_A
-                          , size_t const & node_idx_B
-                          , SubTree<T,K> const & branch_B
-                          , mesh_array::T4Mesh const & mesh_B
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X_B
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y_B
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z_B
-                          , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,mesh_array::T4Mesh> const & surface_map_B
-                          , geometry::ContactsCallback<V> & callback
-                          )
-    {
+  template <size_t K, typename T>
+  inline void traversal(
+      size_t const& node_idx_A, SubTree<T, K> const& branch_A,
+      mesh_array::T4Mesh const& mesh_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_A,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map_A,
+      size_t const& node_idx_B, SubTree<T, K> const& branch_B,
+      mesh_array::T4Mesh const& mesh_B,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_B,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_B,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_B,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map_B,
+      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
+          callback)
+  {
       using namespace mesh_array;
 
       Node<T,K> const & node_A = branch_A.m_nodes[node_idx_A];
@@ -88,21 +87,31 @@ namespace kdop
           return; // all faces of B are internal
         }
 
-        V const a0 = V::make( X_A( tet_A.i() ), Y_A( tet_A.i() ), Z_A( tet_A.i() ) );
-        V const a1 = V::make( X_A( tet_A.j() ), Y_A( tet_A.j() ), Z_A( tet_A.j() ) );
-        V const a2 = V::make( X_A( tet_A.k() ), Y_A( tet_A.k() ), Z_A( tet_A.k() ) );
-        V const a3 = V::make( X_A( tet_A.m() ), Y_A( tet_A.m() ), Z_A( tet_A.m() ) );
+        const EigenVector3<T> a0
+            = EigenVector3<T>(X_A(tet_A.i()), Y_A(tet_A.i()), Z_A(tet_A.i()));
+        const EigenVector3<T> a1
+            = EigenVector3<T>(X_A(tet_A.j()), Y_A(tet_A.j()), Z_A(tet_A.j()));
+        const EigenVector3<T> a2
+            = EigenVector3<T>(X_A(tet_A.k()), Y_A(tet_A.k()), Z_A(tet_A.k()));
+        const EigenVector3<T> a3
+            = EigenVector3<T>(X_A(tet_A.m()), Y_A(tet_A.m()), Z_A(tet_A.m()));
 
-        V const b0 = V::make( X_B( tet_B.i() ), Y_B( tet_B.i() ), Z_B( tet_B.i() ) );
-        V const b1 = V::make( X_B( tet_B.j() ), Y_B( tet_B.j() ), Z_B( tet_B.j() ) );
-        V const b2 = V::make( X_B( tet_B.k() ), Y_B( tet_B.k() ), Z_B( tet_B.k() ) );
-        V const b3 = V::make( X_B( tet_B.m() ), Y_B( tet_B.m() ), Z_B( tet_B.m() ) );
+        const EigenVector3<T> b0
+            = EigenVector3<T>(X_B(tet_B.i()), Y_B(tet_B.i()), Z_B(tet_B.i()));
+        const EigenVector3<T> b1
+            = EigenVector3<T>(X_B(tet_B.j()), Y_B(tet_B.j()), Z_B(tet_B.j()));
+        const EigenVector3<T> b2
+            = EigenVector3<T>(X_B(tet_B.k()), Y_B(tet_B.k()), Z_B(tet_B.k()));
+        const EigenVector3<T> b3
+            = EigenVector3<T>(X_B(tet_B.m()), Y_B(tet_B.m()), Z_B(tet_B.m()));
 
         std::vector<bool> surface_A( 4u, false );
         std::vector<bool> surface_B( 4u, false );
 
-        geometry::TetrahedronEigen<typename V::real_type> const gtet_A = geometry::make_tetrahedron(toEigen(a0),toEigen(a1),toEigen(a2),toEigen(a3));
-        geometry::TetrahedronEigen<typename V::real_type> const gtet_B = geometry::make_tetrahedron(toEigen(b0),toEigen(b1),toEigen(b2),toEigen(b3));
+        geometry::TetrahedronEigen<T> const gtet_A
+            = geometry::make_tetrahedron((a0), (a1), (a2), (a3));
+        geometry::TetrahedronEigen<T> const gtet_B
+            = geometry::make_tetrahedron((b0), (b1), (b2), (b3));
 
         surface_A[0] = surface_Ai;
         surface_A[1] = surface_Aj;
@@ -126,10 +135,9 @@ namespace kdop
         {
           for(size_t b = node_B.m_start; b <= node_B.m_end; ++b)
           {
-            traversal<V,K,T>(  a, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A
-                             , b, branch_B, mesh_B, X_B, Y_B, Z_B, surface_map_B
-                             , callback
-                             );
+              traversal<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A,
+                              b, branch_B, mesh_B, X_B, Y_B, Z_B, surface_map_B,
+                              callback);
           }
         }
       }
@@ -137,29 +145,26 @@ namespace kdop
       {
         for(size_t a = node_A.m_start; a <= node_A.m_end; ++a)
         {
-          traversal<V,K,T>(           a, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A
-                           , node_idx_B, branch_B, mesh_B, X_B, Y_B, Z_B, surface_map_B
-                           , callback
-                           );
+            traversal<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A,
+                            node_idx_B, branch_B, mesh_B, X_B, Y_B, Z_B,
+                            surface_map_B, callback);
         }
       }
       else if( A_is_leaf && !B_is_leaf)
       {
         for(size_t b = node_B.m_start; b <= node_B.m_end; ++b)
         {
-          traversal<V,K,T>(  node_idx_A, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A
-                           ,          b, branch_B, mesh_B, X_B, Y_B, Z_B, surface_map_B
-                           , callback
-                           );
+            traversal<K, T>(node_idx_A, branch_A, mesh_A, X_A, Y_A, Z_A,
+                            surface_map_A, b, branch_B, mesh_B, X_B, Y_B, Z_B,
+                            surface_map_B, callback);
         }
       }
-
-    }
+  }
 
   }// namespace details
 
-  template< typename V, size_t K, typename T>
-  inline void tandem_traversal( TestPair<V,K,T> & work_item  )
+  template <size_t K, typename T>
+  inline void tandem_traversal(TestPair<K, T>& work_item)
   {
 
     if(!geometry::overlap_dop_dop(work_item.m_tree_a->m_root, work_item.m_tree_b->m_root))
@@ -176,36 +181,25 @@ namespace kdop
       {
         SubTree<T,K> const & branch_B = work_item.m_tree_b->branches()[b];
 
-        details::traversal<V,K,T>(  0
-                                  , branch_A
-                                  , *(work_item.m_mesh_a)
-                                  , *(work_item.m_x_a)
-                                  , *(work_item.m_y_a)
-                                  , *(work_item.m_z_a)
-                                  , *(work_item.m_surface_map_a)
-                                  , 0
-                                  , branch_B
-                                  , *(work_item.m_mesh_b)
-                                  , *(work_item.m_x_b)
-                                  , *(work_item.m_y_b)
-                                  , *(work_item.m_z_b)
-                                  , *(work_item.m_surface_map_b)
-                                  , *(work_item.m_callback)
-                                  );
+        details::traversal<K, T>(
+            0, branch_A, *(work_item.m_mesh_a), *(work_item.m_x_a),
+            *(work_item.m_y_a), *(work_item.m_z_a),
+            *(work_item.m_surface_map_a), 0, branch_B, *(work_item.m_mesh_b),
+            *(work_item.m_x_b), *(work_item.m_y_b), *(work_item.m_z_b),
+            *(work_item.m_surface_map_b), *(work_item.m_callback));
       }
     }
   }
 
-  template< typename V, size_t K, typename T>
-  inline void tandem_traversal(
-                               std::vector< TestPair<V,K,T> > & work_pool
-                               , sequential const & /*tag*/
-                               )
+  template <size_t K, typename T>
+  inline void tandem_traversal(std::vector<TestPair<K, T>>& work_pool,
+                               sequential const& /*tag*/
+  )
   {
     if( work_pool.empty() )
       return;
 
-    typedef          TestPair<V,K,T>                  work_item_type;
+    typedef TestPair<K, T> work_item_type;
     typedef          std::vector< work_item_type >    work_pool_type;
     typedef typename work_pool_type::iterator         work_item_iterator;
 
@@ -216,10 +210,7 @@ namespace kdop
     work_item_iterator end     = work_pool.end();
     work_item_iterator current = work_pool.begin();
 
-    for(;current != end; ++current)
-    {
-      tandem_traversal<V, K, T>( *current );
-    }
+    for (; current != end; ++current) { tandem_traversal<K, T>(*current); }
 
     RESUME_TIMER("exact_test");
     STOP_TIMER("exact_test");

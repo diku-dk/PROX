@@ -27,7 +27,7 @@ namespace narrow
 
       using M = tiny::MathTypes<T>;
       typedef typename M::vector3_type V;
-      typedef typename kdop::TestPair<V, 8, T> kdop_pair_type;
+      typedef typename kdop::TestPair<8, T> kdop_pair_type;
 
       std::vector< kdop_pair_type > kdop_test_pairs;
 
@@ -54,26 +54,21 @@ namespace narrow
         if(system.params().use_gproximity())
         {
 
-          kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
-                                          , kdop::dikucl::gproximity()
-                                          , system.params().open_cl_platform()
-                                          , system.params().open_cl_device());
-
+            kdop::tandem_traversal<8, T>(kdop_test_pairs,
+                                         kdop::dikucl::gproximity(),
+                                         system.params().open_cl_platform(),
+                                         system.params().open_cl_device());
         } else {
 
-          kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
-                                          , kdop::dikucl()
-                                          , system.params().open_cl_platform()
-                                          , system.params().open_cl_device());
-
+            kdop::tandem_traversal<8, T>(kdop_test_pairs, kdop::dikucl(),
+                                         system.params().open_cl_platform(),
+                                         system.params().open_cl_device());
         }
       } else {
 #endif // HAS_DIKUCL
 
         // use regular tandem traversal if DIKUCL is not available or should not be used
-        kdop::tandem_traversal<V, 8, T>(  kdop_test_pairs
-                                        , kdop::sequential()
-                                        );
+        kdop::tandem_traversal<8, T>(kdop_test_pairs, kdop::sequential());
 
 #ifdef HAS_DIKUCL
       }
