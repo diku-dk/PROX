@@ -13,10 +13,6 @@ template <typename T>
 void profile_sweep(std::vector<EigenVector3<T>> const& profile, size_t const& slices, T3Mesh& mesh,
                    VertexAttribute<T, T3Mesh>& X, VertexAttribute<T, T3Mesh>& Y, VertexAttribute<T, T3Mesh>& Z)
 {
-/*    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;*/
 
     size_t const N = profile.size();
     size_t const J = slices;

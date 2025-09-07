@@ -14,11 +14,6 @@ template <typename T>
 void make_sphere(T const& radius, size_t const& slices, size_t const& segments, T3Mesh& mesh,
                  VertexAttribute<T, T3Mesh>& X, VertexAttribute<T, T3Mesh>& Y, VertexAttribute<T, T3Mesh>& Z)
 {
-/*    typedef typename MT::real_type       T;
-    typedef typename MT::value_traits    VT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;*/
-
     std::vector<EigenVector3<T>> profile;
 
     profile.resize(segments);
@@ -35,10 +30,6 @@ void make_sphere(T const& radius, size_t const& slices, size_t const& segments, 
 
     profile_sweep<T>(profile, slices, mesh, X, Y, Z);
 
-//    typedef typename MT::real_type       T;
-//    typedef typename MT::value_traits    VT;
-//    typedef typename MT::vector3_type    V;
-//    typedef typename MT::quaternion_type Q;
 //
 //		using std::cos;
 //		using std::sin;

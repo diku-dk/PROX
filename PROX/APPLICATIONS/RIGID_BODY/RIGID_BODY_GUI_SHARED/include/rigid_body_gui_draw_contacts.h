@@ -25,6 +25,7 @@ namespace rigid_body
     {
       typedef tiny::MathTypes<float>       MT;
       typedef typename MT::vector3_type    V;
+      using T = float;
 
       gl3::Program & program = program_manager.get(2);
 
@@ -51,17 +52,20 @@ namespace rigid_body
       mesh_array::make_cone<typename MT::real_type>(radius1, height, 12, head, headX, headY, headZ);
       mesh_array::make_cylinder<typename MT::real_type>(radius2, height, 12, shaft, shaftX, shaftY, shaftZ);
 
-      mesh_array::translate<MT>(V::make(0, height/2, 0), shaft, shaftX, shaftY, shaftZ);
-      mesh_array::translate<MT>(V::make(0, height, 0), head, headX, headY, headZ);
+      mesh_array::translate<T>(EigenVector3<T>(0, height / 2, 0), shaft, shaftX,
+                               shaftY, shaftZ);
+      mesh_array::translate<T>(EigenVector3<T>(0, height, 0), head, headX,
+                               headY, headZ);
 
       mesh_array::T3Mesh mesh;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> X;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Y;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Z;
 
-      mesh_array::concatenation<MT>( base, baseX, baseY, baseZ, mesh, X, Y, Z );
-      mesh_array::concatenation<MT>( shaft, shaftX, shaftY, shaftZ, mesh, X, Y, Z );
-      mesh_array::concatenation<MT>( head, headX, headY, headZ, mesh, X, Y, Z );
+      mesh_array::concatenation<T>(base, baseX, baseY, baseZ, mesh, X, Y, Z);
+      mesh_array::concatenation<T>(shaft, shaftX, shaftY, shaftZ, mesh, X, Y,
+                                   Z);
+      mesh_array::concatenation<T>(head, headX, headY, headZ, mesh, X, Y, Z);
 
       Geometry geometry;
 

@@ -21,7 +21,7 @@ void make_slide(content::API* engine, const EigenVector3<T>& position, const Eig
         = create_geometry_handle_box<T>(engine, hill_extents(0), hill_extents(1), hill_extents(2));
     GeometryHandleEigen<T> stone
         = create_geometry_handle_box<T>(engine, box_extents(0), box_extents(1), box_extents(2));
-    //  GeometryHandle<MT> sphere = create_geometry_handle_sphere<MT>( engine, radius);
+    //  GeometryHandleEigen<T> sphere = create_geometry_handle_sphere<T>( engine, radius);
 
     //BF or MF here?
     EigenVector3<T> Tm = rotate(
@@ -83,7 +83,7 @@ void make_slide(content::API* engine, const EigenVector3<T>& position, const Eig
      Tu = rotate(orientation, Tw) + position;
      Qu = orientation*Qw;
 
-     create_rigid_body<MT>(  engine
+     create_rigid_body<T>(  engine
      , Tu
      , Qu
      , sphere

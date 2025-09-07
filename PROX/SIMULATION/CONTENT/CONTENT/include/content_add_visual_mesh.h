@@ -19,40 +19,40 @@ namespace content
                                        , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                        )
   {
-    typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;
+      using T = float;
 
-    for(size_t j=0u; j < engine->get_number_of_boxes(gid) ; ++j)
-    {
-      float width;
-      float height;
-      float depth;
-      engine->get_box_shape( gid, j , width, height, depth );
+      for (size_t j = 0u; j < engine->get_number_of_boxes(gid); ++j)
+      {
+          float width;
+          float height;
+          float depth;
+          engine->get_box_shape(gid, j, width, height, depth);
 
-      mesh_array::T3Mesh submesh;
-      mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subX;
-      mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
-      mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
+          mesh_array::T3Mesh submesh;
+          mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subX;
+          mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
+          mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_box<typename MT::real_type>( width, height, depth, submesh, subX, subY, subZ);
+          mesh_array::make_box<T>(width, height, depth, submesh, subX, subY,
+                                  subZ);
 
-      float x;
-      float y;
-      float z;
-      engine->get_box_position( gid, j , x, y, z );
+          float x;
+          float y;
+          float z;
+          engine->get_box_position(gid, j, x, y, z);
 
-      V const trans = V::make(x, y, z);
+          const EigenVector3<T> trans = EigenVector3<T>(x, y, z);
 
-      float qs, qx, qy, qz;
-      engine->get_box_orientation( gid, j, qs, qx, qy, qz );
+          float qs, qx, qy, qz;
+          engine->get_box_orientation(gid, j, qs, qx, qy, qz);
 
-      Q const rot = Q(qs,qx,qy,qz);
+          const EigenQuaternion<T> rot = {qs, qx, qy, qz};
 
-      mesh_array::transform<MT>(trans, rot, submesh, subX, subY, subZ);
+          mesh_array::transform<T>(trans, rot, submesh, subX, subY, subZ);
 
-      mesh_array::concatenation<MT>( submesh, subX, subY, subZ, mesh, X, Y, Z );
-    }
+          mesh_array::concatenation<T>(submesh, subX, subY, subZ, mesh, X, Y,
+                                       Z);
+      }
   }
 
   inline void add_visual_mesh_of_capsules(
