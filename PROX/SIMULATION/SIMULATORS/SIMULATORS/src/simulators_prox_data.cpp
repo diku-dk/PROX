@@ -137,7 +137,7 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
 
         mesh_array::compute_vertex_normals<T>(surface, surface_X, surface_Y, surface_Z, normals);
 
-        T const distance = VT::numeric_cast(-0.01);
+        T const distance = (-0.01);
 
         mesh_array::displace_vertices<T>(surface, surface_X, surface_Y, surface_Z, distance, normals);
     }

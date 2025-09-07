@@ -25,14 +25,15 @@ namespace simulators
 	class ProxData
 	{
   public:
-      using MT = prox::MathPolicy<float>;
+      using T = float;
+/*      using MT = prox::MathPolicy<float>;
       using TT = MT::tiny_types;
       using V = TT::vector3_type;
       using Q = TT::quaternion_type;
       using T = TT::real_type;
       static_assert(std::is_floating_point_v<T>);
       using VT = TT::value_traits;
-      using M = TT::matrix3x3_type;
+      using M = TT::matrix3x3_type;*/
 
       using rigid_body_type = prox::RigidBody<T>;
       using contact_type = prox::ContactPoint<T>;
@@ -143,11 +144,15 @@ namespace simulators
       {
         return m_time >= key.m_time;
       }
-
     };
 
-    class KeyPosition    : public Key<V> {    };
-    class KeyOrientation : public Key<Q> {    };
+    class KeyPosition : public Key<EigenVector3<T>>
+    {
+    };
+
+    class KeyOrientation : public Key<EigenQuaternion<T>>
+    {
+    };
 
     class KeyframeMotion : public ScriptedMotion
     {
@@ -161,7 +166,7 @@ namespace simulators
         KeyPosition key;
 
         key.m_time  = time;
-        key.m_value = V::make(x,y,z);
+        key.m_value = EigenVector3<T>(x, y, z);
 
         m_positions.push_back(key);
         std::sort(m_positions.begin(), m_positions.end());
@@ -172,7 +177,7 @@ namespace simulators
         KeyOrientation key;
 
         key.m_time  = time;
-        key.m_value = Q(qs,qx,qy,qz);
+        key.m_value = EigenQuaternion<T>(qs, qx, qy, qz);
 
         m_orientations.push_back(key);
         std::sort(m_orientations.begin(), m_orientations.end());
@@ -186,18 +191,18 @@ namespace simulators
         {
           size_t const N = m_positions.size();
 
-          V p;
-          V v;
+          EigenVector3<T> p;
+          EigenVector3<T> v;
 
           if( m_positions[0].m_time >= time )
           {
             p = m_positions[0].m_value;
-            v = V::zero();
+            v = EigenVector3<T>(0, 0, 0);
           }
           else if( m_positions[N-1].m_time <= time )
           {
             p = m_positions[N-1].m_value;
-            v = V::zero();
+            v = EigenVector3<T>(0, 0, 0);
           }
           else
           {
@@ -215,35 +220,35 @@ namespace simulators
             T const    t = time -  m_positions[key-1u].m_time;
             T const   dt = m_positions[key].m_time -  m_positions[key-1u].m_time;
 
-            V const & p0 = m_positions[key-1u].m_value;
+            const EigenVector3<T>& p0 = m_positions[key - 1u].m_value;
 
-            V const & p1 = m_positions[key].m_value;
+            const EigenVector3<T>& p1 = m_positions[key].m_value;
 
             p =  (p1-p0)*(t/dt) + p0;
 
             v = (p1-p0)/dt;
           }
 
-          body.set_position(toEigen(p));
-          body.set_velocity(toEigen(v));
+          body.set_position((p));
+          body.set_velocity((v));
         }
 
         if (! m_orientations.empty())
         {
           size_t const N = m_orientations.size();
 
-          V w;
-          Q q;
+          EigenVector3<T> w;
+          EigenQuaternion<T> q;
 
           if( m_orientations[0].m_time >= time )
           {
             q = m_orientations[0].m_value;
-            w = V::zero();
+            w = EigenVector3<T>(0, 0, 0);
           }
           else if( m_orientations[N-1].m_time <= time )
           {
             q = m_orientations[N-1].m_value;
-            w = V::zero();
+            w = EigenVector3<T>(0, 0, 0);
           }
           else
           {
@@ -261,22 +266,22 @@ namespace simulators
             T const    t = time -  m_orientations[key-1u].m_time;
             T const   dt = m_orientations[key].m_time -  m_orientations[key-1u].m_time;
 
-            Q const & q0 = m_orientations[key-1u].m_value;
-            Q const & q1 = m_orientations[key].m_value;
-            Q const q_rel  = tiny::prod( q1, tiny::conj(q0));
+            const EigenQuaternion<T>& q0 = m_orientations[key - 1u].m_value;
+            const EigenQuaternion<T>& q1 = m_orientations[key].m_value;
+            const EigenQuaternion<T> q_rel = (q1 * (q0).conjugate());
 
             T theta = 0;
-            V axis  = V::zero();
-            tiny::get_axis_angle(q_rel, axis, theta);
+            EigenVector3<T> axis = EigenVector3<T>(0, 0, 0);
+            getAxisAngle(q_rel, axis, theta);
 
             T const speed = theta/dt;
 
             w = axis*speed;
-            q =  tiny::slerp(q0, q1, t/dt );
+            q = slerp(q0, q1, t / dt);
           }
 
-          body.set_orientation(toEigen(q));
-          body.set_spin(toEigen(w));
+          body.set_orientation((q));
+          body.set_spin((w));
         }
 
       }
@@ -289,23 +294,27 @@ namespace simulators
       T m_amplitude;
       T m_frequency;
       T m_phase;
-      V m_direction;
+      EigenVector3<T> m_direction;
 
-      V m_origin;
+      EigenVector3<T> m_origin;
 
-    public:
-
-      void update(T const & time, rigid_body_type & body)
+  public:
+      void update(T const& time, rigid_body_type& body)
       {
         using tiny::unit;
         using std::cos;
         using std::sin;
 
-        V const p =  m_amplitude*sin(m_frequency*time + m_phase)*unit(m_direction) + m_origin;
-        V const v =  m_amplitude*m_frequency*cos(m_frequency*time + m_phase)*unit(m_direction);
+        const EigenVector3<T> p = m_amplitude
+                                    * sin(m_frequency * time + m_phase)
+                                    * (m_direction).normalized()
+                                + m_origin;
+        const EigenVector3<T> v = m_amplitude * m_frequency
+                                * cos(m_frequency * time + m_phase)
+                                * (m_direction).normalized();
 
-        body.set_position(toEigen(p));
-        body.set_velocity(toEigen(v));
+        body.set_position((p));
+        body.set_velocity((v));
       }
 
     };

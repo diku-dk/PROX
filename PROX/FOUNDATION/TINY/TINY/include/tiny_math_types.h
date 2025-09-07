@@ -570,4 +570,39 @@ void orthonormal_vectors(EigenVector3<T>& i, EigenVector3<T>& j,
     i = cross(j, k);
 }
 
+template <typename T>
+inline EigenQuaternion<T> slerp(EigenQuaternion<T> const& A,
+                                EigenQuaternion<T> const& B, const T& w)
+{
+    using std::acos;
+    using std::sin;
+
+    assert(w >= 0 || !"slerp(): w must not be less than 0");
+    assert(w <= 1 || !"slerp(): w must not be larger than 1");
+
+    T const q_tiny = (10e-7);
+    T norm = dot(A, B);
+
+    bool flip = false;
+    if (norm < 0)
+    {
+        norm = -norm;
+        flip = true;
+    }
+    T weight = w;
+    T inv_weight;
+    if (1 - norm < q_tiny) { inv_weight = 1 - weight; }
+    else
+    {
+        T const theta = T(acos(norm));
+        T const s_val = T(1 / sin(theta));
+        inv_weight = T(sin((1 - weight) * theta) * s_val);
+        weight = T(sin(weight * theta) * s_val);
+    }
+    if (flip) { weight = -weight; }
+    Eigen::Quaternion<T> res = Eigen::Quaternion<T>(
+        (Eigen::Quaternion<T>(inv_weight * A.coeffs())).coeffs()
+        + (Eigen::Quaternion<T>(weight * B.coeffs())).coeffs());
+    return res;
+}
 #endif // TINY_MATH_TYPES_H

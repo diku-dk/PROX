@@ -1604,8 +1604,9 @@ void ProxEngine::set_scripted_oscilation_paramters(size_t const& motion_index, f
     assert((dir_x != 0.0f || dir_y != 0.0f || dir_z != 0.0f)
            || !"set_scripted_oscilation_paramters(): direction was zero vector");
 
-    lookup->second.m_direction = tiny::unit(V::make(dir_x, dir_y, dir_z));
-    lookup->second.m_origin = V::make(ref_x, ref_y, ref_z);
+    lookup->second.m_direction
+        = (EigenVector3<T>(dir_x, dir_y, dir_z)).normalized();
+    lookup->second.m_origin = EigenVector3<T>(ref_x, ref_y, ref_z);
 }
 
 size_t ProxEngine::get_number_of_scripted_motions()
@@ -1735,10 +1736,10 @@ void ProxEngine::get_key_frame_orientations(size_t const& motion_index, float* t
     for (; key != end; ++key, ++count)
     {
         time_array[count] = key->m_time;
-        qs_array[count] = key->m_value.real();
-        qx_array[count] = key->m_value.imag()(0);
-        qy_array[count] = key->m_value.imag()(1);
-        qz_array[count] = key->m_value.imag()(2);
+        qs_array[count] = key->m_value.w();
+        qx_array[count] = key->m_value.x();
+        qy_array[count] = key->m_value.y();
+        qz_array[count] = key->m_value.z();
     }
 }
 
