@@ -340,12 +340,6 @@
       using std::min;
       using std::max;
       using std::fabs;
-
-      /*typedef typename MT::vector3_type    V;
-      typedef typename MT::real_type       T;
-      typedef typename MT::value_traits    VT;
-      typedef typename MT::matrix3x3_type  M;*/
-
       std::vector<EigenVector3<T>> axes;
       detail::compute_obb_obb_sat_axes( A,B, axes);
 

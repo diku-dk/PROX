@@ -748,14 +748,14 @@ void ProxEngine::set_tetramesh_shape(size_t const& geometry_index, size_t const&
 
     if (kdop::SelectContactPointAlgorithm::is_using_closest_point())
     {
-        mesh_array::shrink<MT>(VT::numeric_cast(0.99), mesh, X, Y, Z);
-//      std::vector<V> normals;
-//
-//      mesh_array::compute_vertex_normals<MT>(mesh, X, Y, Z, normals);
-//
-//      T const distance = VT::numeric_cast(-0.01);
-//
-//      mesh_array::displace_vertices<MT>(mesh, X, Y, Z, distance, normals);
+        mesh_array::shrink<T>(VT::numeric_cast(0.99), mesh, X, Y, Z);
+        //      std::vector<V> normals;
+        //
+        //      mesh_array::compute_vertex_normals<MT>(mesh, X, Y, Z, normals);
+        //
+        //      T const distance = VT::numeric_cast(-0.01);
+        //
+        //      mesh_array::displace_vertices<MT>(mesh, X, Y, Z, distance, normals);
     }
 
     geometry.m_tetramesh.set_tetramesh_shape(mesh, X, Y, Z);

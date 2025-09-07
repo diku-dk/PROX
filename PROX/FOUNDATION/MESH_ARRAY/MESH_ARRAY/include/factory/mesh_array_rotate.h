@@ -7,72 +7,23 @@
 
 namespace mesh_array
 {
+template <typename T>
+inline void rotate(const EigenQuaternion<T>& R, T3Mesh const& mesh,
+                   VertexAttribute<T, T3Mesh>& X, VertexAttribute<T, T3Mesh>& Y,
+                   VertexAttribute<T, T3Mesh>& Z)
+{
 
-  template<typename MT>
-  inline void rotate(
-                     typename MT::quaternion_type const & R
-                     , T3Mesh const & mesh
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & X
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-                     , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-                     )
-  {
-    typedef typename MT::vector3_type    V;
-
-    for(size_t i=0u; i < mesh.vertex_size(); ++i)
+    for (size_t i = 0u; i < mesh.vertex_size(); ++i)
     {
-      Vertex const v = mesh.vertex(i);
+        Vertex const v = mesh.vertex(i);
 
-      V const p = rotate(R, V::make( X(v), Y(v), Z(v) ) );
+        const EigenVector3<T> p
+            = ::rotate(R, EigenVector3<T>(X(v), Y(v), Z(v)));
 
-      X(v) = p(0);
-      Y(v) = p(1);
-      Z(v) = p(2);
+        X(v) = p(0);
+        Y(v) = p(1);
+        Z(v) = p(2);
     }
-  }
-
-  template<typename MT>
-  inline void rotate(
-                     typename MT::quaternion_type const & R
-                     , T4Mesh const & mesh
-                     , VertexAttribute<typename MT::real_type,T4Mesh> & X
-                     , VertexAttribute<typename MT::real_type,T4Mesh> & Y
-                     , VertexAttribute<typename MT::real_type,T4Mesh> & Z
-                     )
-  {
-    typedef typename MT::vector3_type    V;
-
-    for(size_t i=0u; i < mesh.vertex_size(); ++i)
-    {
-      Vertex const v = mesh.vertex(i);
-
-      V const p = rotate(R, V::make( X(v), Y(v), Z(v) ) );
-
-      X(v) = p(0);
-      Y(v) = p(1);
-      Z(v) = p(2);
-    }
-  }
-
-  template<typename T>
-  inline void rotate( const EigenQuaternion<T>& R
-      , T3Mesh const & mesh
-      , VertexAttribute<T,T3Mesh> & X
-      , VertexAttribute<T,T3Mesh> & Y
-      , VertexAttribute<T,T3Mesh> & Z
-      )
-  {
-
-      for(size_t i=0u; i < mesh.vertex_size(); ++i)
-      {
-          Vertex const v = mesh.vertex(i);
-
-          const EigenVector3<T> p = ::rotate(R, EigenVector3<T>( X(v), Y(v), Z(v) ) );
-
-          X(v) = p(0);
-          Y(v) = p(1);
-          Z(v) = p(2);
-      }
   }
 
   template<typename T>
@@ -96,8 +47,7 @@ namespace mesh_array
       }
   }
 
-
-} //namespace mesh_array
+  } //namespace mesh_array
 
 // MESH_ARRAY_ROTATE_H
 #endif

@@ -14,43 +14,29 @@
 namespace mesh_array
 {
 
-  template<typename MT>
-  inline void shrink(
-              typename MT::real_type const & factor
-              , T3Mesh const & mesh
-              , VertexAttribute<typename MT::real_type,T3Mesh> & X
-              , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-              , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-              )
-  {
-    typedef typename MT::vector3_type    V;
+template <typename T>
+inline void shrink(const T& factor, T3Mesh const& mesh,
+                   VertexAttribute<T, T3Mesh>& X, VertexAttribute<T, T3Mesh>& Y,
+                   VertexAttribute<T, T3Mesh>& Z)
+{
+    const EigenVector3<T> d = compute_center<T>(mesh, X, Y, Z);
 
-    V const d = compute_center<MT>(mesh,X,Y,Z);
+    translate<T>(-d, mesh, X, Y, Z);
+    scale<T>(factor, factor, factor, mesh, X, Y, Z);
+    translate<T>(d, mesh, X, Y, Z);
+}
 
-    translate<MT>(-d,mesh,X,Y,Z);
-    scale<MT>(factor,factor,factor,mesh,X,Y,Z);
-    translate<MT>(d,mesh,X,Y,Z);
-  }
+template <typename T>
+inline void shrink(const T& factor, T4Mesh const& mesh,
+                   VertexAttribute<T, T4Mesh>& X, VertexAttribute<T, T4Mesh>& Y,
+                   VertexAttribute<T, T4Mesh>& Z)
+{
+    const EigenVector3<T> d = (compute_center<T>(mesh, X, Y, Z));
 
-
-  template<typename MT>
-  inline void shrink(
-                     typename MT::real_type const & factor
-                     , T4Mesh const & mesh
-                     , VertexAttribute<typename MT::real_type,T4Mesh> & X
-                     , VertexAttribute<typename MT::real_type,T4Mesh> & Y
-                     , VertexAttribute<typename MT::real_type,T4Mesh> & Z
-                     )
-  {
-    typedef typename MT::vector3_type    V;
-
-      V const d = fromEigen(compute_center<typename MT::real_type>(mesh,X,Y,Z));
-
-    translate<MT>(-d,mesh,X,Y,Z);
-    scale<MT>(factor,factor,factor,mesh,X,Y,Z);
-    translate<MT>(d,mesh,X,Y,Z);
-  }
-
+    translate<T>(-d, mesh, X, Y, Z);
+    scale<T>(factor, factor, factor, mesh, X, Y, Z);
+    translate<T>(d, mesh, X, Y, Z);
+}
 
 } //namespace mesh_array
 

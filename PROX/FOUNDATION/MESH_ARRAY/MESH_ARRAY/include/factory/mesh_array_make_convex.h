@@ -17,14 +17,6 @@ void make_convex(
     )
 ;
 
-template<typename MT>
-void make_convex(
-    std::vector< typename MT::vector3_type> const & vertices
-    , T3Mesh & mesh
-    , VertexAttribute<typename MT::real_type,T3Mesh> & X
-    , VertexAttribute<typename MT::real_type,T3Mesh> & Y
-    , VertexAttribute<typename MT::real_type,T3Mesh> & Z
-    );
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_CONVEX_H
