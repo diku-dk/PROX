@@ -60,19 +60,18 @@ namespace narrow
         for( box_iterator b = B.begin(); b!=B.end(); ++b )
         {
 
-            CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
-                toEigen(a->transform().T()), toEigen(a->transform().Q()));
-            CoordSysEigen<T> shapeBtobodyB = CoordSysEigen<T>(
-                toEigen(b->transform().T()), toEigen(b->transform().Q()));
+            CoordSysEigen<T> shapeAtobodyA
+                = CoordSysEigen<T>((a->transform().T()), (a->transform().Q()));
+            CoordSysEigen<T> shapeBtobodyB
+                = CoordSysEigen<T>((b->transform().T()), (b->transform().Q()));
             CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
             CoordSysEigen<T> shapeBtoWCS = prod(shapeBtobodyB, bodyBtoWCS);
 
           // compute contact point
             geometry::Sphere<T> const A
                 = geometry::make_sphere((shapeAtoWCS.T()), a->radius());
-            geometry::OBBEigen<T> const B
-                = geometry::make_obb<T>((shapeBtoWCS.T()), (shapeBtoWCS.Q()),
-                                        toEigen(b->half_extent()));
+            geometry::OBBEigen<T> const B = geometry::make_obb<T>(
+                (shapeBtoWCS.T()), (shapeBtoWCS.Q()), (b->half_extent()));
 
             geometry::contacts_obb_sphere<M>(
                 B, A, envelope * min(a->scale(), b->scale()), callback, true);

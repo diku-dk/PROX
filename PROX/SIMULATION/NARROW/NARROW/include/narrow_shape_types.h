@@ -12,24 +12,17 @@ namespace narrow
   namespace detail
   {
 
-    template<typename M>
-    class ShapeTypes
-    {
-    protected:
-
-      typedef typename M::coordsys_type C;
-      typedef typename M::real_type     T;
-      typedef typename M::vector3_type  V;
-      typedef typename M::value_traits  VT;
-
-    protected:
-
+  template <typename T>
+  requires std::is_floating_point_v<T>
+  class ShapeTypes
+  {
+  protected:
       class ShapeBase
       {
 
       protected:
-
-        C m_transform; ///< A coordinate transformation from the local shape frame to the local frame of the object.
+          CoordSysEigen<T>
+              m_transform; ///< A coordinate transformation from the local shape frame to the local frame of the object.
 
       public:
 
@@ -39,24 +32,21 @@ namespace narrow
          *
          * @return     A reference to the current shape transformation
          */
-        C const & transform(  ) const {  return m_transform; }
-        C& transform() { return m_transform; }
+          CoordSysEigen<T> const& transform() const { return m_transform; }
 
-        auto eigenTransform() const { return coordSysToEigen(m_transform); }
+          CoordSysEigen<T>& transform() { return m_transform; }
 
-        /**
+          /**
          * Get a support map function of the shape.
          *
          * @return    A pointer to a support map functor.
          */
 
       public:
-
-        ShapeBase( )
-        : m_transform( C::identity() )
-        {}
-
-
+          ShapeBase()
+              : m_transform(CoordSysEigen<T>::identity())
+          {
+          }
       };
 
     public:
@@ -88,7 +78,7 @@ namespace narrow
 
         // 2015-02-01 Kenny code review: Why not use convex::Box (or geometry::Box) as a member? Like for ConvexHull?
 
-        V m_half_ext;
+          EigenVector3<T> m_half_ext;
 
       public:
 
@@ -97,18 +87,17 @@ namespace narrow
         virtual ~Box() {}
 
       public:
+          const EigenVector3<T>& half_extent() const { return m_half_ext; }
 
-        V const & half_extent() const { return m_half_ext;      }
-        V       & half_extent()       { return m_half_ext;      }
-        T         scale()       const { return min(m_half_ext); }
+          EigenVector3<T>& half_extent() { return m_half_ext; }
 
+          T scale() const { return (m_half_ext).minCoeff(); }
       };
 
       class ConvexHull : public ShapeBase
       {
       public:
-
-          typedef convex::ConvexHull<typename M::real_type> data_type;
+          typedef convex::ConvexHull<T> data_type;
 
       protected:
 
@@ -166,49 +155,38 @@ namespace narrow
                                  , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
                                  )
         {
-          using tiny::norm;
-          using std::max;
-          using tiny::min;
-          using tiny::max;
 
-          kdop::mesh_reorder( mesh
-                             , X
-                             , Y
-                             , Z
-                             , m_mesh
-                             , m_X0
-                             , m_Y0
-                             , m_Z0
-                             );
+            kdop::mesh_reorder(mesh, X, Y, Z, m_mesh, m_X0, m_Y0, m_Z0);
 
-          mesh_array::compute_surface_map( m_mesh
-                                    , m_X0
-                                    , m_Y0
-                                    , m_Z0
-                                    , m_surface_map
-                                    );
+            mesh_array::compute_surface_map(m_mesh, m_X0, m_Y0, m_Z0,
+                                            m_surface_map);
 
-          m_mesh_radius = 0;
+            m_mesh_radius = 0;
 
-          size_t const N = m_mesh.vertex_size();
+            size_t const N = m_mesh.vertex_size();
 
+            EigenVector3<T> min_coord = EigenVector3<T>(
+                std::numeric_limits<T>::max(), std::numeric_limits<T>::max(),
+                std::numeric_limits<T>::max());
+            EigenVector3<T> max_coord
+                = EigenVector3<T>(std::numeric_limits<T>::lowest(),
+                                  std::numeric_limits<T>::lowest(),
+                                  std::numeric_limits<T>::lowest());
 
-          V min_coord = V(std::numeric_limits<T>::max());
-          V max_coord = V(std::numeric_limits<T>::lowest());
+            for (size_t n = 0u; n < N; ++n)
+            {
+                mesh_array::Vertex const& v = m_mesh.vertex(n);
 
-          for(size_t n = 0u; n < N;++n)
-          {
-            mesh_array::Vertex const & v = m_mesh.vertex(n);
+                const EigenVector3<T> r0
+                    = EigenVector3<T>(m_X0(v), m_Y0(v), m_Z0(v));
 
-            V const r0 = V::make(  m_X0(v), m_Y0(v), m_Z0(v) );
+                min_coord = (min_coord).cwiseMin(r0);
+                max_coord = (max_coord).cwiseMax(r0);
 
-            min_coord = min(min_coord,r0);
-            max_coord = max(max_coord,r0);
+                m_mesh_radius = std::max(m_mesh_radius, norm(r0));
+            }
 
-            m_mesh_radius = max( m_mesh_radius, norm(r0) );
-          }
-
-          m_mesh_scale = min(  max_coord-min_coord );
+            m_mesh_scale = (max_coord - min_coord).minCoeff();
         }
 
 
@@ -231,8 +209,7 @@ namespace narrow
 
 
       };
-
-    };
+  };
 
   } // namespace detail
 

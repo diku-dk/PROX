@@ -35,8 +35,8 @@ namespace narrow
 
       for( sphere_iterator a = A.begin(); a!=A.end(); ++a )
       {
-          const CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
-              toEigen(a->transform().T()), toEigen(a->transform().Q()));
+          const CoordSysEigen<T> shapeAtobodyA
+              = CoordSysEigen<T>((a->transform().T()), (a->transform().Q()));
 
           const CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
 

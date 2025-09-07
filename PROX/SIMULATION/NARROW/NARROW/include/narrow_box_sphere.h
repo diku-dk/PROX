@@ -42,10 +42,9 @@ namespace narrow
       using T = typename M::real_type;
       using std::min;
 
-      typedef typename Geometry<
-          typename M::real_type>::box_container::const_iterator box_iterator;
-      typedef typename Geometry<typename M::real_type>::sphere_container::
-          const_iterator sphere_iterator;
+      typedef typename Geometry<T>::box_container::const_iterator box_iterator;
+      typedef typename Geometry<T>::sphere_container::const_iterator
+          sphere_iterator;
 
       assert( envelope > 0 || !"box_sphere(): collision envelope must be positive");
 
@@ -59,17 +58,16 @@ namespace narrow
       {
         for( sphere_iterator b = B.begin(); b!=B.end(); ++b )
         {
-            CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
-                toEigen(a->transform().T()), toEigen(a->transform().Q()));
-            CoordSysEigen<T> shapeBtobodyB = CoordSysEigen<T>(
-                toEigen(b->transform().T()), toEigen(b->transform().Q()));
+            CoordSysEigen<T> shapeAtobodyA
+                = CoordSysEigen<T>((a->transform().T()), (a->transform().Q()));
+            CoordSysEigen<T> shapeBtobodyB
+                = CoordSysEigen<T>((b->transform().T()), (b->transform().Q()));
             CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
             CoordSysEigen<T> shapeBtoWCS = prod(shapeBtobodyB, bodyBtoWCS);
 
           // compute contact point
-            geometry::OBBEigen<T> const A
-                = geometry::make_obb<T>((shapeAtoWCS.T()), (shapeAtoWCS.Q()),
-                                        toEigen(a->half_extent()));
+            geometry::OBBEigen<T> const A = geometry::make_obb<T>(
+                (shapeAtoWCS.T()), (shapeAtoWCS.Q()), (a->half_extent()));
             geometry::Sphere<T> const B
                 = geometry::make_sphere((shapeBtoWCS.T()), b->radius());
 

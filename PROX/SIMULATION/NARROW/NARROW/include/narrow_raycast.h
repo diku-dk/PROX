@@ -37,13 +37,12 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
             for (auto a = geoA.m_boxes.begin(); a != geoA.m_boxes.end(); ++a)
             {
                 const CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
-                    toEigen(a->transform().T()), toEigen(a->transform().Q()));
+                    (a->transform().T()), (a->transform().Q()));
                 const CoordSysEigen<T> shapeAtoWCS
                     = prod(shapeAtobodyA, (bodyAtoWCS));
 
-                geometry::OBBEigen<T> const obb
-                    = geometry::make_obb<T>(shapeAtoWCS.T(), shapeAtoWCS.Q(),
-                                            toEigen(a->half_extent()));
+                geometry::OBBEigen<T> const obb = geometry::make_obb<T>(
+                    shapeAtoWCS.T(), shapeAtoWCS.Q(), (a->half_extent()));
 
                 T local_distance = std::numeric_limits<T>::max();
                 EigenVector3<T> local_point = EigenVector3<T>(0, 0, 0);
@@ -60,7 +59,7 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
             for (auto a = geoA.m_spheres.begin(); a != geoA.m_spheres.end();
                  ++a)
             {
-                auto const shapeAtobodyA = a->eigenTransform();
+                auto const shapeAtobodyA = a->transform();
                 auto const shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
 
                 geometry::Sphere<T> const sphere
@@ -80,7 +79,7 @@ inline bool raycast(geometry::RayEigen<T> const& ray, Object<T> const& objA,
         {
             for (auto a = geoA.m_hulls.begin(); a != geoA.m_hulls.end(); ++a)
             {
-                auto const shapeAtobodyA = a->eigenTransform();
+                auto const shapeAtobodyA = a->transform();
                 auto const shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
 
                 assert(false || !"not implemented yet");

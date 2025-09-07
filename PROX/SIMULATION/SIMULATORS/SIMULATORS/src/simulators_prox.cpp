@@ -337,7 +337,8 @@ void ProxEngine::set_box_shape(size_t const& geometry_index, size_t const& box_n
 
     assert(box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    geometry.m_boxes[box_number].half_extent() = V::make(width, height, depth) / 2;
+    geometry.m_boxes[box_number].half_extent()
+        = EigenVector3<T>(width, height, depth) / 2;
 }
 
 void ProxEngine::set_box_position(size_t const& geometry_index, size_t const& box_number, float const& x,
@@ -351,7 +352,7 @@ void ProxEngine::set_box_position(size_t const& geometry_index, size_t const& bo
 
     assert(box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    geometry.m_boxes[box_number].transform().T() = V::make(x, y, z);
+    geometry.m_boxes[box_number].transform().T() = EigenVector3<T>(x, y, z);
 }
 
 void ProxEngine::set_box_orientation(size_t const& geometry_index, size_t const& box_number, float const& Qs,
@@ -364,7 +365,8 @@ void ProxEngine::set_box_orientation(size_t const& geometry_index, size_t const&
 
     assert(box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    geometry.m_boxes[box_number].transform().Q() = Q(Qs, Qx, Qy, Qz);
+    geometry.m_boxes[box_number].transform().Q()
+        = EigenQuaternion<T>(Qs, Qx, Qy, Qz);
 }
 
 size_t ProxEngine::create_capsule_shape(size_t const& geometry_index)
@@ -527,7 +529,7 @@ void ProxEngine::set_convex_position(size_t const& geometry_index, size_t const&
 
     assert(convex_number < geometry.number_of_hulls() || !"internal error: no such geometry");
 
-    geometry.m_hulls[convex_number].transform().T() = V::make(x, y, z);
+    geometry.m_hulls[convex_number].transform().T() = EigenVector3<T>(x, y, z);
 }
 
 void ProxEngine::set_convex_orientation(size_t const& geometry_index, size_t const& convex_number, float const& Qs,
@@ -540,7 +542,8 @@ void ProxEngine::set_convex_orientation(size_t const& geometry_index, size_t con
 
     assert(convex_number < geometry.number_of_hulls() || !"internal error: no such geometry");
 
-    geometry.m_hulls[convex_number].transform().Q() = Q(Qs, Qx, Qy, Qz);
+    geometry.m_hulls[convex_number].transform().Q()
+        = EigenQuaternion<T>(Qs, Qx, Qy, Qz);
 }
 
 size_t ProxEngine::create_cylinder_shape(size_t const& geometry_index)
@@ -697,7 +700,8 @@ void ProxEngine::set_sphere_position(size_t const& geometry_index, size_t const&
 
     assert(sphere_number < geometry.number_of_spheres() || !"internal error: no such geometry");
 
-    geometry.m_spheres[sphere_number].transform().T() = V::make(x, y, z);
+    geometry.m_spheres[sphere_number].transform().T()
+        = EigenVector3<T>(x, y, z);
 }
 
 void ProxEngine::set_sphere_orientation(size_t const& geometry_index, size_t const& sphere_number, float const& Qs,
@@ -710,7 +714,8 @@ void ProxEngine::set_sphere_orientation(size_t const& geometry_index, size_t con
 
     assert(sphere_number < geometry.number_of_spheres() || !"internal error: no such geometry");
 
-    geometry.m_spheres[sphere_number].transform().Q() = Q(Qs, Qx, Qy, Qz);
+    geometry.m_spheres[sphere_number].transform().Q()
+        = EigenQuaternion<T>(Qs, Qx, Qy, Qz);
 }
 
 size_t ProxEngine::create_tetramesh_shape(size_t const& geometry_index)
@@ -905,7 +910,7 @@ void ProxEngine::get_box_shape(size_t const& geometry_index, size_t const& box_n
 
     assert(box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    V const ext = geometry.m_boxes[box_number].half_extent() * 2;
+    const EigenVector3<T> ext = geometry.m_boxes[box_number].half_extent() * 2;
 
     width = ext(0);
     height = ext(1);
@@ -934,10 +939,10 @@ void ProxEngine::get_box_orientation(size_t const& geometry_index, size_t const&
 
     assert(box_number < geometry.number_of_boxes() || !"internal error: no such geometry");
 
-    Qs = geometry.m_boxes[box_number].transform().Q().real();
-    Qx = geometry.m_boxes[box_number].transform().Q().imag()(0);
-    Qy = geometry.m_boxes[box_number].transform().Q().imag()(1);
-    Qz = geometry.m_boxes[box_number].transform().Q().imag()(2);
+    Qs = geometry.m_boxes[box_number].transform().Q().w();
+    Qx = geometry.m_boxes[box_number].transform().Q().x();
+    Qy = geometry.m_boxes[box_number].transform().Q().y();
+    Qz = geometry.m_boxes[box_number].transform().Q().z();
 }
 
 size_t ProxEngine::get_number_of_cones(size_t const& geometry_index) { return 0u; }
@@ -1062,10 +1067,10 @@ void ProxEngine::get_sphere_orientation(size_t const& geometry_index, size_t con
 
     assert(sphere_number < geometry.number_of_spheres() || !"internal error: no such geometry");
 
-    Qs = geometry.m_spheres[sphere_number].transform().Q().real();
-    Qx = geometry.m_spheres[sphere_number].transform().Q().imag()(0);
-    Qy = geometry.m_spheres[sphere_number].transform().Q().imag()(1);
-    Qz = geometry.m_spheres[sphere_number].transform().Q().imag()(2);
+    Qs = geometry.m_spheres[sphere_number].transform().Q().w();
+    Qx = geometry.m_spheres[sphere_number].transform().Q().x();
+    Qy = geometry.m_spheres[sphere_number].transform().Q().y();
+    Qz = geometry.m_spheres[sphere_number].transform().Q().z();
 }
 
 size_t ProxEngine::get_number_of_tetrameshes(size_t const& geometry_index)
@@ -1180,10 +1185,10 @@ void ProxEngine::get_convex_orientation(size_t const& geometry_index, size_t con
 
     assert(convex_number < geometry.number_of_hulls() || !"internal error: no such geometry");
 
-    Qs = geometry.m_hulls[convex_number].transform().Q().real();
-    Qx = geometry.m_hulls[convex_number].transform().Q().imag()(0);
-    Qy = geometry.m_hulls[convex_number].transform().Q().imag()(1);
-    Qz = geometry.m_hulls[convex_number].transform().Q().imag()(2);
+    Qs = geometry.m_hulls[convex_number].transform().Q().w();
+    Qx = geometry.m_hulls[convex_number].transform().Q().x();
+    Qy = geometry.m_hulls[convex_number].transform().Q().y();
+    Qz = geometry.m_hulls[convex_number].transform().Q().z();
 }
 
 size_t ProxEngine::get_number_of_rigid_bodies()

@@ -31,15 +31,8 @@ template <typename T>
 requires(std::is_floating_point_v<T>)
 class Geometry
 {
-protected:
-    using M = tiny::MathTypes<T>;
-
-    typedef typename M::vector3_type V;
-    typedef typename M::value_traits                      VT;
-    typedef typename M::coordsys_type                     C;
-
 public:
-    typedef detail::ShapeTypes<M> shape_types;
+    typedef detail::ShapeTypes<T> shape_types;
 
     typedef typename shape_types::Box                box_type;
     typedef typename shape_types::Sphere             sphere_type;
@@ -138,31 +131,31 @@ public:
 
       for (size_t i = 0; i < number_of_boxes(); ++i)
       {
-        V const & p = this->m_boxes[i].transform().T();
-        V const & e = this->m_boxes[i].half_extent();
+          const EigenVector3<T>& p = this->m_boxes[i].transform().T();
+          const EigenVector3<T>& e = this->m_boxes[i].half_extent();
 
-        this->m_radius = max ( this->m_radius, norm(e) + norm(p) );
+          this->m_radius = max(this->m_radius, norm(e) + norm(p));
       }
 
       for (size_t i = 0; i < number_of_spheres(); ++i)
       {
-        V const p = this->m_spheres[i].transform().T();
-        T const r = this->m_spheres[i].radius();
+          const EigenVector3<T> p = this->m_spheres[i].transform().T();
+          T const r = this->m_spheres[i].radius();
 
-        this->m_radius = max ( this->m_radius, r + norm(p) );
+          this->m_radius = max(this->m_radius, r + norm(p));
       }
 
       for (size_t i = 0; i < number_of_hulls(); ++i)
       {
-        C const X = this->m_hulls[i].transform();
+          CoordSysEigen<T> const X = this->m_hulls[i].transform();
 
-        for (size_t j=0u; j < this->m_hulls[i].data().size();++j)
-        {
-            V const p = fromEigen(this->m_hulls[i].data().get_point(j));
-          V const q = tiny::xform_point(X,p);
+          for (size_t j = 0u; j < this->m_hulls[i].data().size(); ++j)
+          {
+              const EigenVector3<T> p = (this->m_hulls[i].data().get_point(j));
+              const EigenVector3<T> q = xform_point(X, p);
 
-          this->m_radius = max ( this->m_radius, norm(q) );
-        }
+              this->m_radius = max(this->m_radius, norm(q));
+          }
       }
     }
 

@@ -57,10 +57,10 @@ namespace narrow
       {
         for( sphere_iterator b = B.begin(); b!=B.end(); ++b )
         {
-            CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
-                toEigen(a->transform().T()), toEigen(a->transform().Q()));
-            CoordSysEigen<T> shapeBtobodyB = CoordSysEigen<T>(
-                toEigen(b->transform().T()), toEigen(b->transform().Q()));
+            CoordSysEigen<T> shapeAtobodyA
+                = CoordSysEigen<T>((a->transform().T()), (a->transform().Q()));
+            CoordSysEigen<T> shapeBtobodyB
+                = CoordSysEigen<T>((b->transform().T()), (b->transform().Q()));
             CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
             CoordSysEigen<T> shapeBtoWCS = prod(shapeBtobodyB, bodyBtoWCS);
 
