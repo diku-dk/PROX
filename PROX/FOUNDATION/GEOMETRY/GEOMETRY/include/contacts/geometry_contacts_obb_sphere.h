@@ -19,15 +19,12 @@ namespace geometry
    * @param flip              Set this to true when using this method to test sphere versus box (ie when order of objects are swapped)
    *
    */
-  template<typename MT>
-  inline void contacts_obb_sphere(OBBEigen<typename MT::real_type> const & A
-                                 , Sphere<typename MT::real_type> const & B
-                                 , typename MT::real_type const & envelope
-                                 , ContactsCallback<typename MT::vector3_type> & callback
-                                 , bool const flip = false
-                                 )
-  {
-    typedef typename MT::real_type         T;
+template <typename T>
+inline void contacts_obb_sphere(
+    OBBEigen<T> const& A, Sphere<T> const& B, const T& envelope,
+    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+    bool const flip = false)
+{
 
     using std::sqrt;
 

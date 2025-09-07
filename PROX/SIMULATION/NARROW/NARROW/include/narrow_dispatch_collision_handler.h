@@ -49,7 +49,7 @@ namespace narrow
               spheresA, boxesB, elem.t_a(), elem.Q_a(), elem.t_b(), elem.Q_b(),
               system.params().get_envelope(), elem.callback());
 
-          detail::sphere_sphere<M>(
+          detail::sphere_sphere<T>(
               spheresA, spheresB, elem.t_a(), elem.Q_a(), elem.t_b(),
               elem.Q_b(), system.params().get_envelope(), elem.callback());
           /*

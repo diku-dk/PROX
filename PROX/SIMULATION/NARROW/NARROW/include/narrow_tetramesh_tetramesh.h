@@ -24,9 +24,6 @@ namespace narrow
                                            std::vector<TestPair<T>>& test_pairs)
   {
       assert( ! test_pairs.empty() || !"dispatch_tetramesh_tetramesh : test_pairs are empty" );
-
-      using M = tiny::MathTypes<T>;
-      typedef typename M::vector3_type V;
       typedef typename kdop::TestPair<8, T> kdop_pair_type;
 
       std::vector< kdop_pair_type > kdop_test_pairs;
@@ -58,7 +55,9 @@ namespace narrow
                                          kdop::dikucl::gproximity(),
                                          system.params().open_cl_platform(),
                                          system.params().open_cl_device());
-        } else {
+        }
+        else
+        {
 
             kdop::tandem_traversal<8, T>(kdop_test_pairs, kdop::dikucl(),
                                          system.params().open_cl_platform(),

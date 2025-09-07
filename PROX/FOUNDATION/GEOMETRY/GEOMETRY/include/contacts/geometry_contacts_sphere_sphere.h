@@ -22,15 +22,11 @@ namespace geometry
    * @param callback   A pointer to a callback interface which is used to add contact point information
    *
    */
-  template<typename V>
-  inline void contacts_sphere_sphere(
-    Sphere<typename V::real_type> const & A
-                                    , Sphere<typename V::real_type> const & B
-                                    , const typename V::real_type& envelope
-                                    , ContactsCallback<V> & callback
-                                    )
-  {
-      using T = typename V::real_type;
+template <typename T>
+inline void contacts_sphere_sphere(
+    Sphere<T> const& A, Sphere<T> const& B, const T& envelope,
+    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback)
+{
     using std::sqrt;
 
 

@@ -71,7 +71,7 @@ namespace narrow
             geometry::Sphere<T> const B
                 = geometry::make_sphere((shapeBtoWCS.T()), b->radius());
 
-            geometry::contacts_obb_sphere<M>(
+            geometry::contacts_obb_sphere<T>(
                 (A), B, envelope * min(a->scale(), b->scale()), callback);
         }
       }

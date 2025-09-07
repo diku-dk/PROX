@@ -75,39 +75,52 @@ namespace kdop
     }
 
   public:
-
-    template<typename V>
-    static bool call_algorithm(
-                      geometry::TetrahedronEigen<typename V::real_type> const & A
-                    , geometry::TetrahedronEigen<typename V::real_type> const & B
-                    , geometry::ContactsCallback<V> & callback
-                    , std::vector<bool> const & surface_A
-                    , std::vector<bool> const & surface_B
-                    )
-    {
-      switch ( get_algorithm_choice() )
+      template <typename T>
+      static bool call_algorithm(
+          geometry::TetrahedronEigen<T> const& A,
+          geometry::TetrahedronEigen<T> const& B,
+          geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
+              callback,
+          std::vector<bool> const& surface_A,
+          std::vector<bool> const& surface_B)
       {
-        case use_sat:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::SAT() );
-        case use_restricted_sat:
-            return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::RESTRICTED_SAT() );
-        case use_most_opposing_surfaces:
-            return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::MOST_OPPOSING_SURFACES() );
-        case use_triangle_intersection:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::TRIANGLE_INTERSECTION() );
-        case use_vertex_only:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::VERTEX_ONLY_INTERSECTION() );
-        case use_consistent_vertex:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::CONSISTENT_VERTEX() );
-        case use_growth:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::GROWTH() );
-        case use_closest_points:
-          return geometry::contacts_tetrahedron_tetrahedron(A, B, callback, surface_A, surface_B, geometry::CLOSEST_POINTS() );
-      }
+          switch (get_algorithm_choice())
+          {
+          case use_sat:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B, geometry::SAT());
+          case use_restricted_sat:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B,
+                  geometry::RESTRICTED_SAT());
+          case use_most_opposing_surfaces:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B,
+                  geometry::MOST_OPPOSING_SURFACES());
+          case use_triangle_intersection:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B,
+                  geometry::TRIANGLE_INTERSECTION());
+          case use_vertex_only:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B,
+                  geometry::VERTEX_ONLY_INTERSECTION());
+          case use_consistent_vertex:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B,
+                  geometry::CONSISTENT_VERTEX());
+          case use_growth:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B, geometry::GROWTH());
+          case use_closest_points:
+              return geometry::contacts_tetrahedron_tetrahedron(
+                  A, B, callback, surface_A, surface_B,
+                  geometry::CLOSEST_POINTS());
+          }
 
-      assert(false || !"call_algorithm(): unrecognized algorithm choice");
+          assert(false || !"call_algorithm(): unrecognized algorithm choice");
 
-      return false;
+          return false;
     }
 
   };

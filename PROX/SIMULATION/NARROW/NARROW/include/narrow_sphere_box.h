@@ -73,7 +73,7 @@ namespace narrow
             geometry::OBBEigen<T> const B = geometry::make_obb<T>(
                 (shapeBtoWCS.T()), (shapeBtoWCS.Q()), (b->half_extent()));
 
-            geometry::contacts_obb_sphere<M>(
+            geometry::contacts_obb_sphere<T>(
                 B, A, envelope * min(a->scale(), b->scale()), callback, true);
         }
       }

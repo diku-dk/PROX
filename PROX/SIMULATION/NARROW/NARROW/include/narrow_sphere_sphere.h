@@ -28,22 +28,20 @@ namespace narrow
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
 
-  template <typename M>
-  inline void sphere_sphere(
-      typename Geometry<typename M::real_type>::sphere_container const& A,
-      typename Geometry<typename M::real_type>::sphere_container const& B,
-      const EigenVector3<typename M::real_type>& tA,
-      const EigenQuaternion<typename M::real_type>& qA,
-      const EigenVector3<typename M::real_type>& tB,
-      const EigenQuaternion<typename M::real_type>& qB,
-      typename M::real_type const& envelope,
-      typename geometry::ContactsCallback<typename M::vector3_type>& callback)
+  template <typename T>
+  inline void
+  sphere_sphere(typename Geometry<T>::sphere_container const& A,
+                typename Geometry<T>::sphere_container const& B,
+                const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
+                const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
+                T const& envelope,
+                typename geometry::ContactsCallback<
+                    typename tiny::MathTypes<T>::vector3_type>& callback)
   {
       using std::min;
 
-      using T = M::real_type;
-      typedef typename Geometry<typename M::real_type>::sphere_container::
-          const_iterator sphere_iterator;
+      typedef typename Geometry<T>::sphere_container::const_iterator
+          sphere_iterator;
 
       assert( envelope > 0 || !"sphere_sphere(): collision envelope must be positive");
 
@@ -69,7 +67,7 @@ namespace narrow
             geometry::Sphere<T> const B
                 = geometry::make_sphere((shapeBtoWCS.T()), b->radius());
 
-            geometry::contacts_sphere_sphere<typename M::vector3_type>(
+            geometry::contacts_sphere_sphere<T>(
                 A, B, envelope * min(a->scale(), b->scale()), callback);
         }
       }
