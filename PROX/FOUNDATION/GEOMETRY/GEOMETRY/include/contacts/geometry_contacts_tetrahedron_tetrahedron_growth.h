@@ -19,14 +19,13 @@ namespace geometry
   namespace details
   {
 
-    template< typename V>
-    inline void compute_intersection_points(
-                                     TetrahedronEigen<typename V::real_type> const & A
-                                     , TetrahedronEigen<typename V::real_type> const & B
-      , std::vector<EigenVector3<typename V::real_type>>  & intersections
-                                     )
-    {
-        using T = typename V::real_type;
+  template <typename T>
+  inline void
+  compute_intersection_points(TetrahedronEigen<T> const& A,
+                              TetrahedronEigen<T> const& B,
+                              std::vector<EigenVector3<T>>& intersections)
+  {
+
       intersections.clear();
       intersections.reserve(16);
 
@@ -93,7 +92,7 @@ namespace geometry
           }
         }
       }
-    }
+  }
 
     template<typename V>
     inline void project_to_plane(V const & n, V const & p, std::vector<V> & intersections)
@@ -168,48 +167,46 @@ namespace geometry
 
     }
 
-    template<typename V>
-    inline void filter_unique(
-                         std::vector<V> const & intersections
-                       , std::vector<V>       & reduced
-                       )
+    template <typename T>
+    inline void filter_unique(std::vector<EigenVector3<T>> const& intersections,
+                              std::vector<EigenVector3<T>>& reduced)
     {
-      typedef typename V::real_type                     T;
-      typedef typename std::vector<V>::const_iterator   const_iterator;
-      typedef typename std::vector<V>::iterator         iterator;
+        typedef typename std::vector<EigenVector3<T>>::const_iterator
+            const_iterator;
+        typedef typename std::vector<EigenVector3<T>>::iterator iterator;
 
-      T const accuracy = std::numeric_limits<T>::epsilon()*10;
+        T const accuracy = std::numeric_limits<T>::epsilon() * 10;
 
-      reduced.clear();
-      reduced.reserve( intersections.size() );
+        reduced.clear();
+        reduced.reserve(intersections.size());
 
-      const_iterator p   = intersections.begin();
-      const_iterator end = intersections.end();
+        const_iterator p = intersections.begin();
+        const_iterator end = intersections.end();
 
-      for(; p!= end; ++p)
-      {
-        bool unique = true;
-
-        iterator q    = reduced.begin();
-        iterator endq = reduced.end();
-        for(; q != endq; ++q)
+        for (; p != end; ++p)
         {
-          T const similarity = tiny::norm_1( (*q) - (*p) );
-          unique = similarity < accuracy ? false : unique;
-        }
+            bool unique = true;
 
-        if(unique)
-          reduced.push_back( (*p) );
-      }
+            iterator q = reduced.begin();
+            iterator endq = reduced.end();
+            for (; q != endq; ++q)
+            {
+                EigenVector3<T> tmpVec = ((*q) - (*p));
+                T const similarity = (tmpVec.cwiseAbs()).maxCoeff();
+                unique = similarity < accuracy ? false : unique;
+            }
+
+            if (unique) reduced.push_back((*p));
+        }
     }
 
-    template <typename V>
-    inline void make_contacts(V const& normal,
-                              typename V::real_type const& depth,
-                              std::vector<V> const& positions,
-                              ContactsCallback<V>& callback)
+    template <typename T>
+    inline void make_contacts(const EigenVector3<T>& normal, const T& depth,
+                              std::vector<EigenVector3<T>> const& positions,
+                              ContactsCallback<T>& callback)
     {
-        typedef typename std::vector<V>::const_iterator const_iterator;
+        typedef typename std::vector<EigenVector3<T>>::const_iterator
+            const_iterator;
 
         const_iterator p = positions.begin();
         const_iterator end = positions.end();
@@ -217,148 +214,143 @@ namespace geometry
         for (; p != end; ++p) { callback(*p, normal, depth); }
     }
 
-  }// end namespace details
+    }// end namespace details
 
-
-
-  struct GROWTH {};
-
-
-  template< typename V>
-  inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , GROWTH const & /*algorithm_tag*/
-  )
-  {
-    using std::min;
-    using std::max;
-
-    typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
-
-    bool overlap = overlap_tetrahedron_tetrahedron(A, B);
-
-    if(!overlap)
-      return false;
-
-    T delta = VT::numeric_cast(0.9);
-
-    TetrahedronEigen<T> scaled_A;
-    TetrahedronEigen<T> scaled_B;
-
-    //--- Try to quickly find a scale, delta, that for sure results in separation
-    while(overlap)
+    struct GROWTH
     {
-      scaled_A = uniform_scale(delta , A);
-      scaled_B = uniform_scale(delta , B);
+    };
 
-      overlap = overlap_tetrahedron_tetrahedron(scaled_A, scaled_B);
-
-      delta *= VT::numeric_cast(0.9);
-    }
-
-    //--- We now know that there exist a scale value, tau, such that
-    //---
-    //---    delta < tau < 1 = epsilon
-    //---
-    //--- Where delta results in separation and epislon gives penetration.
-    //---
-    //--- We want to find a tau-value such that the separation is in the
-    //--- order of max_distance.
-    //---
-    //---
-    T distance;
-    EigenVector3<T> sA;
-    EigenVector3<T> sB;
-
-
-    closest_points_tetrahedron_tetrahedron<T>(scaled_A, scaled_B, sA, sB, distance );
-
-
-    if( distance == std::numeric_limits<T>::max() )
-      return false;
-
-    T const max_distance = 2*min( distance, VT::numeric_cast(0.01)* (min(A.get_scale(), B.get_scale() )) );
-
-    T tau = delta;
-
-    const EigenVector3<T> dc   = (B.get_center() - A.get_center());
-    T const dcdc = dot(dc, dc);
-
-    unsigned int const max_iterations = 20u;
-    unsigned int       iteration = 0u;
-
-    while (distance > max_distance && iteration< max_iterations)  // Separation distance was too big.. we need to enlarge a little
+    template <typename T>
+    inline bool contacts_tetrahedron_tetrahedron(
+        TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+        ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+        std::vector<bool> const& surface_B, GROWTH const& /*algorithm_tag*/
+    )
     {
-      const EigenVector3<T> ds             = sB - sA;
-      T const gap_procentage =  dot(ds, dc) / dcdc;
+        using std::max;
+        using std::min;
 
-      T const enlarge = 1 - gap_procentage;
+        bool overlap = overlap_tetrahedron_tetrahedron(A, B);
 
-      assert(enlarge < 1.0 );
+        if (!overlap) return false;
 
-      if(tau >= enlarge)  // We can not do better
-        break;
+        T delta = (0.9);
 
-      tau = enlarge;
+        TetrahedronEigen<T> scaled_A;
+        TetrahedronEigen<T> scaled_B;
 
-      scaled_A = uniform_scale(tau , A);
-      scaled_B = uniform_scale(tau , B);
+        //--- Try to quickly find a scale, delta, that for sure results in separation
+        while (overlap)
+        {
+            scaled_A = uniform_scale(delta, A);
+            scaled_B = uniform_scale(delta, B);
 
-      closest_points_tetrahedron_tetrahedron<T>(scaled_A, scaled_B, sA, sB, distance );
+            overlap = overlap_tetrahedron_tetrahedron(scaled_A, scaled_B);
 
-      ++iteration;
+            delta *= (0.9);
+        }
+
+        //--- We now know that there exist a scale value, tau, such that
+        //---
+        //---    delta < tau < 1 = epsilon
+        //---
+        //--- Where delta results in separation and epislon gives penetration.
+        //---
+        //--- We want to find a tau-value such that the separation is in the
+        //--- order of max_distance.
+        //---
+        //---
+        T distance;
+        EigenVector3<T> sA;
+        EigenVector3<T> sB;
+
+        closest_points_tetrahedron_tetrahedron<T>(scaled_A, scaled_B, sA, sB,
+                                                  distance);
+
+        if (distance == std::numeric_limits<T>::max()) return false;
+
+        T const max_distance
+            = 2 * min(distance, T(0.01) * (min(A.get_scale(), B.get_scale())));
+
+        T tau = delta;
+
+        const EigenVector3<T> dc = (B.get_center() - A.get_center());
+        T const dcdc = dot(dc, dc);
+
+        unsigned int const max_iterations = 20u;
+        unsigned int iteration = 0u;
+
+        while (
+            distance > max_distance
+            && iteration
+                   < max_iterations) // Separation distance was too big.. we need to enlarge a little
+        {
+            const EigenVector3<T> ds = sB - sA;
+            T const gap_procentage = dot(ds, dc) / dcdc;
+
+            T const enlarge = 1 - gap_procentage;
+
+            assert(enlarge < 1.0);
+
+            if (tau >= enlarge) // We can not do better
+                break;
+
+            tau = enlarge;
+
+            scaled_A = uniform_scale(tau, A);
+            scaled_B = uniform_scale(tau, B);
+
+            closest_points_tetrahedron_tetrahedron<T>(scaled_A, scaled_B, sA,
+                                                      sB, distance);
+
+            ++iteration;
+        }
+
+        const EigenVector3<T> s = (sB - sA).normalized();
+
+        static GaussMapOfConvexPolyhedra<T> G
+            = make_gauss_map(TetrahedronEigen<T>());
+
+        //G.set_tolerance_in_degrees(50.0);
+
+        EigenVector3<T> nA;
+        EigenVector3<T> nB;
+
+        std::vector<EigenVector3<T>> pointsA;
+        std::vector<EigenVector3<T>> pointsB;
+
+        update_gauss_map(G, (A));
+        G.search_for_feature((s), pointsA, nA);
+
+        update_gauss_map<T>(G, (B));
+        G.search_for_feature(-(s), pointsB, nB);
+
+        // Determine contact normal from highest dimensional feature
+        const EigenVector3<T> normal
+            = pointsA.size() >= pointsB.size() ? (nA) : (-nB);
+
+        std::vector<EigenVector3<T>> intersections;
+        details::compute_intersection_points<T>(A, B, intersections);
+
+        if (intersections.empty()) return false;
+
+        T max_val;
+        T min_val;
+        details::estimate_overlap(normal, intersections, max_val, min_val);
+
+        T const depth = min_val - max_val;
+
+        const EigenVector3<T> mid = normal * (max_val + min_val) * 0.5f;
+
+        //details::project_to_plane(n, mid, intersections);
+
+        std::vector<EigenVector3<T>> reduced;
+        details::filter_unique(intersections, reduced);
+
+        details::make_contacts((normal), depth, reduced, callback);
+
+        return reduced.size() > 0u;
     }
-
-    const EigenVector3<T> s = (sB-sA).normalized();
-
-    static GaussMapOfConvexPolyhedra<T> G = make_gauss_map( TetrahedronEigen<T>() );
-
-    //G.set_tolerance_in_degrees(50.0);
-
-    EigenVector3<T> nA;
-    EigenVector3<T> nB;
-
-    std::vector<EigenVector3<T>> pointsA;
-    std::vector<EigenVector3<T>> pointsB;
-
-    update_gauss_map(G,(A));
-    G.search_for_feature((s), pointsA, nA);
-
-    update_gauss_map<T>(G,(B));
-    G.search_for_feature(-(s), pointsB, nB);
-
-    // Determine contact normal from highest dimensional feature
-    const EigenVector3<T> normal = pointsA.size() >=  pointsB.size() ? (nA) : (-nB);
-
-    std::vector<EigenVector3<T>> intersections;
-    details::compute_intersection_points<V>(A, B, intersections);
-
-    if(intersections.empty())
-      return false;
-
-    T max_val;
-    T min_val;
-    details::estimate_overlap(normal, intersections, max_val, min_val);
-
-    T const depth = min_val - max_val;
-
-    const EigenVector3<T> mid =  normal * (max_val + min_val)*0.5f;
-
-    //details::project_to_plane(n, mid, intersections);
-
-
-    std::vector<V> reduced;
-    details::filter_unique(eigenvecofvecToTiny<V>(intersections), reduced);
-
-    details::make_contacts(fromEigen(normal), depth, reduced, callback);
-
-    return reduced.size() > 0u;
-  }
 
 }// end namespace geometry
 

@@ -468,10 +468,10 @@ inline void intersect_polygon_circle(std::vector<EigenVector3<T>>& feature, cons
    *                          (ie when objects order are swapped)
    */
 template <typename T>
-inline bool contacts_obb_cylinder(
-    OBB<T> const& A, Cylinder<EigenVector3<T>> const& B, T const& envelope,
-    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-    bool const flip = false)
+inline bool
+contacts_obb_cylinder(OBB<T> const& A, Cylinder<EigenVector3<T>> const& B,
+                      T const& envelope, ContactsCallback<T>& callback,
+                      bool const flip = false)
 {
     using std::max;
     using std::min;

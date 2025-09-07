@@ -29,12 +29,11 @@ namespace narrow
                       const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
                       const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
                       T const& envelope,
-                      typename geometry::ContactsCallback<
-                          typename tiny::MathTypes<T>::vector3_type>& callback)
+                      typename geometry::ContactsCallback<T>& callback)
   {
       using std::min;
 
-      assert( envelope > 0 || !"box_box(): collision envelope must be positive");
+      assert(envelope > 0 || !"box_box(): collision envelope must be positive");
 
       if( A.empty() || B.empty())
         return;

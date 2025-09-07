@@ -12,17 +12,17 @@
 
 namespace geometry
 {
-  struct CLOSEST_POINTS {
-  };
+struct CLOSEST_POINTS
+{
+};
 
-  template <typename T>
-  inline bool contacts_tetrahedron_tetrahedron(
-      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
-      CLOSEST_POINTS const& /*algorithm_tag*/
-  )
-  {
+template <typename T>
+inline bool contacts_tetrahedron_tetrahedron(
+    TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+    ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+    std::vector<bool> const& surface_B, CLOSEST_POINTS const& /*algorithm_tag*/
+)
+{
     using std::min;
     using std::max;
 
@@ -154,7 +154,7 @@ namespace geometry
           const EigenVector3<T> p = (p_a + p_b)*0.5f;
           T const depth = too_far_away - distance;
 
-          callback(fromEigen(p), fromEigen(n), depth);
+          callback((p), (n), depth);
 
           ++count;
 
@@ -213,7 +213,7 @@ namespace geometry
           const EigenVector3<T> p = (p_a + p_b)*0.5f;
           T const depth = too_far_away - distance;
 
-          callback(fromEigen(p), fromEigen(n), depth);
+          callback((p), (n), depth);
 
           ++count;
 
@@ -302,7 +302,7 @@ namespace geometry
         const EigenVector3<T> p = (p_a + p_b)*0.5f;
         T const depth = too_far_away - distance;
 
-        callback( fromEigen(p), fromEigen(n), depth);
+        callback((p), (n), depth);
 
         ++count;
 
@@ -364,7 +364,7 @@ namespace geometry
           const EigenVector3<T> p = p_a;
           T const depth = min( distance0, distance1 );
 
-          callback( fromEigen(p), fromEigen(n), depth);
+          callback((p), (n), depth);
 
           ++count;
 
@@ -423,7 +423,7 @@ namespace geometry
           const EigenVector3<T> p = p_b;
           T const depth = min( distance0, distance1 );
 
-          callback( fromEigen(p), fromEigen(n), depth);
+          callback((p), (n), depth);
 
           ++count;
 
@@ -433,7 +433,7 @@ namespace geometry
     }
 
     return count > 0u;
-  }
+}
 
 }// end namespace geometry
 

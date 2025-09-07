@@ -15,8 +15,6 @@ namespace kdop
 template <size_t K, typename T> class TestPair
 {
 public:
-    using M = tiny::MathTypes<T>;
-
     Tree<T, K> const* m_tree_a;
     Tree<T, K> const * m_tree_b;
 
@@ -33,7 +31,7 @@ public:
 
     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const * m_surface_map_a;
     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const * m_surface_map_b;
-    geometry::ContactsCallback<typename M::vector3_type>* m_callback;
+    geometry::ContactsCallback<T>* m_callback;
 
 public:
     TestPair()
@@ -68,7 +66,7 @@ public:
         mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
                                          mesh_array::T4Mesh> const&
             surface_map_b,
-        geometry::ContactsCallback<typename M::vector3_type>& callback)
+        geometry::ContactsCallback<T>& callback)
         : m_tree_a(&tree_A)
         , m_tree_b(&tree_B)
         , m_mesh_a(&mesh_A)

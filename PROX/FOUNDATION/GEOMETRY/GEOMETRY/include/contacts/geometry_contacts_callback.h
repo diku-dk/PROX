@@ -6,13 +6,11 @@
 namespace geometry
 {
 
-template <typename V>
+template <typename T>
     //requires(std::is_floating_point_v<T>)
 class ContactsCallback
 {
 public:
-    using T = typename V::real_type;
-
         /**
          * Callback interface for reporting newly found contact points.
          *
@@ -20,9 +18,10 @@ public:
          * @param normal    The contact point normal in WCS.
          * @param distance  The penetration distance measure, negative if overlapping and positive if separation.
          */
-    void operator()(const auto& point, const auto& normal, const auto& distance)
+    void operator()(const EigenVector3<T>& point, const EigenVector3<T>& normal,
+                    const T& distance)
     {
-        tempParenthesisOperatorImpl(toEigen(point), toEigen(normal), distance);
+        tempParenthesisOperatorImpl((point), (normal), distance);
     }
 
     virtual void tempParenthesisOperatorImpl(const EigenVector3<T>& point,

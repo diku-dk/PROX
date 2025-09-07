@@ -290,8 +290,7 @@ namespace kdop {
                 KernelV** out_verts, size_t* out_verts_size,
                 KernelWorkItemGenerator<KernelI>*
                     out_kernel_work_item_generator,
-                geometry::ContactsCallback<
-                    typename tiny::MathTypes<T>::vector3_type>*** out_callbacks,
+                geometry::ContactsCallback<T>*** out_callbacks,
                 size_t* out_max_bvtt_degree, size_t* out_max_bvtt_height,
                 cl_device_type device_type, size_t global_mem_cacheline_size,
                 size_t max_kernel_work_items)
@@ -379,12 +378,13 @@ namespace kdop {
                     *out_tsi = new KernelTetrahedronSurfaceInfo[*out_tets_size];
                     *out_verts = new KernelV[*out_verts_size];
                 }
-                *out_callbacks = new geometry::ContactsCallback<V>*[test_pairs.size()];
+                *out_callbacks
+                    = new geometry::ContactsCallback<T>*[test_pairs.size()];
 
                 // keep track of which objects have been copied already
                 std::map < Tree<T, K> const*, bool > objects_copied;
                 for (typename test_pair_container::iterator it = test_pairs.begin(); it != test_pairs.end(); std::advance(it, 1)) {
-                    kdop::TestPair<V, K, T> tp = *it;
+                    kdop::TestPair<K, T> tp = *it;
                     Tree<T, K> const* trees[2] = {tp.m_tree_a, tp.m_tree_b};
                     mesh_array::T4Mesh const* meshes[2] = {tp.m_mesh_a, tp.m_mesh_b};
                     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> const* surface_maps[2]
@@ -566,13 +566,12 @@ namespace kdop {
 
             template <size_t K, typename T, typename KernelI, typename KernelT,
                       typename KernelV>
-            inline void cleanup(
-                KernelNode<KernelI, KernelT, K>* out_nodes,
-                KernelTetrahedron<KernelI>* out_tets,
-                KernelTetrahedronSurfaceInfo* out_tsi, KernelV* out_verts,
-                geometry::ContactsCallback<
-                    typename tiny::MathTypes<T>::vector3_type>** out_callbacks,
-                cl_device_type device_type)
+            inline void cleanup(KernelNode<KernelI, KernelT, K>* out_nodes,
+                                KernelTetrahedron<KernelI>* out_tets,
+                                KernelTetrahedronSurfaceInfo* out_tsi,
+                                KernelV* out_verts,
+                                geometry::ContactsCallback<T>** out_callbacks,
+                                cl_device_type device_type)
             {
                 if(device_type & CL_DEVICE_TYPE_CPU) {
                     free(out_nodes);
@@ -738,8 +737,7 @@ namespace kdop {
         details::cl::KernelTetrahedron<KI> *kernel_tets;
         details::cl::KernelTetrahedronSurfaceInfo *kernel_tsi;
         details::cl::KernelWorkItem<KI> *kernel_work;
-        geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>**
-            kernel_callbacks;
+        geometry::ContactsCallback<T>** kernel_callbacks;
         KV *kernel_verts;
         size_t kernel_nodes_size, kernel_tets_size, kernel_verts_size;
         size_t max_bvtt_degree, max_bvtt_height;

@@ -12,21 +12,17 @@ namespace narrow
   namespace detail
   {
 
-  template <typename M>
-  inline void spheres_tetramesh(
-      typename Geometry<typename M::real_type>::sphere_container const& A,
-      const EigenVector3<typename M::real_type>& tA,
-      const EigenQuaternion<typename M::real_type>& qA,
-      Object<typename M::real_type> const& objB,
-      Geometry<typename M::real_type> const& geoB,
-      typename geometry::ContactsCallback<typename M::vector3_type>& callback,
-      bool const& should_flip)
+  template <typename T>
+  inline void
+  spheres_tetramesh(typename Geometry<T>::sphere_container const& A,
+                    const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
+                    Object<T> const& objB, Geometry<T> const& geoB,
+                    typename geometry::ContactsCallback<T>& callback,
+                    bool const& should_flip)
   {
-      typedef typename M::vector3_type    V;
-      typedef typename M::real_type       T;
 
-      typedef typename Geometry<typename M::real_type>::sphere_container::
-          const_iterator sphere_iterator;
+      typedef typename Geometry<T>::sphere_container::const_iterator
+          sphere_iterator;
 
       if( A.empty() )
         return;
@@ -40,7 +36,7 @@ namespace narrow
 
           const CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
 
-          geometry::Sphere<typename V::real_type> const sphere
+          geometry::Sphere<T> const sphere
               = geometry::make_sphere((shapeAtoWCS.T()), a->radius());
 
           kdop::single_traversal<8, T>(

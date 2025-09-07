@@ -28,14 +28,13 @@ namespace narrow
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
   template <typename T>
-  inline void
-  sphere_box(typename Geometry<T>::sphere_container const& A,
-             typename Geometry<T>::box_container const& B,
-             const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
-             const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
-             T const& envelope,
-             typename geometry::ContactsCallback<
-                 typename tiny::MathTypes<T>::vector3_type>& callback)
+  inline void sphere_box(typename Geometry<T>::sphere_container const& A,
+                         typename Geometry<T>::box_container const& B,
+                         const EigenVector3<T>& tA,
+                         const EigenQuaternion<T>& qA,
+                         const EigenVector3<T>& tB,
+                         const EigenQuaternion<T>& qB, T const& envelope,
+                         typename geometry::ContactsCallback<T>& callback)
   {
       using std::min;
 

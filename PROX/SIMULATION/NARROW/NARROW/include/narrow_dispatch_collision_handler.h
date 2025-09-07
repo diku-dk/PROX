@@ -88,14 +88,14 @@ namespace narrow
 
           if (geoA.m_tetramesh.has_data())
           {
-              detail::spheres_tetramesh<M>(spheresB, elem.t_b(), elem.Q_b(),
+              detail::spheres_tetramesh<T>(spheresB, elem.t_b(), elem.Q_b(),
                                            elem.obj_a(), geoA, elem.callback(),
                                            true);
           }
 
         if ( geoB.m_tetramesh.has_data() )
         {
-            detail::spheres_tetramesh<M>(spheresA, elem.t_a(), elem.Q_a(),
+            detail::spheres_tetramesh<T>(spheresA, elem.t_a(), elem.Q_a(),
                                          elem.obj_b(), geoB, elem.callback(),
                                          false);
         }

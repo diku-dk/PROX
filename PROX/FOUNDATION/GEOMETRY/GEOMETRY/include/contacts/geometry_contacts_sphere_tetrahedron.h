@@ -32,10 +32,10 @@ namespace geometry
    *                      by the tetrahedral mesh.
    */
 template <typename T>
-inline bool contacts_sphere_tetrahedron(
-    Sphere<T> const& A, TetrahedronEigen<T> const& B,
-    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-    bool const flip, std::vector<bool> const& surface_map)
+inline bool
+contacts_sphere_tetrahedron(Sphere<T> const& A, TetrahedronEigen<T> const& B,
+                            ContactsCallback<T>& callback, bool const flip,
+                            std::vector<bool> const& surface_map)
 {
     assert(surface_map.size() == 4u                                                || !"contacts_sphere_tetrahedron(): internal error, must have four surface map values");
 
@@ -79,7 +79,7 @@ inline bool contacts_sphere_tetrahedron(
 
         const EigenVector3<T> p = closest_point_on_plane(((A.center())), plane[k]);
 
-        callback( fromEigen(p), fromEigen(n), d[k] );
+        callback((p), (n), d[k]);
 
         return true;
       }
@@ -110,7 +110,7 @@ inline bool contacts_sphere_tetrahedron(
 
         const EigenVector3<T> n = flip ? unit(m) : - unit(m);
 
-        callback( fromEigen(B.p(i)), fromEigen(n), d - A.radius() );
+        callback((B.p(i)), (n), d - A.radius());
 
         return true;
       }
@@ -160,7 +160,7 @@ inline bool contacts_sphere_tetrahedron(
 
           const EigenVector3<T> n = flip ? (m).normalized() : - (m).normalized();
 
-          callback( fromEigen(p), fromEigen(n), d - A.radius() );
+          callback((p), (n), d - A.radius());
 
           return true;
         }
@@ -186,7 +186,7 @@ inline bool contacts_sphere_tetrahedron(
 
         const EigenVector3<T> p = closest_point_on_plane((A.center()), plane[v]);
 
-        callback(fromEigen( p), fromEigen(n),  d - A.radius() );
+        callback((p), (n), d - A.radius());
 
         return true;
       }
@@ -196,14 +196,14 @@ inline bool contacts_sphere_tetrahedron(
 }
 
 template <typename T>
-inline bool contacts_sphere_tetrahedron(
-    Sphere<T> const& A, TetrahedronEigen<T> const& B,
-    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-    bool const flip = false)
+inline bool contacts_sphere_tetrahedron(Sphere<T> const& A,
+                                        TetrahedronEigen<T> const& B,
+                                        ContactsCallback<T>& callback,
+                                        bool const flip = false)
 {
     std::vector<bool> const surface_map(4u,true);
     return contacts_sphere_tetrahedron(A, B, callback, flip, surface_map);
-  }
+}
 
 }// namespace geometry
 

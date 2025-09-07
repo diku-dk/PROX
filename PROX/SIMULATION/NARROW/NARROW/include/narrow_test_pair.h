@@ -23,9 +23,7 @@ namespace narrow
 template <typename T> class TestPair
 {
 public:
-    using M = tiny::MathTypes<T>;
-
-    typedef geometry::ContactsCallback<typename M::vector3_type> callback_type;
+    typedef geometry::ContactsCallback<T> callback_type;
 
 protected:
     Object<T> const* m_obj_a;
@@ -113,7 +111,7 @@ public:
     TestPair(Object<T> const& objA, Object<T> const& objB,
              const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
              const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
-             geometry::ContactsCallback<typename M::vector3_type>& callback)
+             geometry::ContactsCallback<T>& callback)
         : m_obj_a(&objA)
         , m_obj_b(&objB)
         , m_t_a(tA)

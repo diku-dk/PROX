@@ -208,8 +208,7 @@ namespace kdop
       details::cl::KernelTetrahedron<KI>* kernel_tets;
       details::cl::KernelTetrahedronSurfaceInfo* kernel_tsi;
       details::cl::KernelWorkItem<KI>* kernel_work;
-      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>**
-          kernel_callbacks;
+      geometry::ContactsCallback<T>** kernel_callbacks;
       KV* kernel_verts;
       size_t kernel_nodes_size, kernel_tets_size, kernel_verts_size;
       size_t max_bvtt_degree, max_bvtt_height;

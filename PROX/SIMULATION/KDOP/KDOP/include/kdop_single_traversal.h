@@ -24,13 +24,12 @@ namespace kdop
      *                               setting this flag to true will flip the normals.
      */
   template <typename T>
-  inline bool contacts_shape_tetrahedron(
-      geometry::Sphere<T> const& sphere,
-      geometry::TetrahedronEigen<T> const& tetrahedron,
-      std::vector<bool> const& surface_map,
-      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
-          callback,
-      bool const& should_flip)
+  inline bool
+  contacts_shape_tetrahedron(geometry::Sphere<T> const& sphere,
+                             geometry::TetrahedronEigen<T> const& tetrahedron,
+                             std::vector<bool> const& surface_map,
+                             geometry::ContactsCallback<T>& callback,
+                             bool const& should_flip)
   {
       return geometry::contacts_sphere_tetrahedron(sphere, tetrahedron, callback, should_flip, surface_map);
   }
@@ -51,9 +50,7 @@ namespace kdop
       mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
       mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
                                        mesh_array::T4Mesh> const& surface_map,
-      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
-          callback,
-      bool const& should_flip)
+      geometry::ContactsCallback<T>& callback, bool const& should_flip)
   {
       using namespace mesh_array;
 
@@ -117,9 +114,7 @@ namespace kdop
       mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
       mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
                                        mesh_array::T4Mesh> const& surface_map,
-      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
-          callback,
-      bool const& should_flip = false)
+      geometry::ContactsCallback<T>& callback, bool const& should_flip = false)
   {
       geometry::DOP<T, K> const shape_dop = geometry::convert<K, T>(shape);
 

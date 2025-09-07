@@ -156,16 +156,15 @@ namespace geometry
    * @return          If intersection exists then the return value is true.
    */
   template <typename T>
-  inline bool contacts_obb_obb(
-      OBBEigen<T> const& obbEigenA, OBBEigen<T> const& obbEigenB,
-      const T& envelope,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback)
+  inline bool contacts_obb_obb(OBBEigen<T> const& obbEigenA,
+                               OBBEigen<T> const& obbEigenB, const T& envelope,
+                               ContactsCallback<T>& callback)
   {
     // 2012-06-24 Kenny code review: What about collision envelope, it does nat appear to be used anywhere?
     using std::min;
     using std::max;
 
-    std::vector<EigenVector3<T>> a(8u, EigenVector3<T>(0,0,0));
+    std::vector<EigenVector3<T>> a(8u, EigenVector3<T>(0, 0, 0));
     a[0] = transform_from_obb( get_local_corner(0, obbEigenA), obbEigenA );
     a[1] = transform_from_obb( get_local_corner(1, obbEigenA), obbEigenA);
     a[2] = transform_from_obb( get_local_corner(2, obbEigenA), obbEigenA);
@@ -346,8 +345,7 @@ namespace geometry
         }
       }
 
-      if(unique)
-          callback( fromEigen((*p)), fromEigen(n), depth);
+      if (unique) callback(((*p)), (n), depth);
     }
 
     return true;

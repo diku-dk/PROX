@@ -23,9 +23,9 @@ namespace geometry
    *
    */
 template <typename T>
-inline void contacts_sphere_sphere(
-    Sphere<T> const& A, Sphere<T> const& B, const T& envelope,
-    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback)
+inline void contacts_sphere_sphere(Sphere<T> const& A, Sphere<T> const& B,
+                                   const T& envelope,
+                                   ContactsCallback<T>& callback)
 {
     using std::sqrt;
 
@@ -110,9 +110,8 @@ inline void contacts_sphere_sphere(
     assert( is_number(p(2)) || !"contacts_sphere_sphere(): nan");
     assert( is_finite(p(2)) || !"contacts_sphere_sphere(): inf");
 
-    if( depth <=  envelope  )
-        callback(fromEigen(p),fromEigen(n),depth);
-  }
+    if (depth <= envelope) callback((p), (n), depth);
+}
 
 }//namespace geometry
 

@@ -31,8 +31,7 @@ namespace kdop
       mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_B,
       mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
                                        mesh_array::T4Mesh> const& surface_map_B,
-      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
-          callback)
+      geometry::ContactsCallback<T>& callback)
   {
       using namespace mesh_array;
 

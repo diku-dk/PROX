@@ -38,14 +38,12 @@ namespace detail
      *
      * The functor hides the nasty details and data types from the contact point generation library.
      */
-template <typename M>
-class ContactCallbackFunctor : public geometry::ContactsCallback<typename M::vector3_type>
+template <typename T>
+class ContactCallbackFunctor : public geometry::ContactsCallback<T>
 {
 public:
-    typedef typename M::real_type T;
     typedef prox::RigidBody<T> body_type;
     typedef prox::ContactPoint<T> contact_type;
-    typedef typename M::vector3_type V;
 
 protected:
     body_type* m_body_i;   ///< A pointer to body i of the contact.
@@ -263,7 +261,7 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
         contacts.clear();
 
         std::vector<narrow::TestPair<T>> narrow_test_pairs;
-        typedef detail::ContactCallbackFunctor<MathPolicy<T>> callback_type;
+        typedef detail::ContactCallbackFunctor<T> callback_type;
 
         std::vector<callback_type>
             callbacks; // 2014-10-19 Kenny: Argh, I hate this design choice.... really ugly

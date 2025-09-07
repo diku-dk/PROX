@@ -76,13 +76,11 @@ namespace kdop
 
   public:
       template <typename T>
-      static bool call_algorithm(
-          geometry::TetrahedronEigen<T> const& A,
-          geometry::TetrahedronEigen<T> const& B,
-          geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
-              callback,
-          std::vector<bool> const& surface_A,
-          std::vector<bool> const& surface_B)
+      static bool call_algorithm(geometry::TetrahedronEigen<T> const& A,
+                                 geometry::TetrahedronEigen<T> const& B,
+                                 geometry::ContactsCallback<T>& callback,
+                                 std::vector<bool> const& surface_A,
+                                 std::vector<bool> const& surface_B)
       {
           switch (get_algorithm_choice())
           {
@@ -121,12 +119,10 @@ namespace kdop
           assert(false || !"call_algorithm(): unrecognized algorithm choice");
 
           return false;
-    }
-
+      }
   };
 
-
-}// end namespace kdop
+  } // end namespace kdop
 
 // KDOP_SELECT_CONTACT_POINT_ALGORITHM_H
 #endif

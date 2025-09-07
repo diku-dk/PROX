@@ -20,10 +20,9 @@ namespace geometry
    *
    */
 template <typename T>
-inline void contacts_obb_sphere(
-    OBBEigen<T> const& A, Sphere<T> const& B, const T& envelope,
-    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-    bool const flip = false)
+inline void
+contacts_obb_sphere(OBBEigen<T> const& A, Sphere<T> const& B, const T& envelope,
+                    ContactsCallback<T>& callback, bool const flip = false)
 {
 
     using std::sqrt;
@@ -156,10 +155,9 @@ inline void contacts_obb_sphere(
       //--- Transform normal and point into WCS
         p = xform_point<T>(AtoWCS,p);
       n = flip ? -xform_vector<T>(AtoWCS, n) : xform_vector<T>(AtoWCS, n);
-      callback(fromEigen(p),fromEigen(n),d);
+      callback((p), (n), d);
     }
-
-  }
+}
 }//namespace geometry
 
 //GEOMETRY_CONTACTS_OBB_SPHERE_H

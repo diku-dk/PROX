@@ -526,8 +526,7 @@ namespace geometry
     template <typename T>
     inline bool generate_contacts_from_intersection(
         TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-        ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-        const EigenVector3<T>& n)
+        ContactsCallback<T>& callback, const EigenVector3<T>& n)
     {
       using std::min;
       using std::max;
@@ -651,10 +650,7 @@ namespace geometry
           }
         }
 
-        if(unique)
-        {
-            callback( fromEigen(*p), fromEigen(n), depth);
-        }
+        if (unique) { callback((*p), (n), depth); }
       }
 
       return true;
@@ -676,8 +672,8 @@ namespace geometry
   template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
       TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+      std::vector<bool> const& surface_B,
       TRIANGLE_INTERSECTION const& /*algorithm_tag*/
   )
   {
@@ -765,8 +761,8 @@ namespace geometry
 
           if(is_inside_B)
           {
-              callback( fromEigen(pk), -fromEigen(n), depth);
-            ++count;
+              callback((pk), -(n), depth);
+              ++count;
           }
 
         }
@@ -802,8 +798,8 @@ namespace geometry
 
           if(is_inside_A)
           {
-              callback( fromEigen(pk), fromEigen(n), depth);
-            ++count;
+              callback((pk), (n), depth);
+              ++count;
           }
         }
 
@@ -936,14 +932,14 @@ namespace geometry
             if(a_min <= b_min &&  b_min <= a_max)
             {
               T const depth = b_min - a_max;
-                callback( fromEigen(p), fromEigen(n), depth);
+              callback((p), (n), depth);
               ++count;
             }
 
             if(b_min <= a_min &&  a_min <= b_max)
             {
               T const depth = a_min - b_max;
-              callback( fromEigen(p), -fromEigen(n), depth);
+              callback((p), -(n), depth);
               ++count;
             }
 
@@ -959,8 +955,8 @@ namespace geometry
   template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
       TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+      std::vector<bool> const& surface_B,
       VERTEX_ONLY_INTERSECTION const& /*algorithm_tag*/
   )
   {
@@ -1010,13 +1006,13 @@ namespace geometry
       T const depth3 = surface_A[3] ? a3 / (planesA[3].m_normal).norm() : std::numeric_limits<T>::max() ;
 
       if ( depth0 <= depth1 && depth0 <= depth2 && depth0 <= depth3 )
-          callback( fromEigen(b), fromEigen((planesA[0].m_normal).normalized()), depth0 );
+          callback((b), ((planesA[0].m_normal).normalized()), depth0);
       if ( depth1 <= depth0 && depth1 <= depth2 && depth1 <= depth3 )
-          callback( fromEigen(b), fromEigen((planesA[1].m_normal).normalized()), depth1 );
+          callback((b), ((planesA[1].m_normal).normalized()), depth1);
       if ( depth2 <= depth0 && depth2 <= depth1 && depth2 <= depth3 )
-          callback( fromEigen(b), fromEigen((planesA[2].m_normal).normalized()), depth2 );
+          callback((b), ((planesA[2].m_normal).normalized()), depth2);
       if ( depth3 <= depth0 && depth3 <= depth1 && depth3 <= depth2 )
-          callback( fromEigen(b), fromEigen((planesA[3].m_normal).normalized()), depth3 );
+          callback((b), ((planesA[3].m_normal).normalized()), depth3);
 
       ++count;
     }
@@ -1045,13 +1041,13 @@ namespace geometry
       T const depth3 = surface_B[3] ? b3 / (planesB[3].m_normal).norm() : std::numeric_limits<T>::max() ;
 
       if ( depth0 <= depth1 && depth0 <= depth2 && depth0 <= depth3 )
-          callback( fromEigen(a), fromEigen((planesB[0].m_normal).normalized()), depth0 );
+          callback((a), ((planesB[0].m_normal).normalized()), depth0);
       if ( depth1 <= depth0 && depth1 <= depth2 && depth1 <= depth3 )
-          callback( fromEigen(a), fromEigen((planesB[1].m_normal).normalized()), depth1 );
+          callback((a), ((planesB[1].m_normal).normalized()), depth1);
       if ( depth2 <= depth0 && depth2 <= depth1 && depth2 <= depth3 )
-          callback( fromEigen(a), fromEigen((planesB[2].m_normal).normalized()), depth2 );
+          callback((a), ((planesB[2].m_normal).normalized()), depth2);
       if ( depth3 <= depth0 && depth3 <= depth1 && depth3 <= depth2 )
-          callback( fromEigen(a), fromEigen((planesB[3].m_normal).normalized()), depth3 );
+          callback((a), ((planesB[3].m_normal).normalized()), depth3);
       ++count;
     }
 
@@ -1061,8 +1057,8 @@ namespace geometry
   template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
       TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+      std::vector<bool> const& surface_B,
       CONSISTENT_VERTEX const& /*algorithm_tag*/
   )
   {
@@ -1147,8 +1143,8 @@ namespace geometry
           const EigenVector3<T>& n     = planesA[best_plane].m_normal;
             T const   depth = details::get_signed_distance( B.p(i), planesA[best_plane] ) / (n.norm());
 
-          callback( fromEigen(B.p(i)), fromEigen(n.normalized()), depth );
-          ++count;
+            callback((B.p(i)), (n.normalized()), depth);
+            ++count;
         }
       }
 
@@ -1197,8 +1193,8 @@ namespace geometry
           const EigenVector3<T>& n     = -planesB[best_plane].m_normal;
             T const   depth = details::get_signed_distance( A.p(i), planesB[best_plane] ) / (n.norm());
 
-          callback( fromEigen(A.p(i)), fromEigen(n.normalized()), depth );
-          ++count;
+            callback((A.p(i)), (n.normalized()), depth);
+            ++count;
         }
       }
 
@@ -1210,9 +1206,8 @@ namespace geometry
   template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
       TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
-      SAT const& /*algorithm_tag*/
+      ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+      std::vector<bool> const& surface_B, SAT const& /*algorithm_tag*/
   )
   {
 
@@ -1241,8 +1236,8 @@ namespace geometry
   template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
       TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+      std::vector<bool> const& surface_B,
       RESTRICTED_SAT const& /*algorithm_tag*/
   )
   {
@@ -1271,8 +1266,8 @@ namespace geometry
   template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
       TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
-      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      ContactsCallback<T>& callback, std::vector<bool> const& surface_A,
+      std::vector<bool> const& surface_B,
       MOST_OPPOSING_SURFACES const& /*algorithm_tag*/
   )
   {
@@ -1299,9 +1294,9 @@ namespace geometry
   }
 
   template <typename T>
-  inline bool contacts_tetrahedron_tetrahedron(
-      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
-      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback)
+  inline bool contacts_tetrahedron_tetrahedron(TetrahedronEigen<T> const& A,
+                                               TetrahedronEigen<T> const& B,
+                                               ContactsCallback<T>& callback)
   {
     using std::min;
     using std::max;
