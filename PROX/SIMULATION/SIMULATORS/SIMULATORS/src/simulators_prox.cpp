@@ -10,11 +10,7 @@
 namespace simulators
 {
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using VT = MT::value_traits;
-using T = MT::real_type;
+using T = float;
 
 ProxEngine::ProxEngine()
 {
@@ -328,7 +324,8 @@ void ProxEngine::set_box_shape(size_t const& geometry_index, size_t const& box_n
         mesh_array::VertexAttribute<T, mesh_array::T3Mesh> surface_Y;
         mesh_array::VertexAttribute<T, mesh_array::T3Mesh> surface_Z;
 
-        mesh_array::make_box<typename MT::real_type>(width, height, depth, surface, surface_X, surface_Y, surface_Z);
+        mesh_array::make_box<T>(width, height, depth, surface, surface_X,
+                                surface_Y, surface_Z);
 
         m_data->make_tetramesh_geoemtry(geometry, surface, surface_X, surface_Y, surface_Z);
 
@@ -748,7 +745,7 @@ void ProxEngine::set_tetramesh_shape(size_t const& geometry_index, size_t const&
 
     if (kdop::SelectContactPointAlgorithm::is_using_closest_point())
     {
-        mesh_array::shrink<T>(VT::numeric_cast(0.99), mesh, X, Y, Z);
+        mesh_array::shrink<T>((0.99), mesh, X, Y, Z);
         //      std::vector<V> normals;
         //
         //      mesh_array::compute_vertex_normals<MT>(mesh, X, Y, Z, normals);
@@ -1154,7 +1151,8 @@ void ProxEngine::get_convex_shape(size_t const& geometry_index, size_t const& co
 
     for (size_t i = 0u; i < N; ++i)
     {
-        V const p = fromEigen(geometry.m_hulls[convex_number].data().get_point(i));
+        const EigenVector3<T> p
+            = (geometry.m_hulls[convex_number].data().get_point(i));
 
         coordinates[3 * i + 0] = p(0);
         coordinates[3 * i + 1] = p(1);
