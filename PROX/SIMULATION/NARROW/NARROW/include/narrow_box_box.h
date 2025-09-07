@@ -27,8 +27,10 @@ namespace narrow
   inline void box_box(
       typename Geometry<typename M::real_type>::box_container const& A,
       typename Geometry<typename M::real_type>::box_container const& B,
-      typename M::vector3_type const& tA, typename M::quaternion_type const& qA,
-      typename M::vector3_type const& tB, typename M::quaternion_type const& qB,
+      const EigenVector3<typename M::real_type>& tA,
+      const EigenQuaternion<typename M::real_type>& qA,
+      const EigenVector3<typename M::real_type>& tB,
+      const EigenQuaternion<typename M::real_type>& qB,
       typename M::real_type const& envelope,
       typename geometry::ContactsCallback<typename M::vector3_type>& callback)
   {
@@ -43,8 +45,8 @@ namespace narrow
       if( A.empty() || B.empty())
         return;
 
-      CoordSysEigen<T> bodyAtoWCS = CoordSysEigen<T>(toEigen(tA), toEigen(qA));
-      CoordSysEigen<T> bodyBtoWCS = CoordSysEigen<T>(toEigen(tB), toEigen(qB));
+      CoordSysEigen<T> bodyAtoWCS = CoordSysEigen<T>((tA), (qA));
+      CoordSysEigen<T> bodyBtoWCS = CoordSysEigen<T>((tB), (qB));
 
       for (auto a = A.begin(); a != A.end(); ++a)
       {

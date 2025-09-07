@@ -12,11 +12,9 @@
 namespace kdop
 {
 
-  template< typename V, size_t K, typename T >
-  class TestPair
-  {
-  public:
-
+template <typename V, size_t K, typename T> class TestPair
+{
+public:
     Tree<T, K> const * m_tree_a;
     Tree<T, K> const * m_tree_b;
 
@@ -82,8 +80,7 @@ namespace kdop
     , m_surface_map_b(&surface_map_b)
     , m_callback(&callback)
     {}
-
-  };
+};
 
 } // namespace kdop
 

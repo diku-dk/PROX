@@ -6,6 +6,7 @@
 
 #include <geometry.h>
 
+#include <tiny.h>
 #include <cassert>
 
 namespace narrow
@@ -19,25 +20,22 @@ namespace narrow
    *
    * @tparam M   A typebinder of math types.
    */
-template <typename M> class TestPair
+template <typename T> class TestPair
 {
 public:
-    typedef typename M::real_type T;
-    typedef typename M::value_traits VT;
-    typedef typename M::vector3_type V;
-    typedef typename M::quaternion_type Q;
+    using M = tiny::MathTypes<T>;
 
-    typedef geometry::ContactsCallback<V> callback_type;
+    typedef geometry::ContactsCallback<typename M::vector3_type> callback_type;
 
 protected:
     Object<T> const* m_obj_a;
     Object<T> const* m_obj_b;
 
-    V m_t_a;
-    V m_t_b;
+    EigenVector3<T> m_t_a;
+    EigenVector3<T> m_t_b;
 
-    Q m_Q_a;
-    Q m_Q_b;
+    EigenQuaternion<T> m_Q_a;
+    EigenQuaternion<T> m_Q_b;
 
     callback_type* m_callback;
 
@@ -113,10 +111,8 @@ public:
     }
 
     TestPair(Object<T> const& objA, Object<T> const& objB,
-             typename M::vector3_type const& tA,
-             typename M::quaternion_type const& qA,
-             typename M::vector3_type const& tB,
-             typename M::quaternion_type const& qB,
+             const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
+             const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
              geometry::ContactsCallback<typename M::vector3_type>& callback)
         : m_obj_a(&objA)
         , m_obj_b(&objB)

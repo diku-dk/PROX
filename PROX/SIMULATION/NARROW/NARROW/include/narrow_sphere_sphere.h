@@ -32,17 +32,16 @@ namespace narrow
   inline void sphere_sphere(
       typename Geometry<typename M::real_type>::sphere_container const& A,
       typename Geometry<typename M::real_type>::sphere_container const& B,
-      typename M::vector3_type const& tA, typename M::quaternion_type const& qA,
-      typename M::vector3_type const& tB, typename M::quaternion_type const& qB,
+      const EigenVector3<typename M::real_type>& tA,
+      const EigenQuaternion<typename M::real_type>& qA,
+      const EigenVector3<typename M::real_type>& tB,
+      const EigenQuaternion<typename M::real_type>& qB,
       typename M::real_type const& envelope,
       typename geometry::ContactsCallback<typename M::vector3_type>& callback)
   {
       using std::min;
 
-      typedef typename M::value_traits    VT;
-      typedef typename M::coordsys_type   C;
-      typedef typename M::vector3_type    V;
-
+      using T = M::real_type;
       typedef typename Geometry<typename M::real_type>::sphere_container::
           const_iterator sphere_iterator;
 
@@ -51,27 +50,27 @@ namespace narrow
       if( A.empty() || B.empty())
         return;
 
-      C bodyAtoWCS = C(tA, qA);
-      C bodyBtoWCS = C(tB, qB);
+      CoordSysEigen<T> bodyAtoWCS = CoordSysEigen<T>(tA, qA);
+      CoordSysEigen<T> bodyBtoWCS = CoordSysEigen<T>(tB, qB);
 
       for( sphere_iterator a = A.begin(); a!=A.end(); ++a )
       {
         for( sphere_iterator b = B.begin(); b!=B.end(); ++b )
         {
-          C shapeAtobodyA = C(a->transform().T(), a->transform().Q());
-          C shapeBtobodyB = C(b->transform().T(), b->transform().Q());
-          C shapeAtoWCS = tiny::prod(shapeAtobodyA, bodyAtoWCS);
-          C shapeBtoWCS = tiny::prod(shapeBtobodyB, bodyBtoWCS);
+            CoordSysEigen<T> shapeAtobodyA = CoordSysEigen<T>(
+                toEigen(a->transform().T()), toEigen(a->transform().Q()));
+            CoordSysEigen<T> shapeBtobodyB = CoordSysEigen<T>(
+                toEigen(b->transform().T()), toEigen(b->transform().Q()));
+            CoordSysEigen<T> shapeAtoWCS = prod(shapeAtobodyA, bodyAtoWCS);
+            CoordSysEigen<T> shapeBtoWCS = prod(shapeBtobodyB, bodyBtoWCS);
 
-          geometry::Sphere<typename V::real_type> const A = geometry::make_sphere( toEigen(shapeAtoWCS.T()), a->radius());
-          geometry::Sphere<typename V::real_type> const B = geometry::make_sphere( toEigen(shapeBtoWCS.T()), b->radius());
+            geometry::Sphere<T> const A
+                = geometry::make_sphere((shapeAtoWCS.T()), a->radius());
+            geometry::Sphere<T> const B
+                = geometry::make_sphere((shapeBtoWCS.T()), b->radius());
 
-          geometry::contacts_sphere_sphere<V>(
-                                           A
-                                           , B
-                                           , envelope * min(a->scale(), b->scale())
-                                           , callback
-                                           );
+            geometry::contacts_sphere_sphere<typename M::vector3_type>(
+                A, B, envelope * min(a->scale(), b->scale()), callback);
         }
       }
   }

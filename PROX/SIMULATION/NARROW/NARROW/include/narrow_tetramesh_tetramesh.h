@@ -3,6 +3,8 @@
 
 #include "narrow_object.h"
 #include "narrow_geometry.h"
+#include "narrow_system.h"
+#include "narrow_test_pair.h"
 
 #ifdef HAS_DIKUCL
 #include <cl/gproximity/kdop_cl_gproximity_tandem_traversal.h>
@@ -17,16 +19,15 @@ namespace narrow
   namespace details
   {
 
-  template <typename M>
-  inline void
-  dispatch_tetramesh_tetramesh(System<typename M::real_type> const& system,
-                               std::vector<TestPair<M>>& test_pairs)
+  template <typename T>
+  inline void dispatch_tetramesh_tetramesh(System<T> const& system,
+                                           std::vector<TestPair<T>>& test_pairs)
   {
       assert( ! test_pairs.empty() || !"dispatch_tetramesh_tetramesh : test_pairs are empty" );
 
-      typedef typename M::vector3_type                     V;
-      typedef typename M::real_type T;
-      typedef typename kdop::TestPair<V, 8, T>             kdop_pair_type;
+      using M = tiny::MathTypes<T>;
+      typedef typename M::vector3_type V;
+      typedef typename kdop::TestPair<V, 8, T> kdop_pair_type;
 
       std::vector< kdop_pair_type > kdop_test_pairs;
 

@@ -17,12 +17,12 @@ namespace narrow
 
   namespace details
   {
-  template <typename M>
-  inline void dispatch_primitives(System<typename M::real_type> const& system,
-                                  std::vector<TestPair<M>>& test_pairs)
+  template <typename T>
+  inline void dispatch_primitives(System<T> const& system,
+                                  std::vector<TestPair<T>>& test_pairs)
   {
       assert( ! test_pairs.empty() || !"dispatch_primitives : test_pairs are empty" );
-
+      using M = tiny::MathTypes<T>;
       for (auto& elem : test_pairs)
       {
           const auto& geoA
@@ -67,12 +67,12 @@ namespace narrow
       }
   }
 
-  template <typename M>
-  inline void dispatch_mixed(System<typename M::real_type> const& system,
-                             std::vector<TestPair<M>>& test_pairs)
+  template <typename T>
+  inline void dispatch_mixed(System<T> const& system,
+                             std::vector<TestPair<T>>& test_pairs)
   {
       assert( ! test_pairs.empty() || !"dispatch_mixed : test_pairs are empty" );
-
+      using M = tiny::MathTypes<T>;
       for (auto& elem : test_pairs)
       {
           auto const& geoA
@@ -105,17 +105,17 @@ namespace narrow
 
   } //namespace details
 
-  template <typename M>
+  template <typename T>
   inline void
-  dispatch_collision_handlers(System<typename M::real_type> const& system,
-                              std::vector<TestPair<M>> const& test_pairs)
+  dispatch_collision_handlers(System<T> const& system,
+                              std::vector<TestPair<T>> const& test_pairs)
   {
       assert(!test_pairs.empty()
              || !"dispatch_collision_handlers : test_pairs are empty");
 
-      std::vector<TestPair<M>> tetramesh_pairs;
-      std::vector<TestPair<M>> primitive_pairs;
-      std::vector<TestPair<M>> mixed_pairs;
+      std::vector<TestPair<T>> tetramesh_pairs;
+      std::vector<TestPair<T>> primitive_pairs;
+      std::vector<TestPair<T>> mixed_pairs;
 
       for (const auto& elem : test_pairs)
       {
