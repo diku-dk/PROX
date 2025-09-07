@@ -37,15 +37,15 @@ namespace narrow
           auto const& spheresB = geoB.m_spheres;
           //convex_container   const & hullsB     = geoB.m_hulls;
 
-          detail::box_box<M>(boxesA, boxesB, elem.t_a(), elem.Q_a(), elem.t_b(),
+          detail::box_box<T>(boxesA, boxesB, elem.t_a(), elem.Q_a(), elem.t_b(),
                              elem.Q_b(), system.params().get_envelope(),
                              elem.callback());
 
-          detail::box_sphere<M>(
+          detail::box_sphere<T>(
               boxesA, spheresB, elem.t_a(), elem.Q_a(), elem.t_b(), elem.Q_b(),
               system.params().get_envelope(), elem.callback());
 
-          detail::sphere_box<M>(
+          detail::sphere_box<T>(
               spheresA, boxesB, elem.t_a(), elem.Q_a(), elem.t_b(), elem.Q_b(),
               system.params().get_envelope(), elem.callback());
 

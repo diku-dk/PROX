@@ -27,19 +27,18 @@ namespace narrow
      * @param results  Upon return any new proximity information will have been added to this container.
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
-  template <typename M>
-  inline void box_sphere(
-      typename Geometry<typename M::real_type>::box_container const& A,
-      typename Geometry<typename M::real_type>::sphere_container const& B,
-      const EigenVector3<typename M::real_type>& tA,
-      const EigenQuaternion<typename M::real_type>& qA,
-      const EigenVector3<typename M::real_type>& tB,
-      const EigenQuaternion<typename M::real_type>& qB // not needed?
-      ,
-      typename M::real_type const& envelope,
-      typename geometry::ContactsCallback<typename M::vector3_type>& callback)
+  template <typename T>
+  inline void
+  box_sphere(typename Geometry<T>::box_container const& A,
+             typename Geometry<T>::sphere_container const& B,
+             const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
+             const EigenVector3<T>& tB,
+             const EigenQuaternion<T>& qB // not needed?
+             ,
+             T const& envelope,
+             typename geometry::ContactsCallback<
+                 typename tiny::MathTypes<T>::vector3_type>& callback)
   {
-      using T = typename M::real_type;
       using std::min;
 
       typedef typename Geometry<T>::box_container::const_iterator box_iterator;

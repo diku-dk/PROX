@@ -23,22 +23,16 @@ namespace narrow
      * @param tag      Tag dispatching used for transfering parameter settings to the internal settings.
      */
 
-  template <typename M>
-  inline void box_box(
-      typename Geometry<typename M::real_type>::box_container const& A,
-      typename Geometry<typename M::real_type>::box_container const& B,
-      const EigenVector3<typename M::real_type>& tA,
-      const EigenQuaternion<typename M::real_type>& qA,
-      const EigenVector3<typename M::real_type>& tB,
-      const EigenQuaternion<typename M::real_type>& qB,
-      typename M::real_type const& envelope,
-      typename geometry::ContactsCallback<typename M::vector3_type>& callback)
+  template <typename T>
+  inline void box_box(typename Geometry<T>::box_container const& A,
+                      typename Geometry<T>::box_container const& B,
+                      const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
+                      const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
+                      T const& envelope,
+                      typename geometry::ContactsCallback<
+                          typename tiny::MathTypes<T>::vector3_type>& callback)
   {
       using std::min;
-
-      typedef typename M::value_traits    VT;
-      typedef typename M::coordsys_type   C;
-      using T = M::real_type;
 
       assert( envelope > 0 || !"box_box(): collision envelope must be positive");
 
