@@ -66,7 +66,7 @@ namespace convex
     if(!outside_AB && !outside_BA)
     {
       // because barycentric coords are invariant to uniform scaling, we don't need to rescale A and B
-        geometry::barycentric(fromEigen(A),fromEigen(B),fromEigen(p),S.m_w[idx_A],S.m_w[idx_B]);
+      geometry::barycentric((A), (B), (p), S.m_w[idx_A], S.m_w[idx_B]);
       return;
     }
 
