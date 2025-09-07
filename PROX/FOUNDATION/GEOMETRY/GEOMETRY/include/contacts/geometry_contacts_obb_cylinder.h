@@ -562,7 +562,7 @@ contacts_obb_cylinder(OBB<T> const& A, Cylinder<EigenVector3<T>> const& B,
                 const EigenVector3<T> point = transform_from_cylinder(*p, B);
                 const EigenVector3<T> normal = flip ? B.axis() : -B.axis();
                 T const distance = 0;
-                callback(fromEigen(point), fromEigen(normal), distance);
+                callback((point), (normal), distance);
             }
         }
         return !feature.empty();
