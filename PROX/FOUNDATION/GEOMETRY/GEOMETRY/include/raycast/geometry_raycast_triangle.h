@@ -12,24 +12,19 @@
 namespace geometry
 {
 
-  template<typename V>
-  inline bool compute_raycast_triangle(
-                                   Ray<V> const & ray
-                                   , Triangle<V> const & triangle
-                                   , V & hit
-                                   , typename V::real_type & length
-                                   , bool const & only_front_face = false
-                                   )
-  {
-    typedef typename V::value_traits VT;
-    typedef typename V::real_type     T;
+template <typename T>
+inline bool compute_raycast_triangle(RayEigen<T> const& ray,
+                                     Triangle<T> const& triangle,
+                                     EigenVector3<T>& hit, T& length,
+                                     bool const& only_front_face = false)
+{
 
     length = std::numeric_limits<T>::max();
-    hit    = V::zero();
+    hit = EigenVector3<T>(0, 0, 0);
 
-    Plane<V> const & plane = make_plane( triangle );
+    Plane<T> const& plane = make_plane(triangle);
 
-    V p     = V::zero();
+    EigenVector3<T> p = EigenVector3<T>(0, 0, 0);
     T t     = std::numeric_limits<T>::max();
 
     bool const hit_plane = compute_raycast_plane(ray, plane, p, t, only_front_face );

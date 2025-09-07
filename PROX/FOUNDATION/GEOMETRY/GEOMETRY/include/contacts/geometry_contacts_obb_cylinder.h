@@ -468,17 +468,17 @@ inline void intersect_polygon_circle(std::vector<EigenVector3<T>>& feature, cons
    *                          (ie when objects order are swapped)
    */
 template <typename T>
-inline bool
-contacts_obb_cylinder(OBB<T> const& A, Cylinder<EigenVector3<T>> const& B,
-                      T const& envelope, ContactsCallback<T>& callback,
-                      bool const flip = false)
+inline bool contacts_obb_cylinder(OBBEigen<T> const& A,
+                                  CylinderEigen<T> const& B, T const& envelope,
+                                  ContactsCallback<T>& callback,
+                                  bool const flip = false)
 {
     using std::max;
     using std::min;
 
     //--- First do a quick rejection test by approximating the cylinder with
     //--- a capsule and using a fast overlap test
-    Capsule<T> const& cap = convert(B);
+    CapsuleEigen<T> const& cap = convert(B);
 
     if (!overlap_obb_capsule(A, cap)) return false;
 

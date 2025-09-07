@@ -94,50 +94,6 @@ namespace geometry
       }
   }
 
-    template<typename V>
-    inline void project_to_plane(V const & n, V const & p, std::vector<V> & intersections)
-    {
-      typedef typename std::vector<V>::iterator   iterator;
-
-      iterator q   = intersections.begin();
-      iterator end = intersections.end();
-
-      for( ; q != end ; ++q )
-      {
-        (*q) = (*q) - tiny::inner_prod( n, ( (*q) - p ) ) * n;
-      }
-    }
-
-    template<typename V>
-    inline void estimate_overlap(
-                                 V const & normal
-                                 , std::vector<V> const & intersections
-                                 , typename V::real_type & max_val
-                                 , typename V::real_type & min_val
-                                 )
-    {
-      using std::min;
-      using std::max;
-
-      typedef typename V::real_type                   T;
-      typedef typename std::vector<V>::const_iterator iterator;
-
-      iterator p   = intersections.begin();
-      iterator end = intersections.end();
-
-      min_val = std::numeric_limits<T>::max();
-      max_val = std::numeric_limits<T>::lowest();
-
-      for( ;  p!=end; ++p)
-      {
-        T const d = tiny::inner_prod( (*p), normal );
-
-        min_val = min( min_val, d );
-        max_val = max( max_val, d );
-      }
-
-    }
-
     template<typename T>
     inline void estimate_overlap(
         const EigenVector3<T>& normal

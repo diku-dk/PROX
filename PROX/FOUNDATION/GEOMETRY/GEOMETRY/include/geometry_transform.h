@@ -25,35 +25,6 @@ namespace geometry
    */
   struct TRANSFORM_VECTOR {};
 
-  template<typename MT>
-  inline typename MT::vector3_type transform_from_obb( typename MT::vector3_type const & p, OBB<MT> const & box, TRANSFORM_POINT const & /*tag*/)
-  {
-    return rotate( box.orientation(), p ) + box.center();
-  }
-
-  template<typename MT>
-  inline typename MT::vector3_type transform_from_obb( typename MT::vector3_type const & p, OBB<MT> const & box)
-  {
-    return transform_from_obb(p, box, TRANSFORM_POINT() );
-  }
-
-  template<typename MT>
-  inline typename MT::vector3_type transform_to_obb( typename MT::vector3_type const & v, OBB<MT> const & box, TRANSFORM_VECTOR const & /*tag*/)
-  {
-    return rotate( conj( box.orientation() ), v );
-  }
-
-  template<typename MT>
-  inline typename MT::vector3_type transform_to_obb( typename MT::vector3_type const & p, OBB<MT> const & box, TRANSFORM_POINT const & /*tag*/)
-  {
-    return rotate( conj( box.orientation() ), (p - box.center()) );
-  }
-
-  template<typename MT>
-  inline typename MT::vector3_type transform_to_obb( typename MT::vector3_type const & p, OBB<MT> const & box)
-  {
-    return transform_to_obb( p, box, TRANSFORM_POINT() );
-  }
 
   //EIGEN FUNCTIONS
   template<typename T>
