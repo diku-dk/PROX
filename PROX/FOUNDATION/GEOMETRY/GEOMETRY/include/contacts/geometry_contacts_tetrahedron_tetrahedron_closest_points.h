@@ -12,23 +12,19 @@
 
 namespace geometry
 {
-  struct CLOSEST_POINTS {};
+  struct CLOSEST_POINTS {
+  };
 
-
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , CLOSEST_POINTS const & /*algorithm_tag*/
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      CLOSEST_POINTS const& /*algorithm_tag*/
   )
   {
     using std::min;
     using std::max;
-
-    typedef typename V::real_type    T;
 
     T const too_far_away      = (0.02f); // 2 times the value of the collision envelope
     T const too_small         = std::numeric_limits<T>::epsilon()*10;

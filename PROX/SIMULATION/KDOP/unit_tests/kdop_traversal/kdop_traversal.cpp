@@ -29,7 +29,8 @@ public:
     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> m_surface_map;
 };
 
-class TestCallback : public geometry::ContactsCallback<V>
+class TestCallback : public geometry::ContactsCallback<
+                         typename tiny::MathTypes<T>::vector3_type>
 {
 public:
     void operator()(V const& p, V const& n, V::real_type const& d)

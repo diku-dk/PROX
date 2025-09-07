@@ -31,24 +31,18 @@ namespace geometry
    *                      lying on the actual surface of the object represented
    *                      by the tetrahedral mesh.
    */
-  template<typename V>
-  inline bool contacts_sphere_tetrahedron(
-    Sphere<typename V::real_type> const & A
-    , TetrahedronEigen<typename V::real_type> const & B
-                                          , ContactsCallback<V> & callback
-                                          , bool const flip
-                                          , std::vector<bool> const & surface_map
-                                          )
-  {
+template <typename T>
+inline bool contacts_sphere_tetrahedron(
+    Sphere<T> const& A, TetrahedronEigen<T> const& B,
+    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+    bool const flip, std::vector<bool> const& surface_map)
+{
     assert(surface_map.size() == 4u                                                || !"contacts_sphere_tetrahedron(): internal error, must have four surface map values");
 
     bool const has_surface = (surface_map[0] || surface_map[1] || surface_map[2] || surface_map[3]);
 
     if(!has_surface)
       return false;
-
-    typedef typename V::real_type    T;
-    typedef typename V::value_traits VT;
 
     std::vector<T>            d(4);
     std::vector<Triangle<T> > triangle(4);
@@ -199,16 +193,14 @@ namespace geometry
     }
 
     return false;
-  }
+}
 
-  template<typename V>
-  inline bool contacts_sphere_tetrahedron(
-                                          Sphere<typename V::real_type> const & A
-                                          , TetrahedronEigen<typename V::real_type> const & B
-                                          , ContactsCallback<V> & callback
-                                          , bool const flip = false
-                                        )
-  {
+template <typename T>
+inline bool contacts_sphere_tetrahedron(
+    Sphere<T> const& A, TetrahedronEigen<T> const& B,
+    ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+    bool const flip = false)
+{
     std::vector<bool> const surface_map(4u,true);
     return contacts_sphere_tetrahedron(A, B, callback, flip, surface_map);
   }

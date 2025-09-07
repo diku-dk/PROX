@@ -23,17 +23,17 @@ namespace kdop
      *                               tetrahedron ( being object B). However, if order is reversed then
      *                               setting this flag to true will flip the normals.
      */
-    template< typename V>
-    inline bool contacts_shape_tetrahedron(
-      geometry::Sphere<typename V::real_type> const & sphere
-      , geometry::TetrahedronEigen<typename V::real_type> const & tetrahedron
-                                           , std::vector<bool> const & surface_map
-                                           , geometry::ContactsCallback<V> & callback
-                                           , bool const & should_flip
-                                           )
-    {
+  template <typename T>
+  inline bool contacts_shape_tetrahedron(
+      geometry::Sphere<T> const& sphere,
+      geometry::TetrahedronEigen<T> const& tetrahedron,
+      std::vector<bool> const& surface_map,
+      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
+          callback,
+      bool const& should_flip)
+  {
       return geometry::contacts_sphere_tetrahedron(sphere, tetrahedron, callback, should_flip, surface_map);
-    }
+  }
 
     /**
      *
@@ -41,21 +41,20 @@ namespace kdop
      *                               tetrahedral mesh ( being object B). However, if order is reversed then
      *                               setting this flag to true will flip the normals.
      */
-    template< typename V, size_t K, typename T, typename S>
-    inline void traversal(
-                            geometry::DOP<T, K> const & shape_dop
-                          , S const & shape
-                          , size_t const & node_idx
-                          , SubTree<T,K> const & branch
-                          , mesh_array::T4Mesh const & mesh
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
-                          , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                          , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,mesh_array::T4Mesh> const & surface_map
-                          , geometry::ContactsCallback<V> & callback
-                          , bool const & should_flip
-                          )
-    {
+  template <size_t K, typename T, typename S>
+  inline void traversal(
+      geometry::DOP<T, K> const& shape_dop, S const& shape,
+      size_t const& node_idx, SubTree<T, K> const& branch,
+      mesh_array::T4Mesh const& mesh,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map,
+      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
+          callback,
+      bool const& should_flip)
+  {
       using namespace mesh_array;
 
       Node<T,K> const & node = branch.m_nodes[node_idx];
@@ -74,7 +73,8 @@ namespace kdop
         const EigenVector3<T> p2 = EigenVector3<T>( X( tet.k() ), Y( tet.k() ), Z( tet.k() ) );
         const EigenVector3<T> p3 = EigenVector3<T>( X( tet.m() ), Y( tet.m() ), Z( tet.m() ) );
 
-        geometry::TetrahedronEigen<typename V::real_type> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2,p3);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         std::vector<bool> surface(4u, false);
 
@@ -83,31 +83,20 @@ namespace kdop
         surface[2] = surface_map( tet ).m_k;
         surface[3] = surface_map( tet ).m_m;
 
-        contacts_shape_tetrahedron<V>(shape, tetrahedron, surface, callback, should_flip);
+        contacts_shape_tetrahedron<T>(shape, tetrahedron, surface, callback,
+                                      should_flip);
       }
       else
       {
 
         for(size_t child = node.m_start; child <= node.m_end; ++child)
         {
-            traversal<V,K,T,S>(
-                                shape_dop
-                               , shape
-                               , child
-                               , branch
-                               , mesh
-                               , X
-                               , Y
-                               , Z
-                               , surface_map
-                               , callback
-                               , should_flip
-                               );
+            traversal<K, T, S>(shape_dop, shape, child, branch, mesh, X, Y, Z,
+                               surface_map, callback, should_flip);
         }
 
       }
-
-    }
+  }
 
   } // end of namespace details
 
@@ -120,44 +109,31 @@ namespace kdop
    *                               tetrahedral mesh ( being object B). However, if order is reversed then
    *                               setting this flag to true will flip the normals.
    */
-  template< typename V, size_t K, typename T, typename S>
+  template <size_t K, typename T, typename S>
   inline void single_traversal(
-                                 S const & shape
-                               , Tree<T,K> const & tree
-                               , mesh_array::T4Mesh const & mesh
-                               , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & X
-                               , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Y
-                               , mesh_array::VertexAttribute<T,mesh_array::T4Mesh> const & Z
-                               , mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,mesh_array::T4Mesh> const & surface_map
-                               , geometry::ContactsCallback<V> & callback
-                               , bool const & should_flip = false
-                               )
+      S const& shape, Tree<T, K> const& tree, mesh_array::T4Mesh const& mesh,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map,
+      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>&
+          callback,
+      bool const& should_flip = false)
   {
-      geometry::DOP<T,K> const shape_dop = geometry::convert<K,typename V::real_type>( shape );
+      geometry::DOP<T, K> const shape_dop = geometry::convert<K, T>(shape);
 
-    if(!overlap_dop_dop(tree.m_root, shape_dop))
-      return;
+      if (!overlap_dop_dop(tree.m_root, shape_dop)) return;
 
-    size_t const C = tree.branches().size();
+      size_t const C = tree.branches().size();
 
-    for( size_t a = 0u; a < C; ++a)
-    {
-      SubTree<T,K> const & branch = tree.branches()[a];
+      for (size_t a = 0u; a < C; ++a)
+      {
+          SubTree<T, K> const& branch = tree.branches()[a];
 
-      details::traversal<V,K,T,S>(
-                                    shape_dop
-                                  , shape
-                                  , 0
-                                  , branch
-                                  , mesh
-                                  , X
-                                  , Y
-                                  , Z
-                                  , surface_map
-                                  , callback
-                                  , should_flip
-                                  );
-    }
+          details::traversal<K, T, S>(shape_dop, shape, 0, branch, mesh, X, Y,
+                                      Z, surface_map, callback, should_flip);
+      }
   }
 
 }// namespace kdop

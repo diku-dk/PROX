@@ -147,323 +147,335 @@ namespace kdop
 
   } // namespace details
 
-  template< typename V, size_t K, typename T, typename test_pair_container >
+  template <size_t K, typename T, typename test_pair_container>
   inline void tandem_traversal(test_pair_container test_pairs,
-                               dikucl::gproximity const & /* tag */,
+                               dikucl::gproximity const& /* tag */,
                                size_t open_cl_platform = 0,
-                               size_t open_cl_device = 0) {
-    assert( ! test_pairs.empty() || !"tandem_traversal : test_pairs are empty" );
+                               size_t open_cl_device = 0)
+  {
+      assert(!test_pairs.empty() || !"tandem_traversal : test_pairs are empty");
 
-    cl_ulong tandem_traversal_kernel_time = 0;
-    cl_ulong balance_work_kernel_time     = 0;
-    cl_ulong exact_tests_kernel_time      = 0;
+      cl_ulong tandem_traversal_kernel_time = 0;
+      cl_ulong balance_work_kernel_time = 0;
+      cl_ulong exact_tests_kernel_time = 0;
 
-    size_t tandem_traversal_invocations = 0;
-    size_t exact_test_invocations       = 0;
+      size_t tandem_traversal_invocations = 0;
+      size_t exact_test_invocations = 0;
 
-    cl_int err = CL_SUCCESS;
+      cl_int err = CL_SUCCESS;
 
-    ::dikucl::PlatformHandle *platform_handle = ::dikucl::PlatformManager::get_instance().get_platform(
-                                                                                                       &err, open_cl_platform);
-    CHECK_CL_ERR(err);
+      ::dikucl::PlatformHandle* platform_handle
+          = ::dikucl::PlatformManager::get_instance().get_platform(
+              &err, open_cl_platform);
+      CHECK_CL_ERR(err);
 
-    ::dikucl::DeviceHandle *device_handle = ::dikucl::DeviceManager::get_instance().get_device(
-                                                                                               &err, platform_handle, open_cl_device);
-    CHECK_CL_ERR(err);
-    size_t global_mem_cacheline_size =
-    (size_t) device_handle->device.getInfo<CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE>(&err);
-    CHECK_CL_ERR(err);
+      ::dikucl::DeviceHandle* device_handle
+          = ::dikucl::DeviceManager::get_instance().get_device(
+              &err, platform_handle, open_cl_device);
+      CHECK_CL_ERR(err);
+      size_t global_mem_cacheline_size
+          = (size_t)device_handle->device
+                .getInfo<CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE>(&err);
+      CHECK_CL_ERR(err);
 
-    ::dikucl::ContextHandle *context_handle = ::dikucl::ContextManager::get_instance().get_context(&err, device_handle);
-    CHECK_CL_ERR(err);
-    ::cl::Context context = context_handle->context;
+      ::dikucl::ContextHandle* context_handle
+          = ::dikucl::ContextManager::get_instance().get_context(&err,
+                                                                 device_handle);
+      CHECK_CL_ERR(err);
+      ::cl::Context context = context_handle->context;
 
-    ::dikucl::CommandQueueHandle *command_queue_handle;
+      ::dikucl::CommandQueueHandle* command_queue_handle;
 #ifdef USE_PROFILING
-    command_queue_handle =
-    ::dikucl::CommandQueueManager::get_instance().get_command_queue(
-                                                                    &err,
-                                                                    context_handle,
-                                                                    CL_QUEUE_PROFILING_ENABLE);
+      command_queue_handle
+          = ::dikucl::CommandQueueManager::get_instance().get_command_queue(
+              &err, context_handle, CL_QUEUE_PROFILING_ENABLE);
 #else
-    command_queue_handle =
-    ::dikucl::CommandQueueManager::get_instance().get_command_queue(
-                                                                    &err,
-                                                                    context_handle);
+      command_queue_handle
+          = ::dikucl::CommandQueueManager::get_instance().get_command_queue(
+              &err, context_handle);
 #endif // USE_PROFILING
-    CHECK_CL_ERR(err);
-    ::cl::CommandQueue queue = command_queue_handle->command_queue;
+      CHECK_CL_ERR(err);
+      ::cl::CommandQueue queue = command_queue_handle->command_queue;
 
-    typedef cl_uint KI; const std::string kernel_index_type = "uint";
-    typedef cl_float KT; const std::string kernel_real_type = "float";
-    typedef cl_float3 KV; const std::string kernel_vector3_type = "float3";
+      typedef cl_uint KI;
+      const std::string kernel_index_type = "uint";
+      typedef cl_float KT;
+      const std::string kernel_real_type = "float";
+      typedef cl_float3 KV;
+      const std::string kernel_vector3_type = "float3";
 
-    details::cl::KernelNode<KI, KT, K> *kernel_nodes;
-    details::cl::KernelTetrahedron<KI> *kernel_tets;
-    details::cl::KernelTetrahedronSurfaceInfo *kernel_tsi;
-    details::cl::KernelWorkItem<KI> *kernel_work;
-    geometry::ContactsCallback<V> **kernel_callbacks;
-    KV *kernel_verts;
-    size_t kernel_nodes_size, kernel_tets_size, kernel_verts_size;
-    size_t max_bvtt_degree, max_bvtt_height;
+      details::cl::KernelNode<KI, KT, K>* kernel_nodes;
+      details::cl::KernelTetrahedron<KI>* kernel_tets;
+      details::cl::KernelTetrahedronSurfaceInfo* kernel_tsi;
+      details::cl::KernelWorkItem<KI>* kernel_work;
+      geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>**
+          kernel_callbacks;
+      KV* kernel_verts;
+      size_t kernel_nodes_size, kernel_tets_size, kernel_verts_size;
+      size_t max_bvtt_degree, max_bvtt_height;
 
-    details::cl::gProximityKernelWorkItemGenerator<KI> kernel_work_item_generator;
-    details::cl::prepare_input<V, K, T, KI, KT, KV>(
-                                                    test_pairs,
-                                                    &kernel_nodes, &kernel_nodes_size,
-                                                    &kernel_tets, &kernel_tets_size, &kernel_tsi,
-                                                    &kernel_verts, &kernel_verts_size,
-                                                    &kernel_work_item_generator,
-                                                    &kernel_callbacks,
-                                                    &max_bvtt_degree, &max_bvtt_height,
-                                                    CL_DEVICE_TYPE_GPU, global_mem_cacheline_size,
-                                                    (size_t) std::numeric_limits<size_t>::max());
+      details::cl::gProximityKernelWorkItemGenerator<KI>
+          kernel_work_item_generator;
+      details::cl::prepare_input<K, T, KI, KT, KV>(
+          test_pairs, &kernel_nodes, &kernel_nodes_size, &kernel_tets,
+          &kernel_tets_size, &kernel_tsi, &kernel_verts, &kernel_verts_size,
+          &kernel_work_item_generator, &kernel_callbacks, &max_bvtt_degree,
+          &max_bvtt_height, CL_DEVICE_TYPE_GPU, global_mem_cacheline_size,
+          (size_t)std::numeric_limits<size_t>::max());
 
-    /* Get Tandem Traversal Kernel and set static parameters */
+      /* Get Tandem Traversal Kernel and set static parameters */
 
-    ::dikucl::KernelInfo tandem_traversal_kernel_info(
-                                                      details::cl::kernels_path + "gproximity/",
-                                                      "kdop_cl_gproximity_tandem_traversal.cl",
-                                                      "do_tandem_traversal");
-    tandem_traversal_kernel_info.define("__K", K);
-    tandem_traversal_kernel_info.define("__INDEX_TYPE", kernel_index_type).define("__REAL_TYPE", kernel_real_type);
-    tandem_traversal_kernel_info.define("__MAX_BVTT_DEGREE", max_bvtt_degree);
-    tandem_traversal_kernel_info.define("__GLOBAL_EXACT_TESTS_CAPACITY", TT_GLOBAL_EXACT_TESTS_CAPACITY);
-    tandem_traversal_kernel_info.define("__GLOBAL_WORK_QUEUE_CAPACITY", GLOBAL_WORK_QUEUE_CAPACITY);
-    tandem_traversal_kernel_info.define("__IDLE_THRESHOLD", TT_IDLE_THRESHOLD);
-    tandem_traversal_kernel_info.define("__LOCAL_WORK_QUEUE_CAPACITY", TT_LOCAL_WORK_QUEUE_CAPACITY);
-    tandem_traversal_kernel_info.define("__LOCAL_WORK_QUEUE_INIT_ITEMS", TT_LOCAL_WORK_QUEUE_INIT_ITEMS);
-    tandem_traversal_kernel_info.define("__TRAVERSAL_THREADS", TT_THREADS);
+      ::dikucl::KernelInfo tandem_traversal_kernel_info(
+          details::cl::kernels_path + "gproximity/",
+          "kdop_cl_gproximity_tandem_traversal.cl", "do_tandem_traversal");
+      tandem_traversal_kernel_info.define("__K", K);
+      tandem_traversal_kernel_info.define("__INDEX_TYPE", kernel_index_type)
+          .define("__REAL_TYPE", kernel_real_type);
+      tandem_traversal_kernel_info.define("__MAX_BVTT_DEGREE", max_bvtt_degree);
+      tandem_traversal_kernel_info.define("__GLOBAL_EXACT_TESTS_CAPACITY",
+                                          TT_GLOBAL_EXACT_TESTS_CAPACITY);
+      tandem_traversal_kernel_info.define("__GLOBAL_WORK_QUEUE_CAPACITY",
+                                          GLOBAL_WORK_QUEUE_CAPACITY);
+      tandem_traversal_kernel_info.define("__IDLE_THRESHOLD",
+                                          TT_IDLE_THRESHOLD);
+      tandem_traversal_kernel_info.define("__LOCAL_WORK_QUEUE_CAPACITY",
+                                          TT_LOCAL_WORK_QUEUE_CAPACITY);
+      tandem_traversal_kernel_info.define("__LOCAL_WORK_QUEUE_INIT_ITEMS",
+                                          TT_LOCAL_WORK_QUEUE_INIT_ITEMS);
+      tandem_traversal_kernel_info.define("__TRAVERSAL_THREADS", TT_THREADS);
 
-    tandem_traversal_kernel_info.include(details::cl::kernels_path).no_signed_zeros(true);
-    tandem_traversal_kernel_info.include(details::cl::kernels_path + "gproximity/");
+      tandem_traversal_kernel_info.include(details::cl::kernels_path)
+          .no_signed_zeros(true);
+      tandem_traversal_kernel_info.include(details::cl::kernels_path
+                                           + "gproximity/");
 #ifndef NDEBUG
-    tandem_traversal_kernel_info.nv_verbose(true);
+      tandem_traversal_kernel_info.nv_verbose(true);
 #endif // NDEBUG
-    ::dikucl::KernelHandle *tandem_traversal_kernel_handle = ::dikucl::KernelManager::get_instance().get_kernel(
-                                                                                                                tandem_traversal_kernel_info,
-                                                                                                                &err,
-                                                                                                                context_handle);
-    CHECK_CL_ERR(err);
-    ::cl::Kernel tandem_traversal_kernel = tandem_traversal_kernel_handle->kernel;
+      ::dikucl::KernelHandle* tandem_traversal_kernel_handle
+          = ::dikucl::KernelManager::get_instance().get_kernel(
+              tandem_traversal_kernel_info, &err, context_handle);
+      CHECK_CL_ERR(err);
+      ::cl::Kernel tandem_traversal_kernel
+          = tandem_traversal_kernel_handle->kernel;
 
-    ::cl::Buffer nodes = ::cl::Buffer(
-                                      context, CL_MEM_READ_ONLY,
-                                      sizeof (details::cl::KernelNode<KI, KT, K>) * kernel_nodes_size,
-                                      NULL, &err);
-    CHECK_CL_ERR(err);
-    err = queue.enqueueWriteBuffer(
-                                   nodes, CL_FALSE,
-                                   0, sizeof (details::cl::KernelNode<KI, KT, K>) * kernel_nodes_size,
-                                   kernel_nodes);
-    CHECK_CL_ERR(err);
-    err = tandem_traversal_kernel.setArg(0, nodes);
-    CHECK_CL_ERR(err);
+      ::cl::Buffer nodes = ::cl::Buffer(
+          context, CL_MEM_READ_ONLY,
+          sizeof(details::cl::KernelNode<KI, KT, K>) * kernel_nodes_size, NULL,
+          &err);
+      CHECK_CL_ERR(err);
+      err = queue.enqueueWriteBuffer(nodes, CL_FALSE, 0,
+                                     sizeof(details::cl::KernelNode<KI, KT, K>)
+                                         * kernel_nodes_size,
+                                     kernel_nodes);
+      CHECK_CL_ERR(err);
+      err = tandem_traversal_kernel.setArg(0, nodes);
+      CHECK_CL_ERR(err);
 
-    ::cl::Buffer exact_tests = ::cl::Buffer(
-                                            context, CL_MEM_READ_WRITE,
-                                            TT_GLOBAL_EXACT_TESTS_CAPACITY * sizeof(details::cl::KernelWorkItem<KI>),
-                                            NULL, &err);
-    CHECK_CL_ERR(err);
-    err = tandem_traversal_kernel.setArg(4, exact_tests);
-    CHECK_CL_ERR(err);
+      ::cl::Buffer exact_tests
+          = ::cl::Buffer(context, CL_MEM_READ_WRITE,
+                         TT_GLOBAL_EXACT_TESTS_CAPACITY
+                             * sizeof(details::cl::KernelWorkItem<KI>),
+                         NULL, &err);
+      CHECK_CL_ERR(err);
+      err = tandem_traversal_kernel.setArg(4, exact_tests);
+      CHECK_CL_ERR(err);
 
-    /* Get Exact Tests Kernel and set static parameters */
+      /* Get Exact Tests Kernel and set static parameters */
 
-    ::dikucl::KernelInfo exact_tests_kernel_info(
-                                                 details::cl::kernels_path,
-                                                 "kdop_cl_exact_tests.cl",
-                                                 "do_exact_tests");
-    exact_tests_kernel_info.define("__INDEX_TYPE", kernel_index_type).define("__REAL_TYPE", kernel_real_type);
-    exact_tests_kernel_info.define("__VECTOR3_TYPE", kernel_vector3_type);
+      ::dikucl::KernelInfo exact_tests_kernel_info(details::cl::kernels_path,
+                                                   "kdop_cl_exact_tests.cl",
+                                                   "do_exact_tests");
+      exact_tests_kernel_info.define("__INDEX_TYPE", kernel_index_type)
+          .define("__REAL_TYPE", kernel_real_type);
+      exact_tests_kernel_info.define("__VECTOR3_TYPE", kernel_vector3_type);
 
-    exact_tests_kernel_info.include(details::cl::kernels_path).no_signed_zeros(true);
+      exact_tests_kernel_info.include(details::cl::kernels_path)
+          .no_signed_zeros(true);
 #ifndef NDEBUG
-    exact_tests_kernel_info.nv_verbose(true);
+      exact_tests_kernel_info.nv_verbose(true);
 #endif // NDEBUG
-    ::dikucl::KernelHandle *exact_tests_kernel_handle = ::dikucl::KernelManager::get_instance().get_kernel(
-                                                                                                           exact_tests_kernel_info,
-                                                                                                           &err,
-                                                                                                           context_handle);
-    CHECK_CL_ERR(err);
-    ::cl::Kernel exact_tests_kernel = exact_tests_kernel_handle->kernel;
+      ::dikucl::KernelHandle* exact_tests_kernel_handle
+          = ::dikucl::KernelManager::get_instance().get_kernel(
+              exact_tests_kernel_info, &err, context_handle);
+      CHECK_CL_ERR(err);
+      ::cl::Kernel exact_tests_kernel = exact_tests_kernel_handle->kernel;
 
-    ::cl::Buffer tetrahedrons = ::cl::Buffer(
-                                             context, CL_MEM_READ_ONLY,
-                                             sizeof (details::cl::KernelTetrahedron<KI>) * kernel_tets_size,
-                                             NULL, &err);
-    CHECK_CL_ERR(err);
-    err = queue.enqueueWriteBuffer(
-                                   tetrahedrons, CL_FALSE,
-                                   0, sizeof (details::cl::KernelTetrahedron<KI>) * kernel_tets_size,
-                                   kernel_tets);
-    CHECK_CL_ERR(err);
-    err = exact_tests_kernel.setArg(0, tetrahedrons);
-    CHECK_CL_ERR(err);
+      ::cl::Buffer tetrahedrons = ::cl::Buffer(
+          context, CL_MEM_READ_ONLY,
+          sizeof(details::cl::KernelTetrahedron<KI>) * kernel_tets_size, NULL,
+          &err);
+      CHECK_CL_ERR(err);
+      err = queue.enqueueWriteBuffer(tetrahedrons, CL_FALSE, 0,
+                                     sizeof(details::cl::KernelTetrahedron<KI>)
+                                         * kernel_tets_size,
+                                     kernel_tets);
+      CHECK_CL_ERR(err);
+      err = exact_tests_kernel.setArg(0, tetrahedrons);
+      CHECK_CL_ERR(err);
 
-    ::cl::Buffer tetrahedron_surface_info = ::cl::Buffer(
-                                                         context, CL_MEM_READ_ONLY,
-                                                         sizeof (details::cl::KernelTetrahedronSurfaceInfo) * kernel_tets_size,
-                                                         NULL, &err);
-    CHECK_CL_ERR(err);
-    err = queue.enqueueWriteBuffer(
-                                   tetrahedron_surface_info, CL_FALSE,
-                                   0, sizeof (details::cl::KernelTetrahedronSurfaceInfo) * kernel_tets_size,
-                                   kernel_tsi);
-    CHECK_CL_ERR(err);
-    err = exact_tests_kernel.setArg(1, tetrahedron_surface_info);
-    CHECK_CL_ERR(err);
+      ::cl::Buffer tetrahedron_surface_info = ::cl::Buffer(
+          context, CL_MEM_READ_ONLY,
+          sizeof(details::cl::KernelTetrahedronSurfaceInfo) * kernel_tets_size,
+          NULL, &err);
+      CHECK_CL_ERR(err);
+      err = queue.enqueueWriteBuffer(
+          tetrahedron_surface_info, CL_FALSE, 0,
+          sizeof(details::cl::KernelTetrahedronSurfaceInfo) * kernel_tets_size,
+          kernel_tsi);
+      CHECK_CL_ERR(err);
+      err = exact_tests_kernel.setArg(1, tetrahedron_surface_info);
+      CHECK_CL_ERR(err);
 
-    ::cl::Buffer vertices = ::cl::Buffer(
-                                         context, CL_MEM_READ_ONLY,
-                                         sizeof (KV) * kernel_verts_size,
-                                         NULL, &err);
-    CHECK_CL_ERR(err);
-    err = queue.enqueueWriteBuffer(vertices, CL_FALSE, 0, sizeof (KV) * kernel_verts_size,
-                                   kernel_verts);
-    CHECK_CL_ERR(err);
-    err = exact_tests_kernel.setArg(2, vertices);
-    CHECK_CL_ERR(err);
+      ::cl::Buffer vertices
+          = ::cl::Buffer(context, CL_MEM_READ_ONLY,
+                         sizeof(KV) * kernel_verts_size, NULL, &err);
+      CHECK_CL_ERR(err);
+      err = queue.enqueueWriteBuffer(
+          vertices, CL_FALSE, 0, sizeof(KV) * kernel_verts_size, kernel_verts);
+      CHECK_CL_ERR(err);
+      err = exact_tests_kernel.setArg(2, vertices);
+      CHECK_CL_ERR(err);
 
-    /* Get Balance Work Kernel and set static parameters */
+      /* Get Balance Work Kernel and set static parameters */
 
-    ::dikucl::KernelInfo balance_work_kernel_info(
-                                                  details::cl::kernels_path + "gproximity/",
-                                                  "kdop_cl_gproximity_balance_work.cl",
-                                                  "do_balance_work");
-    balance_work_kernel_info.define("__INDEX_TYPE", kernel_index_type);
-    balance_work_kernel_info.define("__BALANCE_THREADS", BW_THREADS);
-    balance_work_kernel_info.define("__GLOBAL_WORK_QUEUE_CAPACITY", GLOBAL_WORK_QUEUE_CAPACITY);
-    balance_work_kernel_info.define("__GLOBAL_WORK_QUEUES", TT_WORK_GROUPS);
-    balance_work_kernel_info.define("__LOCAL_WORK_QUEUE_INIT_ITEMS", TT_LOCAL_WORK_QUEUE_INIT_ITEMS);
-    balance_work_kernel_info.define("__LOCAL_WORK_QUEUE_CAPACITY", TT_LOCAL_WORK_QUEUE_CAPACITY);
-    balance_work_kernel_info.define("__TRAVERSAL_THREADS", TT_THREADS);
+      ::dikucl::KernelInfo balance_work_kernel_info(
+          details::cl::kernels_path + "gproximity/",
+          "kdop_cl_gproximity_balance_work.cl", "do_balance_work");
+      balance_work_kernel_info.define("__INDEX_TYPE", kernel_index_type);
+      balance_work_kernel_info.define("__BALANCE_THREADS", BW_THREADS);
+      balance_work_kernel_info.define("__GLOBAL_WORK_QUEUE_CAPACITY",
+                                      GLOBAL_WORK_QUEUE_CAPACITY);
+      balance_work_kernel_info.define("__GLOBAL_WORK_QUEUES", TT_WORK_GROUPS);
+      balance_work_kernel_info.define("__LOCAL_WORK_QUEUE_INIT_ITEMS",
+                                      TT_LOCAL_WORK_QUEUE_INIT_ITEMS);
+      balance_work_kernel_info.define("__LOCAL_WORK_QUEUE_CAPACITY",
+                                      TT_LOCAL_WORK_QUEUE_CAPACITY);
+      balance_work_kernel_info.define("__TRAVERSAL_THREADS", TT_THREADS);
 
-    balance_work_kernel_info.include(details::cl::kernels_path).no_signed_zeros(true);
-    balance_work_kernel_info.include(details::cl::kernels_path + "gproximity/");
+      balance_work_kernel_info.include(details::cl::kernels_path)
+          .no_signed_zeros(true);
+      balance_work_kernel_info.include(details::cl::kernels_path
+                                       + "gproximity/");
 #ifndef NDEBUG
-    balance_work_kernel_info.nv_verbose(true);
+      balance_work_kernel_info.nv_verbose(true);
 #endif // NDEBUG
-    ::dikucl::KernelHandle *balance_work_kernel_handle = ::dikucl::KernelManager::get_instance().get_kernel(
-                                                                                                            balance_work_kernel_info,
-                                                                                                            &err,
-                                                                                                            context_handle);
-    CHECK_CL_ERR(err);
-    ::cl::Kernel balance_work_kernel = balance_work_kernel_handle->kernel;
+      ::dikucl::KernelHandle* balance_work_kernel_handle
+          = ::dikucl::KernelManager::get_instance().get_kernel(
+              balance_work_kernel_info, &err, context_handle);
+      CHECK_CL_ERR(err);
+      ::cl::Kernel balance_work_kernel = balance_work_kernel_handle->kernel;
 
-    details::cl::KernelContactPoint<KV, KT, KI> *contact_point_container = NULL;
-    size_t contact_point_container_size = 0;
+      details::cl::KernelContactPoint<KV, KT, KI>* contact_point_container
+          = NULL;
+      size_t contact_point_container_size = 0;
 
-    while(!kernel_work_item_generator.empty()) {
-      size_t kernel_root_pairs_size = kernel_work_item_generator.generate_kernel_work_items(
-                                                                                            TT_WORK_GROUPS, &kernel_work,
-                                                                                            global_mem_cacheline_size,
-                                                                                            max_bvtt_degree, max_bvtt_height,
-                                                                                            TT_WORK_GROUPS,
-                                                                                            GLOBAL_WORK_QUEUE_CAPACITY);
+      while (!kernel_work_item_generator.empty())
+      {
+          size_t kernel_root_pairs_size
+              = kernel_work_item_generator.generate_kernel_work_items(
+                  TT_WORK_GROUPS, &kernel_work, global_mem_cacheline_size,
+                  max_bvtt_degree, max_bvtt_height, TT_WORK_GROUPS,
+                  GLOBAL_WORK_QUEUE_CAPACITY);
 
-      if(kernel_root_pairs_size > 0) {
-        ::cl::Buffer work[2];
-        work[0] = ::cl::Buffer(
-                               context, CL_MEM_READ_WRITE,
-                               TT_WORK_GROUPS * GLOBAL_WORK_QUEUE_CAPACITY * sizeof(details::cl::KernelWorkItem<KI>),
-                               NULL, &err);
-        CHECK_CL_ERR(err);
-        err = queue.enqueueWriteBuffer(
-                                       work[0], CL_FALSE,
-                                       0, TT_WORK_GROUPS * GLOBAL_WORK_QUEUE_CAPACITY * sizeof(details::cl::KernelWorkItem<KI>),
-                                       kernel_work);
-        CHECK_CL_ERR(err);
+          if (kernel_root_pairs_size > 0)
+          {
+              ::cl::Buffer work[2];
+              work[0]
+                  = ::cl::Buffer(context, CL_MEM_READ_WRITE,
+                                 TT_WORK_GROUPS * GLOBAL_WORK_QUEUE_CAPACITY
+                                     * sizeof(details::cl::KernelWorkItem<KI>),
+                                 NULL, &err);
+              CHECK_CL_ERR(err);
+              err = queue.enqueueWriteBuffer(
+                  work[0], CL_FALSE, 0,
+                  TT_WORK_GROUPS * GLOBAL_WORK_QUEUE_CAPACITY
+                      * sizeof(details::cl::KernelWorkItem<KI>),
+                  kernel_work);
+              CHECK_CL_ERR(err);
 
-        work[1] = ::cl::Buffer(
-                               context, CL_MEM_READ_WRITE,
-                               TT_WORK_GROUPS * GLOBAL_WORK_QUEUE_CAPACITY * sizeof(details::cl::KernelWorkItem<KI>),
-                               NULL, &err);
-        CHECK_CL_ERR(err);
+              work[1]
+                  = ::cl::Buffer(context, CL_MEM_READ_WRITE,
+                                 TT_WORK_GROUPS * GLOBAL_WORK_QUEUE_CAPACITY
+                                     * sizeof(details::cl::KernelWorkItem<KI>),
+                                 NULL, &err);
+              CHECK_CL_ERR(err);
 
-        cl_uint *kernel_work_counts =
-        new cl_uint[TT_WORK_GROUPS];
-        memset(kernel_work_counts, 0,
-               TT_WORK_GROUPS * sizeof(cl_uint));
-        for(size_t i = 0; i < kernel_root_pairs_size; ++i) {
-          kernel_work_counts[i] = 1;
-        }
-        ::cl::Buffer work_counts = ::cl::Buffer(
-                                                context, CL_MEM_READ_WRITE,
-                                                TT_WORK_GROUPS * sizeof(cl_uint),
-                                                NULL, &err);
-        CHECK_CL_ERR(err);
-        err = queue.enqueueWriteBuffer(
-                                       work_counts, CL_FALSE,
-                                       0, TT_WORK_GROUPS * sizeof(cl_uint),
-                                       kernel_work_counts);
-        CHECK_CL_ERR(err);
-        err = tandem_traversal_kernel.setArg(2, work_counts);
-        CHECK_CL_ERR(err);
+              cl_uint* kernel_work_counts = new cl_uint[TT_WORK_GROUPS];
+              memset(kernel_work_counts, 0, TT_WORK_GROUPS * sizeof(cl_uint));
+              for (size_t i = 0; i < kernel_root_pairs_size; ++i)
+              {
+                  kernel_work_counts[i] = 1;
+              }
+              ::cl::Buffer work_counts
+                  = ::cl::Buffer(context, CL_MEM_READ_WRITE,
+                                 TT_WORK_GROUPS * sizeof(cl_uint), NULL, &err);
+              CHECK_CL_ERR(err);
+              err = queue.enqueueWriteBuffer(work_counts, CL_FALSE, 0,
+                                             TT_WORK_GROUPS * sizeof(cl_uint),
+                                             kernel_work_counts);
+              CHECK_CL_ERR(err);
+              err = tandem_traversal_kernel.setArg(2, work_counts);
+              CHECK_CL_ERR(err);
 
-        cl_uint kernel_exact_tests_size = 0;
-        ::cl::Buffer exact_tests_size = ::cl::Buffer(
-                                                     context, CL_MEM_READ_WRITE,
-                                                     sizeof (cl_uint),
-                                                     NULL, &err);
-        CHECK_CL_ERR(err);
-        err = queue.enqueueWriteBuffer(
-                                       exact_tests_size, CL_FALSE,
-                                       0, sizeof (cl_uint),
-                                       &kernel_exact_tests_size);
-        CHECK_CL_ERR(err);
-        err = tandem_traversal_kernel.setArg(5, exact_tests_size);
-        CHECK_CL_ERR(err);
+              cl_uint kernel_exact_tests_size = 0;
+              ::cl::Buffer exact_tests_size = ::cl::Buffer(
+                  context, CL_MEM_READ_WRITE, sizeof(cl_uint), NULL, &err);
+              CHECK_CL_ERR(err);
+              err = queue.enqueueWriteBuffer(exact_tests_size, CL_FALSE, 0,
+                                             sizeof(cl_uint),
+                                             &kernel_exact_tests_size);
+              CHECK_CL_ERR(err);
+              err = tandem_traversal_kernel.setArg(5, exact_tests_size);
+              CHECK_CL_ERR(err);
 
-        cl_int kernel_active_splits = 1;
-        bool global_work_queue_overflow = false;
-        size_t current_work_buffer = 0;
-        while (kernel_active_splits > 0 && !global_work_queue_overflow) {
-          err = tandem_traversal_kernel.setArg(1, work[current_work_buffer]);
-          CHECK_CL_ERR(err);
+              cl_int kernel_active_splits = 1;
+              bool global_work_queue_overflow = false;
+              size_t current_work_buffer = 0;
+              while (kernel_active_splits > 0 && !global_work_queue_overflow)
+              {
+                  err = tandem_traversal_kernel.setArg(
+                      1, work[current_work_buffer]);
+                  CHECK_CL_ERR(err);
 
-          cl_uint kernel_idle_count = 0;
-          ::cl::Buffer idle_count = ::cl::Buffer(
-                                                 context, CL_MEM_READ_WRITE,
+                  cl_uint kernel_idle_count = 0;
+                  ::cl::Buffer idle_count = ::cl::Buffer(
+                      context, CL_MEM_READ_WRITE, sizeof(cl_uint), NULL, &err);
+                  CHECK_CL_ERR(err);
+                  err = queue.enqueueWriteBuffer(idle_count, CL_FALSE, 0,
                                                  sizeof(cl_uint),
-                                                 NULL, &err);
-          CHECK_CL_ERR(err);
-          err = queue.enqueueWriteBuffer(
-                                         idle_count, CL_FALSE,
-                                         0, sizeof(cl_uint),
-                                         &kernel_idle_count);
-          CHECK_CL_ERR(err);
-          err = tandem_traversal_kernel.setArg(3, idle_count);
-          CHECK_CL_ERR(err);
+                                                 &kernel_idle_count);
+                  CHECK_CL_ERR(err);
+                  err = tandem_traversal_kernel.setArg(3, idle_count);
+                  CHECK_CL_ERR(err);
 
 #ifdef USE_PROFILING
-          {
-            ::cl::Event tt_profiling;
-            err = queue.enqueueNDRangeKernel(
-                                             tandem_traversal_kernel,
-                                             ::cl::NullRange,
-                                             ::cl::NDRange(TT_WORK_GROUPS * TT_THREADS),
-                                             ::cl::NDRange(TT_THREADS),
-                                             NULL,
-                                             &tt_profiling);
-            CHECK_CL_ERR(err);
-            err = queue.finish();
-            CHECK_CL_ERR(err);
-            cl_ulong tt_start =
-            tt_profiling.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err);
-            CHECK_CL_ERR(err);
-            cl_ulong tt_end =
-            tt_profiling.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err);
-            CHECK_CL_ERR(err);
-            tandem_traversal_kernel_time += tt_end - tt_start;
-          }
+                  {
+                      ::cl::Event tt_profiling;
+                      err = queue.enqueueNDRangeKernel(
+                          tandem_traversal_kernel, ::cl::NullRange,
+                          ::cl::NDRange(TT_WORK_GROUPS * TT_THREADS),
+                          ::cl::NDRange(TT_THREADS), NULL, &tt_profiling);
+                      CHECK_CL_ERR(err);
+                      err = queue.finish();
+                      CHECK_CL_ERR(err);
+                      cl_ulong tt_start
+                          = tt_profiling
+                                .getProfilingInfo<CL_PROFILING_COMMAND_START>(
+                                    &err);
+                      CHECK_CL_ERR(err);
+                      cl_ulong tt_end
+                          = tt_profiling
+                                .getProfilingInfo<CL_PROFILING_COMMAND_END>(
+                                    &err);
+                      CHECK_CL_ERR(err);
+                      tandem_traversal_kernel_time += tt_end - tt_start;
+                  }
 #else
-          err = queue.enqueueNDRangeKernel(
-                                           tandem_traversal_kernel,
-                                           ::cl::NullRange,
-                                           ::cl::NDRange(TT_WORK_GROUPS * TT_THREADS),
-                                           ::cl::NDRange(TT_THREADS));
-          CHECK_CL_ERR(err);
+                  err = queue.enqueueNDRangeKernel(
+                      tandem_traversal_kernel, ::cl::NullRange,
+                      ::cl::NDRange(TT_WORK_GROUPS * TT_THREADS),
+                      ::cl::NDRange(TT_THREADS));
+                  CHECK_CL_ERR(err);
 #endif // USE_PROFILING
           ++tandem_traversal_invocations;
 
@@ -534,12 +546,11 @@ namespace kdop
             balance_work_kernel_time += bw_end - bw_start;
           }
 #else
-          err = queue.enqueueNDRangeKernel(
-                                           balance_work_kernel,
-                                           ::cl::NullRange,
-                                           ::cl::NDRange(BW_THREADS * BW_WORK_GROUPS),
-                                           ::cl::NDRange(BW_THREADS));
-          CHECK_CL_ERR(err);
+                  err = queue.enqueueNDRangeKernel(
+                      balance_work_kernel, ::cl::NullRange,
+                      ::cl::NDRange(BW_THREADS * BW_WORK_GROUPS),
+                      ::cl::NDRange(BW_THREADS));
+                  CHECK_CL_ERR(err);
 #endif // USE_PROFILING
 
           err = queue.enqueueReadBuffer(
@@ -558,7 +569,7 @@ namespace kdop
           if(kernel_balance_signal == 1) {
             current_work_buffer = 1 - current_work_buffer;
           }
-        }
+              }
 
         delete[] kernel_work_counts;
 
@@ -616,12 +627,11 @@ namespace kdop
             exact_tests_kernel_time += et_end - et_start;
           }
 #else
-          err = queue.enqueueNDRangeKernel(
-                                           exact_tests_kernel,
-                                           ::cl::NullRange,
-                                           ::cl::NDRange(ET_THREADS * ET_WORK_GROUPS),
-                                           ::cl::NDRange(ET_THREADS));
-          CHECK_CL_ERR(err);
+                  err = queue.enqueueNDRangeKernel(
+                      exact_tests_kernel, ::cl::NullRange,
+                      ::cl::NDRange(ET_THREADS * ET_WORK_GROUPS),
+                      ::cl::NDRange(ET_THREADS));
+                  CHECK_CL_ERR(err);
 #endif // USE_PROFILING
           ++exact_test_invocations;
 
@@ -646,12 +656,11 @@ namespace kdop
           }
 
         }
-
-      }
+          }
 
       kernel_work_item_generator.cleanup_generated_work_items(
                                                               kernel_work);
-    }
+      }
 
     err = queue.finish();
     CHECK_CL_ERR(err);

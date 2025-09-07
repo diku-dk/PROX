@@ -203,23 +203,18 @@ namespace geometry
       }
     }
 
-    template< typename V>
-    inline void make_contacts(
-                              V const & normal
-                              , typename V::real_type const & depth
-                              , std::vector<V> const & positions
-                              , ContactsCallback<V> & callback
-                              )
+    template <typename V>
+    inline void make_contacts(V const& normal,
+                              typename V::real_type const& depth,
+                              std::vector<V> const& positions,
+                              ContactsCallback<V>& callback)
     {
-      typedef typename std::vector<V>::const_iterator   const_iterator;
+        typedef typename std::vector<V>::const_iterator const_iterator;
 
-      const_iterator p   = positions.begin();
-      const_iterator end = positions.end();
+        const_iterator p = positions.begin();
+        const_iterator end = positions.end();
 
-      for(; p!= end; ++p)
-      {
-        callback(*p, normal, depth);
-      }
+        for (; p != end; ++p) { callback(*p, normal, depth); }
     }
 
   }// end namespace details

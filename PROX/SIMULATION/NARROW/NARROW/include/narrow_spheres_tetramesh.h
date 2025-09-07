@@ -43,7 +43,7 @@ namespace narrow
           geometry::Sphere<typename V::real_type> const sphere
               = geometry::make_sphere((shapeAtoWCS.T()), a->radius());
 
-          kdop::single_traversal<V, 8, T>(
+          kdop::single_traversal<8, T>(
               sphere, objB.m_tree, geoB.m_tetramesh.m_mesh, objB.m_X, objB.m_Y,
               objB.m_Z, geoB.m_tetramesh.m_surface_map, callback, should_flip);
       }

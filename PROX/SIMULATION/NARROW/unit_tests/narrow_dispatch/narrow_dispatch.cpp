@@ -24,7 +24,8 @@ using convex_type = geometry_type::convex_type;
 using sphere_type = geometry_type::sphere_type;
 using tetramesh_type = geometry_type::tetramesh_type;
 
-class MyCallback : public geometry::ContactsCallback<V>
+class MyCallback : public geometry::ContactsCallback<
+                       typename tiny::MathTypes<T>::vector3_type>
 {
 public:
     bool m_hit;

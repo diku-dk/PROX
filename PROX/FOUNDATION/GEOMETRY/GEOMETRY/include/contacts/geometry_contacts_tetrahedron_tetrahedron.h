@@ -523,18 +523,15 @@ namespace geometry
      * away any redundant contact points before reporting them with the
      * callback function.
      */
-    template< typename V>
+    template <typename T>
     inline bool generate_contacts_from_intersection(
-                                                    TetrahedronEigen<typename V::real_type> const & A
-                                                    , TetrahedronEigen<typename V::real_type> const & B
-                                                    , ContactsCallback<V> & callback
-                                                    , const EigenVector3<typename V::real_type>& n
-                                                    )
+        TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+        ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+        const EigenVector3<T>& n)
     {
       using std::min;
       using std::max;
 
-      typedef typename V::real_type     T;
 
       std::vector<EigenVector3<T>> contacts;
       contacts.reserve(16);
@@ -676,15 +673,14 @@ namespace geometry
   struct RESTRICTED_SAT {};
   struct MOST_OPPOSING_SURFACES {};
 
-  template < typename V>
-  inline bool contacts_tetrahedron_tetrahedron(TetrahedronEigen<typename V::real_type> const& A,
-                                               TetrahedronEigen<typename V::real_type> const& B,
-                                               ContactsCallback<V>& callback, std::vector<bool> const& surface_A,
-                                               std::vector<bool> const& surface_B,
-                                               TRIANGLE_INTERSECTION const& /*algorithm_tag*/
+  template <typename T>
+  inline bool contacts_tetrahedron_tetrahedron(
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      TRIANGLE_INTERSECTION const& /*algorithm_tag*/
   )
   {
-      using T = typename V::real_type;
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_A[0] || surface_A[1] || surface_A[2] || surface_A[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron A must have at least one surface face");
     assert(surface_B.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
@@ -960,22 +956,18 @@ namespace geometry
     return count > 0u;
   }
 
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , VERTEX_ONLY_INTERSECTION const & /*algorithm_tag*/
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      VERTEX_ONLY_INTERSECTION const& /*algorithm_tag*/
   )
   {
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_A[0] || surface_A[1] || surface_A[2] || surface_A[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron A must have at least one surface face");
     assert(surface_B.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_B[0] || surface_B[1] || surface_B[2] || surface_B[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron B must have at least one surface face");
-
-    typedef typename V::real_type     T;
 
     unsigned int count = 0u;
 
@@ -1066,23 +1058,18 @@ namespace geometry
     return count > 0u;
   }
 
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-      TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , CONSISTENT_VERTEX const & /*algorithm_tag*/
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      CONSISTENT_VERTEX const& /*algorithm_tag*/
   )
   {
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_A[0] || surface_A[1] || surface_A[2] || surface_A[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron A must have at least one surface face");
     assert(surface_B.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
     assert( (surface_B[0] || surface_B[1] || surface_B[2] || surface_B[3]) || !"contacts_tetrahedron_tetrahedron(): internal error, tetrahedron B must have at least one surface face");
-
-    typedef typename V::value_traits VT;
-    typedef typename V::real_type     T;
 
     unsigned int count = 0u;
 
@@ -1220,15 +1207,13 @@ namespace geometry
     return count > 0u;
   }
 
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , SAT const & /*algorithm_tag*/
-                                               )
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      SAT const& /*algorithm_tag*/
+  )
   {
 
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
@@ -1243,7 +1228,7 @@ namespace geometry
     if(!overlap)
       return false;
 
-    EigenVector3<typename V::real_type> n; // The contact normal to be used
+    EigenVector3<T> n; // The contact normal to be used
 
     bool const found_normal = details::pick_sat_normal(A,B,surface_A,surface_B, n);
 
@@ -1253,14 +1238,12 @@ namespace geometry
     return details::generate_contacts_from_intersection(A, B, callback, n);
   }
 
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , RESTRICTED_SAT const & /*algorithm_tag*/
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      RESTRICTED_SAT const& /*algorithm_tag*/
   )
   {
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
@@ -1275,7 +1258,7 @@ namespace geometry
     if(!overlap)
       return false;
 
-    EigenVector3<typename V::real_type> n; // The contact normal to be used
+    EigenVector3<T> n; // The contact normal to be used
 
     bool const found_normal = details::pick_restricted_sat_normal(A,B,surface_A,surface_B, n);
 
@@ -1285,15 +1268,12 @@ namespace geometry
     return details::generate_contacts_from_intersection(A, B, callback, n);
   }
 
-
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               , std::vector<bool> const & surface_A
-                                               , std::vector<bool> const & surface_B
-                                               , MOST_OPPOSING_SURFACES const & /*algorithm_tag*/
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback,
+      std::vector<bool> const& surface_A, std::vector<bool> const& surface_B,
+      MOST_OPPOSING_SURFACES const& /*algorithm_tag*/
   )
   {
     assert(surface_A.size() == 4u                                          || !"contacts_tetrahedron_tetrahedron(): internal error, must have four surface map values");
@@ -1308,7 +1288,7 @@ namespace geometry
     if(!overlap)
       return false;
 
-    EigenVector3<typename V::real_type> n; // The contact normal to be used
+    EigenVector3<T> n; // The contact normal to be used
 
     bool const found_normal = details::pick_most_opposing_surface_normal(A,B,surface_A,surface_B, n);
 
@@ -1318,17 +1298,15 @@ namespace geometry
     return details::generate_contacts_from_intersection(A, B, callback, n);
   }
 
-  template< typename V>
+  template <typename T>
   inline bool contacts_tetrahedron_tetrahedron(
-                                               TetrahedronEigen<typename V::real_type> const & A
-                                               , TetrahedronEigen<typename V::real_type> const & B
-                                               , ContactsCallback<V> & callback
-                                               )
+      TetrahedronEigen<T> const& A, TetrahedronEigen<T> const& B,
+      ContactsCallback<typename tiny::MathTypes<T>::vector3_type>& callback)
   {
     using std::min;
     using std::max;
 
-    V n; // The contact normal to be used
+    EigenVector3<T> n; // The contact normal to be used
     bool const overlap = details::pick_sat_normal(A,B,n);
 
     if(!overlap)

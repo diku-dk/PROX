@@ -280,25 +280,21 @@ namespace kdop {
 
             };
 
-            template< typename V, size_t K, typename T,
-            typename KernelI, typename KernelT, typename KernelV,
-            typename test_pair_container >
+            template <size_t K, typename T, typename KernelI, typename KernelT,
+                      typename KernelV, typename test_pair_container>
             inline void prepare_input(
-                    test_pair_container test_pairs,
-                    KernelNode<KernelI, KernelT, K> **out_nodes,
-                    size_t *out_nodes_size,
-                    KernelTetrahedron<KernelI> **out_tets,
-                    size_t *out_tets_size,
-                    KernelTetrahedronSurfaceInfo **out_tsi,
-                    KernelV **out_verts,
-                    size_t *out_verts_size,
-                    KernelWorkItemGenerator<KernelI> *out_kernel_work_item_generator,
-                    geometry::ContactsCallback<V> ***out_callbacks,
-                    size_t *out_max_bvtt_degree,
-                    size_t *out_max_bvtt_height,
-                    cl_device_type device_type,
-                    size_t global_mem_cacheline_size,
-                    size_t max_kernel_work_items)
+                test_pair_container test_pairs,
+                KernelNode<KernelI, KernelT, K>** out_nodes,
+                size_t* out_nodes_size, KernelTetrahedron<KernelI>** out_tets,
+                size_t* out_tets_size, KernelTetrahedronSurfaceInfo** out_tsi,
+                KernelV** out_verts, size_t* out_verts_size,
+                KernelWorkItemGenerator<KernelI>*
+                    out_kernel_work_item_generator,
+                geometry::ContactsCallback<
+                    typename tiny::MathTypes<T>::vector3_type>*** out_callbacks,
+                size_t* out_max_bvtt_degree, size_t* out_max_bvtt_height,
+                cl_device_type device_type, size_t global_mem_cacheline_size,
+                size_t max_kernel_work_items)
             {
                 // maintain object offsets in memory to void duplicates
                 std::map< Tree<T, K> const*, object_offset > object_offsets;
@@ -307,7 +303,7 @@ namespace kdop {
                 size_t max_bvtt_degree = 0, max_bvh_height = 0;
 
                 for (typename test_pair_container::iterator it = test_pairs.begin(); it != test_pairs.end(); std::advance(it, 1)) {
-                    kdop::TestPair<V, K, T> tp = *it;
+                    kdop::TestPair<K, T> tp = *it;
                     Tree<T, K> const* trees[2] = {tp.m_tree_a, tp.m_tree_b};
                     mesh_array::T4Mesh const* meshes[2] = {tp.m_mesh_a, tp.m_mesh_b};
 
@@ -568,15 +564,15 @@ namespace kdop {
                 }
             }
 
-            template< typename V, size_t K, typename T,
-            typename KernelI, typename KernelT, typename KernelV >
+            template <size_t K, typename T, typename KernelI, typename KernelT,
+                      typename KernelV>
             inline void cleanup(
-                    KernelNode<KernelI, KernelT, K> *out_nodes,
-                    KernelTetrahedron<KernelI> *out_tets,
-                    KernelTetrahedronSurfaceInfo *out_tsi,
-                    KernelV *out_verts,
-                    geometry::ContactsCallback<V> **out_callbacks,
-                    cl_device_type device_type)
+                KernelNode<KernelI, KernelT, K>* out_nodes,
+                KernelTetrahedron<KernelI>* out_tets,
+                KernelTetrahedronSurfaceInfo* out_tsi, KernelV* out_verts,
+                geometry::ContactsCallback<
+                    typename tiny::MathTypes<T>::vector3_type>** out_callbacks,
+                cl_device_type device_type)
             {
                 if(device_type & CL_DEVICE_TYPE_CPU) {
                     free(out_nodes);
@@ -610,11 +606,11 @@ namespace kdop {
 
     } // namespace details
 
-    template< typename V, size_t K, typename T, typename test_pair_container >
-    inline void tandem_traversal(test_pair_container test_pairs,
-                                 dikucl const & /* tag */,
-                                 size_t open_cl_platform = 0,
-                                 size_t open_cl_device = 0) {
+    template <size_t K, typename T, typename test_pair_container>
+    inline void
+    tandem_traversal(test_pair_container test_pairs, dikucl const& /* tag */,
+                     size_t open_cl_platform = 0, size_t open_cl_device = 0)
+    {
         assert( ! test_pairs.empty() || !"tandem_traversal : test_pairs are empty" );
 
         cl_ulong tandem_traversal_kernel_time = 0;
@@ -742,22 +738,19 @@ namespace kdop {
         details::cl::KernelTetrahedron<KI> *kernel_tets;
         details::cl::KernelTetrahedronSurfaceInfo *kernel_tsi;
         details::cl::KernelWorkItem<KI> *kernel_work;
-        geometry::ContactsCallback<V> **kernel_callbacks;
+        geometry::ContactsCallback<typename tiny::MathTypes<T>::vector3_type>**
+            kernel_callbacks;
         KV *kernel_verts;
         size_t kernel_nodes_size, kernel_tets_size, kernel_verts_size;
         size_t max_bvtt_degree, max_bvtt_height;
 
         details::cl::KernelWorkItemGenerator<KI> kernel_work_item_generator;
-        details::cl::prepare_input<V, K, T, KI, KT, KV>(
-                test_pairs,
-                &kernel_nodes, &kernel_nodes_size,
-                &kernel_tets, &kernel_tets_size, &kernel_tsi,
-                &kernel_verts, &kernel_verts_size,
-                &kernel_work_item_generator,
-                &kernel_callbacks,
-                &max_bvtt_degree, &max_bvtt_height,
-                device_type, global_mem_cacheline_size,
-                max_kernel_work_items);
+        details::cl::prepare_input<K, T, KI, KT, KV>(
+            test_pairs, &kernel_nodes, &kernel_nodes_size, &kernel_tets,
+            &kernel_tets_size, &kernel_tsi, &kernel_verts, &kernel_verts_size,
+            &kernel_work_item_generator, &kernel_callbacks, &max_bvtt_degree,
+            &max_bvtt_height, device_type, global_mem_cacheline_size,
+            max_kernel_work_items);
 
         // maximum number of elements that a work item will push onto its stack
         // only the leaf level needs to fully fit, for the others we can
