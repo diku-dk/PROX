@@ -153,6 +153,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
 
         get_jacobian_matrix_eigen(contacts.begin(), contacts.end(), bodies,
                                   properties, JNew, number_of_contacts);
+        verify_inverse_mass_matrix(W, WNew);
 
         if (params.stepper_params().pre_stabilization())
         {
@@ -210,8 +211,8 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
         fc.resize(WJT.nrows());
         sparse::prod(WJT, lambda, fc, true);     // fc = M^{-1}*J^T*lambda
 
-        fcNew.resize(WJTNew.rows());
-        fcNew.setZero();
+        //        fcNew.resize(WJTNew.rows());
+        //        fcNew.setZero();
         fcNew = WJTNew * lambdaNew;
 
         velocity_update(u, Wdth, fc, u); // u = u + dt M^{-1} h + fc
@@ -262,6 +263,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
 
             sparse::prod(WJT, lambda, fc, true);
 
+            fcNew = WJTNew * lambdaNew;
             position_update<T>(q, fc, 1, q);
             position_update_eigen<T>(qNew, fcNew, 1, qNew);
 

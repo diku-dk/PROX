@@ -174,12 +174,9 @@ namespace sparse
   }
 
   template <typename B1, typename B2>
-  inline void prod(
-                     DiagonalMatrix<B1> const& lhs
-                   , CompressedRowMatrix<B2> const& rhs
-                   , CompressedRowMatrix<B2>& res
-                   , bool init = false
-                   )
+  inline void prod(DiagonalMatrix<B1> const& lhs,
+                   CompressedRowMatrix<B2> const& rhs,
+                   CompressedRowMatrix<B2>& res, bool init = false)
   {
     assert(lhs.ncols() == rhs.nrows() || !"number of lhs columns must be the same as number of right hand side rows");
 
