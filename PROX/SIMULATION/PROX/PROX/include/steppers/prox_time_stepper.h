@@ -64,7 +64,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
         STOP_TIMER("stepper");
         return;
     }
-
+    /*
     NCVec7<T> q;      // position vector
     NCVec7<T> qM;     // position half step update
     NCVec6<T> u;      // velocity vector
@@ -83,7 +83,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
     CRMatrix<4, 6, T> J; // Jacobian matrix
     CRMatrix<6, 4, T>
         WJT; // the product of the inverse mass matrix and the transposed Jacobian
-    NCVec4<T> w; // Current contact velocities
+    NCVec4<T> w; // Current contact velocities*/
 
     //=============EIGEN================0
     Eigen::VectorX<T> qNew; // position vector:               vector7
@@ -107,17 +107,13 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
     Eigen::VectorX<T> fcNew; // contact forces:               vector6
     detail::update_body_indices(bodies.begin(), bodies.end());
 
-    get_position_vector(bodies.begin(), bodies.end(), q);
     get_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
 
-    get_velocity_vector(bodies.begin(), bodies.end(), u);
     get_velocity_vector_eigen(bodies.begin(), bodies.end(), uNew);
 
     if (stepperType == moreau)
     {
         position_update_eigen(qNew, uNew, 0.5f * dt, qMNew);
-        position_update(q, u, .5f * dt, qM);
-        //set_position_vector(bodies.begin(), bodies.end(), qM);
         set_position_vector_eigen(bodies.begin(), bodies.end(), qMNew);
     }
 
@@ -128,40 +124,22 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
     logging << "thyme_stepper(): Number of contacts = " << number_of_contacts
             << util::Log::newline();
 
-    //EigenSparseVec6<T> hNew;
-    //NCVec6<T> h;
-    get_inverse_mass_matrix(bodies.begin(), bodies.end(), W);
-
     get_inverse_mass_matrix_eigen(bodies.begin(), bodies.end(), WNew);
 
-    get_external_forces_vector(bodies.begin(), bodies.end(), gravity, damping,
-                               h);
     get_external_forces_vector_eigen(bodies.begin(), bodies.end(), gravity,
                                      damping, hNew);
-    //    NCVec6<T> newH = convertEigenToSparse(hNew);
 
-    sparse::prod(dt, (h));
-    sparse::prod(W, (h), Wdth); // Wdth = dt M^{-1} f_ext
     hNew *= dt;
     WdthNew = WNew * hNew;
 
     if (number_of_contacts > 0u)
     {
 
-        get_jacobian_matrix(contacts.begin(), contacts.end(), bodies,
-                            properties, J, number_of_contacts);
-
         get_jacobian_matrix_eigen(contacts.begin(), contacts.end(), bodies,
                                   properties, JNew, number_of_contacts);
 
         if (params.stepper_params().pre_stabilization())
         {
-            //Not run first time, ignore for now.
-            sparse::prod(J, u, w);
-
-            get_pre_stabilization_vector(contacts.begin(), contacts.end(),
-                                         params.stepper_params(), dt, w, g,
-                                         number_of_contacts);
             wNew = JNew * uNew;
             get_pre_stabilization_vector_eigen(contacts.begin(), contacts.end(),
                                                params.stepper_params(), dt,
@@ -169,74 +147,55 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
         }
         else
         {
-            g.resize(number_of_contacts);
-            g.clear_data();
             gNew.resize(number_of_contacts * 4);
             gNew.setZero();
         }
 
         if (params.stepper_params().bounce_on())
         {
-            get_restitution_vector(contacts.begin(), contacts.end(), properties,
-                                   e, number_of_contacts);
             get_restitution_vector_eigen(contacts.begin(), contacts.end(),
                                          properties, eNew, number_of_contacts);
         }
         else
         {
-            e.resize(number_of_contacts);
-            e.clear_data();
             //Below *4 because it is vec4s...
             eNew.resize(number_of_contacts * 4);
             eNew.setZero();
         }
 
-        get_friction_coefficient_vector(contacts.begin(), contacts.end(),
-                                        properties, mu, number_of_contacts);
         get_friction_coefficient_vector_eigen(contacts.begin(), contacts.end(),
                                               properties, muNew,
                                               number_of_contacts);
 
-        computeWJT(W, J, WJT); // WJT = M^{-1} J^T
-        computeWJT_Eigen(WNew, JNew, WJTNew);
+        computeWJT_Eigen(WNew, JNew, WJTNew); // WJT = M^{-1} J^T
 
-        computeB(J, Wdth, u, e, g, b); // b   = (I+E)J u + J W (dt h)
         computeB_Eigen(JNew, WdthNew, uNew, eNew, gNew, bNew);
 
-        run_solver(J, WJT, b, mu, lambda, params.solver_params());
         run_solver_eigen(JNew, WJTNew, bNew, muNew, lambdaNew,
                          params.solver_params());
 
-        fc.resize(WJT.nrows());
-        sparse::prod(WJT, lambda, fc, true);     // fc = M^{-1}*J^T*lambda
-
         fcNew.resize(WJTNew.rows());
         fcNew.setZero();
-        fcNew = WJTNew * lambdaNew;
+        fcNew = WJTNew * lambdaNew; // fc = M^{-1}*J^T*lambda
 
-        velocity_update(u, Wdth, fc, u); // u = u + dt M^{-1} h + fc
-        velocity_update_eigen(uNew, WdthNew, fcNew, uNew);
+        velocity_update_eigen(uNew, WdthNew, fcNew,
+                              uNew); // u = u + dt M^{-1} h + fc
     }
     else
     {
-        velocity_update(u, Wdth, u); // u = u + dt M^{-1} h
-        velocity_update_eigen(uNew, WdthNew, uNew);
+        velocity_update_eigen(uNew, WdthNew, uNew); // u = u + dt M^{-1} h
     }
 
     if (stepperType == moreau)
     {
-        position_update(qM, u, dt * .5f, q);
         position_update_eigen(qMNew, uNew, dt * 0.5f, qNew);
     }
     else if (stepperType == semi_implicit)
     {
-        position_update(q, u, dt, q);
         position_update_eigen(qMNew, uNew, dt, qNew);
     }
 
-    //set_position_vector(bodies.begin(), bodies.end(), q);
     set_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
-    //set_velocity_vector(bodies.begin(), bodies.end(), u);
     set_velocity_vector_eigen(bodies.begin(), bodies.end(), uNew);
     STOP_TIMER("stepper");
 
@@ -250,22 +209,20 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
 
         if (number_of_contacts > 0u)
         {
-            get_post_stabilization_vector(contacts.begin(), contacts.end(),
-                                          params.stepper_params(), g,
-                                          number_of_contacts);
+            get_post_stabilization_vector_eigen(
+                contacts.begin(), contacts.end(), params.stepper_params(), gNew,
+                number_of_contacts);
 
             PREFIX("post_");
-            run_solver(J, WJT, g, mu, lambda, newSolverParams);
             run_solver_eigen(JNew, WJTNew, gNew, muNew, lambdaNew,
                              newSolverParams);
             PREFIX("");
 
-            sparse::prod(WJT, lambda, fc, true);
+            //sparse::prod(WJT, lambda, fc, true);
+            fcNew = WJTNew * lambdaNew;
 
-            position_update<T>(q, fc, 1, q);
             position_update_eigen<T>(qNew, fcNew, 1, qNew);
 
-            //set_position_vector(bodies.begin(), bodies.end(), q);
             set_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
         }
 

@@ -56,6 +56,49 @@ inline void get_post_stabilization_vector(Iterator begin, Iterator end,
                || !"get_post_stabilization_vector(): b(0) is not a number");
     }
 }
+
+template <typename T, typename Iterator>
+inline void get_post_stabilization_vector_eigen(Iterator begin, Iterator end,
+                                                const StepperParams<T>& params,
+                                                Eigen::VectorX<T>& g, size_t K)
+{
+    util::Log logging;
+
+    g.resize(K * 4);  // Resize to (K * 4) x 1
+    g.setZero();      // Initialize all elements to 0
+
+    logging << "get_post_stabilization_vector(): post stabilizaiton = "
+            << params.post_stabilization() << util::Log::newline();
+
+    if (!params.post_stabilization()) return;
+
+    T const& reduction = params.gap_reduction();
+    T const& max_gap = params.max_gap();
+
+    assert(
+        reduction >= 0
+        && "get_post_stabilization_vector(): reduction must be non-negative");
+    assert(reduction <= 1
+           && "get_post_stabilization_vector(): reduction must less than or "
+              "equal one");
+    assert(
+        max_gap > 0
+        && "get_post_stabilization_vector(): max reduction must be positive");
+
+    size_t index = 0;
+
+    for (auto contact = begin; contact != end; ++contact, ++index)
+    {
+        // Calculate the starting index for this contact's data
+        size_t idx = index * 4;
+
+        // Set the first element to the computed value, others remain 0
+        g(idx) = std::max(-max_gap, std::min<T>(reduction * contact->depth, 0));
+
+        assert(is_number(g(idx))
+               && "get_post_stabilization_vector(): g(idx) is not a number");
+    }
+}
 } //namespace prox
 
 // PROX_GET_POST_STABILIZATION_VECTOR_H

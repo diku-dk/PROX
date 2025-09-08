@@ -164,21 +164,37 @@ void jacobi_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJT, con
 }
 
 template <typename T>
-Eigen::Matrix<T, 4, 1> get_block4(const Eigen::VectorX<T>& v, size_t k)
+void computeZ_Eigen(const Eigen::VectorX<T>& x,
+                    const std::vector<Eigen::Matrix<T, 4, 4>>& R,
+                    const Eigen::SparseMatrix<T>& J,
+                    const Eigen::SparseMatrix<T>& WJT,
+                    const Eigen::VectorX<T>& b, Eigen::VectorX<T>& z)
 {
-    return Eigen::Matrix<T, 4, 1>(v(4 * k), v(4 * k + 1), v(4 * k + 2),
-                                  v(4 * k + 3));
-}
+    // Get the number of contact points
+    size_t K = x.size() / 4;
 
-// Helper function to set a 4x1 block in a flat vector
-template <typename T>
-void set_block4(Eigen::VectorX<T>& v, size_t k,
-                const Eigen::Matrix<T, 4, 1>& block)
-{
-    v(4 * k) = block(0);
-    v(4 * k + 1) = block(1);
-    v(4 * k + 2) = block(2);
-    v(4 * k + 3) = block(3);
+    // Initialize temporary vectors
+    Eigen::VectorX<T> t1 = WJT * x; // t1 = WJT * x
+    Eigen::VectorX<T> t2 = J * t1 + b; // t2 = J * t1 + b
+    Eigen::VectorX<T> t3(x.size()); // t3 will be R * t2
+
+    // Apply block-diagonal multiplication R * t2 without using segment
+    for (size_t i = 0; i < K; ++i)
+    {
+        // Extract the 4x4 block from R and 4x1 block from t2
+        const auto& R_block = R[i];
+        Eigen::Matrix<T, 4, 1> t2_block;
+        for (int j = 0; j < 4; ++j) { t2_block(j) = t2(4 * i + j); }
+
+        // Multiply R_block * t2_block
+        Eigen::Matrix<T, 4, 1> result_block = R_block * t2_block;
+
+        // Store the result in t3
+        for (int j = 0; j < 4; ++j) { t3(4 * i + j) = result_block(j); }
+    }
+
+    // Compute z = x - t3
+    z = x - t3;
 }
 
 template <typename T>
@@ -227,7 +243,7 @@ void jacobi_solver_Eigen(const Eigen::SparseMatrix<T>& J,
     T last_residual_norm = std::numeric_limits<T>::max();
 
     std::vector<Eigen::Matrix<T, 4, 4>> R, nu;
-    rstrategy(params.r_factor_strategy(), J, WJT, R, nu);
+    rstrategy_Eigen(params.r_factor_strategy(), J, WJT, R, nu);
 
     Eigen::VectorX<T> z(4 * K_blocks);
     bool last_iteration_diverged = false;
@@ -241,8 +257,7 @@ void jacobi_solver_Eigen(const Eigen::SparseMatrix<T>& J,
         last_iteration_diverged = false;
 
         // Compute z = x - R(J W J^T x + b) = x - R(A x + b)
-        // This would need a specialized computeZ function for flat vectors
-        computeZ_flat(x[in], R, J, WJT, b, z);
+        computeZ_Eigen(x[in], R, J, WJT, b, z);
 
         for (size_t k = 0; k < K_blocks; ++k)
         {
@@ -270,7 +285,7 @@ void jacobi_solver_Eigen(const Eigen::SparseMatrix<T>& J,
 
         // Compute residual: residual = x[in] - x[out]
         residual = x[in] - x[out];
-        T residual_norm = computeInfNorm(residual);
+        T residual_norm = computeInfNorm_Eigen(residual);
 
         RECORD_VECTOR_PUSH("convergence", residual_norm);
 
