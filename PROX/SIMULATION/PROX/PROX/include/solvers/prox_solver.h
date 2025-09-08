@@ -24,6 +24,22 @@ void run_solver(const CRMatrix<4, 6, T>& J, const CRMatrix<6, 4, T>& WJT, const 
     default:                        assert(0);
     }
 }
+
+template <typename T>
+void run_solver_eigen(const Eigen::SparseMatrix<T>& J,
+                      const Eigen::SparseMatrix<T>& WJT,
+                      const Eigen::VectorX<T>& b, const Eigen::VectorX<T>& mu,
+                      Eigen::VectorX<T>& lambda, const SolverParams<T>& params)
+{
+    switch (params.solver())
+    {
+    case solver_type::gauss_seidel:
+        return gauss_seidel_solver_Eigen(J, WJT, b, mu, lambda, params);
+    case prox::solver_type::jacobi:
+        return jacobi_solver_Eigen(J, WJT, b, mu, lambda, params);
+    default: assert(0);
+    }
+}
 } //namespace prox
 
 // PROX_SOLVER_H
