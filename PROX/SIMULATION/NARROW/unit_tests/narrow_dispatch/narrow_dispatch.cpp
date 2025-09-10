@@ -13,19 +13,18 @@ using V = M::vector3_type;
 using Q = M::quaternion_type;
 using C = M::coordsys_type;
 
-class MyObject : public narrow::Object< M >
+class MyObject : public narrow::Object<T>
 {
 };
 
-using geometry_type = narrow::Geometry<M>;
+using geometry_type = narrow::Geometry<T>;
 
 using box_type = geometry_type::box_type;
 using convex_type = geometry_type::convex_type;
 using sphere_type = geometry_type::sphere_type;
 using tetramesh_type = geometry_type::tetramesh_type;
 
-class MyCallback : public geometry::ContactsCallback<
-                       typename tiny::MathTypes<T>::vector3_type>
+class MyCallback : public geometry::ContactsCallback<T>
 {
 public:
     bool m_hit;
@@ -35,7 +34,12 @@ public:
     {
     }
 
-    void operator()(V const& point, V const& normal, V::real_type const& distance) { m_hit = true; }
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
+    {
+        m_hit = true;
+    }
 };
 
 /**
@@ -43,10 +47,12 @@ public:
  * This is a convenience function that makes it more easy to write test cases.
  */
 template <typename shape_typeA, typename shape_typeB>
-inline void do_test(V posA, V posB, Q rotA, Q rotB, shape_typeA const& shapeA, shape_typeB const& shapeB,
+inline void do_test(EigenVector3<T> posA, EigenVector3<T> posB,
+                    EigenQuaternion<T> rotA, EigenQuaternion<T> rotB,
+                    shape_typeA const& shapeA, shape_typeB const& shapeB,
                     bool const& should_overlap)
 {
-    narrow::System<M> system;
+    narrow::System<T> system;
 
     size_t const geoA_idx = system.create_geometry();
     size_t const geoB_idx = system.create_geometry();
@@ -70,12 +76,13 @@ inline void do_test(V posA, V posB, Q rotA, Q rotB, shape_typeA const& shapeA, s
   // run-time while simulating their BVH must be updated to reflect positional
   // changes. This is done using the update_kdop_bvh.
     {
-        std::vector< narrow::KDopBvhUpdateWorkItem< M > > work_pool;
+        std::vector<narrow::KDopBvhUpdateWorkItem<T>> work_pool;
 
         if (geoA.m_tetramesh.has_data())
         {
             narrow::make_kdop_bvh(system.params(), objA, geoA);
-            narrow::KDopBvhUpdateWorkItem<M> const work = narrow::KDopBvhUpdateWorkItem<M>(objA, geoA, posA, rotA);
+            narrow::KDopBvhUpdateWorkItem<T> const work
+                = narrow::KDopBvhUpdateWorkItem<T>(objA, geoA, posA, rotA);
 
             work_pool.push_back(work);
         }
@@ -83,7 +90,8 @@ inline void do_test(V posA, V posB, Q rotA, Q rotB, shape_typeA const& shapeA, s
         {
             narrow::make_kdop_bvh(system.params(), objB, geoB);
 
-            narrow::KDopBvhUpdateWorkItem<M> const work = narrow::KDopBvhUpdateWorkItem<M>(objB, geoB, posB, rotB);
+            narrow::KDopBvhUpdateWorkItem<T> const work
+                = narrow::KDopBvhUpdateWorkItem<T>(objB, geoB, posB, rotB);
             work_pool.push_back(work);
         }
 
@@ -92,9 +100,10 @@ inline void do_test(V posA, V posB, Q rotA, Q rotB, shape_typeA const& shapeA, s
 
     MyCallback callback;
 
-    narrow::TestPair<M> test_pair = narrow::TestPair<M>(objA, objB, posA, rotA, posB, rotB, callback);
+    narrow::TestPair<T> test_pair
+        = narrow::TestPair<T>(objA, objB, posA, rotA, posB, rotB, callback);
 
-    std::vector<narrow::TestPair<M> > test_pairs;
+    std::vector<narrow::TestPair<T>> test_pairs;
     test_pairs.push_back(test_pair);
 
     narrow::dispatch_collision_handlers(system, test_pairs);
@@ -108,28 +117,28 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_box_test)
 {
     sphere_type shapeA;
     shapeA.radius() = 1.0f;
-    shapeA.transform() = C::identity();
+    shapeA.transform() = CoordSysEigen<T>::identity();
 
     box_type shapeB;
     shapeB.half_extent()(0) = 1.0f;
     shapeB.half_extent()(1) = 1.0f;
     shapeB.half_extent()(2) = 1.0f;
 
-    shapeB.transform() = C::identity();
+    shapeB.transform() = CoordSysEigen<T>::identity();
 
     {
-        V posA = V::make(-1.0f, 0.0f, 0.0f);
-        V posB = V::make(1.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(-2.0f, 0.0f, 0.0f);
-        V posB = V::make(2.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
@@ -138,25 +147,25 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_sphere_test)
 {
     sphere_type shapeA;
     shapeA.radius() = 1.0f;
-    shapeA.transform() = C::identity();
+    shapeA.transform() = CoordSysEigen<T>::identity();
 
     sphere_type shapeB;
     shapeB.radius() = 1.0f;
-    shapeB.transform() = C::identity();
+    shapeB.transform() = CoordSysEigen<T>::identity();
 
     {
-        V posA = V::make(-1.0f, 0.0f, 0.0f);
-        V posB = V::make(1.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(-2.0f, 0.0f, 0.0f);
-        V posB = V::make(2.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
@@ -167,27 +176,27 @@ BOOST_AUTO_TEST_CASE(dispatch_box_box_test)
     shapeA.half_extent()(0) = 1.0f;
     shapeA.half_extent()(1) = 1.0f;
     shapeA.half_extent()(2) = 1.0f;
-    shapeA.transform() = C::identity();
+    shapeA.transform() = CoordSysEigen<T>::identity();
 
     box_type shapeB;
     shapeB.half_extent()(0) = 1.0f;
     shapeB.half_extent()(1) = 1.0f;
     shapeB.half_extent()(2) = 1.0f;
-    shapeB.transform() = C::identity();
+    shapeB.transform() = CoordSysEigen<T>::identity();
 
     {
-        V posA = V::make(-1.0f, 0.0f, 0.0f);
-        V posB = V::make(1.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(-2.0f, 0.0f, 0.0f);
-        V posB = V::make(2.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
@@ -198,25 +207,25 @@ BOOST_AUTO_TEST_CASE(dispatch_box_sphere_test)
     shapeA.half_extent()(0) = 1.0f;
     shapeA.half_extent()(1) = 1.0f;
     shapeA.half_extent()(2) = 1.0f;
-    shapeA.transform() = C::identity();
+    shapeA.transform() = CoordSysEigen<T>::identity();
 
     sphere_type shapeB;
     shapeB.radius() = 1.0f;
-    shapeB.transform() = C::identity();
+    shapeB.transform() = CoordSysEigen<T>::identity();
 
     {
-        V posA = V::make(-1.0f, 0.0f, 0.0f);
-        V posB = V::make(1.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(-2.0f, 0.0f, 0.0f);
-        V posB = V::make(2.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
@@ -228,7 +237,7 @@ BOOST_AUTO_TEST_CASE(dispatch_tetmesh_tetmesh_test)
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sYA;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sZA;
 
-    mesh_array::make_box<M>(2.0f, 2.0f, 2.0f, surfaceA, sXA, sYA, sZA);
+    mesh_array::make_box<T>(2.0f, 2.0f, 2.0f, surfaceA, sXA, sYA, sZA);
 
     mesh_array::T4Mesh mesh;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> X;
@@ -244,18 +253,18 @@ BOOST_AUTO_TEST_CASE(dispatch_tetmesh_tetmesh_test)
     shapeB.set_tetramesh_shape(mesh, X, Y, Z);
 
     {
-        V posA = V::make(-1.0f, 0.0f, 0.0f);
-        V posB = V::make(1.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(-2.0f, 0.0f, 0.0f);
-        V posB = V::make(2.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
@@ -264,7 +273,7 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_tetmesh_test)
 {
     sphere_type shapeA;
     shapeA.radius() = 1.0f;
-    shapeA.transform() = C::identity();
+    shapeA.transform() = CoordSysEigen<T>::identity();
 
     tetramesh_type shapeB;
 
@@ -273,7 +282,7 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_tetmesh_test)
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sY;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sZ;
 
-    mesh_array::make_box<M>(2.0f, 2.0f, 2.0f, surface, sX, sY, sZ);
+    mesh_array::make_box<T>(2.0f, 2.0f, 2.0f, surface, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> X;
@@ -285,18 +294,18 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_tetmesh_test)
     shapeB.set_tetramesh_shape(mesh, X, Y, Z);
 
     {
-        V posA = V::make(1.0f, 0.0f, 0.0f);
-        V posB = V::make(-0.9f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(-0.9f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(1.1f, 0.0f, 0.0f);
-        V posB = V::make(-1.1f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
+        EigenVector3<T> posA = EigenVector3<T>(1.1f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(-1.1f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
         do_test(posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
@@ -304,43 +313,43 @@ BOOST_AUTO_TEST_CASE(dispatch_sphere_tetmesh_test)
 BOOST_AUTO_TEST_CASE(dispatch_convex_convex_test)
 {
     convex_type shapeA;
-    shapeA.data().add_point(V::make(1.0f, 1.0f, 1.0f));
-    shapeA.data().add_point(V::make(-1.0f, 1.0f, 1.0f));
-    shapeA.data().add_point(V::make(1.0f, -1.0f, 1.0f));
-    shapeA.data().add_point(V::make(-1.0f, -1.0f, 1.0f));
-    shapeA.data().add_point(V::make(1.0f, 1.0f, -1.0f));
-    shapeA.data().add_point(V::make(-1.0f, 1.0f, -1.0f));
-    shapeA.data().add_point(V::make(1.0f, -1.0f, -1.0f));
-    shapeA.data().add_point(V::make(-1.0f, -1.0f, -1.0f));
-    shapeA.transform() = C::identity();
+    shapeA.data().add_point(EigenVector3<T>(1.0f, 1.0f, 1.0f));
+    shapeA.data().add_point(EigenVector3<T>(-1.0f, 1.0f, 1.0f));
+    shapeA.data().add_point(EigenVector3<T>(1.0f, -1.0f, 1.0f));
+    shapeA.data().add_point(EigenVector3<T>(-1.0f, -1.0f, 1.0f));
+    shapeA.data().add_point(EigenVector3<T>(1.0f, 1.0f, -1.0f));
+    shapeA.data().add_point(EigenVector3<T>(-1.0f, 1.0f, -1.0f));
+    shapeA.data().add_point(EigenVector3<T>(1.0f, -1.0f, -1.0f));
+    shapeA.data().add_point(EigenVector3<T>(-1.0f, -1.0f, -1.0f));
+    shapeA.transform() = CoordSysEigen<T>::identity();
 
     convex_type shapeB;
-    shapeB.data().add_point(V::make(1.0f, 1.0f, 1.0f));
-    shapeB.data().add_point(V::make(-1.0f, 1.0f, 1.0f));
-    shapeB.data().add_point(V::make(1.0f, -1.0f, 1.0f));
-    shapeB.data().add_point(V::make(-1.0f, -1.0f, 1.0f));
-    shapeB.data().add_point(V::make(1.0f, 1.0f, -1.0f));
-    shapeB.data().add_point(V::make(-1.0f, 1.0f, -1.0f));
-    shapeB.data().add_point(V::make(1.0f, -1.0f, -1.0f));
-    shapeB.data().add_point(V::make(-1.0f, -1.0f, -1.0f));
-    shapeB.transform() = C::identity();
+    shapeB.data().add_point(EigenVector3<T>(1.0f, 1.0f, 1.0f));
+    shapeB.data().add_point(EigenVector3<T>(-1.0f, 1.0f, 1.0f));
+    shapeB.data().add_point(EigenVector3<T>(1.0f, -1.0f, 1.0f));
+    shapeB.data().add_point(EigenVector3<T>(-1.0f, -1.0f, 1.0f));
+    shapeB.data().add_point(EigenVector3<T>(1.0f, 1.0f, -1.0f));
+    shapeB.data().add_point(EigenVector3<T>(-1.0f, 1.0f, -1.0f));
+    shapeB.data().add_point(EigenVector3<T>(1.0f, -1.0f, -1.0f));
+    shapeB.data().add_point(EigenVector3<T>(-1.0f, -1.0f, -1.0f));
+    shapeB.transform() = CoordSysEigen<T>::identity();
 
     {
-        V posA = V::make(-1.0f, 0.0f, 0.0f);
-        V posB = V::make(1.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
-    // 2015-11-30 Kenny: Convex types not yet supported
-    //    do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
+        EigenVector3<T> posA = EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+        // 2015-11-30 Kenny: Convex types not yet supported
+        //    do_test( posA, posB, rotA, rotB, shapeA, shapeB, true);
     }
 
     {
-        V posA = V::make(-2.0f, 0.0f, 0.0f);
-        V posB = V::make(2.0f, 0.0f, 0.0f);
-        Q rotA = Q::identity();
-        Q rotB = Q::identity();
-    // 2015-11-30 Kenny: Convex types not yet supported
-    // do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
+        EigenVector3<T> posA = EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        EigenVector3<T> posB = EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+        // 2015-11-30 Kenny: Convex types not yet supported
+        // do_test( posA, posB, rotA, rotB, shapeA, shapeB, false);
     }
 }
 
