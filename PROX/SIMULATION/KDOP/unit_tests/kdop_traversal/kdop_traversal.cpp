@@ -13,9 +13,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 class GeometryInfo
 {
@@ -29,11 +27,12 @@ public:
     mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo, mesh_array::T4Mesh> m_surface_map;
 };
 
-class TestCallback : public geometry::ContactsCallback<
-                         typename tiny::MathTypes<T>::vector3_type>
+class TestCallback : public geometry::ContactsCallback<T>
 {
 public:
-    void operator()(V const& p, V const& n, V::real_type const& d)
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
     {
     // Do something?
     }
@@ -44,9 +43,11 @@ public:
  *
  * @param p   Initial translation of the test mesh
  */
-void make_test_mesh(mesh_array::T3Mesh& mesh, mesh_array::VertexAttribute<T, mesh_array::T3Mesh>& X,
+void make_test_mesh(mesh_array::T3Mesh& mesh,
+                    mesh_array::VertexAttribute<T, mesh_array::T3Mesh>& X,
                     mesh_array::VertexAttribute<T, mesh_array::T3Mesh>& Y,
-                    mesh_array::VertexAttribute<T, mesh_array::T3Mesh>& Z, V const& p)
+                    mesh_array::VertexAttribute<T, mesh_array::T3Mesh>& Z,
+                    const EigenVector3<T>& p)
 {
     mesh.clear();
 
@@ -87,7 +88,7 @@ void make_test_mesh(mesh_array::T3Mesh& mesh, mesh_array::VertexAttribute<T, mes
     mesh.push_triangle(v1, v3, vm);
 }
 
-void make_geometry(GeometryInfo& info, V const& p)
+void make_geometry(GeometryInfo& info, const EigenVector3<T>& p)
 {
     mesh_array::T3Mesh surface;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;
@@ -106,12 +107,16 @@ void make_geometry(GeometryInfo& info, V const& p)
 
     mesh_array::compute_surface_map(info.m_mesh, info.m_X, info.m_Y, info.m_Z, info.m_surface_map);
 
-    info.m_tree = kdop::make_tree<V, 6, T>(32000, info.m_mesh, info.m_X, info.m_Y, info.m_Z, kdop::sequential());
+    info.m_tree = kdop::make_tree<6, T>(32000, info.m_mesh, info.m_X, info.m_Y,
+                                        info.m_Z, kdop::sequential());
 
     BOOST_CHECK(info.m_surface_map.size() > 0u);
 }
 
-void make_geometry(GeometryInfo& info) { make_geometry(info, V::zero()); }
+void make_geometry(GeometryInfo& info)
+{
+    make_geometry(info, EigenVector3<T>(0, 0, 0));
+}
 
 BOOST_AUTO_TEST_SUITE(kdop);
 
@@ -128,20 +133,20 @@ BOOST_AUTO_TEST_CASE(kdop_tandem_traversal)
   // children nodes AABB( (-1,-1,-2), (1,1,0) ) and AABB( (-1,-1,0), (1,1,2) )
   // and both children are leafs
   //
-    make_geometry(A, V::make(0.0f, 0.0f, -1.5f));
-    make_geometry(B, V::make(0.0f, 0.0f, 1.5f));
+    make_geometry(A, EigenVector3<T>(0.0f, 0.0f, -1.5f));
+    make_geometry(B, EigenVector3<T>(0.0f, 0.0f, 1.5f));
 
     TestCallback my_test_callback;
 
-    std::vector<kdop::TestPair<V, 6, T> > test_pairs;
+    std::vector<kdop::TestPair<6, T>> test_pairs;
 
-    kdop::TestPair<V, 6, T> test
-        = kdop::TestPair<V, 6, T>(A.m_tree, B.m_tree, A.m_mesh, B.m_mesh, A.m_X, B.m_X, A.m_Y, B.m_Y, A.m_Z, B.m_Z,
-                                  A.m_surface_map, B.m_surface_map, my_test_callback);
+    kdop::TestPair<6, T> test = kdop::TestPair<6, T>(
+        A.m_tree, B.m_tree, A.m_mesh, B.m_mesh, A.m_X, B.m_X, A.m_Y, B.m_Y,
+        A.m_Z, B.m_Z, A.m_surface_map, B.m_surface_map, my_test_callback);
 
     test_pairs.push_back(test);
 
-    kdop::tandem_traversal<V, 6, T>(test_pairs, kdop::sequential());
+    kdop::tandem_traversal<6, T>(test_pairs, kdop::sequential());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

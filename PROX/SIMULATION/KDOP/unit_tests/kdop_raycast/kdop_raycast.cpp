@@ -9,10 +9,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 class GeometryInfo
 {
@@ -33,7 +30,7 @@ void make_geometry(GeometryInfo& info)
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sY;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sZ;
 
-    mesh_array::make_box<MT>(2.0f, 2.0f, 2.0f, surface, sX, sY, sZ);
+    mesh_array::make_box<T>(2.0f, 2.0f, 2.0f, surface, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh_in;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> X_in;
@@ -46,12 +43,15 @@ void make_geometry(GeometryInfo& info)
 
     mesh_array::compute_surface_map(info.m_mesh, info.m_X, info.m_Y, info.m_Z, info.m_surface_map);
 
-    info.m_tree = kdop::make_tree<V, 6, T>(32000, info.m_mesh, info.m_X, info.m_Y, info.m_Z, kdop::sequential());
+    info.m_tree = kdop::make_tree<6, T>(32000, info.m_mesh, info.m_X, info.m_Y,
+                                        info.m_Z, kdop::sequential());
 
     BOOST_CHECK(info.m_surface_map.size() > 0u);
 }
 
-bool compute_raycast(geometry::Ray<V> const& ray, GeometryInfo const& object, V& hit_point, T& length)
+bool compute_raycast(geometry::RayEigen<T> const& ray,
+                     GeometryInfo const& object, EigenVector3<T>& hit_point,
+                     T& length)
 {
     return kdop::raycast(ray, object.m_tree, object.m_mesh, object.m_X, object.m_Y, object.m_Z, object.m_surface_map,
                          hit_point, length);
@@ -68,13 +68,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Hit straigth on
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        const EigenVector3<T> r = EigenVector3<T>(0.0, 0.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -88,13 +88,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Hit straigth on corner
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-1.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(-1.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -108,13 +108,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Hit straigth on edge
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, -1.0, -3.0);
+        const EigenVector3<T> r = EigenVector3<T>(0.0, 0.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(0.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -128,13 +128,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Aligned ray no hitting
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-2.0, 0.0, -3.0);
+        const EigenVector3<T> r = EigenVector3<T>(0.0, 0.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(-2.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -148,13 +148,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Obligue ray no hitting
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -10.0);
+        const EigenVector3<T> r = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(0.0, 0.0, -10.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -168,13 +168,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Obligue ray central hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(-2.0, -2.0, -3.0);
+        const EigenVector3<T> r = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(-2.0, -2.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -188,13 +188,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Obligue ray corner hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -2.0);
+        const EigenVector3<T> r = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(0.0, 0.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 
@@ -208,13 +208,13 @@ BOOST_AUTO_TEST_CASE(raycast_test)
 
   // Obligue ray edge hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, -1.0, -2.0);
+        const EigenVector3<T> r = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenVector3<T> p = EigenVector3<T>(0.0, -1.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool const hit = compute_raycast(ray, object, q, length);
 

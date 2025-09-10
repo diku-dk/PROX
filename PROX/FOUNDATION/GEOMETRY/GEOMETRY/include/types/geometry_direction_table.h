@@ -207,8 +207,7 @@ template <typename T> inline DirectionTable<T, 3> make3()
       return D;
   }
 
-  template<typename T>
-  inline DirectionTableEigen<T,3>  make3()
+  template <typename T> inline DirectionTableEigen<T, 3> make3Eigen()
   {
       DirectionTableEigen<T,3> D;
 
@@ -278,7 +277,7 @@ template <typename T> inline DirectionTable<T, 3> make3()
   class DirectionTableEigenHelper<T,3>
   {
   public:
-      static DirectionTableEigen<T,3> make() { return make3<T>(); }
+      static DirectionTableEigen<T, 3> make() { return make3Eigen<T>(); }
   };
 
   template<typename T>

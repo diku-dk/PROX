@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_sphere)
     size_t const slices = 12u;
     size_t const segments = 12u;
     T const radius = 1.0f;
-    mesh_array::make_sphere<MT>(radius, slices, segments, surf, sX, sY, sZ);
+    mesh_array::make_sphere<T>(radius, slices, segments, surf, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh_in;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> Xin;
@@ -44,8 +44,8 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_sphere)
 
 BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_box)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::real_type T;
+    using T = float;
+    ;
 
     mesh_array::T3Mesh surf;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_box)
     T const width = 1.0f;
     T const height = 1.0f;
     T const depth = 1.0f;
-    mesh_array::make_box<MT>(width, height, depth, surf, sX, sY, sZ);
+    mesh_array::make_box<T>(width, height, depth, surf, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh_in;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> Xin;
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_cone)
     T const radius = 1.0f;
     size_t const slices = 12u;
 
-    mesh_array::make_cone<MT>(radius, height, slices, surf, sX, sY, sZ);
+    mesh_array::make_cone<T>(radius, height, slices, surf, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh_in;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> Xin;
@@ -105,8 +105,7 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_cone)
 
 BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_capsule)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::real_type T;
+    using T = float;
 
     mesh_array::T3Mesh surf;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;
@@ -118,7 +117,8 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_capsule)
     size_t const slices = 12u;
     size_t const segments = 12u;
 
-    mesh_array::make_capsule<MT>(radius, height, slices, segments, surf, sX, sY, sZ);
+    mesh_array::make_capsule<T>(radius, height, slices, segments, surf, sX, sY,
+                                sZ);
 
     mesh_array::T4Mesh mesh_in;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> Xin;
