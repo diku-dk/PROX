@@ -52,11 +52,11 @@ inline bool outside_dop( const EigenVector3<T2>& p, DOP<T,K> const & dop, T cons
     return ! outside_dop(p, dop);
   }
 
-  template<typename T>
-  inline bool inside_sphere(const EigenVector3<T>& p, Sphere<T> const & sphere)
+  template <typename T>
+  inline bool inside_sphere(const EigenVector3<T>& p, Sphere<T> const& sphere)
   {
     const EigenVector3<T> p_local          =  p-sphere.center();
-    T const distance_squared = tiny::inner_prod( p_local, p_local );
+    T const distance_squared = dot(p_local, p_local);
 
     if (distance_squared > sphere.radius()*sphere.radius() )
       return false;

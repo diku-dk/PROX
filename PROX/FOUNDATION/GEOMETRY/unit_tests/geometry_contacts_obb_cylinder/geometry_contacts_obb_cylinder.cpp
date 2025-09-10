@@ -9,27 +9,24 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
-
+using T = float;
 class ContactInfo
 {
 public:
-    V m_point;
-    V m_normal;
+    EigenVector3<T> m_point;
+    EigenVector3<T> m_normal;
     T m_distance;
 };
 
-class MyCallback : public geometry::ContactsCallback<V>
+class MyCallback : public geometry::ContactsCallback<T>
 {
 public:
     std::vector<ContactInfo> m_contacts;
 
 public:
-    void operator()(V const& point, V const& normal, typename V::real_type const& distance)
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
     {
         ContactInfo info;
 
@@ -46,21 +43,24 @@ BOOST_AUTO_TEST_SUITE(geometry);
 BOOST_AUTO_TEST_CASE(contacts_obb_cylinder_test)
 {
     {
-        V const center = V::make(0.0, 0.0, 0.0);
-        V const half_ext = V::make(1.0, 1.0, 1.0);
-        Q const q = Q::identity();
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenQuaternion<T> q = EigenQuaternion<T>::Identity();
 
-        V const center2 = V::zero();
-        V const axis = V::i();
+        EigenVector3<T> const center2 = EigenVector3<T>(0, 0, 0);
+        EigenVector3<T> const axis = EigenVector3<T>(1, 0, 0);
         T const height = 1.0;
         T const radius = 1.0;
 
-        geometry::OBB<MT> const& obb = geometry::make_obb<MT>(center, q, half_ext);
-        geometry::Cylinder<V> const& cyl = geometry::make_cylinder(radius, height, axis, center2);
+        geometry::OBBEigen<T> const& obb
+            = geometry::make_obb<T>(center, q, half_ext);
+        geometry::CylinderEigen<T> const& cyl
+            = geometry::make_cylinder(radius, height, axis, center2);
 
         MyCallback mycallback;
 
-        bool const test = geometry::contacts_obb_cylinder(obb, cyl, 0.0, mycallback, false);
+        bool const test = geometry::contacts_obb_cylinder<T>(obb, cyl, 0.0,
+                                                             mycallback, false);
 
         BOOST_CHECK(!test);
     }

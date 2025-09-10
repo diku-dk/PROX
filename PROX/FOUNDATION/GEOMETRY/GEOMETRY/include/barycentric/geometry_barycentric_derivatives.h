@@ -23,7 +23,7 @@ namespace geometry
   {
     using std::fabs;
 
-    T const vol6 = inner_prod(x4 - x1, cross(x2 - x1, x3 - x1 ));
+    T const vol6 = dot((x4 - x1).eval(), (cross(x2 - x1, x3 - x1)));
 
     assert( vol6 > 0 || !"compute_barycentric_derivatives(): tetrahedron was left oriented");
 

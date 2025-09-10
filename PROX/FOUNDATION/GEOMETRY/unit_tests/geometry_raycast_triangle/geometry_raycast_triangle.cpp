@@ -14,59 +14,56 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
 
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
+    using T = double;
 
-    V const p0 = V::make(0.0, 0.0, 0.0);
-    V const p1 = V::make(1.0, 0.0, 0.0);
-    V const p2 = V::make(0.0, 1.0, 0.0);
+    EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
 
-    geometry::Triangle<V> const triangle = geometry::make_triangle(p0, p1, p2);
+    geometry::Triangle<T> const triangle = geometry::make_triangle(p0, p1, p2);
 
   // Ray hitting from front
     {
-        V const p = V::make(0.0, 0.0, 1.0);
-        V const r = V::make(0.2, 0.2, -1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.2, 0.2, -1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, true);
 
         BOOST_CHECK(hit);
-        BOOST_CHECK_CLOSE(length, tiny::norm(r), 0.01);
+        BOOST_CHECK_CLOSE(length, norm(r), 0.01);
         BOOST_CHECK_CLOSE(q(0), 0.2, 0.01);
         BOOST_CHECK_CLOSE(q(1), 0.2, 0.01);
         BOOST_CHECK_CLOSE(q(2), 0.0, 0.01);
     }
   // Ray hitting from front
     {
-        V const p = V::make(0.0, 0.0, 1.0);
-        V const r = V::make(0.2, 0.2, -1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.2, 0.2, -1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false);
 
         BOOST_CHECK(hit);
-        BOOST_CHECK_CLOSE(length, tiny::norm(r), 0.01);
+        BOOST_CHECK_CLOSE(length, norm(r), 0.01);
         BOOST_CHECK_CLOSE(q(0), 0.2, 0.01);
         BOOST_CHECK_CLOSE(q(1), 0.2, 0.01);
         BOOST_CHECK_CLOSE(q(2), 0.0, 0.01);
     }
   // Ray hitting from back
     {
-        V const p = V::make(0.0, 0.0, -1.0);
-        V const r = V::make(0.2, 0.2, 1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.2, 0.2, 1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, true);
 
@@ -74,17 +71,17 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
     }
   // Ray hitting from back
     {
-        V const p = V::make(0.0, 0.0, -1.0);
-        V const r = V::make(0.2, 0.2, 1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.2, 0.2, 1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false);
 
         BOOST_CHECK(hit);
-        BOOST_CHECK_CLOSE(length, tiny::norm(r), 0.01);
+        BOOST_CHECK_CLOSE(length, norm(r), 0.01);
         BOOST_CHECK_CLOSE(q(0), 0.2, 0.01);
         BOOST_CHECK_CLOSE(q(1), 0.2, 0.01);
         BOOST_CHECK_CLOSE(q(2), 0.0, 0.01);
@@ -92,24 +89,24 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
 
   // Rays missing
     {
-        V const p = V::make(0.0, 0.0, 1.0);
-        V const r = V::make(0.6, 0.6, -1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.6, 0.6, -1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false);
 
         BOOST_CHECK(!hit);
     }
     {
-        V const p = V::make(0.0, 0.0, 1.0);
-        V const r = V::make(0.5, -0.1, -1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.5, -0.1, -1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false);
 
@@ -118,17 +115,17 @@ BOOST_AUTO_TEST_CASE(raycast_triangle)
 
   // Ray gracing
     {
-        V const p = V::make(0.0, 0.0, -1.0);
-        V const r = V::make(0.4999, 0.4999, 1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -1.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.4999, 0.4999, 1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_triangle(ray, triangle, q, length, false);
 
         BOOST_CHECK(hit);
-        BOOST_CHECK_CLOSE(length, tiny::norm(r), 0.01);
+        BOOST_CHECK_CLOSE(length, norm(r), 0.01);
         BOOST_CHECK_CLOSE(q(0), r(0), 0.01);
         BOOST_CHECK_CLOSE(q(1), r(1), 0.01);
         BOOST_CHECK_CLOSE(q(2), 0.0, 0.01);

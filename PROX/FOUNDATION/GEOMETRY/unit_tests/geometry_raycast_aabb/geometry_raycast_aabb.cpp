@@ -13,27 +13,24 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 {
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
+    using T = float;
 
-    V const min_coord = V::make(-1.0, -1.0, -1.0);
-    V const max_coord = V::make(1.0, 1.0, 1.0);
+    EigenVector3<T> const min_coord = EigenVector3<T>(-1.0, -1.0, -1.0);
+    EigenVector3<T> const max_coord = EigenVector3<T>(1.0, 1.0, 1.0);
 
-    geometry::AABB<V> aabb = geometry::make_aabb(min_coord, max_coord);
+    geometry::AABBEigen<T> aabb = geometry::make_aabb(min_coord, max_coord);
 
     BOOST_CHECK(geometry::is_valid(aabb));
 
   // Hit straigth on
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -47,13 +44,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Hit straigth on corner
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-1.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-1.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -67,13 +64,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Hit straigth on edge
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -87,13 +84,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Aligned ray no hitting
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-2.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -107,13 +104,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Obligue ray no hitting
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -10.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -10.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -127,13 +124,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Obligue ray central hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(-2.0, -2.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, -2.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -147,13 +144,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Obligue ray corner hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -2.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 
@@ -167,13 +164,13 @@ BOOST_AUTO_TEST_CASE(raycast_aabb)
 
   // Obligue ray edge hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, -1.0, -2.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_aabb(ray, aabb, q, length);
 

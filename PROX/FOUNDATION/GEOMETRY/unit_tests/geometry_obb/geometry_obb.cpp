@@ -7,11 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using Q = MT::quaternion_type;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -19,7 +15,7 @@ BOOST_AUTO_TEST_CASE(obb_test)
 {
 
     {
-        geometry::OBB<MT> A;
+        geometry::OBBEigen<T> A;
         BOOST_CHECK(geometry::is_valid(A) == true);
 
         BOOST_CHECK_CLOSE(A.center()(0), 0.0, 0.01);
@@ -30,19 +26,19 @@ BOOST_AUTO_TEST_CASE(obb_test)
         BOOST_CHECK_CLOSE(A.half_extent()(1), 1.0, 0.01);
         BOOST_CHECK_CLOSE(A.half_extent()(2), 1.0, 0.01);
 
-        BOOST_CHECK_CLOSE(A.orientation().real(), 1.0, 0.01);
-        BOOST_CHECK_CLOSE(A.orientation().imag()(0), 0.0, 0.01);
-        BOOST_CHECK_CLOSE(A.orientation().imag()(1), 0.0, 0.01);
-        BOOST_CHECK_CLOSE(A.orientation().imag()(2), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().w(), 1.0, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().x(), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().y(), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().z(), 0.0, 0.01);
 
-        V const p000 = geometry::get_local_corner(0, A);
-        V const p001 = geometry::get_local_corner(1, A);
-        V const p010 = geometry::get_local_corner(2, A);
-        V const p011 = geometry::get_local_corner(3, A);
-        V const p100 = geometry::get_local_corner(4, A);
-        V const p101 = geometry::get_local_corner(5, A);
-        V const p110 = geometry::get_local_corner(6, A);
-        V const p111 = geometry::get_local_corner(7, A);
+        EigenVector3<T> const p000 = geometry::get_local_corner(0, A);
+        EigenVector3<T> const p001 = geometry::get_local_corner(1, A);
+        EigenVector3<T> const p010 = geometry::get_local_corner(2, A);
+        EigenVector3<T> const p011 = geometry::get_local_corner(3, A);
+        EigenVector3<T> const p100 = geometry::get_local_corner(4, A);
+        EigenVector3<T> const p101 = geometry::get_local_corner(5, A);
+        EigenVector3<T> const p110 = geometry::get_local_corner(6, A);
+        EigenVector3<T> const p111 = geometry::get_local_corner(7, A);
 
         BOOST_CHECK_CLOSE(p000(0), -1.0, 0.01);
         BOOST_CHECK_CLOSE(p000(1), -1.0, 0.01);
@@ -78,11 +74,11 @@ BOOST_AUTO_TEST_CASE(obb_test)
     }
 
     {
-        V const center = V::make(1.0, 2.0, 3.0);
-        V const half_ext = V::make(4.0, 5.0, 6.0);
-        Q const q = Q::Rx(VT::pi_half());
+        EigenVector3<T> const center = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const half_ext = EigenVector3<T>(4.0, 5.0, 6.0);
+        const EigenQuaternion<T> q = Rotatex(std::numbers::pi_v<T> * 0.5f);
 
-        geometry::OBB<MT> A = geometry::make_obb<MT>(center, q, half_ext);
+        geometry::OBBEigen<T> A = geometry::make_obb<T>(center, q, half_ext);
 
         BOOST_CHECK(geometry::is_valid(A) == true);
 
@@ -94,20 +90,21 @@ BOOST_AUTO_TEST_CASE(obb_test)
         BOOST_CHECK_CLOSE(A.half_extent()(1), 5.0, 0.01);
         BOOST_CHECK_CLOSE(A.half_extent()(2), 6.0, 0.01);
 
-        BOOST_CHECK_CLOSE(A.orientation().real(), 0.707106769, 0.01);
-        BOOST_CHECK_CLOSE(A.orientation().imag()(0), 0.707106769, 0.01);
-        BOOST_CHECK_CLOSE(A.orientation().imag()(1), 0.0, 0.01);
-        BOOST_CHECK_CLOSE(A.orientation().imag()(2), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().w(), 0.707106769, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().x(), 0.707106769, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().y(), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(A.orientation().z(), 0.0, 0.01);
     }
 
     {
-        V const center = V::make(1.0, 2.0, 3.0);
-        V const half_ext = V::make(4.0, 5.0, 6.0);
-        Q const q = Q::Rx(VT::pi_half());
+        EigenVector3<T> const center = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const half_ext = EigenVector3<T>(4.0, 5.0, 6.0);
+        const EigenQuaternion<T> q = Rotatex(std::numbers::pi_v<T> * 0.5f);
 
-        geometry::OBB<MT> const A = geometry::make_obb<MT>(center, q, half_ext);
-        geometry::OBB<MT> const B(A);
-        geometry::OBB<MT> const C = B;
+        geometry::OBBEigen<T> const A
+            = geometry::make_obb<T>(center, q, half_ext);
+        geometry::OBBEigen<T> const B(A);
+        geometry::OBBEigen<T> const C = B;
 
         BOOST_CHECK(geometry::is_valid(B) == true);
         BOOST_CHECK(geometry::is_valid(C) == true);
@@ -118,10 +115,10 @@ BOOST_AUTO_TEST_CASE(obb_test)
         BOOST_CHECK_CLOSE(B.half_extent()(0), 4.0, 0.01);
         BOOST_CHECK_CLOSE(B.half_extent()(1), 5.0, 0.01);
         BOOST_CHECK_CLOSE(B.half_extent()(2), 6.0, 0.01);
-        BOOST_CHECK_CLOSE(B.orientation().real(), 0.707106769, 0.01);
-        BOOST_CHECK_CLOSE(B.orientation().imag()(0), 0.707106769, 0.01);
-        BOOST_CHECK_CLOSE(B.orientation().imag()(1), 0.0, 0.01);
-        BOOST_CHECK_CLOSE(B.orientation().imag()(2), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(B.orientation().w(), 0.707106769, 0.01);
+        BOOST_CHECK_CLOSE(B.orientation().x(), 0.707106769, 0.01);
+        BOOST_CHECK_CLOSE(B.orientation().y(), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(B.orientation().z(), 0.0, 0.01);
 
         BOOST_CHECK_CLOSE(C.center()(0), 1.0, 0.01);
         BOOST_CHECK_CLOSE(C.center()(1), 2.0, 0.01);
@@ -129,10 +126,10 @@ BOOST_AUTO_TEST_CASE(obb_test)
         BOOST_CHECK_CLOSE(C.half_extent()(0), 4.0, 0.01);
         BOOST_CHECK_CLOSE(C.half_extent()(1), 5.0, 0.01);
         BOOST_CHECK_CLOSE(C.half_extent()(2), 6.0, 0.01);
-        BOOST_CHECK_CLOSE(C.orientation().real(), 0.707106769, 0.01);
-        BOOST_CHECK_CLOSE(C.orientation().imag()(0), 0.707106769, 0.01);
-        BOOST_CHECK_CLOSE(C.orientation().imag()(1), 0.0, 0.01);
-        BOOST_CHECK_CLOSE(C.orientation().imag()(2), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(C.orientation().w(), 0.707106769, 0.01);
+        BOOST_CHECK_CLOSE(C.orientation().x(), 0.707106769, 0.01);
+        BOOST_CHECK_CLOSE(C.orientation().y(), 0.0, 0.01);
+        BOOST_CHECK_CLOSE(C.orientation().z(), 0.0, 0.01);
     }
 }
 

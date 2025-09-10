@@ -214,24 +214,15 @@ namespace geometry
     if( obb.half_extent()(2) <= 0  )
       return false;
 
+    if (!is_number(obb.orientation().w())) return false;
+    if (!is_finite(obb.orientation().w())) return false;
 
-    if( !is_number( obb.orientation().real() ) )
-      return false;
-    if(  !is_finite( obb.orientation().real() ) )
-      return false;
-
-    if( !is_number( obb.orientation().imag()(0) ) )
-      return false;
-    if(  !is_finite( obb.orientation().imag()(0) ) )
-      return false;
-    if( !is_number( obb.orientation().imag()(1) ) )
-      return false;
-    if(  !is_finite( obb.orientation().imag()(1) ) )
-      return false;
-    if( !is_number( obb.orientation().imag()(2) ) )
-      return false;
-    if(  !is_finite( obb.orientation().imag()(2) ) )
-      return false;
+    if (!is_number(obb.orientation().x())) return false;
+    if (!is_finite(obb.orientation().x())) return false;
+    if (!is_number(obb.orientation().y())) return false;
+    if (!is_finite(obb.orientation().y())) return false;
+    if (!is_number(obb.orientation().z())) return false;
+    if (!is_finite(obb.orientation().z())) return false;
 
     if (  fabs( 1 - norm(obb.orientation() ) ) > std::numeric_limits<T>::epsilon()*10 )
       return false;

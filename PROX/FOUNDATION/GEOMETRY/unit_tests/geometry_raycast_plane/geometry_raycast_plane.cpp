@@ -14,25 +14,22 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
 
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
+    using T = double;
 
-    V const normal = V::make(1.0, 1.0, 1.0);
+    EigenVector3<T> const normal = EigenVector3<T>(1.0, 1.0, 1.0);
     T const offset = norm(normal);
-    geometry::Plane<V> const plane = geometry::make_plane(unit(normal), offset);
+    geometry::Plane<T> const plane = geometry::make_plane(unit(normal), offset);
 
     BOOST_CHECK(geometry::is_valid(plane));
 
   // Orthogonal hit from back-side
     {
-        V const p = V::make(0.0, 0.0, 0.0);
-        V const r = V::make(1.0, 1.0, 1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_plane(ray, plane, q, length);
 
@@ -46,12 +43,12 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
 
   // Orthogonal hit from back-side with front-face only
     {
-        V const p = V::make(0.0, 0.0, 0.0);
-        V const r = V::make(1.0, 1.0, 1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_plane(ray, plane, q, length, true);
 
@@ -60,12 +57,12 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
 
   // Orthogonal hit from front-side but with ray origin on back-side
     {
-        V const p = V::make(0.0, 0.0, 0.0);
-        V const r = V::make(-1.0, -1.0, -1.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const r = EigenVector3<T>(-1.0, -1.0, -1.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_plane(ray, plane, q, length, true);
 
@@ -74,12 +71,12 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
 
   // Parallel ray and plane
     {
-        V const p = V::make(0.0, 0.0, 0.0);
-        V const r = V::make(-1.0, 1.0, 0.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const r = EigenVector3<T>(-1.0, 1.0, 0.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_plane(ray, plane, q, length);
 
@@ -88,12 +85,12 @@ BOOST_AUTO_TEST_CASE(raycast_plane)
 
   // Oblique hit
     {
-        V const p = V::make(2.0, 1.0, 1.0);
-        V const r = V::make(-1.0, 0.0, 0.0);
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        EigenVector3<T> const p = EigenVector3<T>(2.0, 1.0, 1.0);
+        EigenVector3<T> const r = EigenVector3<T>(-1.0, 0.0, 0.0);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_plane(ray, plane, q, length);
 

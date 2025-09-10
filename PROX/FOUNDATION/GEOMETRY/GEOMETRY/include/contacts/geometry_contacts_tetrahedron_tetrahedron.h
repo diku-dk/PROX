@@ -211,7 +211,7 @@ namespace geometry
           const EigenVector3<T> AxB   = cross( edgeA, edgeB );
           T const l     = norm(AxB);
 
-          if(l > std::numeric_limits<T>::epsilon()*10 )
+          if (l > std::numeric_limits<T>::epsilon() * 10)
           {
             const EigenVector3<T> axis = AxB / l;
 

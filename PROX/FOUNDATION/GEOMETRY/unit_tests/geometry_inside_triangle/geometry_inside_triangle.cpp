@@ -7,27 +7,25 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(inside_triangle_test)
 {
-    V const p0 = V::make(0.0, 0.0, 0.0);
-    V const p1 = V::make(1.0, 0.0, 0.0);
-    V const p2 = V::make(0.0, 1.0, 0.0);
+    EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
 
-    geometry::Triangle<V> const A = geometry::make_triangle(p0, p1, p2);
+    geometry::Triangle<T> const A = geometry::make_triangle(p0, p1, p2);
 
     BOOST_CHECK(geometry::is_valid(A) == true);
 
   // Close to corners are allways inside
     {
-        V const k0 = V::make(0.0001, 0.0001, 0.0);
-        V const k1 = V::make(0.9999, 0.0, 0.0);
-        V const k2 = V::make(0.0, 0.9999, 0.0);
+        EigenVector3<T> const k0 = EigenVector3<T>(0.0001, 0.0001, 0.0);
+        EigenVector3<T> const k1 = EigenVector3<T>(0.9999, 0.0, 0.0);
+        EigenVector3<T> const k2 = EigenVector3<T>(0.0, 0.9999, 0.0);
 
         bool test0 = geometry::inside_triangle(k0, A, true);
         bool test1 = geometry::inside_triangle(k1, A, true);
@@ -47,20 +45,28 @@ BOOST_AUTO_TEST_CASE(inside_triangle_test)
     }
   // Midpoint is allways inside
     {
-        bool const test0 = geometry::inside_triangle((p0 + p1 + p2) / 3.0, A, true);
-        bool const test1 = geometry::inside_triangle((p0 + p1 + p2) / 3.0, A, false);
+        bool const test0
+            = geometry::inside_triangle<T>((p0 + p1 + p2) / 3.0, A, true);
+        bool const test1
+            = geometry::inside_triangle<T>((p0 + p1 + p2) / 3.0, A, false);
 
         BOOST_CHECK(test0);
         BOOST_CHECK(test1);
     }
   // Some arbitary points
     {
-        V const k0 = V::make(0.2, 0.2, 0.0);  // inside and on plane
-        V const k1 = V::make(0.2, 0.2, 0.2);  // inside and above plane
-        V const k2 = V::make(0.2, 0.2, -0.2); // inside and below plane
-        V const k3 = V::make(-1.0, -1.0, 0.0);   // outside and on plane
-        V const k4 = V::make(-1.0, -1.0, 0.2);  // outside and above plane
-        V const k5 = V::make(-1.0, -1.0, -0.2); // outside and below plane
+        EigenVector3<T> const k0
+            = EigenVector3<T>(0.2, 0.2, 0.0);  // inside and on plane
+        EigenVector3<T> const k1
+            = EigenVector3<T>(0.2, 0.2, 0.2); // inside and above plane
+        EigenVector3<T> const k2
+            = EigenVector3<T>(0.2, 0.2, -0.2); // inside and below plane
+        EigenVector3<T> const k3
+            = EigenVector3<T>(-1.0, -1.0, 0.0); // outside and on plane
+        EigenVector3<T> const k4
+            = EigenVector3<T>(-1.0, -1.0, 0.2); // outside and above plane
+        EigenVector3<T> const k5
+            = EigenVector3<T>(-1.0, -1.0, -0.2); // outside and below plane
 
         bool test0 = geometry::inside_triangle(k0, A, true);
         bool test1 = geometry::inside_triangle(k1, A, true);
@@ -92,12 +98,12 @@ BOOST_AUTO_TEST_CASE(inside_triangle_test)
     }
   // Different outside tests -- trying to generate all different cases....
     {
-        V const k0 = V::make(0.5, -0.1, 0.0);
-        V const k1 = V::make(1.0, 1.0, 0.0);
-        V const k2 = V::make(-0.1, 0.5, 0.0);
-        V const k3 = V::make(-1.0, -1.0, 0.0);
-        V const k4 = V::make(0.1, 1.0, 0.0);
-        V const k5 = V::make(1.0, 0.1, 0.0);
+        EigenVector3<T> const k0 = EigenVector3<T>(0.5, -0.1, 0.0);
+        EigenVector3<T> const k1 = EigenVector3<T>(1.0, 1.0, 0.0);
+        EigenVector3<T> const k2 = EigenVector3<T>(-0.1, 0.5, 0.0);
+        EigenVector3<T> const k3 = EigenVector3<T>(-1.0, -1.0, 0.0);
+        EigenVector3<T> const k4 = EigenVector3<T>(0.1, 1.0, 0.0);
+        EigenVector3<T> const k5 = EigenVector3<T>(1.0, 0.1, 0.0);
 
         bool const test0 = geometry::inside_triangle(k0, A, false);
         bool const test1 = geometry::inside_triangle(k1, A, false);

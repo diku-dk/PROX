@@ -7,11 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using Q = MT::quaternion_type;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -19,17 +15,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
 {
   // touching bottom-top faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBBEigen<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, -2.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ry(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, -2.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatey(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -39,17 +37,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // touching left-right faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.0, 0.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rx(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(2.0, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatex(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -59,17 +59,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // touching front-back faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 2.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rz(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 2.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatez(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -79,17 +81,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // separating bottom-top faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, -2.1, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ry(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, -2.1, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatey(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -99,17 +103,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // separating left-right faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.1, 0.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rx(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(2.1, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatex(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -119,17 +125,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // separating front-back faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 2.1);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rz(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 2.1);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatez(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -139,17 +147,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // A inside of B
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(0.5, 0.5, 0.5);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(0.5, 0.5, 0.5);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ry(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatey(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -159,17 +169,19 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // B inside of A
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 0.0);
-        V const half_extB = V::make(0.5, 0.5, 0.5);
-        Q const qB = Q::Ry(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(0.5, 0.5, 0.5);
+        EigenQuaternion<T> const qB = Rotatey(std::numbers::pi_v<T> * 0.25f);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -179,17 +191,20 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // touching edge-edge-case
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.0, 2.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ru(VT::pi_half(), centerB);
+        EigenVector3<T> const centerB = EigenVector3<T>(2.0, 2.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB
+            = Rotateu(std::numbers::pi_v<T> * 0.5f, centerB);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);
@@ -199,17 +214,20 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
     }
   // separating edge-edge-case
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.01, 2.01, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ru(VT::pi_half(), centerB);
+        EigenVector3<T> const centerB = EigenVector3<T>(2.01, 2.01, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB
+            = Rotateu(std::numbers::pi_v<T> * 0.5f, centerB);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         bool const test1 = geometry::overlap_obb_obb(obbA, obbB);
         bool const test2 = geometry::overlap_obb_obb(obbB, obbA);

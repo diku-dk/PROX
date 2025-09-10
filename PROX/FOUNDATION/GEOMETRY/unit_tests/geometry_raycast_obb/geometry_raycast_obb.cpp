@@ -13,27 +13,22 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 {
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
-    typedef MT::quaternion_type Q;
+    using T = double;
+    EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 1.0, 1.0);
+    EigenQuaternion<T> const q = EigenQuaternion<T>::Identity();
 
-    V const center = V::make(0.0, 0.0, 0.0);
-    V const half_ext = V::make(1.0, 1.0, 1.0);
-    Q const q = Q::identity();
-
-    geometry::OBB<MT> obb = geometry::make_obb<MT>(center, q, half_ext);
+    geometry::OBBEigen<T> obb = geometry::make_obb<T>(center, q, half_ext);
 
   // Hit straigth on
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -47,13 +42,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Hit straigth on corner
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-1.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-1.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -67,13 +62,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Hit straigth on edge
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -87,13 +82,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Aligned ray no hitting
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-2.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -107,13 +102,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Obligue ray no hitting
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -10.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -10.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -127,13 +122,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Obligue ray central hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(-1.0, -1.0, -2.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-1.0, -1.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -147,13 +142,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Obligue ray corner hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(-1.0, -1.0, -2.9999);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-1.0, -1.0, -2.9999);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -167,13 +162,13 @@ BOOST_AUTO_TEST_CASE(raycast_obb)
 
   // Obligue ray edge hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, -1.0, -2.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
@@ -190,33 +185,29 @@ BOOST_AUTO_TEST_CASE(raycast_strange_size_obb)
 {
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
-    typedef MT::quaternion_type Q;
+    using T = double;
 
-    V const center = V::make(0.0, 0.0, 0.0);
-    V const half_ext = V::make(1.0, 2.0, 3.0);
+    EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 2.0, 3.0);
   //  Q const q        = Q::Rx(VT::pi_half() );
-    Q const q = Q::identity();
+    EigenQuaternion<T> const q = EigenQuaternion<T>::Identity();
 
-    geometry::OBB<MT> obb = geometry::make_obb<MT>(center, q, half_ext);
+    geometry::OBBEigen<T> obb = geometry::make_obb<T>(center, q, half_ext);
 
     {
-        V const r = V::make(2.0, 3.0, -1.0);
-        V const p = V::make(-2.0, -3.0, 4.0);
+        EigenVector3<T> const r = EigenVector3<T>(2.0, 3.0, -1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, -3.0, 4.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
         BOOST_CHECK(hit);
 
-        BOOST_CHECK_CLOSE(length, tiny::norm(r), 0.01);
+        BOOST_CHECK_CLOSE(length, norm(r), 0.01);
         BOOST_CHECK_CLOSE(q(0), 0.0, 0.01);
         BOOST_CHECK_CLOSE(q(1), 0.0, 0.01);
         BOOST_CHECK_CLOSE(q(2), 3.0, 0.01);
@@ -227,32 +218,28 @@ BOOST_AUTO_TEST_CASE(raycast_rotated_obb)
 {
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
-    typedef MT::quaternion_type Q;
+    using T = double;
 
-    V const center = V::make(0.0, 0.0, 0.0);
-    V const half_ext = V::make(1.0, 2.0, 3.0);
-    Q const q = Q::Rx(VT::pi_half());
+    EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 2.0, 3.0);
+    EigenQuaternion<T> const q = Rotatex(std::numbers::pi_v<T> * 0.5f);
 
-    geometry::OBB<MT> obb = geometry::make_obb<MT>(center, q, half_ext);
+    geometry::OBBEigen<T> obb = geometry::make_obb<T>(center, q, half_ext);
 
     {
-        V const r = V::make(2.0, 1.0, 3.0);
-        V const p = V::make(-2.0, -4.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(2.0, 1.0, 3.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, -4.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_obb(ray, obb, q, length);
 
         BOOST_CHECK(hit);
 
-        BOOST_CHECK_CLOSE(length, tiny::norm(r), 0.01);
+        BOOST_CHECK_CLOSE(length, norm(r), 0.01);
         BOOST_CHECK_SMALL(q(0), 0.01);
         BOOST_CHECK_CLOSE(q(1), -3.0, 0.01);
         BOOST_CHECK_SMALL(q(2), 0.01);

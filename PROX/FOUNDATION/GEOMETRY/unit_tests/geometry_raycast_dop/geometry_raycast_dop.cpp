@@ -13,29 +13,27 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 {
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
+    using T = double;
 
-    std::vector<V> corners(2u);
+    std::vector<EigenVector3<T>> corners(2u);
 
-    corners[0] = V::make(-1.0, -1.0, -1.0);
-    corners[1] = V::make(1.0, 1.0, 1.0);
+    corners[0] = EigenVector3<T>(-1.0, -1.0, -1.0);
+    corners[1] = EigenVector3<T>(1.0, 1.0, 1.0);
 
-    geometry::DOP<T, 6u> const dop = geometry::make_dop(corners.begin(), corners.end(), geometry::make3<V>());
+    geometry::DOP<T, 6u> const dop = geometry::make_dop(
+        corners.begin(), corners.end(), geometry::make3<T>());
 
     BOOST_CHECK(geometry::is_valid(dop));
 
   // Hit straigth on
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -49,13 +47,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Hit straigth on corner
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-1.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-1.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -69,13 +67,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Hit straigth on edge
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, -1.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -89,13 +87,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Aligned ray no hitting
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(-2.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -109,13 +107,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Obligue ray no hitting
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -10.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -10.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -129,13 +127,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Obligue ray central hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(-2.0, -2.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, -2.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -149,13 +147,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Obligue ray corner hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, 0.0, -2.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 
@@ -169,13 +167,13 @@ BOOST_AUTO_TEST_CASE(raycast_dop)
 
   // Obligue ray edge hit
     {
-        V const r = V::make(1.0, 1.0, 1.0);
-        V const p = V::make(0.0, -1.0, -2.0);
+        EigenVector3<T> const r = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, -2.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_dop(ray, dop, q, length);
 

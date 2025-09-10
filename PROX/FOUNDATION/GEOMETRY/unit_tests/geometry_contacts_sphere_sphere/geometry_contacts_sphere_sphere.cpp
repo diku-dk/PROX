@@ -1,3 +1,4 @@
+#include "tiny_math_types.h"
 #include <geometry.h>
 #include <tiny.h>
 
@@ -9,25 +10,25 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 class ContactInfo
 {
 public:
-    V m_point;
-    V m_normal;
+    EigenVector3<T> m_point;
+    EigenVector3<T> m_normal;
     T m_distance;
 };
 
-class MyCallback : public geometry::ContactsCallback<V>
+class MyCallback : public geometry::ContactsCallback<T>
 {
 public:
     std::vector<ContactInfo> m_contacts;
 
 public:
-    void operator()(V const& point, V const& normal, typename V::real_type const& distance)
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
     {
         ContactInfo info;
 
@@ -46,17 +47,17 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_sphere_test)
 
   // Penetration
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
         T const radiusA = 2.0;
-        V const centerB = V::make(5.0, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(5.0, 0.0, 0.0);
         T const radiusB = 4.0;
 
-        geometry::Sphere<V> const A = geometry::make_sphere(centerA, radiusA);
-        geometry::Sphere<V> const B = geometry::make_sphere(centerB, radiusB);
+        geometry::Sphere<T> const A = geometry::make_sphere(centerA, radiusA);
+        geometry::Sphere<T> const B = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_sphere_sphere(A, B, 0.0, callback);
+        geometry::contacts_sphere_sphere<T>(A, B, 0.0, callback);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -73,17 +74,17 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_sphere_test)
 
   // Touching
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
         T const radiusA = 2.0;
-        V const centerB = V::make(6.0, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(6.0, 0.0, 0.0);
         T const radiusB = 4.0;
 
-        geometry::Sphere<V> const A = geometry::make_sphere(centerA, radiusA);
-        geometry::Sphere<V> const B = geometry::make_sphere(centerB, radiusB);
+        geometry::Sphere<T> const A = geometry::make_sphere(centerA, radiusA);
+        geometry::Sphere<T> const B = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_sphere_sphere(A, B, 0.0, callback);
+        geometry::contacts_sphere_sphere<T>(A, B, 0.0, callback);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -100,17 +101,17 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_sphere_test)
 
   // Separation
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
         T const radiusA = 2.0;
-        V const centerB = V::make(7.0, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(7.0, 0.0, 0.0);
         T const radiusB = 4.0;
 
-        geometry::Sphere<V> const A = geometry::make_sphere(centerA, radiusA);
-        geometry::Sphere<V> const B = geometry::make_sphere(centerB, radiusB);
+        geometry::Sphere<T> const A = geometry::make_sphere(centerA, radiusA);
+        geometry::Sphere<T> const B = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_sphere_sphere(A, B, 0.0, callback);
+        geometry::contacts_sphere_sphere<T>(A, B, 0.0, callback);
 
         BOOST_CHECK(callback.m_contacts.size() == 0u);
     }

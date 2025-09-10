@@ -1,3 +1,4 @@
+#include "tiny_math_types.h"
 #include <geometry.h>
 #include <tiny.h>
 
@@ -7,9 +8,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -17,7 +16,7 @@ BOOST_AUTO_TEST_CASE(tetrahedron_test)
 {
 
     {
-        geometry::Tetrahedron<V> A;
+        geometry::TetrahedronEigen<T> A;
         BOOST_CHECK(geometry::is_valid(A) == true);
 
         BOOST_CHECK_CLOSE(A.point(0)(0), 0.0, 0.01);
@@ -40,10 +39,10 @@ BOOST_AUTO_TEST_CASE(tetrahedron_test)
 
         BOOST_CHECK_CLOSE(vol, 1.0 / 6.0, 0.01);
 
-        geometry::Triangle<V> const face_i = geometry::get_opposite_face(0, A);
-        geometry::Triangle<V> const face_j = geometry::get_opposite_face(1, A);
-        geometry::Triangle<V> const face_k = geometry::get_opposite_face(2, A);
-        geometry::Triangle<V> const face_m = geometry::get_opposite_face(3, A);
+        geometry::Triangle<T> const face_i = geometry::get_opposite_face(0, A);
+        geometry::Triangle<T> const face_j = geometry::get_opposite_face(1, A);
+        geometry::Triangle<T> const face_k = geometry::get_opposite_face(2, A);
+        geometry::Triangle<T> const face_m = geometry::get_opposite_face(3, A);
 
     //  face opposite vertex 0:  123
 
@@ -100,12 +99,13 @@ BOOST_AUTO_TEST_CASE(tetrahedron_test)
     }
 
     {
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(0.0, 1.0, 0.0);
-        V const p2 = V::make(1.0, 0.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Tetrahedron<V> A = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::TetrahedronEigen<T> A
+            = geometry::make_tetrahedron<T>(p0, p1, p2, p3);
         BOOST_CHECK(geometry::is_valid(A) == true);
 
         BOOST_CHECK_CLOSE(A.point(0)(0), 0.0, 0.01);
@@ -130,45 +130,48 @@ BOOST_AUTO_TEST_CASE(tetrahedron_test)
     }
 
     {
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(0.0, 1.0, 0.0);
-        V const p2 = V::make(1.0, 0.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Tetrahedron<V> A = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::TetrahedronEigen<T> A
+            = geometry::make_tetrahedron<T>(p0, p1, p2, p3);
 
-        V const v = V::make(-1.0, -1.0, -1.0);
-        V const p = A.get_support_point(v);
+        EigenVector3<T> const v = EigenVector3<T>(-1.0, -1.0, -1.0);
+        EigenVector3<T> const p = A.get_support_point(v);
 
         BOOST_CHECK_CLOSE(p(0), 0.0, 0.01);
         BOOST_CHECK_CLOSE(p(1), 0.0, 0.01);
         BOOST_CHECK_CLOSE(p(2), 0.0, 0.01);
     }
     {
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(0.0, 1.0, 0.0);
-        V const p2 = V::make(1.0, 0.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Tetrahedron<V> A = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::TetrahedronEigen<T> A
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
-        V const v = V::make(1.0, 0.0, 0.0);
-        V const p = A.get_support_point(v);
+        EigenVector3<T> const v = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p = A.get_support_point(v);
 
         BOOST_CHECK_CLOSE(p(0), 1.0, 0.01);
         BOOST_CHECK_CLOSE(p(1), 0.0, 0.01);
         BOOST_CHECK_CLOSE(p(2), 0.0, 0.01);
     }
     {
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(0.0, 1.0, 0.0);
-        V const p2 = V::make(1.0, 0.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Tetrahedron<V> A = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::TetrahedronEigen<T> A
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
-        V const v = V::make(0.0, 0.0, 1.0);
-        V const p = A.get_support_point(v);
+        EigenVector3<T> const v = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = A.get_support_point(v);
 
         BOOST_CHECK_CLOSE(p(0), 0.0, 0.01);
         BOOST_CHECK_CLOSE(p(1), 0.0, 0.01);

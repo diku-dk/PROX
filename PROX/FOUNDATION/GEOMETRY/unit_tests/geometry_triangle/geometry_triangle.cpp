@@ -7,9 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -17,7 +15,7 @@ BOOST_AUTO_TEST_CASE(triangle_test)
 {
 
     {
-        geometry::Triangle<V> A;
+        geometry::Triangle<T> A;
         BOOST_CHECK(geometry::is_valid(A) == true);
 
         BOOST_CHECK_CLOSE(A.point(0)(0), 0.0, 0.01);
@@ -38,11 +36,11 @@ BOOST_AUTO_TEST_CASE(triangle_test)
     }
 
     {
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(0.0, 1.0, 0.0);
-        V const p2 = V::make(1.0, 0.0, 0.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(1.0, 0.0, 0.0);
 
-        geometry::Triangle<V> A = geometry::make_triangle(p0, p1, p2);
+        geometry::Triangle<T> A = geometry::make_triangle(p0, p1, p2);
         BOOST_CHECK(geometry::is_valid(A) == true);
 
         BOOST_CHECK_CLOSE(A.point(0)(0), 0.0, 0.01);

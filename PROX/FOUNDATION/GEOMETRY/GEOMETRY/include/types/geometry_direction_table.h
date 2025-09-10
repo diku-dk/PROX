@@ -51,9 +51,9 @@ template <typename T> inline DirectionTable<T, 3> make3()
 
     DirectionTable<T, 3> D;
 
-    D(0) = {1, 0, 0};
-    D(1) = {0, 1, 0};
-    D(2) = {0, 0, 1};
+    D(0) = EigenVector3<T>(T(1), T(0), T(0));
+    D(1) = EigenVector3<T>(T(0), T(1), T(0));
+    D(2) = EigenVector3<T>(T(0), T(0), T(1));
 
     return D;
   }
@@ -84,79 +84,68 @@ template <typename T> inline DirectionTable<T, 3> make3()
       return D;
   }
 
-  template<typename V>
-  inline DirectionTable<V,7>  make7()
+  template <typename T> inline DirectionTable<T, 7> make7()
   {
-    return make_union( make3<V>(), make4<V>() );
+      return make_union(make3<T>(), make4<T>());
   }
 
-  template<typename V>
-  inline DirectionTable<V,9>  make9()
+  template <typename T> inline DirectionTable<T, 9> make9()
   {
-    return make_union( make3<V>(), make6<V>() );
+      return make_union(make3<T>(), make6<T>());
   }
 
-  template<typename V>
-  inline DirectionTable<V,10>  make10()
+  template <typename T> inline DirectionTable<T, 10> make10()
   {
-    return make_union( make4<V>(), make6<V>() );
+      return make_union(make4<T>(), make6<T>());
   }
 
-  template<typename V>
-  inline DirectionTable<V,13>  make13()
+  template <typename T> inline DirectionTable<T, 13> make13()
   {
-    return make_union( make7<V>(), make6<V>() );
+      return make_union(make7<T>(), make6<T>());
   }
 
-  template<typename V, size_t N> class DirectionTableHelper;
+  template <typename T, size_t N> class DirectionTableHelper;
 
-  template<typename V>
-  class DirectionTableHelper<V,3>
+  template <typename T> class DirectionTableHelper<T, 3>
   {
   public:
-    static DirectionTable<V,3> make() { return make3<V>(); }
+      static DirectionTable<T, 3> make() { return make3<T>(); }
   };
 
-  template<typename V>
-  class DirectionTableHelper<V,4>
+  template <typename T> class DirectionTableHelper<T, 4>
   {
   public:
-    static DirectionTable<V,4> make() { return make4<V>(); }
+      static DirectionTable<T, 4> make() { return make4<T>(); }
   };
 
-  template<typename V>
-  class DirectionTableHelper<V,6>
+  template <typename T> class DirectionTableHelper<T, 6>
   {
   public:
-    static DirectionTable<V,6> make() { return make6<V>(); }
+      static DirectionTable<T, 6> make() { return make6<T>(); }
   };
 
-  template<typename V>
-  class  DirectionTableHelper<V,7>
+  template <typename T> class DirectionTableHelper<T, 7>
   {
   public:
-    static DirectionTable<V,7> make() { return make7<V>(); }
+      static DirectionTable<T, 7> make() { return make7<T>(); }
   };
 
-  template<typename V>
-  class  DirectionTableHelper<V,9>
+  template <typename T> class DirectionTableHelper<T, 9>
   {
   public:
-    static DirectionTable<V,9> make() { return make9<V>(); }
+      static DirectionTable<T, 9> make() { return make9<T>(); }
   };
 
-  template<typename V>
-  class  DirectionTableHelper<V,10>
+  template <typename T> class DirectionTableHelper<T, 10>
   {
   public:
-    static DirectionTable<V,10> make() { return make10<V>(); }
+      static DirectionTable<T, 10> make() { return make10<T>(); }
   };
 
-  template<typename V>
-  class  DirectionTableHelper<V,13>
+  template <typename T> class DirectionTableHelper<T, 13>
   {
   public:
-    static DirectionTable<V,13> make() { return make13<V>(); }
+      static DirectionTable<T, 13> make() { return make13<T>(); }
   };
 
 }// namespace geometry
@@ -232,8 +221,7 @@ template <typename T> inline DirectionTable<T, 3> make3()
       return D;
   }
 
-  template<typename T>
-  inline DirectionTableEigen<T,6> make6()
+  template <typename T> inline DirectionTableEigen<T, 6> make6Eigen()
   {
       DirectionTableEigen<T,6> D;
 
@@ -247,28 +235,24 @@ template <typename T> inline DirectionTable<T, 3> make3()
       return D;
   }
 
-  template<typename T>
-  inline DirectionTableEigen<T,7>  make7()
+  template <typename T> inline DirectionTableEigen<T, 7> make7Eigen()
   {
-      return make_union( make3<T>(), make4<T>() );
+      return make_union(make3Eigen<T>(), make4Eigen<T>());
   }
 
-  template<typename T>
-  inline DirectionTableEigen<T,9>  make9()
+  template <typename T> inline DirectionTableEigen<T, 9> make9Eigen()
   {
-      return make_union( make3<T>(), make6<T>() );
+      return make_union(make3Eigen<T>(), make6Eigen<T>());
   }
 
-  template<typename T>
-  inline DirectionTableEigen<T,10>  make10()
+  template <typename T> inline DirectionTableEigen<T, 10> make10Eigen()
   {
-      return make_union( make4<T>(), make6<T>() );
+      return make_union(make4Eigen<T>(), make6Eigen<T>());
   }
 
-  template<typename T>
-  inline DirectionTableEigen<T,13>  make13()
+  template <typename T> inline DirectionTableEigen<T, 13> make13Eigen()
   {
-      return make_union( make7<T>(), make6<T>() );
+      return make_union(make7Eigen<T>(), make6Eigen<T>());
   }
 
   template<typename T, size_t N> class DirectionTableEigenHelper;
@@ -291,35 +275,35 @@ template <typename T> inline DirectionTable<T, 3> make3()
   class DirectionTableEigenHelper<T,6>
   {
   public:
-      static DirectionTableEigen<T,6> make() { return make6<T>(); }
+      static DirectionTableEigen<T, 6> make() { return make6Eigen<T>(); }
   };
 
   template<typename T>
   class  DirectionTableEigenHelper<T,7>
   {
   public:
-      static DirectionTableEigen<T,7> make() { return make7<T>(); }
+      static DirectionTableEigen<T, 7> make() { return make7Eigen<T>(); }
   };
 
   template<typename T>
   class  DirectionTableEigenHelper<T,9>
   {
   public:
-      static DirectionTableEigen<T,9> make() { return make9<T>(); }
+      static DirectionTableEigen<T, 9> make() { return make9Eigen<T>(); }
   };
 
   template<typename T>
   class  DirectionTableEigenHelper<T,10>
   {
   public:
-      static DirectionTableEigen<T,10> make() { return make10<T>(); }
+      static DirectionTableEigen<T, 10> make() { return make10Eigen<T>(); }
   };
 
   template<typename T>
   class  DirectionTableEigenHelper<T,13>
   {
   public:
-      static DirectionTableEigen<T,13> make() { return make13<T>(); }
+      static DirectionTableEigen<T, 13> make() { return make13Eigen<T>(); }
   };
 
   }// namespace geometry

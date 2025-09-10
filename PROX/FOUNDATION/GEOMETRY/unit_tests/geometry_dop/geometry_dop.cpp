@@ -13,9 +13,7 @@ BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(make_dops)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
+    using T = float;
 
     {
         geometry::DOP<T, 6> A;
@@ -23,18 +21,18 @@ BOOST_AUTO_TEST_CASE(make_dops)
     }
 
     {
-        geometry::DirectionTable<V, 3> DT = geometry::make3<V>();
+        geometry::DirectionTable<T, 3> DT = geometry::make3<T>();
 
-        std::vector<V> points(8);
+        std::vector<EigenVector3<T>> points(8);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f);
 
         geometry::DOP<T, 6> A = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
@@ -50,29 +48,45 @@ BOOST_AUTO_TEST_CASE(make_dops)
 
   // Separated kDOPs
     {
-        geometry::DirectionTable<V, 3> DT = geometry::make3<V>();
+        geometry::DirectionTable<T, 3> DT = geometry::make3<T>();
 
-        std::vector<V> points(8);
+        std::vector<EigenVector3<T>> points(8);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f) + V::make(-2.0f, 0.0f, 0.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f) + V::make(-2.0f, 0.0f, 0.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(-2.0f, 0.0f, 0.0f);
 
         geometry::DOP<T, 6> A = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f) + V::make(2.0f, 0.0f, 0.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f) + V::make(2.0f, 0.0f, 0.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(2.0f, 0.0f, 0.0f);
 
         geometry::DOP<T, 6> B = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
@@ -81,29 +95,45 @@ BOOST_AUTO_TEST_CASE(make_dops)
     }
   // Penetrating kDOPs
     {
-        geometry::DirectionTable<V, 3> DT = geometry::make3<V>();
+        geometry::DirectionTable<T, 3> DT = geometry::make3<T>();
 
-        std::vector<V> points(8);
+        std::vector<EigenVector3<T>> points(8);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f) + V::make(-0.5f, 0.0f, 0.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f) + V::make(-0.5f, 0.0f, 0.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(-0.5f, 0.0f, 0.0f);
 
         geometry::DOP<T, 6> A = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f) + V::make(0.5f, 0.0f, 0.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f) + V::make(0.5f, 0.0f, 0.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(0.5f, 0.0f, 0.0f);
 
         geometry::DOP<T, 6> B = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
@@ -112,29 +142,45 @@ BOOST_AUTO_TEST_CASE(make_dops)
     }
   // Touching kDOPs
     {
-        geometry::DirectionTable<V, 3> DT = geometry::make3<V>();
+        geometry::DirectionTable<T, 3> DT = geometry::make3<T>();
 
-        std::vector<V> points(8);
+        std::vector<EigenVector3<T>> points(8);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f) + V::make(-1.0f, 0.0f, 0.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f) + V::make(-1.0f, 0.0f, 0.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(-1.0f, 0.0f, 0.0f);
 
         geometry::DOP<T, 6> A = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f) + V::make(1.0f, 0.0f, 0.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f) + V::make(1.0f, 0.0f, 0.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f)
+                  + EigenVector3<T>(1.0f, 0.0f, 0.0f);
 
         geometry::DOP<T, 6> B = geometry::make_dop(&points[0], &points[0] + 8, DT);
 
@@ -146,18 +192,18 @@ BOOST_AUTO_TEST_CASE(make_dops)
     }
   // Identical kDOPs
     {
-        geometry::DirectionTable<V, 3> DT = geometry::make3<V>();
+        geometry::DirectionTable<T, 3> DT = geometry::make3<T>();
 
-        std::vector<V> points(8);
+        std::vector<EigenVector3<T>> points(8);
 
-        points[0] = V::make(-1.0f, -1.0f, -1.0f);
-        points[1] = V::make(1.0f, -1.0f, -1.0f);
-        points[2] = V::make(1.0f, 1.0f, -1.0f);
-        points[3] = V::make(-1.0f, 1.0f, -1.0f);
-        points[4] = V::make(-1.0f, -1.0f, 1.0f);
-        points[5] = V::make(1.0f, -1.0f, 1.0f);
-        points[6] = V::make(1.0f, 1.0f, 1.0f);
-        points[7] = V::make(-1.0f, 1.0f, 1.0f);
+        points[0] = EigenVector3<T>(-1.0f, -1.0f, -1.0f);
+        points[1] = EigenVector3<T>(1.0f, -1.0f, -1.0f);
+        points[2] = EigenVector3<T>(1.0f, 1.0f, -1.0f);
+        points[3] = EigenVector3<T>(-1.0f, 1.0f, -1.0f);
+        points[4] = EigenVector3<T>(-1.0f, -1.0f, 1.0f);
+        points[5] = EigenVector3<T>(1.0f, -1.0f, 1.0f);
+        points[6] = EigenVector3<T>(1.0f, 1.0f, 1.0f);
+        points[7] = EigenVector3<T>(-1.0f, 1.0f, 1.0f);
 
         geometry::DOP<T, 6> A = geometry::make_dop(&points[0], &points[0] + 8, DT);
         geometry::DOP<T, 6> B = geometry::make_dop(&points[0], &points[0] + 8, DT);

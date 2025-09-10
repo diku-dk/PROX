@@ -11,9 +11,7 @@ BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(interval)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::value_traits VT;
-    typedef MT::real_type T;
+    using T = float;
 
     {
         geometry::Interval<T> I;

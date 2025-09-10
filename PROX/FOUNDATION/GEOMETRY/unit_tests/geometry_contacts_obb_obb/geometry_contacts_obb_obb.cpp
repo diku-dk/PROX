@@ -9,27 +9,25 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 class ContactInfo
 {
 public:
-    V m_point;
-    V m_normal;
+    EigenVector3<T> m_point;
+    EigenVector3<T> m_normal;
     T m_distance;
 };
 
-class MyCallback : public geometry::ContactsCallback<V>
+class MyCallback : public geometry::ContactsCallback<T>
 {
 public:
     std::vector<ContactInfo> m_contacts;
 
 public:
-    void operator()(V const& point, V const& normal, typename V::real_type const& distance)
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
     {
         ContactInfo info;
 
@@ -47,23 +45,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
 {
   // touching bottom-top faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, -2.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ry(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, -2.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatey<T>(std::numbers::pi_v<T> * 0.25);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(test1);
         BOOST_CHECK(test2);
@@ -81,23 +83,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // touching left-right faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.0, 0.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rx(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(2.0, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatex<T>(std::numbers::pi_v<T> * 0.25);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(test1);
         BOOST_CHECK(test2);
@@ -115,23 +121,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // touching front-back faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 2.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rz(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 2.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatez<T>(std::numbers::pi_v<T> * 0.25);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(test1);
         BOOST_CHECK(test2);
@@ -149,23 +159,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // separating bottom-top faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, -2.1, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ry(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, -2.1, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatey<T>(std::numbers::pi_v<T> * 0.25);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(!test1);
         BOOST_CHECK(!test2);
@@ -175,23 +189,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // separating left-right faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.1, 0.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rx(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(2.1, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatex<T>(std::numbers::pi_v<T> * 0.25);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(!test1);
         BOOST_CHECK(!test2);
@@ -201,23 +219,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // separating front-back faces
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 2.1);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Rz(VT::pi_quarter());
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 2.1);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = Rotatez<T>(std::numbers::pi_v<T> * 0.25);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(!test1);
         BOOST_CHECK(!test2);
@@ -227,23 +249,27 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // A inside of B
     {
-        V const centerA = V::make(0.0, 0.5, 0.0);
-        V const half_extA = V::make(0.5, 0.25, 0.5);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.5, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(0.5, 0.25, 0.5);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(0.0, 0.0, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::identity();
+        EigenVector3<T> const centerB = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(test1);
         BOOST_CHECK(test2);
@@ -265,23 +291,28 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // separating edge-edge-case
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(2.01, 2.01, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ru(VT::pi_half(), centerB);
+        EigenVector3<T> const centerB = EigenVector3<T>(2.01, 2.01, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB
+            = Rotateu(std::numbers::pi_v<T> * 0.5f, centerB);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(!test1);
         BOOST_CHECK(!test2);
@@ -291,23 +322,29 @@ BOOST_AUTO_TEST_CASE(contacts_obb_obb_test)
     }
   // touching edge-edge-case
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<T> obbA
+            = geometry::make_obb<T>(centerA, qA, half_extA);
 
-        V const centerB = V::make(1.999999, 1.999999, 0.0);
-        V const half_extB = V::make(1.0, 1.0, 1.0);
-        Q const qB = Q::Ru(VT::pi_half(), centerB);
+        EigenVector3<T> const centerB
+            = EigenVector3<T>(1.999999, 1.999999, 0.0);
+        EigenVector3<T> const half_extB = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qB
+            = Rotateu(std::numbers::pi_v<T> * 0.5f, centerB);
 
-        geometry::OBB<MT> obbB = geometry::make_obb<MT>(centerB, qB, half_extB);
+        geometry::OBBEigen<T> obbB
+            = geometry::make_obb<T>(centerB, qB, half_extB);
 
         MyCallback callback1;
         MyCallback callback2;
 
-        bool const test1 = geometry::contacts_obb_obb(obbA, obbB, 0.0, callback1);
-        bool const test2 = geometry::contacts_obb_obb(obbB, obbA, 0.0, callback2);
+        bool const test1
+            = geometry::contacts_obb_obb<T>(obbA, obbB, 0.0, callback1);
+        bool const test2
+            = geometry::contacts_obb_obb<T>(obbB, obbA, 0.0, callback2);
 
         BOOST_CHECK(test1);
         BOOST_CHECK(test2);

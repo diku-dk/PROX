@@ -9,26 +9,25 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using T = MT::real_type;
+using T = double;
 
 class ContactInfo
 {
 public:
-    V m_point;
-    V m_normal;
+    EigenVector3<T> m_point;
+    EigenVector3<T> m_normal;
     T m_distance;
 };
 
-class MyCallback : public geometry::ContactsCallback<V>
+class MyCallback : public geometry::ContactsCallback<T>
 {
 public:
     std::vector<ContactInfo> m_contacts;
 
 public:
-    void operator()(V const& point, V const& normal, typename V::real_type const& distance)
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
     {
         ContactInfo info;
 
@@ -46,20 +45,22 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
 {
   // B tip inside left-side of A
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(-0.7, 0.2, 0.2);
+        EigenVector3<T> const offset = EigenVector3<T>(-0.7, 0.2, 0.2);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -93,20 +94,22 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // B tip inside front-side of A
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(0.3, -0.7, 0.2);
+        EigenVector3<T> const offset = EigenVector3<T>(0.3, -0.7, 0.2);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -140,20 +143,22 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // B tip inside bottom-side of A
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(0.3, 0.3, -0.7);
+        EigenVector3<T> const offset = EigenVector3<T>(0.3, 0.3, -0.7);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -194,20 +199,22 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // B tip inside oblique-side of A
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(0.3, 0.3, 0.3);
+        EigenVector3<T> const offset = EigenVector3<T>(0.3, 0.3, 0.3);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -248,18 +255,20 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // B inside of A
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const b0 = V::make(0.1, 0.1, 0.1);
-        V const b1 = V::make(0.9, 0.0, 0.0);
-        V const b2 = V::make(0.0, 0.9, 0.0);
-        V const b3 = V::make(0.0, 0.0, 0.9);
+        EigenVector3<T> const b0 = EigenVector3<T>(0.1, 0.1, 0.1);
+        EigenVector3<T> const b1 = EigenVector3<T>(0.9, 0.0, 0.0);
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 0.9, 0.0);
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 0.9);
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback1;
         MyCallback callback2;
@@ -333,18 +342,20 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // Edge from B goes through A and vice-versa
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const b0 = V::make(0.3, 0.3, -1.0);
-        V const b1 = V::make(1.3, 0.3, 0.0);
-        V const b2 = V::make(0.3, 1.3, 0.0);
-        V const b3 = V::make(0.3, 0.3, 1.0);
+        EigenVector3<T> const b0 = EigenVector3<T>(0.3, 0.3, -1.0);
+        EigenVector3<T> const b1 = EigenVector3<T>(1.3, 0.3, 0.0);
+        EigenVector3<T> const b2 = EigenVector3<T>(0.3, 1.3, 0.0);
+        EigenVector3<T> const b3 = EigenVector3<T>(0.3, 0.3, 1.0);
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -385,18 +396,20 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // A is impaled by B
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const b0 = V::make(0.1, 0.1, 2.0);
-        V const b1 = V::make(0.1, 0.9, 2.0);
-        V const b2 = V::make(0.9, 0.1, 2.0);
-        V const b3 = V::make(0.2, 0.2, -2.0);
+        EigenVector3<T> const b0 = EigenVector3<T>(0.1, 0.1, 2.0);
+        EigenVector3<T> const b1 = EigenVector3<T>(0.1, 0.9, 2.0);
+        EigenVector3<T> const b2 = EigenVector3<T>(0.9, 0.1, 2.0);
+        EigenVector3<T> const b3 = EigenVector3<T>(0.2, 0.2, -2.0);
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -451,18 +464,20 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
     }
   // face of A is touching face of  B
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 2.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 2.0);
 
-        V const b0 = V::make(0.9, 0.9, 0.1);
-        V const b1 = V::make(0.9, -0.1, 0.1);
-        V const b2 = V::make(-0.1, 0.9, 0.1);
-        V const b3 = V::make(0.9, 0.9, -2.0);
+        EigenVector3<T> const b0 = EigenVector3<T>(0.9, 0.9, 0.1);
+        EigenVector3<T> const b1 = EigenVector3<T>(0.9, -0.1, 0.1);
+        EigenVector3<T> const b2 = EigenVector3<T>(-0.1, 0.9, 0.1);
+        EigenVector3<T> const b3 = EigenVector3<T>(0.9, 0.9, -2.0);
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -546,15 +561,15 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
 
   // face of A is touching face of  B, only two surface faces
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 2.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 2.0);
 
-        V const b0 = V::make(0.9, 0.9, 0.1);
-        V const b1 = V::make(0.9, -0.1, 0.1);
-        V const b2 = V::make(-0.1, 0.9, 0.1);
-        V const b3 = V::make(0.9, 0.9, -2.0);
+        EigenVector3<T> const b0 = EigenVector3<T>(0.9, 0.9, 0.1);
+        EigenVector3<T> const b1 = EigenVector3<T>(0.9, -0.1, 0.1);
+        EigenVector3<T> const b2 = EigenVector3<T>(-0.1, 0.9, 0.1);
+        EigenVector3<T> const b3 = EigenVector3<T>(0.9, 0.9, -2.0);
 
         std::vector<bool> surface_A(4u, false);
         std::vector<bool> surface_B(4u, false);
@@ -562,8 +577,10 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
         surface_A[3] = true;
         surface_B[3] = true;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 
@@ -648,18 +665,20 @@ BOOST_AUTO_TEST_CASE(contacts_tetrahedron_tetrahedron_test)
 
   // Edge from B goes through A and vice-versa
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const b0 = V::make(0.3, 0.3, -1.0);
-        V const b1 = V::make(1.3, 0.3, 0.0);
-        V const b2 = V::make(0.3, 1.3, 0.0);
-        V const b3 = V::make(0.3, 0.3, 1.0);
+        EigenVector3<T> const b0 = EigenVector3<T>(0.3, 0.3, -1.0);
+        EigenVector3<T> const b1 = EigenVector3<T>(1.3, 0.3, 0.0);
+        EigenVector3<T> const b2 = EigenVector3<T>(0.3, 1.3, 0.0);
+        EigenVector3<T> const b3 = EigenVector3<T>(0.3, 0.3, 1.0);
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
         MyCallback callback;
 

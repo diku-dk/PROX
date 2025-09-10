@@ -7,11 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using Q = MT::quaternion_type;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -19,15 +15,15 @@ BOOST_AUTO_TEST_CASE(inside_obb_test)
 {
 
     {
-        V const center = V::make(0.0, 0.0, 0.0);
-        V const half_ext = V::make(1.0, 1.0, 1.0);
-        Q const q = Q::identity();
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenQuaternion<T> q = EigenQuaternion<T>::Identity();
 
-        geometry::OBB<MT> A = geometry::make_obb<MT>(center, q, half_ext);
+        geometry::OBBEigen<T> A = geometry::make_obb<T>(center, q, half_ext);
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 1.0, 1.0);
-        V const p2 = V::make(2.0, 2.0, 2.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(2.0, 2.0, 2.0);
 
         BOOST_CHECK(geometry::inside_obb(p0, A) == true);
         BOOST_CHECK(geometry::inside_obb(p1, A) == true);
@@ -35,15 +31,18 @@ BOOST_AUTO_TEST_CASE(inside_obb_test)
     }
 
     {
-        V const center = V::make(0.0, 0.0, 0.0);
-        V const half_ext = V::make(1.0, 1.0, 1.0);
-        Q const q = Q::Rx(VT::pi_half());
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 1.0, 1.0);
+        const EigenQuaternion<T> q = Rotatex<T>(std::numbers::pi_v<T> * 0.5);
 
-        geometry::OBB<MT> A = geometry::make_obb<MT>(center, q, half_ext);
+        geometry::OBBEigen<T> A = geometry::make_obb<T>(center, q, half_ext);
 
-        V const p0 = geometry::transform_from_obb(V::make(0.0, 0.0, 0.0), A);
-        V const p1 = geometry::transform_from_obb(V::make(1.0, 1.0, 1.0), A);
-        V const p2 = geometry::transform_from_obb(V::make(2.0, 2.0, 2.0), A);
+        EigenVector3<T> const p0
+            = geometry::transform_from_obb(EigenVector3<T>(0.0, 0.0, 0.0), A);
+        EigenVector3<T> const p1
+            = geometry::transform_from_obb(EigenVector3<T>(1.0, 1.0, 1.0), A);
+        EigenVector3<T> const p2
+            = geometry::transform_from_obb(EigenVector3<T>(2.0, 2.0, 2.0), A);
 
         BOOST_CHECK(geometry::inside_obb(p0, A) == true);
         BOOST_CHECK(geometry::inside_obb(p1, A) == true);

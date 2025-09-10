@@ -7,9 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -17,7 +15,7 @@ BOOST_AUTO_TEST_CASE(ray_test)
 {
 
     {
-        geometry::Ray<V> A;
+        geometry::RayEigen<T> A;
         BOOST_CHECK(geometry::is_valid(A) == true);
 
         BOOST_CHECK_CLOSE(A.origin()(0), 0.0, 0.01);
@@ -29,10 +27,10 @@ BOOST_AUTO_TEST_CASE(ray_test)
         BOOST_CHECK_CLOSE(A.direction()(2), 1.0, 0.01);
     }
     {
-        V const o = V::make(1.0, 2.0, 3.0);
-        V const d = V::make(4.0, 0.0, 0.0);
+        EigenVector3<T> const o = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const d = EigenVector3<T>(4.0, 0.0, 0.0);
 
-        geometry::Ray<V> A = geometry::make_ray(o, d);
+        geometry::RayEigen<T> A = geometry::make_ray(o, d);
 
         BOOST_CHECK(geometry::is_valid(A) == true);
 
@@ -45,10 +43,10 @@ BOOST_AUTO_TEST_CASE(ray_test)
         BOOST_CHECK_CLOSE(A.direction()(2), 0.0, 0.01);
     }
     {
-        V const o = V::make(1.0, 2.0, 3.0);
-        V const d = V::make(4.0, 0.0, 0.0);
+        EigenVector3<T> const o = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const d = EigenVector3<T>(4.0, 0.0, 0.0);
 
-        geometry::Ray<V> A;
+        geometry::RayEigen<T> A;
 
         A.origin() = o;
         A.set_direction(d);
@@ -64,13 +62,13 @@ BOOST_AUTO_TEST_CASE(ray_test)
         BOOST_CHECK_CLOSE(A.direction()(2), 0.0, 0.01);
     }
     {
-        V const o = V::make(1.0, 2.0, 3.0);
-        V const d = V::make(4.0, 0.0, 0.0);
+        EigenVector3<T> const o = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const d = EigenVector3<T>(4.0, 0.0, 0.0);
 
-        geometry::Ray<V> A = geometry::make_ray(o, d);
+        geometry::RayEigen<T> A = geometry::make_ray(o, d);
 
-        geometry::Ray<V> B = A;
-        geometry::Ray<V> C(A);
+        geometry::RayEigen<T> B = A;
+        geometry::RayEigen<T> C(A);
 
         BOOST_CHECK(geometry::is_valid(B) == true);
         BOOST_CHECK(geometry::is_valid(C) == true);

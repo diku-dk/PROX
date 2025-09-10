@@ -13,27 +13,31 @@ BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(intersection)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::vector3_type V;
+    using T = float;
 
     {
-        geometry::Plane<V> const A = geometry::make_plane(V::make(0, 0, 1), -1.0);
-        geometry::Plane<V> const B = geometry::make_plane(V::make(0, 1, 0), -1.0);
-        geometry::Line<V> const L = geometry::make_intersection(A, B);
+        geometry::Plane<T> const A
+            = geometry::make_plane<T>(EigenVector3<T>(0, 0, 1), -1.0);
+        geometry::Plane<T> const B
+            = geometry::make_plane<T>(EigenVector3<T>(0, 1, 0), -1.0);
+        geometry::Line<T> const L = geometry::make_intersection(A, B);
 
         BOOST_CHECK_CLOSE(geometry::get_distance(L.point(), A), 0.0, 0.01f);
         BOOST_CHECK_CLOSE(geometry::get_distance(L.point(), B), 0.0, 0.01f);
-        BOOST_CHECK_CLOSE(inner_prod(L.direction(), A.normal()), 0.0, 0.01f);
-        BOOST_CHECK_CLOSE(inner_prod(L.direction(), B.normal()), 0.0, 0.01f);
-        BOOST_CHECK_CLOSE(inner_prod(L.direction(), L.direction()), 1.0, 0.01f);
+        BOOST_CHECK_CLOSE(dot(L.direction(), A.normal()), 0.0, 0.01f);
+        BOOST_CHECK_CLOSE(dot(L.direction(), B.normal()), 0.0, 0.01f);
+        BOOST_CHECK_CLOSE(dot(L.direction(), L.direction()), 1.0, 0.01f);
     }
 
     {
-        geometry::Plane<V> const A = geometry::make_plane(V::make(0, 0, 1), -1.0);
-        geometry::Plane<V> const B = geometry::make_plane(V::make(0, 1, 0), -1.0);
-        geometry::Plane<V> const C = geometry::make_plane(V::make(1, 0, 0), -1.0);
+        geometry::Plane<T> const A
+            = geometry::make_plane<T>(EigenVector3<T>(0, 0, 1), -1.0);
+        geometry::Plane<T> const B
+            = geometry::make_plane<T>(EigenVector3<T>(0, 1, 0), -1.0);
+        geometry::Plane<T> const C
+            = geometry::make_plane<T>(EigenVector3<T>(1, 0, 0), -1.0);
 
-        V const p = geometry::make_intersection(A, B, C);
+        const EigenVector3<T> p = geometry::make_intersection(A, B, C);
 
         BOOST_CHECK_CLOSE(geometry::get_distance(p, A), 0.0, 0.01f);
         BOOST_CHECK_CLOSE(geometry::get_distance(p, B), 0.0, 0.01f);

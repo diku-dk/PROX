@@ -312,7 +312,7 @@ template <typename T> inline bool inside_quad(const EigenVector3<T>& p, std::vec
         const EigenVector3<T> a = quad[(k + 1) % 4] - quad[k];
         const EigenVector3<T> b = p - quad[k];
 
-        T const tst = tiny::cross(a, b)[2];
+        T const tst = cross(a, b)[2];
 
         if (tst < 0) return false;
     }
@@ -332,7 +332,8 @@ inline void intersect_polygon_circle(std::vector<EigenVector3<T>>& feature, cons
 
     if (feature.size() == 1u)
     {
-        T const distance = tiny::norm(EigenVector3<T>(feature[0](0), feature[0](1), 0));
+        T const distance
+            = norm(EigenVector3<T>(feature[0](0), feature[0](1), 0));
 
         if (distance <= radius) { intersection.push_back(feature[0]); }
 

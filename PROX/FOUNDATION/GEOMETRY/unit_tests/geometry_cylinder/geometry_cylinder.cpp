@@ -7,9 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -17,7 +15,7 @@ BOOST_AUTO_TEST_CASE(cylinder_test)
 {
 
     {
-        geometry::Cylinder<V> const A;
+        geometry::CylinderEigen<T> const A;
 
         BOOST_CHECK(geometry::is_valid(A) == true);
 
@@ -35,12 +33,13 @@ BOOST_AUTO_TEST_CASE(cylinder_test)
 
     {
 
-        V const center = V::make(1.0, 2.0, 3.0);
-        V const axis = V::make(0.0, 5.0, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const axis = EigenVector3<T>(0.0, 5.0, 0.0);
         T const radius = 2.0;
         T const height = 4.0;
 
-        geometry::Cylinder<V> const A = geometry::make_cylinder(radius, height, axis, center);
+        geometry::CylinderEigen<T> const A
+            = geometry::make_cylinder(radius, height, axis, center);
 
         BOOST_CHECK(geometry::is_valid(A) == true);
 
@@ -57,12 +56,12 @@ BOOST_AUTO_TEST_CASE(cylinder_test)
     }
 
     {
-        V const center = V::make(1.0, 2.0, 3.0);
-        V const axis = V::make(0.0, 5.0, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const axis = EigenVector3<T>(0.0, 5.0, 0.0);
         T const radius = 2.0;
         T const height = 4.0;
 
-        geometry::Cylinder<V> A;
+        geometry::CylinderEigen<T> A;
 
         A.center() = center;
         A.set_axis(axis);
@@ -85,14 +84,15 @@ BOOST_AUTO_TEST_CASE(cylinder_test)
 
     {
 
-        V const center = V::make(1.0, 2.0, 3.0);
-        V const axis = V::make(0.0, 5.0, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.0, 2.0, 3.0);
+        EigenVector3<T> const axis = EigenVector3<T>(0.0, 5.0, 0.0);
         T const radius = 2.0;
         T const height = 4.0;
 
-        geometry::Cylinder<V> const A = geometry::make_cylinder(radius, height, axis, center);
-        geometry::Cylinder<V> const B(A);
-        geometry::Cylinder<V> const C = B;
+        geometry::CylinderEigen<T> const A
+            = geometry::make_cylinder(radius, height, axis, center);
+        geometry::CylinderEigen<T> const B(A);
+        geometry::CylinderEigen<T> const C = B;
 
         BOOST_CHECK(geometry::is_valid(B) == true);
 

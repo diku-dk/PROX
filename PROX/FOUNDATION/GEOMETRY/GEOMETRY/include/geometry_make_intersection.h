@@ -13,10 +13,9 @@
 namespace geometry
 {
 
-
-  template<typename T>
-  inline T make_intersection(Line<T> const & L, Plane<T> const & P)
-  {
+template <typename T>
+inline EigenVector3<T> make_intersection(Line<T> const& L, Plane<T> const& P)
+{
     using std::fabs;
     const EigenVector3<T>& o       = L.point();
     const EigenVector3<T>& d       = L.direction();
@@ -75,7 +74,7 @@ namespace geometry
   {
     const EigenVector3<T> D = cross( A.normal(), B.normal() );
 
-    assert( inner_prod(D,D) > 0 || !"make_intersection(): error planes are coplanar");
+    assert(dot(D, D) > 0 || !"make_intersection(): error planes are coplanar");
     assert( is_number(D(0))               || !"make_intersection(): NaN encountered");
     assert( is_finite(D(0))               || !"make_intersection(): Inf encountered");
     assert( is_number(D(1))               || !"make_intersection(): NaN encountered");

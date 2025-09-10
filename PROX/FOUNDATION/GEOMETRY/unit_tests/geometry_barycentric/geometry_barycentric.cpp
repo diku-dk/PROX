@@ -8,16 +8,14 @@
 #include <boost/test/test_tools.hpp>
 
 using T = double;
-using MT = tiny::MathTypes<T>;
-using V = MT::vector3_type;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(barycentric_line_inside)
 {
-    V x1 = V::make(0.0, 0.0, 0.0);
-    V x2 = V::make(1.0, 0.0, 0.0);
-    V p = 0.55 * x1 + 0.45 * x2;
+    EigenVector3<T> x1 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> p = 0.55 * x1 + 0.45 * x2;
 
     T w1 = 0.0;
     T w2 = 0.0;
@@ -32,10 +30,10 @@ BOOST_AUTO_TEST_CASE(barycentric_line_inside)
 
 BOOST_AUTO_TEST_CASE(barycentric_triangle_inside)
 {
-    V x1 = V::make(0.0, 0.0, 0.0);
-    V x2 = V::make(1.0, 0.0, 0.0);
-    V x3 = V::make(0.0, 1.0, 0.0);
-    V p = 0.5 * x1 + 0.25 * x2 + 0.25 * x3;
+    EigenVector3<T> x1 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> x3 = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> p = 0.5 * x1 + 0.25 * x2 + 0.25 * x3;
 
     T w1 = 0.0;
     T w2 = 0.0;
@@ -52,11 +50,11 @@ BOOST_AUTO_TEST_CASE(barycentric_triangle_inside)
 
 BOOST_AUTO_TEST_CASE(barycentric_tetrahedron_inside)
 {
-    V x1 = V::make(0.0, 0.0, 0.0);
-    V x2 = V::make(1.0, 0.0, 0.0);
-    V x3 = V::make(0.0, 1.0, 0.0);
-    V x4 = V::make(0.0, 0.0, 1.0);
-    V p = 0.4 * x1 + 0.3 * x2 + 0.2 * x3 + 0.1 * x4;
+    EigenVector3<T> x1 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> x3 = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> x4 = EigenVector3<T>(0.0, 0.0, 1.0);
+    EigenVector3<T> p = 0.4 * x1 + 0.3 * x2 + 0.2 * x3 + 0.1 * x4;
 
     T w1 = 0.0;
     T w2 = 0.0;
@@ -75,9 +73,9 @@ BOOST_AUTO_TEST_CASE(barycentric_tetrahedron_inside)
 
 BOOST_AUTO_TEST_CASE(barycentric_line_outside)
 {
-    V x1 = V::make(1.0, 0.0, 0.0);
-    V x2 = V::make(2.0, 0.0, 0.0);
-    V p = -1.0 * x1 + 2.0 * x2;
+    EigenVector3<T> x1 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(2.0, 0.0, 0.0);
+    EigenVector3<T> p = -1.0 * x1 + 2.0 * x2;
 
     T w1 = 0.0;
     T w2 = 0.0;
@@ -92,10 +90,10 @@ BOOST_AUTO_TEST_CASE(barycentric_line_outside)
 
 BOOST_AUTO_TEST_CASE(barycentric_triangle_outside)
 {
-    V x1 = V::make(0.0, 0.0, 0.0);
-    V x2 = V::make(1.0, 0.0, 0.0);
-    V x3 = V::make(0.0, 1.0, 0.0);
-    V p = V::make(1.0, 1.0, 0.0);
+    EigenVector3<T> x1 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> x3 = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> p = EigenVector3<T>(1.0, 1.0, 0.0);
 
     T w1 = 0.0;
     T w2 = 0.0;
@@ -112,11 +110,11 @@ BOOST_AUTO_TEST_CASE(barycentric_triangle_outside)
 
 BOOST_AUTO_TEST_CASE(barycentric_tetrahedron_outside)
 {
-    V x1 = V::make(0.0, 0.0, 0.0);
-    V x2 = V::make(1.0, 0.0, 0.0);
-    V x3 = V::make(0.0, 1.0, 0.0);
-    V x4 = V::make(0.0, 0.0, 1.0);
-    V p = V::make(1.0, 1.0, 1.0);
+    EigenVector3<T> x1 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> x3 = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> x4 = EigenVector3<T>(0.0, 0.0, 1.0);
+    EigenVector3<T> p = EigenVector3<T>(1.0, 1.0, 1.0);
     ;
 
     T w1 = 0.0;
@@ -136,15 +134,15 @@ BOOST_AUTO_TEST_CASE(barycentric_tetrahedron_outside)
 
 BOOST_AUTO_TEST_CASE(barycentric_tetrahedron_derivatives)
 {
-    V x1 = V::make(0.0, 0.0, 0.0);
-    V x2 = V::make(1.0, 0.0, 0.0);
-    V x3 = V::make(0.0, 1.0, 0.0);
-    V x4 = V::make(0.0, 0.0, 1.0);
+    EigenVector3<T> x1 = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> x2 = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> x3 = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> x4 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-    V nabla_w1;
-    V nabla_w2;
-    V nabla_w3;
-    V nabla_w4;
+    EigenVector3<T> nabla_w1;
+    EigenVector3<T> nabla_w2;
+    EigenVector3<T> nabla_w3;
+    EigenVector3<T> nabla_w4;
 
     geometry::barycentric_derivatives(x1, x2, x3, x4, nabla_w1, nabla_w2, nabla_w3, nabla_w4);
 

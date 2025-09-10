@@ -7,12 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using M = tiny::MathTypes<float>;
-using T = M::real_type;
-using V = M::vector3_type;
-using Q = M::quaternion_type;
-using C = M::coordsys_type;
-
+using T = double;
 class MyObject : public narrow::Object<T>
 {
 };

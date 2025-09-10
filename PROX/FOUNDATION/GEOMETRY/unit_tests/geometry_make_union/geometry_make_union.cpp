@@ -19,15 +19,17 @@ BOOST_AUTO_TEST_SUITE(geometry);
 BOOST_AUTO_TEST_CASE(make_union_test)
 {
 
-    V const min_coord1 = V::make(-2, -2, -2);
-    V const max_coord1 = V::make(-1, -1, -1);
-    geometry::AABB<V> const aabb1 = geometry::make_aabb(min_coord1, max_coord1);
-    geometry::DOP<T, 6> const left = geometry::convert<6, V>(aabb1);
+    EigenVector3<T> const min_coord1 = EigenVector3<T>(-2, -2, -2);
+    EigenVector3<T> const max_coord1 = EigenVector3<T>(-1, -1, -1);
+    geometry::AABBEigen<T> const aabb1
+        = geometry::make_aabb(min_coord1, max_coord1);
+    geometry::DOP<T, 6> const left = geometry::convert<6, T>(aabb1);
 
-    V const min_coord2 = V::make(1, 1, 1);
-    V const max_coord2 = V::make(2, 2, 2);
-    geometry::AABB<V> const aabb2 = geometry::make_aabb(min_coord2, max_coord2);
-    geometry::DOP<T, 6> const right = geometry::convert<6, V>(aabb2);
+    EigenVector3<T> const min_coord2 = EigenVector3<T>(1, 1, 1);
+    EigenVector3<T> const max_coord2 = EigenVector3<T>(2, 2, 2);
+    geometry::AABBEigen<T> const aabb2
+        = geometry::make_aabb(min_coord2, max_coord2);
+    geometry::DOP<T, 6> const right = geometry::convert<6, T>(aabb2);
 
     geometry::DOP<T, 6> const all = geometry::make_union(left, right);
 

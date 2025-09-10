@@ -9,10 +9,7 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -20,23 +17,25 @@ BOOST_AUTO_TEST_CASE(closest_points_tetrahedron_tetrahedron_test)
 {
   // Get V-V contact
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(2.0, 0.0, 0.0);
+        EigenVector3<T> const offset = EigenVector3<T>(2.0, 0.0, 0.0);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
-        V a;
-        V b;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
         T distance;
 
         geometry::closest_points_tetrahedron_tetrahedron(A, B, a, b, distance);
@@ -52,23 +51,25 @@ BOOST_AUTO_TEST_CASE(closest_points_tetrahedron_tetrahedron_test)
 
   // Get V-F contact
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(2.0, 2.0, 2.0);
+        EigenVector3<T> const offset = EigenVector3<T>(2.0, 2.0, 2.0);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
-        V a;
-        V b;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
         T distance;
 
         geometry::closest_points_tetrahedron_tetrahedron(A, B, a, b, distance);
@@ -84,23 +85,25 @@ BOOST_AUTO_TEST_CASE(closest_points_tetrahedron_tetrahedron_test)
 
   // Get V-E contact
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(0.5, 0.0, -2.0);
+        EigenVector3<T> const offset = EigenVector3<T>(0.5, 0.0, -2.0);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
-        V a;
-        V b;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
         T distance;
 
         geometry::closest_points_tetrahedron_tetrahedron(A, B, a, b, distance);
@@ -118,23 +121,25 @@ BOOST_AUTO_TEST_CASE(closest_points_tetrahedron_tetrahedron_test)
 
   // Get E-E contact
     {
-        V const a0 = V::make(0.0, 0.0, 0.0);
-        V const a1 = V::make(1.0, 0.0, 0.0);
-        V const a2 = V::make(0.0, 1.0, 0.0);
-        V const a3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const a0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const a1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const a2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const a3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        V const offset = V::make(2.0, 2.0, -0.5);
+        EigenVector3<T> const offset = EigenVector3<T>(2.0, 2.0, -0.5);
 
-        V const b0 = V::make(0.0, 0.0, 0.0) + offset;
-        V const b1 = V::make(1.0, 0.0, 0.0) + offset;
-        V const b2 = V::make(0.0, 1.0, 0.0) + offset;
-        V const b3 = V::make(0.0, 0.0, 1.0) + offset;
+        EigenVector3<T> const b0 = EigenVector3<T>(0.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b1 = EigenVector3<T>(1.0, 0.0, 0.0) + offset;
+        EigenVector3<T> const b2 = EigenVector3<T>(0.0, 1.0, 0.0) + offset;
+        EigenVector3<T> const b3 = EigenVector3<T>(0.0, 0.0, 1.0) + offset;
 
-        geometry::Tetrahedron<V> const A = geometry::make_tetrahedron(a0, a1, a2, a3);
-        geometry::Tetrahedron<V> const B = geometry::make_tetrahedron(b0, b1, b2, b3);
+        geometry::TetrahedronEigen<T> const A
+            = geometry::make_tetrahedron(a0, a1, a2, a3);
+        geometry::TetrahedronEigen<T> const B
+            = geometry::make_tetrahedron(b0, b1, b2, b3);
 
-        V a;
-        V b;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
         T distance;
 
         geometry::closest_points_tetrahedron_tetrahedron(A, B, a, b, distance);

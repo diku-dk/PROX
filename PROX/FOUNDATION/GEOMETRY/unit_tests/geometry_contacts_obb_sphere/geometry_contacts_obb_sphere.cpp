@@ -8,11 +8,7 @@
 #include <boost/test/test_tools.hpp>
 
 #include <vector>
-
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using T = MT::real_type;
+using T = float;
 
 class ContactInfo
 {
@@ -28,7 +24,7 @@ public:
     std::vector<ContactInfo> m_contacts;
 
 public:
-    void tempParenthesisOperatorImpl(EigenVector3<T> const& point,
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
                                      const EigenVector3<T>& normal,
                                      const T& distance)
     {
@@ -48,19 +44,21 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
 {
   // Touching rigth side
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(2.0, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(2.0, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, false);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, false);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -76,37 +74,41 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     }
   // Separating rigth side
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(2.1, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(2.1, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, false);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, false);
 
         BOOST_CHECK(callback.m_contacts.size() == 0u);
     }
   // Penetration rigth side
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(1.5, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(1.5, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, false);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, false);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -122,19 +124,21 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     }
   // Penetration rigth side flipped-case
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(1.5, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(1.5, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, true);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, true);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -151,19 +155,21 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
 
   // Touching left side
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(-2.0, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(-2.0, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, false);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, false);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -179,37 +185,41 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     }
   // Separating left side
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(-2.1, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(-2.1, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, false);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, false);
 
         BOOST_CHECK(callback.m_contacts.size() == 0u);
     }
   // Penetration left side
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(-1.5, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(-1.5, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, false);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, false);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 
@@ -225,19 +235,21 @@ BOOST_AUTO_TEST_CASE(contacts_obb_sphere_test)
     }
   // Penetration left side flipped-case
     {
-        V const centerA = V::make(0.0, 0.0, 0.0);
-        V const half_extA = V::make(1.0, 1.0, 1.0);
-        Q const qA = Q::identity();
+        EigenVector3<T> const centerA = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const half_extA = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenQuaternion<T> const qA = EigenQuaternion<T>::Identity();
 
-        V const centerB = V::make(-1.5, 0.0, 0.0);
+        EigenVector3<T> const centerB = EigenVector3<T>(-1.5, 0.0, 0.0);
         T const radiusB = 1.0;
 
-        geometry::OBB<MT> const obb = geometry::make_obb<MT>(centerA, qA, half_extA);
-        geometry::Sphere<V> const sphere = geometry::make_sphere(centerB, radiusB);
+        geometry::OBBEigen<T> const obb
+            = geometry::make_obb<T>(centerA, qA, half_extA);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(centerB, radiusB);
 
         MyCallback callback;
 
-        geometry::contacts_obb_sphere(obb, sphere, 0.0, callback, true);
+        geometry::contacts_obb_sphere<T>(obb, sphere, 0.0, callback, true);
 
         BOOST_CHECK(callback.m_contacts.size() == 1u);
 

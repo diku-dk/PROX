@@ -19,10 +19,11 @@ BOOST_AUTO_TEST_CASE(convert_test)
     typedef MT::real_type T;
 
     {
-        V const center = V::zero();
+        EigenVector3<T> const center = EigenVector3<T>(0, 0, 0);
         T const radius = 1;
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::DOP<T, 6> const dop = geometry::convert<6, V>(sphere);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::DOP<T, 6> const dop = geometry::convert<6, T>(sphere);
 
         BOOST_CHECK_EQUAL(dop.size(), 6u);
         BOOST_CHECK_CLOSE(dop(0).lower(), -1, 0.01);
@@ -34,10 +35,11 @@ BOOST_AUTO_TEST_CASE(convert_test)
     }
 
     {
-        V const min_coord = V::make(-1, -1, -1);
-        V const max_coord = V::make(1, 1, 1);
-        geometry::AABB<V> const aabb = geometry::make_aabb(min_coord, max_coord);
-        geometry::DOP<T, 6> const dop = geometry::convert<6, V>(aabb);
+        EigenVector3<T> const min_coord = EigenVector3<T>(-1, -1, -1);
+        EigenVector3<T> const max_coord = EigenVector3<T>(1, 1, 1);
+        geometry::AABBEigen<T> const aabb
+            = geometry::make_aabb(min_coord, max_coord);
+        geometry::DOP<T, 6> const dop = geometry::convert<6, T>(aabb);
 
         BOOST_CHECK_EQUAL(dop.size(), 6u);
         BOOST_CHECK_CLOSE(dop(0).lower(), -1, 0.01);

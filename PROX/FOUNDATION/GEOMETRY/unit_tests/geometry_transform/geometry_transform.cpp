@@ -7,41 +7,39 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using Q = MT::quaternion_type;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(obb_transform_test)
 {
-    V const center = V::make(1.0, 1.0, 1.0);
-    V const half_ext = V::make(1.0, 2.0, 3.0);
-    Q const q = Q::Rx(VT::pi_half());
+    EigenVector3<T> const center = EigenVector3<T>(1.0, 1.0, 1.0);
+    EigenVector3<T> const half_ext = EigenVector3<T>(1.0, 2.0, 3.0);
+    const EigenQuaternion<T> q = Rotatex(std::numbers::pi_v<T> * 0.5f);
 
-    geometry::OBB<MT> const obb = geometry::make_obb<MT>(center, q, half_ext);
+    geometry::OBBEigen<T> const obb
+        = geometry::make_obb<T>(center, q, half_ext);
 
-    V const p0 = geometry::transform_to_obb(center, obb);
+    EigenVector3<T> const p0 = geometry::transform_to_obb(center, obb);
 
     BOOST_CHECK_CLOSE(p0(0), 0.0, 0.01);
     BOOST_CHECK_CLOSE(p0(1), 0.0, 0.01);
     BOOST_CHECK_CLOSE(p0(2), 0.0, 0.01);
 
-    V const p1 = geometry::transform_from_obb(p0, obb);
+    EigenVector3<T> const p1 = geometry::transform_from_obb(p0, obb);
 
     BOOST_CHECK_CLOSE(p1(0), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p1(1), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p1(2), 1.0, 0.01);
 
-    V const p2 = geometry::transform_from_obb(V::make(0.0, 2.0, 0.0), obb);
+    EigenVector3<T> const p2
+        = geometry::transform_from_obb(EigenVector3<T>(0.0, 2.0, 0.0), obb);
 
     BOOST_CHECK_CLOSE(p2(0), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p2(1), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p2(2), 3.0, 0.01);
 
-    V const p3 = geometry::transform_to_obb(p2, obb);
+    EigenVector3<T> const p3 = geometry::transform_to_obb(p2, obb);
 
     BOOST_CHECK_CLOSE(p3(0), 0.0, 0.01);
     BOOST_CHECK_CLOSE(p3(1), 2.0, 0.01);
@@ -50,32 +48,34 @@ BOOST_AUTO_TEST_CASE(obb_transform_test)
 
 BOOST_AUTO_TEST_CASE(cylinder_transform_test)
 {
-    V const center = V::make(1.0, 1.0, 1.0);
-    V const axis = V::make(1.0, 0.0, 0.0);
+    EigenVector3<T> const center = EigenVector3<T>(1.0, 1.0, 1.0);
+    EigenVector3<T> const axis = EigenVector3<T>(1.0, 0.0, 0.0);
     T const radius = 1.0;
     T const height = 1.0;
 
-    geometry::Cylinder<V> const cyl = geometry::make_cylinder(radius, height, axis, center);
+    geometry::CylinderEigen<T> const cyl
+        = geometry::make_cylinder(radius, height, axis, center);
 
-    V const p0 = geometry::transform_to_cylinder(center, cyl);
+    EigenVector3<T> const p0 = geometry::transform_to_cylinder(center, cyl);
 
     BOOST_CHECK_CLOSE(p0(0), 0.0, 0.01);
     BOOST_CHECK_CLOSE(p0(1), 0.0, 0.01);
     BOOST_CHECK_CLOSE(p0(2), 0.0, 0.01);
 
-    V const p1 = geometry::transform_from_cylinder(p0, cyl);
+    EigenVector3<T> const p1 = geometry::transform_from_cylinder(p0, cyl);
 
     BOOST_CHECK_CLOSE(p1(0), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p1(1), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p1(2), 1.0, 0.01);
 
-    V const p2 = geometry::transform_from_cylinder(V::make(0.0, 2.0, 0.0), cyl);
+    EigenVector3<T> const p2 = geometry::transform_from_cylinder(
+        EigenVector3<T>(0.0, 2.0, 0.0), cyl);
 
     BOOST_CHECK_CLOSE(p2(0), 1.0, 0.01);
     BOOST_CHECK_CLOSE(p2(1), 3.0, 0.01);
     BOOST_CHECK_CLOSE(p2(2), 1.0, 0.01);
 
-    V const p3 = geometry::transform_to_cylinder(p2, cyl);
+    EigenVector3<T> const p3 = geometry::transform_to_cylinder(p2, cyl);
 
     BOOST_CHECK_CLOSE(p3(0), 0.0, 0.01);
     BOOST_CHECK_CLOSE(p3(1), 2.0, 0.01);

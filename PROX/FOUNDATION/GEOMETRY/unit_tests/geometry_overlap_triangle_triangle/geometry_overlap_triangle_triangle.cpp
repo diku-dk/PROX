@@ -7,11 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using Q = MT::quaternion_type;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -19,16 +15,16 @@ BOOST_AUTO_TEST_CASE(overlap_tri_tri_test)
 {
   // B inside A
     {
-        V const A0 = V::make(0.0, 0.0, 0.0);
-        V const A1 = V::make(1.0, 0.0, 0.0);
-        V const A2 = V::make(0.0, 1.0, 0.0);
+        EigenVector3<T> const A0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const A1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const A2 = EigenVector3<T>(0.0, 1.0, 0.0);
 
-        V const B0 = V::make(0.1, 0.1, 0.1);
-        V const B1 = V::make(0.9, 0.0, 0.0);
-        V const B2 = V::make(0.0, 0.9, 0.0);
+        EigenVector3<T> const B0 = EigenVector3<T>(0.1, 0.1, 0.1);
+        EigenVector3<T> const B1 = EigenVector3<T>(0.9, 0.0, 0.0);
+        EigenVector3<T> const B2 = EigenVector3<T>(0.0, 0.9, 0.0);
 
-        geometry::Triangle<V> triA = geometry::make_triangle<V>(A0, A1, A2);
-        geometry::Triangle<V> triB = geometry::make_triangle<V>(B0, B1, B2);
+        geometry::Triangle<T> triA = geometry::make_triangle<T>(A0, A1, A2);
+        geometry::Triangle<T> triB = geometry::make_triangle<T>(B0, B1, B2);
 
         bool const test1 = geometry::overlap_triangle_triangle(triA, triB);
         bool const test2 = geometry::overlap_triangle_triangle(triB, triA);
@@ -48,25 +44,27 @@ BOOST_AUTO_TEST_CASE(overlap_tri_tri_test)
 
   // Touching edge-edge cases
     {
-        std::vector<V> A(3u);
-        std::vector<V> B(3u);
+        std::vector<EigenVector3<T>> A(3u);
+        std::vector<EigenVector3<T>> B(3u);
 
-        A[0] = V::make(0.0, 0.0, 0.0);
-        A[1] = V::make(1.0, 0.0, 0.0);
-        A[2] = V::make(0.0, 1.0, 0.0);
+        A[0] = EigenVector3<T>(0.0, 0.0, 0.0);
+        A[1] = EigenVector3<T>(1.0, 0.0, 0.0);
+        A[2] = EigenVector3<T>(0.0, 1.0, 0.0);
 
-        B[0] = V::make(0.5, 0.0, -0.5);
-        B[1] = V::make(0.5, 0.0, 0.5);
-        B[2] = V::make(0.5, -1.0, 0.0);
+        B[0] = EigenVector3<T>(0.5, 0.0, -0.5);
+        B[1] = EigenVector3<T>(0.5, 0.0, 0.5);
+        B[2] = EigenVector3<T>(0.5, -1.0, 0.0);
 
         for (unsigned int i = 0u; i < 6u; ++i)
         {
             for (unsigned int j = 0u; j < 6u; ++j)
             {
-                geometry::Triangle<V> triA
-                    = geometry::make_triangle<V>(A[permutation[i][0]], A[permutation[i][1]], A[permutation[i][2]]);
-                geometry::Triangle<V> triB
-                    = geometry::make_triangle<V>(B[permutation[j][0]], B[permutation[j][1]], B[permutation[j][2]]);
+                geometry::Triangle<T> triA = geometry::make_triangle<T>(
+                    A[permutation[i][0]], A[permutation[i][1]],
+                    A[permutation[i][2]]);
+                geometry::Triangle<T> triB = geometry::make_triangle<T>(
+                    B[permutation[j][0]], B[permutation[j][1]],
+                    B[permutation[j][2]]);
 
                 bool const test1 = geometry::overlap_triangle_triangle(triA, triB);
                 bool const test2 = geometry::overlap_triangle_triangle(triB, triA);
@@ -79,25 +77,27 @@ BOOST_AUTO_TEST_CASE(overlap_tri_tri_test)
 
   // Separating edge-edge cases
     {
-        std::vector<V> A(3u);
-        std::vector<V> B(3u);
+        std::vector<EigenVector3<T>> A(3u);
+        std::vector<EigenVector3<T>> B(3u);
 
-        A[0] = V::make(0.0, 0.0, 0.0);
-        A[1] = V::make(1.0, 0.0, 0.0);
-        A[2] = V::make(0.0, 1.0, 0.0);
+        A[0] = EigenVector3<T>(0.0, 0.0, 0.0);
+        A[1] = EigenVector3<T>(1.0, 0.0, 0.0);
+        A[2] = EigenVector3<T>(0.0, 1.0, 0.0);
 
-        B[0] = V::make(0.5, -0.01, -0.5);
-        B[1] = V::make(0.5, -0.01, 0.5);
-        B[2] = V::make(0.5, -1.01, 0.0);
+        B[0] = EigenVector3<T>(0.5, -0.01, -0.5);
+        B[1] = EigenVector3<T>(0.5, -0.01, 0.5);
+        B[2] = EigenVector3<T>(0.5, -1.01, 0.0);
 
         for (unsigned int i = 0u; i < 6u; ++i)
         {
             for (unsigned int j = 0u; j < 6u; ++j)
             {
-                geometry::Triangle<V> triA
-                    = geometry::make_triangle<V>(A[permutation[i][0]], A[permutation[i][1]], A[permutation[i][2]]);
-                geometry::Triangle<V> triB
-                    = geometry::make_triangle<V>(B[permutation[j][0]], B[permutation[j][1]], B[permutation[j][2]]);
+                geometry::Triangle<T> triA = geometry::make_triangle<T>(
+                    A[permutation[i][0]], A[permutation[i][1]],
+                    A[permutation[i][2]]);
+                geometry::Triangle<T> triB = geometry::make_triangle<T>(
+                    B[permutation[j][0]], B[permutation[j][1]],
+                    B[permutation[j][2]]);
 
                 bool const test1 = geometry::overlap_triangle_triangle(triA, triB);
                 bool const test2 = geometry::overlap_triangle_triangle(triB, triA);
@@ -110,25 +110,27 @@ BOOST_AUTO_TEST_CASE(overlap_tri_tri_test)
 
   // Separated by face cases
     {
-        std::vector<V> A(3u);
-        std::vector<V> B(3u);
+        std::vector<EigenVector3<T>> A(3u);
+        std::vector<EigenVector3<T>> B(3u);
 
-        A[0] = V::make(0.0, 0.0, 0.0);
-        A[1] = V::make(1.0, 0.0, 0.0);
-        A[2] = V::make(0.0, 1.0, 0.0);
+        A[0] = EigenVector3<T>(0.0, 0.0, 0.0);
+        A[1] = EigenVector3<T>(1.0, 0.0, 0.0);
+        A[2] = EigenVector3<T>(0.0, 1.0, 0.0);
 
-        B[0] = V::make(1.1, 0.0, 0.1);
-        B[1] = V::make(1.1, 0.0, 1.1);
-        B[2] = V::make(1.1, -1.0, 0.6);
+        B[0] = EigenVector3<T>(1.1, 0.0, 0.1);
+        B[1] = EigenVector3<T>(1.1, 0.0, 1.1);
+        B[2] = EigenVector3<T>(1.1, -1.0, 0.6);
 
         for (unsigned int i = 0u; i < 6u; ++i)
         {
             for (unsigned int j = 0u; j < 6u; ++j)
             {
-                geometry::Triangle<V> triA
-                    = geometry::make_triangle<V>(A[permutation[i][0]], A[permutation[i][1]], A[permutation[i][2]]);
-                geometry::Triangle<V> triB
-                    = geometry::make_triangle<V>(B[permutation[j][0]], B[permutation[j][1]], B[permutation[j][2]]);
+                geometry::Triangle<T> triA = geometry::make_triangle<T>(
+                    A[permutation[i][0]], A[permutation[i][1]],
+                    A[permutation[i][2]]);
+                geometry::Triangle<T> triB = geometry::make_triangle<T>(
+                    B[permutation[j][0]], B[permutation[j][1]],
+                    B[permutation[j][2]]);
 
                 bool const test1 = geometry::overlap_triangle_triangle(triA, triB);
                 bool const test2 = geometry::overlap_triangle_triangle(triB, triA);

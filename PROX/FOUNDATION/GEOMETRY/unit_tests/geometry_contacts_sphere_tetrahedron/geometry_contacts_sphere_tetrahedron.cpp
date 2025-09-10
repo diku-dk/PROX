@@ -9,26 +9,25 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using Q = MT::quaternion_type;
-using T = MT::real_type;
+using T = float;
 
 class ContactInfo
 {
 public:
-    V m_point;
-    V m_normal;
+    EigenVector3<T> m_point;
+    EigenVector3<T> m_normal;
     T m_distance;
 };
 
-class MyCallback : public geometry::ContactsCallback<V>
+class MyCallback : public geometry::ContactsCallback<T>
 {
 public:
     std::vector<ContactInfo> m_contacts;
 
 public:
-    void operator()(V const& point, V const& normal, typename V::real_type const& distance)
+    void tempParenthesisOperatorImpl(const EigenVector3<T>& point,
+                                     const EigenVector3<T>& normal,
+                                     const T& distance)
     {
         ContactInfo info;
 
@@ -46,16 +45,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
 {
   // Separation in vertex regions
     {
-        V const center = V::make(2.1, 0.0, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(2.1, 0.0, 0.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -66,16 +67,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(0.0, 2.1, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 2.1, 0.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -86,16 +89,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(0.0, 0.0, 2.1);
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 2.1);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -106,16 +111,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(-1.0, -1.0, -1.0);
+        EigenVector3<T> const center = EigenVector3<T>(-1.0, -1.0, -1.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -127,16 +134,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     }
   // Separation in edge regions
     {
-        V const center = V::make(0.5, -1.0, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(0.5, -1.0, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -147,16 +156,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(-1.0, 0.5, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(-1.0, 0.5, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -167,16 +178,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(-1.0, -1.0, 0.5);
+        EigenVector3<T> const center = EigenVector3<T>(-1.0, -1.0, 0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -187,16 +200,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(1.0, 1.0, -1.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.0, 1.0, -1.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -207,16 +222,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(1.0, -1.0, 1.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.0, -1.0, 1.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -227,16 +244,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(-1.0, 1.0, 1.0);
+        EigenVector3<T> const center = EigenVector3<T>(-1.0, 1.0, 1.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -248,16 +267,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     }
   // Separation in face regions
     {
-        V const center = V::make(0.2, 0.2, -2.1);
+        EigenVector3<T> const center = EigenVector3<T>(0.2, 0.2, -2.1);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -268,16 +289,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(0.2, -2.1, 0.2);
+        EigenVector3<T> const center = EigenVector3<T>(0.2, -2.1, 0.2);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -288,16 +311,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(-2.1, 0.2, 0.2);
+        EigenVector3<T> const center = EigenVector3<T>(-2.1, 0.2, 0.2);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -308,16 +333,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 0u);
     }
     {
-        V const center = V::make(2.0, 2.0, 2.0);
+        EigenVector3<T> const center = EigenVector3<T>(2.0, 2.0, 2.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -329,16 +356,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     }
   // Contacts in vertex regions
     {
-        V const center = V::make(1.9, 0.0, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.9, 0.0, 0.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -359,16 +388,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.1, 0.01);
     }
     {
-        V const center = V::make(1.9, 0.0, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(1.9, 0.0, 0.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -390,16 +421,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     }
 
     {
-        V const center = V::make(0.0, 1.9, 0.0);
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 1.9, 0.0);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -410,16 +443,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(0.0, 0.0, 1.9);
+        EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 1.9);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -430,16 +465,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(-0.5, -0.5, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(-0.5, -0.5, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -451,16 +488,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     }
   // Contact in edge regions
     {
-        V const center = V::make(0.5, -0.5, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(0.5, -0.5, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -481,16 +520,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.292893231, 0.01);
     }
     {
-        V const center = V::make(0.5, -0.5, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(0.5, -0.5, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -511,16 +552,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.292893231, 0.01);
     }
     {
-        V const center = V::make(-0.5, 0.5, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(-0.5, 0.5, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -531,16 +574,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(-0.5, -0.5, 0.5);
+        EigenVector3<T> const center = EigenVector3<T>(-0.5, -0.5, 0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -551,16 +596,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(0.5, 0.5, -0.5);
+        EigenVector3<T> const center = EigenVector3<T>(0.5, 0.5, -0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -571,16 +618,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(0.5, -0.5, 0.5);
+        EigenVector3<T> const center = EigenVector3<T>(0.5, -0.5, 0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -591,16 +640,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(-0.5, 0.5, 0.5);
+        EigenVector3<T> const center = EigenVector3<T>(-0.5, 0.5, 0.5);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -612,16 +663,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
     }
   // Contact in face regions
     {
-        V const center = V::make(0.2, 0.2, -0.9);
+        EigenVector3<T> const center = EigenVector3<T>(0.2, 0.2, -0.9);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -642,16 +695,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.1, 0.01);
     }
     {
-        V const center = V::make(0.2, 0.2, -0.9);
+        EigenVector3<T> const center = EigenVector3<T>(0.2, 0.2, -0.9);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -672,16 +727,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_CLOSE(callback.m_contacts[0].m_distance, -0.1, 0.01);
     }
     {
-        V const center = V::make(0.2, -0.9, 0.2);
+        EigenVector3<T> const center = EigenVector3<T>(0.2, -0.9, 0.2);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -692,16 +749,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(-0.9, 0.2, 0.2);
+        EigenVector3<T> const center = EigenVector3<T>(-0.9, 0.2, 0.2);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -712,16 +771,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
         BOOST_CHECK_EQUAL(callback.m_contacts.size(), 1u);
     }
     {
-        V const center = V::make(0.7, 0.7, 0.7);
+        EigenVector3<T> const center = EigenVector3<T>(0.7, 0.7, 0.7);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 
@@ -734,16 +795,18 @@ BOOST_AUTO_TEST_CASE(contacts_sphere_tetrahedron_test)
 
   // sphere inside
     {
-        V const center = V::make(0.3, 0.2, 0.1);
+        EigenVector3<T> const center = EigenVector3<T>(0.3, 0.2, 0.1);
         T const radius = 1.0;
 
-        V const p0 = V::make(0.0, 0.0, 0.0);
-        V const p1 = V::make(1.0, 0.0, 0.0);
-        V const p2 = V::make(0.0, 1.0, 0.0);
-        V const p3 = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const p0 = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const p2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const p3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
-        geometry::Sphere<V> const sphere = geometry::make_sphere(center, radius);
-        geometry::Tetrahedron<V> const tetrahedron = geometry::make_tetrahedron(p0, p1, p2, p3);
+        geometry::Sphere<T> const sphere
+            = geometry::make_sphere(center, radius);
+        geometry::TetrahedronEigen<T> const tetrahedron
+            = geometry::make_tetrahedron(p0, p1, p2, p3);
 
         MyCallback callback;
 

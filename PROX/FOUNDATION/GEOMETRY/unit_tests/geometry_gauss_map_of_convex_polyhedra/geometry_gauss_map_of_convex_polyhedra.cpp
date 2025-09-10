@@ -7,9 +7,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
+using T = float;
 
 BOOST_AUTO_TEST_SUITE(geometry);
 
@@ -17,16 +15,16 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
 {
 
     {
-        geometry::Tetrahedron<V> A;
+        geometry::TetrahedronEigen<T> A;
 
-        geometry::GaussMapOfConvexPolyhedra<V> G = geometry::make_gauss_map(A);
+        geometry::GaussMapOfConvexPolyhedra<T> G = geometry::make_gauss_map(A);
 
     // Search for face features
         {
-            V const s = tiny::unit(V::make(0.0, 0.0, -1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(0.0, 0.0, -1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -50,10 +48,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], -1.0, 0.01);
         }
         {
-            V const s = tiny::unit(V::make(-1.0, 0.0, 0.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(-1.0, 0.0, 0.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -77,10 +75,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], 0.0, 0.01);
         }
         {
-            V const s = tiny::unit(V::make(0.0, -1.0, 0.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(0.0, -1.0, 0.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -104,10 +102,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], 0.0, 0.01);
         }
         {
-            V const s = tiny::unit(V::make(1.0, 1.0, 1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(1.0, 1.0, 1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -133,10 +131,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
 
     // Search for vertex features
         {
-            V const s = tiny::unit(V::make(0.0, 0.0, 1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(0.0, 0.0, 1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -152,10 +150,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(0.0, 1.0, 0.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(0.0, 1.0, 0.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -171,10 +169,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(1.0, 0.0, 0.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(1.0, 0.0, 0.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -190,10 +188,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(-1.0, -1.0, -1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(-1.0, -1.0, -1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -211,10 +209,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
 
     // Search for edge features
         {
-            V const s = tiny::unit(V::make(-1.0, -1.0, 0.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(-1.0, -1.0, 0.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -234,10 +232,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(-1.0, 0.0, -1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(-1.0, 0.0, -1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -257,10 +255,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(0.0, -1.0, -1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(0.0, -1.0, -1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -280,10 +278,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(1.0, 1.0, 0.5));
+            EigenVector3<T> const s = unit(EigenVector3<T>(1.0, 1.0, 0.5));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -303,10 +301,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(1.0, -0.5, 1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(1.0, -0.5, 1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 
@@ -326,10 +324,10 @@ BOOST_AUTO_TEST_CASE(gauss_map_tetrahedron_test)
             BOOST_CHECK_CLOSE(n[2], s[2], 0.01);
         }
         {
-            V const s = tiny::unit(V::make(-0.5, 1.0, 1.0));
+            EigenVector3<T> const s = unit(EigenVector3<T>(-0.5, 1.0, 1.0));
 
-            V n;
-            std::vector<V> points;
+            EigenVector3<T> n;
+            std::vector<EigenVector3<T>> points;
 
             bool found = G.search_for_feature(s, points, n);
 

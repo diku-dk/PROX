@@ -70,8 +70,7 @@ public:
     }
 
 public:
-
-    EigenVector3<T> get_support_point( const EigenVector3<T>& v ) const
+    EigenVector3<T> get_support_point(EigenVector3<T> v) const override
     {
         assert( is_number(v(0)) || !"get_support_point(): NAN encountered");
         assert( is_number(v(1)) || !"get_support_point(): NAN encountered");
@@ -120,7 +119,7 @@ public:
         return p;
     }
 
-    EigenVector3<T> get_support_point(EigenVector3<T> dir) const override
+/*    EigenVector3<T> get_support_point(EigenVector3<T> dir) const override
     {
         auto bestPoint = m_point[0];
         auto maxVal = dot(dir, bestPoint);
@@ -135,8 +134,7 @@ public:
             }
         }
         return bestPoint;
-    }
-
+    }*/
 
     EigenVector3<T> get_center() const
     {
@@ -234,7 +232,7 @@ inline T get_volume(TetrahedronEigen<T> const & tet)
 {
     using std::fabs;
 
-    return fabs( get_signed_volume(tet) );
+    return std::abs(get_signed_volume(tet));
 }
 }
 

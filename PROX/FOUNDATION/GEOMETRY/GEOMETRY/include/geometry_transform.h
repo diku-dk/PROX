@@ -75,7 +75,7 @@ namespace geometry
 
     const EigenQuaternion<T> orientation = Rotateu( angle, axis);
 
-    return rotate( conj( orientation ), (p - cylinder.center()) );
+    return rotate((orientation).conjugate(), (p - cylinder.center()).eval());
   }
 
   template<typename T>

@@ -13,25 +13,22 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 {
     using std::sqrt;
 
-    typedef tiny::MathTypes<double> MT;
-    typedef MT::vector3_type V;
-    typedef MT::real_type T;
-    typedef MT::value_traits VT;
+    using T = double;
 
-    V const center = V::make(0.0, 0.0, 0.0);
+    EigenVector3<T> const center = EigenVector3<T>(0.0, 0.0, 0.0);
     T const radius = 1;
 
-    geometry::Sphere<V> sphere = geometry::make_sphere(center, radius);
+    geometry::Sphere<T> sphere = geometry::make_sphere(center, radius);
 
   // ray hitting straight on
     {
-        V const r = V::make(0.0, 0.0, 1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
 
@@ -45,13 +42,13 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
   // ray shooting staright away
     {
-        V const r = V::make(0.0, 0.0, -1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, -1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
 
@@ -60,13 +57,13 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
   // ray starts inside
     {
-        V const r = V::make(0.0, 0.0, -1.0);
-        V const p = V::make(0.0, 0.0, 0.5);
+        EigenVector3<T> const r = EigenVector3<T>(0.0, 0.0, -1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.5);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
 
@@ -75,13 +72,13 @@ BOOST_AUTO_TEST_CASE(raycast_sphere)
 
   // ray shooting pass sphere
     {
-        V const r = V::make(4.0, 0.0, 1.0);
-        V const p = V::make(0.0, 0.0, -3.0);
+        EigenVector3<T> const r = EigenVector3<T>(4.0, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, -3.0);
 
-        geometry::Ray<V> const ray = geometry::make_ray(p, r);
+        geometry::RayEigen<T> const ray = geometry::make_ray(p, r);
 
         T length = 0;
-        V q = V::zero();
+        EigenVector3<T> q = EigenVector3<T>(0, 0, 0);
 
         bool hit = geometry::compute_raycast_sphere(ray, sphere, q, length);
 

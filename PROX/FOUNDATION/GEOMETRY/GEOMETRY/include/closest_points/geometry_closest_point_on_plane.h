@@ -11,9 +11,10 @@
 namespace geometry
 {
 
-  template<typename T>
-  inline EigenVector3<T> closest_point_on_plane(const EigenVector3<T>& p, Plane<T> const & P)
-  {
+template <typename T>
+inline EigenVector3<T> closest_point_on_plane(const EigenVector3<T>& p,
+                                              Plane<T> const& P)
+{
 
     const EigenVector3<T>& n = P.n();
     T const & w = P.w();
@@ -28,7 +29,7 @@ namespace geometry
     assert( is_finite(q(2)) || !"closest_point_on_line(): Inf encountered");
 
     return q;
-  }
+}
 
 }// namespace geometry
 
