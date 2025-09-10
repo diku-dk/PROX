@@ -24,8 +24,6 @@
 #include <prox_update_body_indices.h>
 
 #include <prox_params.h>
-#include <prox_math_policy.h>
-#include <prox_math.h>
 
 #include <solvers/prox_solver.h>
 #include <solvers/sub/prox_bind_normal_sub_solver.h>

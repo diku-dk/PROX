@@ -1,8 +1,5 @@
 #include <eigen3/Eigen/Sparse>
 #include <eigen3/Eigen/Dense>
-#include <sparse.h>
-#include <sparse_fill.h>
-#include <prox_math_policy.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>

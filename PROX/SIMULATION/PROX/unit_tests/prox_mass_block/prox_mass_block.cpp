@@ -1,6 +1,3 @@
-#include <sparse.h>
-#include <prox_math_policy.h>
-
 #include <eigen3/Eigen/Sparse>
 #include <eigen3/Eigen/Dense>
 

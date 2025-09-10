@@ -1,7 +1,3 @@
-#include <sparse.h>
-#include <sparse_fill.h>
-#include <prox_math_policy.h>
-
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_suite.hpp>

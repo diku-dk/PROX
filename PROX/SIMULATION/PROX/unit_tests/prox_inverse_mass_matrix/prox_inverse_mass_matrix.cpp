@@ -1,6 +1,3 @@
-#include <sparse.h>
-#include <sparse_fill.h> // 2009-08-04 Kenny: Damn this header is part of the sparse unit tests but not sparse. The reason is that it uses some ugly Boost MPL stuff
-#include <prox_math_policy.h>
 #include <eigen3/Eigen/Sparse>
 #include <eigen3/Eigen/Dense>
 

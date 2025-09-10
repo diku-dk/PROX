@@ -1,13 +1,8 @@
-#include <sparse.h>
-#include <sparse_fill.h>
-
 #include <narrow.h>
 
 #include <prox_rigid_body.h>
 #include <prox_get_velocity_vector.h>
 #include <prox_set_velocity_vector.h>
-
-#include <prox_math_policy.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>

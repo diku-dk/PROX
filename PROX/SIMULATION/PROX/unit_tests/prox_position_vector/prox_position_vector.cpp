@@ -1,25 +1,13 @@
-#include <sparse.h>
-#include <sparse_fill.h>
-
 #include <narrow.h>
 
 #include <prox_rigid_body.h>
 #include <prox_get_position_vector.h>
 #include <prox_set_position_vector.h>
 
-#include <prox_math_policy.h>
-
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_suite.hpp>
 #include <boost/test/test_tools.hpp>
-
-using math_policy = prox::MathPolicy<float>;
-using tiny_types = math_policy::tiny_types;
-using real_type = math_policy::real_type;
-using vector3_type = math_policy::vector3_type;
-using vector7_type = math_policy::vector7_type;
-using matrix3x3_type = math_policy::matrix3x3_type;
 
 BOOST_AUTO_TEST_SUITE(position_vector);
 

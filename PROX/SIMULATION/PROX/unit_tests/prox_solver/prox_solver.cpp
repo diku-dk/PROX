@@ -1,6 +1,3 @@
-#include <sparse.h>
-#include <sparse_fill.h>
-#include <prox_math_policy.h>
 #include <solvers/prox_jacobi_solver.h>
 #include <solvers/prox_gauss_seidel_solver.h>
 
