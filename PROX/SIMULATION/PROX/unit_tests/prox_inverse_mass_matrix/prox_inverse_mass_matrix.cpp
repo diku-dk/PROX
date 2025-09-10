@@ -1,6 +1,8 @@
 #include <sparse.h>
 #include <sparse_fill.h> // 2009-08-04 Kenny: Damn this header is part of the sparse unit tests but not sparse. The reason is that it uses some ugly Boost MPL stuff
 #include <prox_math_policy.h>
+#include <eigen3/Eigen/Sparse>
+#include <eigen3/Eigen/Dense>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -11,41 +13,56 @@ BOOST_AUTO_TEST_SUITE(mass_block_jac);
 
 BOOST_AUTO_TEST_CASE(mass_block_test_case)
 {
-    typedef prox::MathPolicy<float> math_policy;
-    typedef math_policy::diagonal_mass_type mass_matrix_type;
-    typedef math_policy::value_traits value_traits;
+    using T = float;
 
-    mass_matrix_type A(1);
-    sparse::fill(A(0, 0), 0.0f); // 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    // Create a 6x6 sparse matrix (mass matrix block)
+    Eigen::SparseMatrix<T> A(6, 6);
 
-    BOOST_CHECK_EQUAL(A(0, 0)[0], 0);
-    BOOST_CHECK_EQUAL(A(0, 0)[1], 1);
-    BOOST_CHECK_EQUAL(A(0, 0)[2], 2);
-    BOOST_CHECK_EQUAL(A(0, 0)[3], 3);
-    BOOST_CHECK_EQUAL(A(0, 0)[4], 4);
-    BOOST_CHECK_EQUAL(A(0, 0)[5], value_traits::numeric_cast(5));
-    BOOST_CHECK_EQUAL(A(0, 0)[6], value_traits::numeric_cast(6));
+    // Fill the matrix with consecutive values starting from 0
+    T value = 0;
+    for (int i = 0; i < 6; ++i)
+    {
+        for (int j = 0; j < 6; ++j) { A.insert(i, j) = value++; }
+    }
 
-    A(0, 0)[0] = value_traits::numeric_cast(2.5);
-    mass_matrix_type B(A);
+    // Check the initial values
+    BOOST_CHECK_EQUAL(A.coeff(0, 0), T(0));
+    BOOST_CHECK_EQUAL(A.coeff(0, 1), T(1));
+    BOOST_CHECK_EQUAL(A.coeff(0, 2), T(2));
+    BOOST_CHECK_EQUAL(A.coeff(0, 3), T(3));
+    BOOST_CHECK_EQUAL(A.coeff(0, 4), T(4));
+    BOOST_CHECK_EQUAL(A.coeff(0, 5), T(5));
+    BOOST_CHECK_EQUAL(A.coeff(1, 0),
+                      T(6)); // This is the 7th element in row-major order
 
-    BOOST_CHECK_EQUAL(B(0, 0)[0], value_traits::numeric_cast(2.5));
-    BOOST_CHECK_EQUAL(B(0, 0)[1], 1);
-    BOOST_CHECK_EQUAL(B(0, 0)[2], 2);
-    BOOST_CHECK_EQUAL(B(0, 0)[3], 3);
-    BOOST_CHECK_EQUAL(B(0, 0)[4], 4);
-    BOOST_CHECK_EQUAL(B(0, 0)[5], value_traits::numeric_cast(5));
-    BOOST_CHECK_EQUAL(B(0, 0)[6], value_traits::numeric_cast(6));
+    // Modify the (0,0) element
+    A.coeffRef(0, 0) = T(2.5);
 
-    sparse::inverse(A);
+    // Create a copy
+    Eigen::SparseMatrix<T> B = A;
 
-    BOOST_CHECK_EQUAL(A(0, 0)[0], 1 / value_traits::numeric_cast(2.5));
-    BOOST_CHECK_EQUAL(A(0, 0)[1], 1);
-    BOOST_CHECK_EQUAL(A(0, 0)[2], value_traits::numeric_cast(-3));
-    BOOST_CHECK_EQUAL(A(0, 0)[3], 2);
-    BOOST_CHECK_EQUAL(A(0, 0)[4], 3);
-    BOOST_CHECK_EQUAL(A(0, 0)[5], value_traits::numeric_cast(-1));
-    BOOST_CHECK_EQUAL(A(0, 0)[6], 0);
+    // Check the copied values
+    BOOST_CHECK_EQUAL(B.coeff(0, 0), T(2.5));
+    BOOST_CHECK_EQUAL(B.coeff(0, 1), T(1));
+    BOOST_CHECK_EQUAL(B.coeff(0, 2), T(2));
+    BOOST_CHECK_EQUAL(B.coeff(0, 3), T(3));
+    BOOST_CHECK_EQUAL(B.coeff(0, 4), T(4));
+    BOOST_CHECK_EQUAL(B.coeff(0, 5), T(5));
+    BOOST_CHECK_EQUAL(B.coeff(1, 0), T(6));
+
+    Eigen::Matrix<T, 6, 6> denseA = A.toDense();
+    denseA = denseA.inverse();
+    Eigen::SparseMatrix<T> A_inv = denseA.sparseView();
+
+    // Check the inverted values (approximate due to floating point precision)
+    const T tolerance = 1e-3;
+    BOOST_CHECK_CLOSE(A_inv.coeff(0, 0), 1 / T(2.5), tolerance);
+    BOOST_CHECK_CLOSE(A_inv.coeff(0, 1), 0, tolerance);
+    BOOST_CHECK_CLOSE(A_inv.coeff(0, 2), -0.533333361, tolerance);
+    BOOST_CHECK_CLOSE(A_inv.coeff(0, 3), 0.13333334, tolerance);
+    BOOST_CHECK_CLOSE(A_inv.coeff(0, 4), -0.13333334, tolerance);
+    BOOST_CHECK_CLOSE(A_inv.coeff(0, 5), 0.0666666701, tolerance);
+    BOOST_CHECK_CLOSE(A_inv.coeff(1, 0), 0.352721691, tolerance);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

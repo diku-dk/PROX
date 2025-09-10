@@ -1,3 +1,5 @@
+#include <eigen3/Eigen/Sparse>
+#include <eigen3/Eigen/Dense>
 #include <sparse.h>
 #include <sparse_fill.h>
 #include <prox_math_policy.h>
@@ -9,168 +11,178 @@
 
 BOOST_AUTO_TEST_SUITE(prod_mass_jac);
 
+using T = float;
+
+// Helper function to fill a matrix with consecutive values starting from a given value
+template <typename MatrixType>
+void fill_matrix_consecutive(MatrixType& mat, T start_value)
+{
+    for (int i = 0; i < mat.rows(); ++i)
+    {
+        for (int j = 0; j < mat.cols(); ++j)
+        {
+            mat.insert(i, j) = start_value++;
+        }
+    }
+}
+
+// Helper function to fill a diagonal block matrix with consecutive values
+void fill_diagonal_block(Eigen::SparseMatrix<T>& M, size_t block_idx,
+                         T start_value)
+{
+    size_t start_row = block_idx * 6;
+    size_t start_col = block_idx * 6;
+    T value = start_value;
+
+    for (int i = 0; i < 6; ++i)
+    {
+        for (int j = 0; j < 6; ++j)
+        {
+            M.insert(start_row + i, start_col + j) = value++;
+        }
+    }
+}
+
 BOOST_AUTO_TEST_CASE(mass_compress_prod_test_case)
 {
-    typedef prox::MathPolicy<float> math_policy;
-    typedef math_policy::diagonal_mass_type mass_matrix_type;
-    typedef math_policy::compressed6x4_type transposed_jacobian_type;
+    // Create mass matrix M (6x6)
+    Eigen::SparseMatrix<T> M(6, 6);
+    fill_diagonal_block(M, 0, 1.5f);
+    M.coeffRef(0, 0) = 2.5f; // Override first element
 
-    mass_matrix_type M(1);
-    sparse::fill(M(0, 0), 1.5f); // 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    // Create transposed Jacobian JT (6x4)
+    Eigen::SparseMatrix<T> JT(6, 4);
+    fill_matrix_consecutive(JT, 2.0f);
 
-    transposed_jacobian_type JT(1, 1, 1);
-    sparse::fill(JT(0, 0), 2.0f); // 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    // Compute product C = M * JT
+    Eigen::SparseMatrix<T> C = M * JT;
 
-    transposed_jacobian_type C(1, 1, 1);
-    sparse::prod(M, JT, C);
+    // Check all values
+    BOOST_CHECK_EQUAL(C.coeff(0, 0), 360);
+    BOOST_CHECK_EQUAL(C.coeff(0, 1), 385);
+    BOOST_CHECK_EQUAL(C.coeff(0, 2), 410);
+    BOOST_CHECK_EQUAL(C.coeff(0, 3), 435);
 
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 0), 3);
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 1), 4.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 2), 6);
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 3), 7.5);
+    BOOST_CHECK_EQUAL(C.coeff(1, 0), 790);
+    BOOST_CHECK_EQUAL(C.coeff(1, 1), 850);
+    BOOST_CHECK_EQUAL(C.coeff(1, 2), 910);
+    BOOST_CHECK_EQUAL(C.coeff(1, 3), 970);
 
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 0), 9);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 1), 10.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 2), 12);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 3), 13.5);
+    BOOST_CHECK_EQUAL(C.coeff(2, 0), 1222);
+    BOOST_CHECK_EQUAL(C.coeff(2, 1), 1318);
+    BOOST_CHECK_EQUAL(C.coeff(2, 2), 1414);
+    BOOST_CHECK_EQUAL(C.coeff(2, 3), 1510);
 
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 0), 15);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 1), 16.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 2), 18);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 3), 19.5);
+    BOOST_CHECK_EQUAL(C.coeff(3, 0), 1654);
+    BOOST_CHECK_EQUAL(C.coeff(3, 1), 1786);
+    BOOST_CHECK_EQUAL(C.coeff(3, 2), 1918);
+    BOOST_CHECK_EQUAL(C.coeff(3, 3), 2050);
 
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 0), 197);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 1), 207.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 2), 218);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 3), 228.5);
+    BOOST_CHECK_EQUAL(C.coeff(4, 0), 2086);
+    BOOST_CHECK_EQUAL(C.coeff(4, 1), 2254);
+    BOOST_CHECK_EQUAL(C.coeff(4, 2), 2422);
+    BOOST_CHECK_EQUAL(C.coeff(4, 3), 2590);
 
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 0), 291);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 1), 306.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 2), 322);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 3), 337.5);
-
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 0), 345);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 1), 363.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 2), 382);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 3), 400.5);
+    BOOST_CHECK_EQUAL(C.coeff(5, 0), 2518);
+    BOOST_CHECK_EQUAL(C.coeff(5, 1), 2722);
+    BOOST_CHECK_EQUAL(C.coeff(5, 2), 2926);
+    BOOST_CHECK_EQUAL(C.coeff(5, 3), 3130);
 }
 
 BOOST_AUTO_TEST_CASE(mass_compress_resized_prod_test_case)
 {
-    typedef prox::MathPolicy<float> math_policy;
-    typedef math_policy::diagonal_mass_type mass_matrix_type;
-    typedef math_policy::compressed6x4_type transposed_jacobian_type;
+    // Create mass matrix M (12x12) with 2 blocks
+    Eigen::SparseMatrix<T> M(12, 12);
+    fill_diagonal_block(M, 0, 1.5f);
+    M.coeffRef(0, 0) = 2.5f; // Override first element of first block
 
-    mass_matrix_type M(1);
-    sparse::fill(M(0, 0), 1.5f);// 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    fill_diagonal_block(M, 1, 2.5f); // Second block
 
-    transposed_jacobian_type JT(1, 1, 1);
-    sparse::fill(JT(0, 0), 2.0f);// 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    // Create transposed Jacobian JT (12x8) with 2x4 blocks
+    Eigen::SparseMatrix<T> JT(12, 8);
+    fill_matrix_consecutive(JT, 2.0f);
 
-    transposed_jacobian_type C(1, 1, 1);
-    sparse::prod(M, JT, C);
-    M.resize(2, 2);
-    sparse::fill(M(1, 1), 2.5f);// 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    // Set specific value for block (1,2)
+    JT.coeffRef(6, 4) = 3.0f; // First element of block (1,2)
 
-    JT.resize(2, 4, 2);
-    sparse::fill(JT(1, 2), 3.0f);// 2009-09-20 Kenny:  error:`fill' is not a member of 'sparse'
+    // Compute product C = M * JT
+    Eigen::SparseMatrix<T> C = M * JT;
 
-    C.clear();
-    C.resize(2, 4, 2);
-    sparse::prod(M, JT, C);
+    // Check values for block (0,0)
+    BOOST_CHECK_EQUAL(C.coeff(0, 0), 670);
+    BOOST_CHECK_EQUAL(C.coeff(0, 1), 695);
+    BOOST_CHECK_EQUAL(C.coeff(0, 2), 720);
+    BOOST_CHECK_EQUAL(C.coeff(0, 3), 745);
+    BOOST_CHECK_EQUAL(C.coeff(1, 0), 1460);
+    BOOST_CHECK_EQUAL(C.coeff(1, 1), 1520);
+    BOOST_CHECK_EQUAL(C.coeff(1, 2), 1580);
+    BOOST_CHECK_EQUAL(C.coeff(1, 3), 1640);
+    BOOST_CHECK_EQUAL(C.coeff(2, 0), 2252);
+    BOOST_CHECK_EQUAL(C.coeff(2, 1), 2348);
+    BOOST_CHECK_EQUAL(C.coeff(2, 2), 2444);
+    BOOST_CHECK_EQUAL(C.coeff(2, 3), 2540);
+    BOOST_CHECK_EQUAL(C.coeff(3, 0), 3044);
+    BOOST_CHECK_EQUAL(C.coeff(3, 1), 3176);
+    BOOST_CHECK_EQUAL(C.coeff(3, 2), 3308);
+    BOOST_CHECK_EQUAL(C.coeff(3, 3), 3440);
+    BOOST_CHECK_EQUAL(C.coeff(4, 0), 3836);
+    BOOST_CHECK_EQUAL(C.coeff(4, 1), 4004);
+    BOOST_CHECK_EQUAL(C.coeff(4, 2), 4172);
+    BOOST_CHECK_EQUAL(C.coeff(4, 3), 4340);
+    BOOST_CHECK_EQUAL(C.coeff(5, 0), 4628);
+    BOOST_CHECK_EQUAL(C.coeff(5, 1), 4832);
+    BOOST_CHECK_EQUAL(C.coeff(5, 2), 5036);
+    BOOST_CHECK_EQUAL(C.coeff(5, 3), 5240);
 
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 0), 3);
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 1), 4.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 2), 6);
-    BOOST_CHECK_EQUAL(C(0, 0)(0, 3), 7.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 0), 9);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 1), 10.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 2), 12);
-    BOOST_CHECK_EQUAL(C(0, 0)(1, 3), 13.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 0), 15);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 1), 16.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 2), 18);
-    BOOST_CHECK_EQUAL(C(0, 0)(2, 3), 19.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 0), 197);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 1), 207.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 2), 218);
-    BOOST_CHECK_EQUAL(C(0, 0)(3, 3), 228.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 0), 291);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 1), 306.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 2), 322);
-    BOOST_CHECK_EQUAL(C(0, 0)(4, 3), 337.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 0), 345);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 1), 363.5);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 2), 382);
-    BOOST_CHECK_EQUAL(C(0, 0)(5, 3), 400.5);
-
-    BOOST_CHECK_EQUAL(C(1, 2)(0, 0), 7.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(0, 1), 10);
-    BOOST_CHECK_EQUAL(C(1, 2)(0, 2), 12.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(0, 3), 15);
-    BOOST_CHECK_EQUAL(C(1, 2)(1, 0), 17.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(1, 1), 20);
-    BOOST_CHECK_EQUAL(C(1, 2)(1, 2), 22.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(1, 3), 25);
-    BOOST_CHECK_EQUAL(C(1, 2)(2, 0), 27.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(2, 1), 30);
-    BOOST_CHECK_EQUAL(C(1, 2)(2, 2), 32.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(2, 3), 35);
-    BOOST_CHECK_EQUAL(C(1, 2)(3, 0), 264.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(3, 1), 278);
-    BOOST_CHECK_EQUAL(C(1, 2)(3, 2), 291.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(3, 3), 305);
-    BOOST_CHECK_EQUAL(C(1, 2)(4, 0), 363.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(4, 1), 382);
-    BOOST_CHECK_EQUAL(C(1, 2)(4, 2), 400.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(4, 3), 419);
-    BOOST_CHECK_EQUAL(C(1, 2)(5, 0), 420.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(5, 1), 442);
-    BOOST_CHECK_EQUAL(C(1, 2)(5, 2), 463.5);
-    BOOST_CHECK_EQUAL(C(1, 2)(5, 3), 485);
+    // Check values for block (1,2)
+    BOOST_CHECK_EQUAL(C.coeff(6, 4), 2232.5);
+    BOOST_CHECK_EQUAL(C.coeff(6, 5), 2390);
+    BOOST_CHECK_EQUAL(C.coeff(6, 6), 2420);
+    BOOST_CHECK_EQUAL(C.coeff(6, 7), 2450);
+    BOOST_CHECK_EQUAL(C.coeff(7, 4), 4590.5);
+    BOOST_CHECK_EQUAL(C.coeff(7, 5), 5090);
+    BOOST_CHECK_EQUAL(C.coeff(7, 6), 5156);
+    BOOST_CHECK_EQUAL(C.coeff(7, 7), 5222);
+    BOOST_CHECK_EQUAL(C.coeff(8, 4), 6948.5);
+    BOOST_CHECK_EQUAL(C.coeff(8, 5), 7790);
+    BOOST_CHECK_EQUAL(C.coeff(8, 6), 7892);
+    BOOST_CHECK_EQUAL(C.coeff(8, 7), 7994);
+    BOOST_CHECK_EQUAL(C.coeff(9, 4), 9306.5);
+    BOOST_CHECK_EQUAL(C.coeff(9, 5), 10490);
+    BOOST_CHECK_EQUAL(C.coeff(9, 6), 10628);
+    BOOST_CHECK_EQUAL(C.coeff(9, 7), 10766);
+    BOOST_CHECK_EQUAL(C.coeff(10, 4), 11664.5);
+    BOOST_CHECK_EQUAL(C.coeff(10, 5), 13190);
+    BOOST_CHECK_EQUAL(C.coeff(10, 6), 13364);
+    BOOST_CHECK_EQUAL(C.coeff(10, 7), 13538);
+    BOOST_CHECK_EQUAL(C.coeff(11, 4), 14022.5);
+    BOOST_CHECK_EQUAL(C.coeff(11, 5), 15890);
+    BOOST_CHECK_EQUAL(C.coeff(11, 6), 16100);
+    BOOST_CHECK_EQUAL(C.coeff(11, 7), 16310);
 }
 
 BOOST_AUTO_TEST_CASE(compress_zero_init_clear_test_case)
 {
-    typedef prox::MathPolicy<float> math_policy;
-    typedef math_policy::compressed6x4_type transposed_jacobian_type;
-    typedef math_policy::value_traits value_traits;
+    // Create a 6x4 sparse matrix
+    Eigen::SparseMatrix<T> C(6, 4);
 
-    transposed_jacobian_type C(1, 1, 1);
+    // Check dimensions
+    BOOST_CHECK_EQUAL(C.rows(), 6);
+    BOOST_CHECK_EQUAL(C.cols(), 4);
 
-    BOOST_CHECK_EQUAL(C.nrows(), 1u);
-    BOOST_CHECK_EQUAL(C.ncols(), 1u);
+    // Check that all elements are initially zero
+    for (int i = 0; i < 6; ++i)
+    {
+        for (int j = 0; j < 4; ++j) { BOOST_CHECK_EQUAL(C.coeff(i, j), 0); }
+    }
 
-    BOOST_CHECK_EQUAL(C(0, 0)[0], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[1], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[2], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[3], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[4], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[5], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[6], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[7], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[8], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[9], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[10], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[11], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[12], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[13], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[14], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[15], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[16], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[17], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[18], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[19], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[20], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[21], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[22], 0);
-    BOOST_CHECK_EQUAL(C(0, 0)[23], 0);
+    // Clear the matrix by resizing to 0x0
+    C.resize(0, 0);
 
-    C.clear();
-
-    BOOST_CHECK_EQUAL(C.size(), 0u);
-    BOOST_CHECK_EQUAL(C.nrows(), 0u);
-    BOOST_CHECK_EQUAL(C.ncols(), 0u);
+    // Check that the matrix is now empty
+    BOOST_CHECK_EQUAL(C.rows(), 0);
+    BOOST_CHECK_EQUAL(C.cols(), 0);
+    BOOST_CHECK_EQUAL(C.nonZeros(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

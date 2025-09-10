@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(overlap_obb_obb_test)
         V const half_extA = V::make(1.0, 1.0, 1.0);
         Q const qA = Q::identity();
 
-        geometry::OBB<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
+        geometry::OBBEigen<MT> obbA = geometry::make_obb<MT>(centerA, qA, half_extA);
 
         V const centerB = V::make(0.0, -2.0, 0.0);
         V const half_extB = V::make(1.0, 1.0, 1.0);

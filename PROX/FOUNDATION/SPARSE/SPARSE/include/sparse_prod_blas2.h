@@ -59,10 +59,7 @@ namespace sparse
   {
     assert(lhs.ncols() == rhs.nrows() || !"number of lhs columns must be the same as number of right hand side rows");
 
-    if (init)
-    {
-      memset(&res[0], 0, sizeof(BR)*res.size());
-    }
+    if (init) { memset(&res[0], 0.0, sizeof(BR) * res.size()); }
 
     if (res.nrows() != lhs.nrows())
     {

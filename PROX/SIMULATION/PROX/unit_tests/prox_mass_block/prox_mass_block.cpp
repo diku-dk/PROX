@@ -1,6 +1,9 @@
 #include <sparse.h>
 #include <prox_math_policy.h>
 
+#include <eigen3/Eigen/Sparse>
+#include <eigen3/Eigen/Dense>
+
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_suite.hpp>
@@ -10,61 +13,82 @@ BOOST_AUTO_TEST_SUITE(mass_block_jac);
 
 BOOST_AUTO_TEST_CASE(mass_block_test_case)
 {
-    typedef prox::MathPolicy<float> math_policy;
-    typedef math_policy::mass_block_type Mass_block;
-    typedef math_policy::value_traits value_traits;
-    typedef math_policy::real_type real_type;
+    using T = float;
 
-    Mass_block b(0); // zero-init
-    // size checks
-    BOOST_CHECK_EQUAL(b.nrows(), 6u);
-    BOOST_CHECK_EQUAL(b.ncols(), 6u);
-    BOOST_CHECK_EQUAL(b.size(), 7u);
+    // Create a 6x6 sparse matrix to represent the mass block
+    Eigen::SparseMatrix<T> b(6, 6);
 
-    // is data initialised to float(0)
-    BOOST_CHECK_EQUAL(std::find_if(b.begin(), b.end(), bind2nd(std::not_equal_to<real_type>(), 0)), b.end());
+    // Initialize to zeros
+    b.setZero();
 
-    b(0, 0) = 0.5f; // should make m = b[0] == 0.5
-    BOOST_CHECK_EQUAL(b[0], 0.5f);
+    // Size checks
+    BOOST_CHECK_EQUAL(b.rows(), 6);
+    BOOST_CHECK_EQUAL(b.cols(), 6);
+    BOOST_CHECK_EQUAL(b.nonZeros(), 0); // Initially no non-zero elements
 
-    b(1, 1) = value_traits::numeric_cast(1.5); // should make m = b[0] == 1.5
-    BOOST_CHECK_EQUAL(b[0], value_traits::numeric_cast(1.5));
-    BOOST_CHECK_EQUAL(b(2, 2), b(0, 0));//should be same as b(0,0) && b(1,1)
-    BOOST_CHECK_EQUAL(b(2, 2), b(1, 1));//should be same as b(0,0) && b(1,1)
+    // Check if all elements are zero
+    bool all_zeros = true;
+    for (int i = 0; i < b.rows(); ++i)
+    {
+        for (int j = 0; j < b.cols(); ++j)
+        {
+            if (b.coeff(i, j) != 0)
+            {
+                all_zeros = false;
+                break;
+            }
+        }
+    }
+    BOOST_CHECK(all_zeros);
 
-    Mass_block b_copy(b);
-    BOOST_CHECK_EQUAL(b[0], b_copy[0]);
-    BOOST_CHECK_EQUAL(b[1], b_copy[1]);
-    BOOST_CHECK_EQUAL(b[2], b_copy[2]);
-    BOOST_CHECK_EQUAL(b[3], b_copy[3]);
-    BOOST_CHECK_EQUAL(b[4], b_copy[4]);
-    BOOST_CHECK_EQUAL(b[5], b_copy[5]);
-    BOOST_CHECK_EQUAL(b[6], b_copy[6]);
+    // Set element (0, 0) to 0.5
+    b.coeffRef(0, 0) = 0.5f;
+    BOOST_CHECK_EQUAL(b.coeff(0, 0), 0.5f);
 
-    b_copy(3, 3) = value_traits::numeric_cast(0.5);
-    b_copy(4, 4) = value_traits::numeric_cast(2.5);
-    b_copy(4, 5) = value_traits::numeric_cast(3.5);
-    b_copy(3, 4) = value_traits::numeric_cast(4.5);
-    b_copy(5, 4) = value_traits::numeric_cast(5.5);
-    b_copy(3, 5) = value_traits::numeric_cast(6.5);
-    b_copy(5, 5) = value_traits::numeric_cast(7.5);
+    // Set element (1, 1) to 1.5
+    b.coeffRef(1, 1) = 1.5f;
+    BOOST_CHECK_EQUAL(b.coeff(1, 1), 1.5f);
 
-    BOOST_CHECK_EQUAL(b_copy(4, 3), b_copy(3, 4));// by symmetry
-    BOOST_CHECK_EQUAL(b_copy(4, 3), value_traits::numeric_cast(4.5));
-    BOOST_CHECK_EQUAL(b_copy(4, 5), b_copy(5, 4)); // by symmetry
-    BOOST_CHECK_EQUAL(b_copy(4, 5), value_traits::numeric_cast(5.5));
-    BOOST_CHECK_EQUAL(b_copy(5, 3), b_copy(3, 5)); // by symmetry
-    BOOST_CHECK_EQUAL(b_copy(3, 5), value_traits::numeric_cast(6.5));
+    // Check that (2, 2) is still zero (not the same as (0, 0) or (1, 1))
+    BOOST_CHECK_EQUAL(b.coeff(2, 2), 0.0f);
 
+    // Create a copy
+    Eigen::SparseMatrix<T> b_copy = b;
+
+    // Check that all elements are equal
+    for (int i = 0; i < b.rows(); ++i)
+    {
+        for (int j = 0; j < b.cols(); ++j)
+        {
+            BOOST_CHECK_EQUAL(b.coeff(i, j), b_copy.coeff(i, j));
+        }
+    }
+
+    // Set additional elements in the copy
+    b_copy.coeffRef(3, 3) = 0.5f;
+    b_copy.coeffRef(4, 4) = 2.5f;
+    b_copy.coeffRef(4, 5) = 3.5f;
+    b_copy.coeffRef(3, 4) = 4.5f;
+    b_copy.coeffRef(5, 4) = 5.5f;
+    b_copy.coeffRef(3, 5) = 6.5f;
+    b_copy.coeffRef(5, 5) = 7.5f;
+
+    // Check symmetry
+    BOOST_CHECK_EQUAL(b_copy.coeff(3, 4), 4.5f);
+    BOOST_CHECK_EQUAL(b_copy.coeff(5, 4), 5.5f);
+    BOOST_CHECK_EQUAL(b_copy.coeff(3, 5), 6.5f);
+
+    // Assign back to b
     b = b_copy;
 
-    BOOST_CHECK_EQUAL(b[0], value_traits::numeric_cast(1.5));
-    BOOST_CHECK_EQUAL(b[1], value_traits::numeric_cast(0.5));
-    BOOST_CHECK_EQUAL(b[2], value_traits::numeric_cast(4.5));
-    BOOST_CHECK_EQUAL(b[3], value_traits::numeric_cast(6.5));
-    BOOST_CHECK_EQUAL(b[4], value_traits::numeric_cast(2.5));
-    BOOST_CHECK_EQUAL(b[5], value_traits::numeric_cast(5.5));
-    BOOST_CHECK_EQUAL(b[6], value_traits::numeric_cast(7.5));
+    // Check specific values
+    BOOST_CHECK_EQUAL(b.coeff(1, 1), 1.5f);  // Was overwritten by the copy
+    BOOST_CHECK_EQUAL(b.coeff(3, 3), 0.5f);  // Was overwritten by the copy
+    BOOST_CHECK_EQUAL(b.coeff(3, 4), 4.5f);
+    BOOST_CHECK_EQUAL(b.coeff(3, 5), 6.5f);
+    BOOST_CHECK_EQUAL(b.coeff(4, 4), 2.5f);
+    BOOST_CHECK_EQUAL(b.coeff(5, 4), 5.5f);
+    BOOST_CHECK_EQUAL(b.coeff(5, 5), 7.5f);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

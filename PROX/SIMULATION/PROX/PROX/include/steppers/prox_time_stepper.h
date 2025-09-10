@@ -211,8 +211,8 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
         fc.resize(WJT.nrows());
         sparse::prod(WJT, lambda, fc, true);     // fc = M^{-1}*J^T*lambda
 
-        //        fcNew.resize(WJTNew.rows());
-        //        fcNew.setZero();
+        fcNew.resize(WJTNew.rows());
+        fcNew.setZero();
         fcNew = WJTNew * lambdaNew;
 
         velocity_update(u, Wdth, fc, u); // u = u + dt M^{-1} h + fc
