@@ -11,18 +11,17 @@ BOOST_AUTO_TEST_SUITE(convex_outside_edge_face);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type V;
+    /*typedef tiny::MathTypes<double> math_types;
+    typedef math_types::vector3_type V;*/
 
-    V const a = V::make(0.0, 0.0, 0.0);
-    V const b = V::make(1.0, 0.0, 0.0);
-    ;
-    V const c = V::make(0.0, 1.0, 0.0);
-    ;
+    using T = double;
+    const EigenVector3<T> a = EigenVector3<T>(0.0, 0.0, 0.0);
+    const EigenVector3<T> b = EigenVector3<T>(1.0, 0.0, 0.0);
+    const EigenVector3<T> c = EigenVector3<T>(0.0, 1.0, 0.0);
 
   // Front side of AB voronoi plane
     {
-        V p = V::make(-0.5, -1.0, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, -1.0, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(outside);
 
@@ -31,7 +30,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of AB voronoi plane
     {
-        V p = V::make(-0.5, 1.0, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, 1.0, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(!outside);
 
@@ -40,7 +39,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In AB voronoi plane
     {
-        V p = V::make(-0.5, 0.0, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, 0.0, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(outside);
 
@@ -49,7 +48,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Front side of AC voronoi plane
     {
-        V p = V::make(-1.0, 0.5, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(-1.0, 0.5, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(outside);
 
@@ -58,7 +57,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of AC voronoi plane
     {
-        V p = V::make(1.0, 0.5, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(1.0, 0.5, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(!outside);
 
@@ -67,7 +66,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In AC voronoi plane
     {
-        V p = V::make(0.0, 0.5, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(0.0, 0.5, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(outside);
 
@@ -76,7 +75,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Front side of BC voronoi plane
     {
-        V p = V::make(1.0, 1.0, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(1.0, 1.0, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(outside);
 
@@ -85,7 +84,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of BC voronoi plane
     {
-        V p = V::make(0.0, 0.0, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(0.0, 0.0, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(!outside);
 
@@ -94,7 +93,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In BC voronoi plane
     {
-        V p = V::make(0.5, 0.5, 1.0);
+        EigenVector3<T> p = EigenVector3<T>(0.5, 0.5, 1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(outside);
 
@@ -106,7 +105,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
   // Front side of AB voronoi plane
     {
-        V p = V::make(-0.5, -1.0, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, -1.0, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(outside);
 
@@ -115,7 +114,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of AB voronoi plane
     {
-        V p = V::make(-0.5, 1.0, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, 1.0, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(!outside);
 
@@ -124,7 +123,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In AB voronoi plane
     {
-        V p = V::make(-0.5, 0.0, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, 0.0, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(outside);
 
@@ -133,7 +132,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Front side of AC voronoi plane
     {
-        V p = V::make(-1.0, 0.5, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(-1.0, 0.5, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(outside);
 
@@ -142,7 +141,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of AC voronoi plane
     {
-        V p = V::make(1.0, 0.5, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(1.0, 0.5, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(!outside);
 
@@ -151,7 +150,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In AC voronoi plane
     {
-        V p = V::make(0.0, 0.5, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(0.0, 0.5, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(outside);
 
@@ -160,7 +159,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Front side of BC voronoi plane
     {
-        V p = V::make(1.0, 1.0, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(1.0, 1.0, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(outside);
 
@@ -169,7 +168,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of BC voronoi plane
     {
-        V p = V::make(0.0, 0.0, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(0.0, 0.0, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(!outside);
 
@@ -178,7 +177,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In BC voronoi plane
     {
-        V p = V::make(0.5, 0.5, 0.0);
+        EigenVector3<T> p = EigenVector3<T>(0.5, 0.5, 0.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(outside);
 
@@ -190,7 +189,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
   // Front side of AB voronoi plane
     {
-        V p = V::make(-0.5, -1.0, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, -1.0, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(outside);
 
@@ -199,7 +198,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of AB voronoi plane
     {
-        V p = V::make(-0.5, 1.0, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, 1.0, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(!outside);
 
@@ -208,7 +207,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In AB voronoi plane
     {
-        V p = V::make(-0.5, 0.0, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(-0.5, 0.0, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, b, c);
         BOOST_CHECK(outside);
 
@@ -217,7 +216,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Front side of AC voronoi plane
     {
-        V p = V::make(-1.0, 0.5, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(-1.0, 0.5, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(outside);
 
@@ -226,7 +225,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of AC voronoi plane
     {
-        V p = V::make(1.0, 0.5, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(1.0, 0.5, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(!outside);
 
@@ -235,7 +234,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In AC voronoi plane
     {
-        V p = V::make(0.0, 0.5, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(0.0, 0.5, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, a, c, b);
         BOOST_CHECK(outside);
 
@@ -244,7 +243,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Front side of BC voronoi plane
     {
-        V p = V::make(1.0, 1.0, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(1.0, 1.0, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(outside);
 
@@ -253,7 +252,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Back side of BC voronoi plane
     {
-        V p = V::make(0.0, 0.0, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(0.0, 0.0, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(!outside);
 
@@ -262,7 +261,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // In BC voronoi plane
     {
-        V p = V::make(0.5, 0.5, -1.0);
+        EigenVector3<T> p = EigenVector3<T>(0.5, 0.5, -1.0);
         bool outside = convex::outside_edge_face_voronoi_plane(p, b, c, a);
         BOOST_CHECK(outside);
 

@@ -13,11 +13,19 @@ template <typename T> const EigenVector3<T>& Ellipsoid<T>::scale() const { retur
 
 template <typename T> void Ellipsoid<T>::setScale(const EigenVector3<T>& vec) { this->m_scale = vec; }
 
-template <typename T> const EigenVector3<T>& Ellipsoid<T>::scale() { return this->m_scale; }
+template <typename T> const EigenVector3<T>& Ellipsoid<T>::scale()
+{
+    return this->m_scale;
+}
+
+template <typename T> EigenVector3<T>& Ellipsoid<T>::scaleRef()
+{
+    return this->m_scale;
+}
 
 template <typename T>
 Ellipsoid<T>::Ellipsoid()
-    : m_scale(1)
+    : m_scale({1, 1, 1})
 {
 }
 

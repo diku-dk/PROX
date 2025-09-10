@@ -11,12 +11,10 @@ BOOST_AUTO_TEST_SUITE(convex_simplex);
 
 BOOST_AUTO_TEST_CASE(simplex_testing)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type V;
+    using T = double;
+    typedef convex::Simplex<T> S;
 
-    typedef convex::Simplex<V> S;
-
-    V const not_in_simplex = V::make(1.5, 5.0, 1.0);
+    const EigenVector3<T> not_in_simplex = EigenVector3<T>(1.5, 5.0, 1.0);
 
     S simplex;
 
@@ -56,9 +54,9 @@ BOOST_AUTO_TEST_CASE(simplex_testing)
 
     // Next try to insert one simplex vertex into the simplex
 
-    V const p1 = V::make(1.0, 0.0, 0.0);
-    V const a1 = V::make(1.0, 1.0, 0.0);
-    V const b1 = V::make(1.0, 0.0, 1.0);
+    const EigenVector3<T> p1 = EigenVector3<T>(1.0, 0.0, 0.0);
+    const EigenVector3<T> a1 = EigenVector3<T>(1.0, 1.0, 0.0);
+    const EigenVector3<T> b1 = EigenVector3<T>(1.0, 0.0, 1.0);
 
     BOOST_CHECK_NO_THROW(convex::add_point_to_simplex(p1, a1, b1, simplex));
 
@@ -95,9 +93,9 @@ BOOST_AUTO_TEST_CASE(simplex_testing)
 
     // Next try to insert one more simplex vertex into the simplex
 
-    V const p2 = V::make(2.0, 0.5, 1.0);
-    V const a2 = V::make(2.0, 1.0, 7.0);
-    V const b2 = V::make(2.0, 0.5, 1.0);
+    const EigenVector3<T> p2 = EigenVector3<T>(2.0, 0.5, 1.0);
+    const EigenVector3<T> a2 = EigenVector3<T>(2.0, 1.0, 7.0);
+    const EigenVector3<T> b2 = EigenVector3<T>(2.0, 0.5, 1.0);
 
     BOOST_CHECK_NO_THROW(convex::add_point_to_simplex(p2, a2, b2, simplex));
 
@@ -146,9 +144,9 @@ BOOST_AUTO_TEST_CASE(simplex_testing)
 
     // Insert one more simplex vertex
 
-    V const p3 = V::make(2.3, 7.5, 1.2);
-    V const a3 = V::make(2.1, 1.1, 2.3);
-    V const b3 = V::make(2.2, 2.5, 0.1);
+    const EigenVector3<T> p3 = EigenVector3<T>(2.3, 7.5, 1.2);
+    const EigenVector3<T> a3 = EigenVector3<T>(2.1, 1.1, 2.3);
+    const EigenVector3<T> b3 = EigenVector3<T>(2.2, 2.5, 0.1);
 
     BOOST_CHECK_NO_THROW(convex::add_point_to_simplex(p3, a3, b3, simplex));
 
@@ -215,9 +213,9 @@ BOOST_AUTO_TEST_CASE(simplex_testing)
 
     // Insert one more vertex then we have a full simplex
 
-    V const p4 = V::make(1.3, 1.5, 1.2);
-    V const a4 = V::make(1.1, 1.1, 1.3);
-    V const b4 = V::make(1.2, 1.5, 1.1);
+    const EigenVector3<T> p4 = EigenVector3<T>(1.3, 1.5, 1.2);
+    const EigenVector3<T> a4 = EigenVector3<T>(1.1, 1.1, 1.3);
+    const EigenVector3<T> b4 = EigenVector3<T>(1.2, 1.5, 1.1);
 
     BOOST_CHECK_NO_THROW(convex::add_point_to_simplex(p4, a4, b4, simplex));
 
@@ -289,9 +287,9 @@ BOOST_AUTO_TEST_CASE(simplex_testing)
 
     // Test what happens if we try to insert five vertices into the simplex
 
-    V const p5 = V::make(2.3, 2.5, 2.2);
-    V const a5 = V::make(2.1, 2.1, 2.3);
-    V const b5 = V::make(2.2, 2.5, 2.1);
+    const EigenVector3<T> p5 = EigenVector3<T>(2.3, 2.5, 2.2);
+    const EigenVector3<T> a5 = EigenVector3<T>(2.1, 2.1, 2.3);
+    const EigenVector3<T> b5 = EigenVector3<T>(2.2, 2.5, 2.1);
 
     BOOST_CHECK_THROW(convex::add_point_to_simplex(p5, a5, b5, simplex), std::logic_error);
 
@@ -484,10 +482,8 @@ BOOST_AUTO_TEST_CASE(simplex_testing)
 
 BOOST_AUTO_TEST_CASE(simplex_degenerate_point)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type V;
-    typedef math_types::real_type T;
-    typedef convex::Simplex<V> S;
+    using T = double;
+    typedef convex::Simplex<T> S;
 
     S simplex;
 
@@ -496,9 +492,9 @@ BOOST_AUTO_TEST_CASE(simplex_degenerate_point)
 
     for (size_t i = 0u; i < 100u; ++i)
     {
-        V const rand_in0 = V::random();
-        V const rand_in1 = V::random();
-        V const rand_in2 = V::random();
+        const EigenVector3<T> rand_in0 = randomEigen<T>();
+        const EigenVector3<T> rand_in1 = randomEigen<T>();
+        const EigenVector3<T> rand_in2 = randomEigen<T>();
 
         simplex.m_v[0] = rand_in0;
         simplex.m_v[1] = rand_in1;
@@ -511,9 +507,9 @@ BOOST_AUTO_TEST_CASE(simplex_degenerate_point)
 
     for (size_t i = 0u; i < 100u; ++i)
     {
-        V const rand_in0 = V::random();
-        V const rand_in1 = V::random();
-        V const rand_in2 = V::random();
+        const EigenVector3<T> rand_in0 = randomEigen<T>();
+        const EigenVector3<T> rand_in1 = randomEigen<T>();
+        const EigenVector3<T> rand_in2 = randomEigen<T>();
         simplex.m_v[0] = rand_in0;
         simplex.m_v[1] = rand_in1;
         simplex.m_v[2] = rand_in2;
@@ -535,7 +531,8 @@ BOOST_AUTO_TEST_CASE(simplex_degenerate_point)
         // 2011-11-12: Kenny: If by design you initialize w0 and w1 to sum to one instead of using the while loop then all w's could be const declared.
         T w2 = 1 - w0 - w1;
 
-        V const new_in_plane = w0 * rand_in0 + w1 * rand_in1 + w2 * rand_in2;
+        const EigenVector3<T> new_in_plane
+            = w0 * rand_in0 + w1 * rand_in1 + w2 * rand_in2;
 
         bool const is_degenerate = convex::is_degenerate_point(new_in_plane, simplex);
         BOOST_CHECK(is_degenerate == true);

@@ -11,14 +11,12 @@ BOOST_AUTO_TEST_SUITE(convex_reduce_edge);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type vector3_type;
-
-    typedef convex::Simplex<vector3_type> simplex_type;
+    using T = double;
+    typedef convex::Simplex<T> simplex_type;
 
   // First we create a simplex that represents an edge
-    vector3_type const a = vector3_type::make(1.0, 0.0, 0.0);
-    vector3_type const b = vector3_type::make(0.0, 0.0, 0.0);
+    EigenVector3<T> const a = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> const b = EigenVector3<T>(0.0, 0.0, 0.0);
 
   // First we use a test point that does not lie on the line
 
@@ -29,7 +27,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(1.5, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(1.5, 1.0, 1.0);
 
         convex::reduce_edge(p, S);
 
@@ -52,7 +50,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(0.5, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.5, 1.0, 1.0);
 
         convex::reduce_edge(p, S);
 
@@ -83,7 +81,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(1.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(1.0, 1.0, 1.0);
 
         convex::reduce_edge(p, S);
 
@@ -107,7 +105,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(-0.5, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-0.5, 1.0, 1.0);
 
         convex::reduce_edge(p, S);
 
@@ -130,7 +128,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(0.5, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.5, 1.0, 1.0);
 
         convex::reduce_edge(p, S);
 
@@ -161,7 +159,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(0.0, 1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 1.0, 1.0);
 
         convex::reduce_edge(p, S);
 
@@ -187,7 +185,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(1.5, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(1.5, 0.0, 0.0);
 
         convex::reduce_edge(p, S);
 
@@ -210,7 +208,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(0.5, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.5, 0.0, 0.0);
 
         convex::reduce_edge(p, S);
 
@@ -241,7 +239,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(1.0, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(1.0, 0.0, 0.0);
 
         convex::reduce_edge(p, S);
 
@@ -265,7 +263,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(-0.5, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(-0.5, 0.0, 0.0);
 
         convex::reduce_edge(p, S);
 
@@ -288,7 +286,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(0.5, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.5, 0.0, 0.0);
 
         convex::reduce_edge(p, S);
 
@@ -319,7 +317,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = vector3_type::make(0.0, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.0);
 
         convex::reduce_edge(p, S);
 
@@ -343,7 +341,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(a, a, a, S);
         convex::add_point_to_simplex(b, b, b, S);
 
-        vector3_type const p = (2.0 * a + 3.0 * b) / 5.0;
+        EigenVector3<T> const p = (2.0 * a + 3.0 * b) / 5.0;
 
         convex::reduce_edge(p, S);
 

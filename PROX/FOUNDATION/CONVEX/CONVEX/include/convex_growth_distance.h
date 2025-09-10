@@ -56,12 +56,13 @@ namespace convex
 
     const auto d_min = 2 * epsilon;
     const auto d_min_sqrd = 4 * epsilon * epsilon;
-    const auto v2 = v*v;
+    const T v2 = dot(v, v);
 
-    assert( v2 > 0 || !"growth_distance(): internal error growth centers are bad");
+    assert(v2 > 0
+           || !"growth_distance(): internal error growth centers are bad");
 
     // compute the support point: \vec p = S_{\set A - \set B}(- \vec v)
-    EigenVector3<T> s_a = tiny::rotate( ( X_A.Q() ).conjugate(), - v  );
+    EigenVector3<T> s_a = rotate((X_A.Q()).conjugate(), (-v).eval());
     EigenVector3<T> s_b = rotate( ( X_B.Q() ).conjugate(),   v  );
 
     auto w_a = (A->get_support_point( (s_a) ));
@@ -80,7 +81,7 @@ namespace convex
 
     const EigenVector3<T> p = w_a - w_b;
 
-    T tau = p*v/v2 - d_min/sqrt(v2);
+    T tau = dot(p, v) / v2 - d_min / sqrt(v2);
 
     for(iterations=1u; iterations <= max_iterations; ++iterations)
     {
@@ -120,7 +121,7 @@ namespace convex
       EigenVector3<T> s = p_A - p_B;
 
       // Test to see if separation is small enough
-      T const d_squared = tiny::inner_prod(s,s);
+      T const d_squared = dot(s, s);
       if( d_squared < d_min_sqrd )
       {
         // Convert ray cast length to growth scale
@@ -134,8 +135,7 @@ namespace convex
       }
 
       // Separation were too big so we will step closer
-      tau = tau + 0.9f*(s*v)/v2;//dampening the tau update value
-
+      tau = tau + 0.9f * dot(s, v) / v2; //dampening the tau update value
     }
 
     // not enough iterations to determine what goes on! We give up

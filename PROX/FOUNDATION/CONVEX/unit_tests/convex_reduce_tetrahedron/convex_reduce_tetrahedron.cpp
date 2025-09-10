@@ -11,16 +11,15 @@ BOOST_AUTO_TEST_SUITE(convex_reduce_tetrahedron);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type vector3_type;
+    using T = double;
 
-    typedef convex::Simplex<vector3_type> simplex_type;
+    typedef convex::Simplex<T> simplex_type;
 
   // First we create a simplex that represents a tetrahedron
-    vector3_type const a = vector3_type::make(0.0, 0.0, 0.0);
-    vector3_type const b = vector3_type::make(1.0, 0.0, 0.0);
-    vector3_type const c = vector3_type::make(0.0, 1.0, 0.0);
-    vector3_type const d = vector3_type::make(0.0, 0.0, 1.0);
+    EigenVector3<T> const a = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const b = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> const c = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> const d = EigenVector3<T>(0.0, 0.0, 1.0);
 
   // Inside tetrahedron region new simplex should be ABC
     {
@@ -31,7 +30,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b + c + d) * 0.25;
+        EigenVector3<T> const p = (a + b + c + d) * 0.25;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -69,7 +68,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b + c) / 3.0 - vector3_type::make(0, 0, 1);
+        EigenVector3<T> const p = (a + b + c) / 3.0 - EigenVector3<T>(0, 0, 1);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -110,7 +109,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (b + c + d) / 3.0 + vector3_type::make(1, 1, 1);
+        EigenVector3<T> const p = (b + c + d) / 3.0 + EigenVector3<T>(1, 1, 1);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -151,7 +150,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b + d) / 3.0 - vector3_type::make(0, 1, 0);
+        EigenVector3<T> const p = (a + b + d) / 3.0 - EigenVector3<T>(0, 1, 0);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -194,7 +193,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + c + d) / 3.0 - vector3_type::make(1, 0, 0);
+        EigenVector3<T> const p = (a + c + d) / 3.0 - EigenVector3<T>(1, 0, 0);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -235,7 +234,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b) / 2.0 - vector3_type::make(0, 1, 1);
+        EigenVector3<T> const p = (a + b) / 2.0 - EigenVector3<T>(0, 1, 1);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -269,7 +268,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + c) / 2.0 - vector3_type::make(1, 0, 1);
+        EigenVector3<T> const p = (a + c) / 2.0 - EigenVector3<T>(1, 0, 1);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -303,7 +302,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + d) / 2.0 - vector3_type::make(1, 1, 0);
+        EigenVector3<T> const p = (a + d) / 2.0 - EigenVector3<T>(1, 1, 0);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -337,7 +336,8 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (b + c) / 2.0 + vector3_type::make(0, 0, -1) + tiny::unit(vector3_type::make(1, 1, 1));
+        EigenVector3<T> const p = (b + c) / 2.0 + EigenVector3<T>(0, 0, -1)
+                                + unit(EigenVector3<T>(1, 1, 1));
 
         convex::reduce_tetrahedron(p, S);
 
@@ -371,8 +371,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p
-            = (b + d) / 2.0 + vector3_type::make(0.0, -1.0, 0.0) + tiny::unit(vector3_type::make(1.0, 1.0, 1.0));
+        EigenVector3<T> const p = (b + d) / 2.0
+                                + EigenVector3<T>(0.0, -1.0, 0.0)
+                                + unit(EigenVector3<T>(1.0, 1.0, 1.0));
 
         convex::reduce_tetrahedron(p, S);
 
@@ -406,8 +407,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p
-            = (c + d) / 2.0 + vector3_type::make(-1.0, 0.0, 0.0) + tiny::unit(vector3_type::make(1.0, 1.0, 1.0));
+        EigenVector3<T> const p = (c + d) / 2.0
+                                + EigenVector3<T>(-1.0, 0.0, 0.0)
+                                + unit(EigenVector3<T>(1.0, 1.0, 1.0));
 
         convex::reduce_tetrahedron(p, S);
 
@@ -441,7 +443,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = a + vector3_type::make(-1.0, -1.0, -1.0);
+        EigenVector3<T> const p = a + EigenVector3<T>(-1.0, -1.0, -1.0);
 
         convex::reduce_tetrahedron(p, S);
 
@@ -468,8 +470,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = b + vector3_type::make(0.0, -1.0, 0.0) + vector3_type::make(0.0, 0.0, -1.0)
-                             + tiny::unit(vector3_type::make(1, 1, 1));
+        EigenVector3<T> const p = b + EigenVector3<T>(0.0, -1.0, 0.0)
+                                + EigenVector3<T>(0.0, 0.0, -1.0)
+                                + unit(EigenVector3<T>(1, 1, 1));
 
         convex::reduce_tetrahedron(p, S);
 
@@ -496,8 +499,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = c + vector3_type::make(-1.0, 0.0, 0.0) + vector3_type::make(0, 0, -1)
-                             + tiny::unit(vector3_type::make(1, 1, 1));
+        EigenVector3<T> const p = c + EigenVector3<T>(-1.0, 0.0, 0.0)
+                                + EigenVector3<T>(0, 0, -1)
+                                + unit(EigenVector3<T>(1, 1, 1));
 
         convex::reduce_tetrahedron(p, S);
 
@@ -524,8 +528,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = d + vector3_type::make(-1.0, 0.0, 0.0) + vector3_type::make(0.0, -1.0, 0.0)
-                             + tiny::unit(vector3_type::make(1, 1, 1));
+        EigenVector3<T> const p = d + EigenVector3<T>(-1.0, 0.0, 0.0)
+                                + EigenVector3<T>(0.0, -1.0, 0.0)
+                                + unit(EigenVector3<T>(1, 1, 1));
 
         convex::reduce_tetrahedron(p, S);
 
@@ -546,16 +551,15 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_not_touching)
 
 BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type vector3_type;
+    using T = double;
 
-    typedef convex::Simplex<vector3_type> simplex_type;
+    typedef convex::Simplex<T> simplex_type;
 
   // First we create a simplex that represents a tetrahedron
-    vector3_type const a = vector3_type::make(0.0, 0.0, 0.0);
-    vector3_type const b = vector3_type::make(1.0, 0.0, 0.0);
-    vector3_type const c = vector3_type::make(0.0, 1.0, 0.0);
-    vector3_type const d = vector3_type::make(0.0, 0.0, 1.0);
+    EigenVector3<T> const a = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const b = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> const c = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> const d = EigenVector3<T>(0.0, 0.0, 1.0);
 
   // Inside tetrahedron region new simplex should be ABCD
     {
@@ -566,7 +570,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b + c + d) * 0.25;
+        EigenVector3<T> const p = (a + b + c + d) * 0.25;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -604,7 +608,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b + c) / 3.0;
+        EigenVector3<T> const p = (a + b + c) / 3.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -653,7 +657,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (b + c + d) / 3.0;
+        EigenVector3<T> const p = (b + c + d) / 3.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -694,7 +698,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b + d) / 3.0;
+        EigenVector3<T> const p = (a + b + d) / 3.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -737,7 +741,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + c + d) / 3.0;
+        EigenVector3<T> const p = (a + c + d) / 3.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -778,7 +782,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + b) / 2.0;
+        EigenVector3<T> const p = (a + b) / 2.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -812,7 +816,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + c) / 2.0;
+        EigenVector3<T> const p = (a + c) / 2.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -846,7 +850,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (a + d) / 2.0;
+        EigenVector3<T> const p = (a + d) / 2.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -880,7 +884,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (b + c) / 2.0;
+        EigenVector3<T> const p = (b + c) / 2.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -914,7 +918,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (b + d) / 2.0;
+        EigenVector3<T> const p = (b + d) / 2.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -948,7 +952,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = (c + d) / 2.0;
+        EigenVector3<T> const p = (c + d) / 2.0;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -982,7 +986,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = a;
+        EigenVector3<T> const p = a;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1009,7 +1013,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = b;
+        EigenVector3<T> const p = b;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1036,7 +1040,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = c;
+        EigenVector3<T> const p = c;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1063,7 +1067,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = d;
+        EigenVector3<T> const p = d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1084,18 +1088,17 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_touching)
 
 BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type vector3_type;
+    using T = double;
 
-    typedef convex::Simplex<vector3_type> simplex_type;
+    typedef convex::Simplex<T> simplex_type;
 
-  // First we create a simplex that represents a tetrahedron
-    vector3_type const a = vector3_type::make(0.0, 0.0, 0.0);
-    vector3_type const b = vector3_type::make(1.0, 0.0, 0.0);
-    vector3_type const c = vector3_type::make(0.0, 1.0, 0.0);
-    vector3_type const d = vector3_type::make(0.0, 0.0, 1.0);
+    // First we create a simplex that represents a tetrahedron
+    EigenVector3<T> const a = EigenVector3<T>(0.0, 0.0, 0.0);
+    EigenVector3<T> const b = EigenVector3<T>(1.0, 0.0, 0.0);
+    EigenVector3<T> const c = EigenVector3<T>(0.0, 1.0, 0.0);
+    EigenVector3<T> const d = EigenVector3<T>(0.0, 0.0, 1.0);
 
-  // New simplex should be ABCD
+    // New simplex should be ABCD
     {
         simplex_type S;
 
@@ -1104,7 +1107,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.1 * a + 0.2 * b + 0.3 * c + 0.4 * d;
+        EigenVector3<T> const p = 0.1 * a + 0.2 * b + 0.3 * c + 0.4 * d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1142,7 +1145,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.2 * a + 0.3 * b + 0.5 * c;
+        EigenVector3<T> const p = 0.2 * a + 0.3 * b + 0.5 * c;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1183,7 +1186,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.2 * b + 0.3 * c + 0.5 * d;
+        EigenVector3<T> const p = 0.2 * b + 0.3 * c + 0.5 * d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1224,7 +1227,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.2 * a + 0.3 * b + 0.5 * d;
+        EigenVector3<T> const p = 0.2 * a + 0.3 * b + 0.5 * d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1267,7 +1270,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.2 * a + 0.3 * c + 0.5 * d;
+        EigenVector3<T> const p = 0.2 * a + 0.3 * c + 0.5 * d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1308,7 +1311,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.4 * a + 0.6 * b;
+        EigenVector3<T> const p = 0.4 * a + 0.6 * b;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1342,7 +1345,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.4 * a + 0.6 * c;
+        EigenVector3<T> const p = 0.4 * a + 0.6 * c;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1376,7 +1379,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.4 * a + 0.6 * d;
+        EigenVector3<T> const p = 0.4 * a + 0.6 * d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1410,7 +1413,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.4 * b + 0.6 * c;
+        EigenVector3<T> const p = 0.4 * b + 0.6 * c;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1444,7 +1447,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.4 * b + 0.6 * d;
+        EigenVector3<T> const p = 0.4 * b + 0.6 * d;
 
         convex::reduce_tetrahedron(p, S);
 
@@ -1478,7 +1481,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test_assymmetric)
         convex::add_point_to_simplex(c, c, c, S);
         convex::add_point_to_simplex(d, d, d, S);
 
-        vector3_type const p = 0.4 * c + 0.6 * d;
+        EigenVector3<T> const p = 0.4 * c + 0.6 * d;
 
         convex::reduce_tetrahedron(p, S);
 

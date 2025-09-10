@@ -34,11 +34,11 @@ namespace convex
   {
     using std::fabs;
 
-      EigenVector3<T> m = ( A-B).times (C-B );
+    EigenVector3<T> m = (A - B).cross(C - B);
 
     assert( dot( m, m ) > 0 || !"signed_distance_to_triangle(): Degenerate triangle encountered");
 
-    EigenVector3<T>  n = ( m ).norm();
+    EigenVector3<T> n = (m).normalized();
 
     T sign_p = ( n).dot( p-B );
     T sign_q = ( n).dot( q-B );

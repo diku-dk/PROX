@@ -13,17 +13,16 @@ BOOST_AUTO_TEST_SUITE(convex_reduce_triangle);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type vector3_type;
-    typedef math_types::real_type real_type;
+    using T = double;
+    using real_type = T;
 
-    typedef convex::Simplex<vector3_type> simplex_type;
+    typedef convex::Simplex<T> simplex_type;
 
     // Inside face-region new simplex should be ABC
     {
-        vector3_type const a = vector3_type::make(-1.0, -1.0, 0.0);
-        vector3_type const b = vector3_type::make(1.0, -1.0, 0.0);
-        vector3_type const c = vector3_type::make(0.5, 0.1, 0.0);
+        EigenVector3<T> const a = EigenVector3<T>(-1.0, -1.0, 0.0);
+        EigenVector3<T> const b = EigenVector3<T>(1.0, -1.0, 0.0);
+        EigenVector3<T> const c = EigenVector3<T>(0.5, 0.1, 0.0);
 
         simplex_type S;
 
@@ -44,7 +43,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
                     v /= lgh;
                     w /= lgh;
 
-                    vector3_type const p = u * a + v * b + w * c;
+                    EigenVector3<T> const p = u * a + v * b + w * c;
 
                     convex::reduce_triangle(p, S);
 
@@ -77,9 +76,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
                 }
     }
     // First we create a simplex that represents an triangle
-    vector3_type const a = vector3_type::make(-1.0, -1.0, 0.0);
-    vector3_type const b = vector3_type::make(1.0, -1.0, 0.0);
-    vector3_type const c = vector3_type::make(0.0, 1.0, 0.0);
+    EigenVector3<T> const a = EigenVector3<T>(-1.0, -1.0, 0.0);
+    EigenVector3<T> const b = EigenVector3<T>(1.0, -1.0, 0.0);
+    EigenVector3<T> const c = EigenVector3<T>(0.0, 1.0, 0.0);
 
     // Inside face-region new simplex should be ABC
     {
@@ -89,7 +88,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(0.0, 0.0, 0.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 0.0, 0.0);
 
         convex::reduce_triangle(p, S);
 
@@ -128,7 +127,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(-2.0, -1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-2.0, -1.0, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -153,7 +152,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(2.0, -1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(2.0, -1.0, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -178,7 +177,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(0.0, 2.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, 2.0, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -203,7 +202,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(0.0, -2.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -2.0, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -235,7 +234,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(1.5, 0.5, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(1.5, 0.5, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -267,7 +266,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(-1.5, 0.5, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-1.5, 0.5, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -368,7 +367,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(0.0, -1.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(0.0, -1.0, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -400,7 +399,8 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(0.5, 0.0, 1.0); // this point is inside the triangle?!
+        EigenVector3<T> const p = EigenVector3<T>(
+            0.5, 0.0, 1.0); // this point is inside the triangle?!
 
         convex::reduce_triangle(p, S);
 
@@ -432,7 +432,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = vector3_type::make(-0.5, 0.0, 1.0);
+        EigenVector3<T> const p = EigenVector3<T>(-0.5, 0.0, 1.0);
 
         convex::reduce_triangle(p, S);
 
@@ -466,7 +466,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = 0.4 * a + 0.6 * b;
+        EigenVector3<T> const p = 0.4 * a + 0.6 * b;
 
         convex::reduce_triangle(p, S);
 
@@ -498,7 +498,8 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = 0.4 * b + 0.6 * c; // point is inside triangle?!
+        EigenVector3<T> const p
+            = 0.4 * b + 0.6 * c; // point is inside triangle?!
 
         convex::reduce_triangle(p, S);
 
@@ -530,7 +531,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = 0.6 * a + 0.4 * c;
+        EigenVector3<T> const p = 0.6 * a + 0.4 * c;
 
         convex::reduce_triangle(p, S);
 
@@ -562,7 +563,7 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(b, b, b, S);
         convex::add_point_to_simplex(c, c, c, S);
 
-        vector3_type const p = 0.1 * a + 0.2 * b + 0.7 * c;
+        EigenVector3<T> const p = 0.1 * a + 0.2 * b + 0.7 * c;
 
         convex::reduce_triangle(p, S);
 

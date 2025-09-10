@@ -29,7 +29,7 @@ namespace convex
 
     assert( dot( m, m ) > 0 || !"signed_distance_to_vertex_edge_voronoi_plane(): Degenerate edge encountered");
 
-    const EigenVector3<T> n = ( m ).norm();
+    const EigenVector3<T> n = (m).normalized();
 
     T sign_p = (n).dot((p-A) );
 

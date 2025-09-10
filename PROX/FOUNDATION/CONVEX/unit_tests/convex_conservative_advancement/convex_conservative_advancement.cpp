@@ -16,31 +16,32 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
     using std::fabs;
 
-    typedef tiny::MathTypes<double> M;
+/*    typedef tiny::MathTypes<double> M;
     typedef M::value_traits VT;
     typedef M::vector3_type V;
     typedef M::real_type T;
     typedef M::quaternion_type Q;
-    typedef M::coordsys_type C;
+    typedef M::coordsys_type C;*/
+    using T = double;
 
     // Setup a central impact, two sphere hitting in perfect symmetry, totally independent of their rotationnal motion!
     {
-        geometry::Sphere<V> const A;
-        geometry::Sphere<V> const B;
+        geometry::Sphere<T> const A;
+        geometry::Sphere<T> const B;
 
-        C T_a;
-        C T_b;
+        CoordSysEigen<T> T_a;
+        CoordSysEigen<T> T_b;
 
-        T_a.T() = V::make(-2.0, 0.0, 0.0);
-        T_a.Q() = Q::identity();
-        V const v_a = V::make(2.0, 0.0, 0.0);
-        V const w_a = V::make(0.0, 5.0, 0.0);
+        T_a.T() = EigenVector3<T>(-2.0, 0.0, 0.0);
+        T_a.Q() = EigenQuaternion<T>::Identity();
+        const EigenVector3<T> v_a = EigenVector3<T>(2.0, 0.0, 0.0);
+        const EigenVector3<T> w_a = EigenVector3<T>(0.0, 5.0, 0.0);
         T const r_max_a = A.radius();
 
-        T_b.T() = V::make(2.0, 0.0, 0.0);
-        T_b.Q() = Q::identity();
-        V const v_b = V::make(-2.0, 0.0, 0.0);
-        V const w_b = V::make(0.0, 0.0, 5.0);
+        T_b.T() = EigenVector3<T>(2.0, 0.0, 0.0);
+        T_b.Q() = EigenQuaternion<T>::Identity();
+        const EigenVector3<T> v_b = EigenVector3<T>(-2.0, 0.0, 0.0);
+        const EigenVector3<T> w_b = EigenVector3<T>(0.0, 0.0, 5.0);
         T const r_max_b = B.radius();
 
         size_t const max_iterations = 100u;
@@ -48,11 +49,12 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         T const epsilon = 0.01;
         T toi = 0.0;
         size_t iterations;
-        V p_a;
-        V p_b;
+        EigenVector3<T> p_a;
+        EigenVector3<T> p_b;
 
-        bool const impact = convex::conservative_advancement<M>(T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b,
-                                                                p_a, p_b, toi, iterations, epsilon, 1, max_iterations);
+        bool const impact = convex::conservative_advancement<T>(
+            T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b, p_a, p_b,
+            toi, iterations, epsilon, 1, max_iterations);
 
         BOOST_CHECK(impact);
         BOOST_CHECK_CLOSE(toi, 0.5, 1.0);
@@ -67,66 +69,68 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
     // Setup separating motion, two spheres moving away from each other
     {
-        geometry::Sphere<V> const A;
-        geometry::Sphere<V> const B;
+        geometry::Sphere<T> const A;
+        geometry::Sphere<T> const B;
 
-        C T_a;
-        C T_b;
+        CoordSysEigen<T> T_a;
+        CoordSysEigen<T> T_b;
 
-        T_a.T() = V::make(-2.0, 0.0, 0.0);
-        T_a.Q() = Q::identity();
-        V const v_a = V::make(-2.0, 0.0, 0.0);
-        V const w_a = V::make(0.0, 0.0, 0.0);
+        T_a.T() = EigenVector3<T>(-2.0, 0.0, 0.0);
+        T_a.Q() = EigenQuaternion<T>::Identity();
+        EigenVector3<T> const v_a = EigenVector3<T>(-2.0, 0.0, 0.0);
+        EigenVector3<T> const w_a = EigenVector3<T>(0.0, 0.0, 0.0);
         T const r_max_a = A.radius();
 
-        T_b.T() = V::make(2.0, 0.0, 0.0);
-        T_b.Q() = Q::identity();
-        V const v_b = V::make(2.0, 0.0, 0.0);
-        V const w_b = V::make(0.0, 0.0, 0.0);
+        T_b.T() = EigenVector3<T>(2.0, 0.0, 0.0);
+        T_b.Q() = EigenQuaternion<T>::Identity();
+        EigenVector3<T> const v_b = EigenVector3<T>(2.0, 0.0, 0.0);
+        EigenVector3<T> const w_b = EigenVector3<T>(0.0, 0.0, 0.0);
         T const r_max_b = B.radius();
 
         size_t const max_iterations = 100u;
         T const epsilon = 0.01;
         T toi = 0.0;
         size_t iterations;
-        V p_a;
-        V p_b;
+        EigenVector3<T> p_a;
+        EigenVector3<T> p_b;
 
-        bool const impact = convex::conservative_advancement<M>(T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b,
-                                                                p_a, p_b, toi, iterations, epsilon, 1, max_iterations);
+        bool const impact = convex::conservative_advancement<T>(
+            T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b, p_a, p_b,
+            toi, iterations, epsilon, 1, max_iterations);
 
         BOOST_CHECK(!impact);
     }
 
     // Setup two sphere moving close by each other but never impacting
     {
-        geometry::Sphere<V> const A;
-        geometry::Sphere<V> const B;
+        geometry::Sphere<T> const A;
+        geometry::Sphere<T> const B;
 
-        C T_a;
-        C T_b;
+        CoordSysEigen<T> T_a;
+        CoordSysEigen<T> T_b;
 
-        T_a.T() = V::make(-2.0, 1.01, 0.0);
-        T_a.Q() = Q::identity();
-        V const v_a = V::make(-2.0, 0.0, 0.0);
-        V const w_a = V::make(0.0, 5.0, 0.0);
+        T_a.T() = EigenVector3<T>(-2.0, 1.01, 0.0);
+        T_a.Q() = EigenQuaternion<T>::Identity();
+        EigenVector3<T> const v_a = EigenVector3<T>(-2.0, 0.0, 0.0);
+        EigenVector3<T> const w_a = EigenVector3<T>(0.0, 5.0, 0.0);
         T const r_max_a = A.radius();
 
-        T_b.T() = V::make(2.0, -1.01, 0.0);
-        T_b.Q() = Q::identity();
-        V const v_b = V::make(2.0, 0.0, 0.0);
-        V const w_b = V::make(0.0, 0.0, 5.0);
+        T_b.T() = EigenVector3<T>(2.0, -1.01, 0.0);
+        T_b.Q() = EigenQuaternion<T>::Identity();
+        EigenVector3<T> const v_b = EigenVector3<T>(2.0, 0.0, 0.0);
+        EigenVector3<T> const w_b = EigenVector3<T>(0.0, 0.0, 5.0);
         T const r_max_b = B.radius();
 
         size_t const max_iterations = 100u;
         T const epsilon = 0.01;
         T toi = 0.0;
         size_t iterations;
-        V p_a;
-        V p_b;
+        EigenVector3<T> p_a;
+        EigenVector3<T> p_b;
 
-        bool const impact = convex::conservative_advancement<M>(T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b,
-                                                                p_a, p_b, toi, iterations, epsilon, 1, max_iterations);
+        bool const impact = convex::conservative_advancement<T>(
+            T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b, p_a, p_b,
+            toi, iterations, epsilon, 1, max_iterations);
 
         BOOST_CHECK(!impact);
     }
@@ -135,41 +139,43 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     {
         using std::sqrt;
 
-        convex::Cylinder<M> A;
-        geometry::Sphere<V> B;
+        convex::Cylinder<T> A;
+        geometry::Sphere<T> B;
 
         A.half_height() = 10.0;
         A.radius() = 1.0;
         B.radius() = 1.0;
 
-        C T_a;
-        C T_b;
+        CoordSysEigen<T> T_a;
+        CoordSysEigen<T> T_b;
 
-        T_a.T() = V::make(0.0, 0.0, 2.0);
-        T_a.Q() = Q::identity();
-        V const v_a = V::make(0.0, 0.0, 0.0);
-        V const w_a = V::make(-VT::pi(), 0.0, 0.0);
+        T_a.T() = EigenVector3<T>(0.0, 0.0, 2.0);
+        T_a.Q() = EigenQuaternion<T>::Identity();
+        EigenVector3<T> const v_a = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const w_a
+            = EigenVector3<T>(-std::numbers::pi_v<T>, 0.0, 0.0);
         T const r_max_a = sqrt(A.half_height() * A.half_height() + A.radius() * A.radius());
 
-        T_b.T() = V::make(0.0, 10.0, 0.0);
-        T_b.Q() = Q::identity();
-        V const v_b = V::make(0.0, 0.0, 0.0);
-        V const w_b = V::make(0.0, 0.0, 0.0);
+        T_b.T() = EigenVector3<T>(0.0, 10.0, 0.0);
+        T_b.Q() = EigenQuaternion<T>::Identity();
+        EigenVector3<T> const v_b = EigenVector3<T>(0.0, 0.0, 0.0);
+        EigenVector3<T> const w_b = EigenVector3<T>(0.0, 0.0, 0.0);
         T const r_max_b = B.radius();
 
         size_t const max_iterations = 100u;
         T const epsilon = 0.01;
         T toi = 0.0;
         size_t iterations;
-        V p_a;
-        V p_b;
+        EigenVector3<T> p_a;
+        EigenVector3<T> p_b;
 
-        bool const impact = convex::conservative_advancement<M>(T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b,
-                                                                p_a, p_b, toi, iterations, epsilon, 1, max_iterations);
+        bool const impact = convex::conservative_advancement<T>(
+            T_a, v_a, w_a, &A, r_max_a, T_b, v_b, w_b, &B, r_max_b, p_a, p_b,
+            toi, iterations, epsilon, 1, max_iterations);
 
         BOOST_CHECK(impact);
         BOOST_CHECK_CLOSE(toi, 0.5, 1.0);
-        BOOST_CHECK(tiny::norm(p_a - p_b) < epsilon);
+        BOOST_CHECK(norm(p_a - p_b) < epsilon);
     }
 }
 

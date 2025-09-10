@@ -12,21 +12,22 @@ BOOST_AUTO_TEST_SUITE(motion_utils);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-    typedef tiny::MathTypes<double> M;
+/*    typedef tiny::MathTypes<double> M;
     typedef M::vector3_type V;
     typedef M::real_type T;
     typedef M::quaternion_type Q;
-    typedef M::coordsys_type X;
+    typedef M::coordsys_type X;*/
 
-    X from;
-    X to;
+    using T = double;
+    CoordSysEigen<T> from;
+    CoordSysEigen<T> to;
 
-    from = X::identity();
-    to.T() = V::make(1.0, 2.0, 3.0);
-    to.Q() = Q::Ru(3.0, V::make(1.0, 0.0, 0.0));
-    V v;
-    V w;
-    convex::compute_velocities<M>(from, to, 1.0, v, w);
+    from = CoordSysEigen<T>::identity();
+    to.T() = EigenVector3<T>(1.0, 2.0, 3.0);
+    to.Q() = Rotateu(3.0, EigenVector3<T>(1.0, 0.0, 0.0));
+    EigenVector3<T> v;
+    EigenVector3<T> w;
+    convex::compute_velocities<T>(from, to, 1.0, v, w);
 
     BOOST_CHECK_CLOSE(v(0), to.T()(0), 0.01);
     BOOST_CHECK_CLOSE(v(1), to.T()(1), 0.01);
@@ -36,36 +37,36 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     BOOST_CHECK_CLOSE(w(2), 0.0, 0.01);
 
     T tau = 0.5;
-    X cur = convex::integrate_motion<M>(from, tau, v, w);
+    CoordSysEigen<T> cur = convex::integrate_motion<T>(from, tau, v, w);
 
     BOOST_CHECK_CLOSE(0.5, cur.T()(0), 0.01);
     BOOST_CHECK_CLOSE(1.0, cur.T()(1), 0.01);
     BOOST_CHECK_CLOSE(1.5, cur.T()(2), 0.01);
 
     T theta;
-    V n;
-    tiny::get_axis_angle(cur.Q(), n, theta);
+    EigenVector3<T> n;
+    getAxisAngle(cur.Q(), n, theta);
 
     BOOST_CHECK_CLOSE(theta, 1.5, 0.01);
     BOOST_CHECK_CLOSE(n(0), 1.0, 0.01);
     BOOST_CHECK_CLOSE(n(1), 0.0, 0.01);
     BOOST_CHECK_CLOSE(n(2), 0.0, 0.01);
 
-    geometry::Sphere<V> const A;
-    geometry::Sphere<V> const B;
-    X X_a;
-    X X_b;
+    geometry::Sphere<T> const A;
+    geometry::Sphere<T> const B;
+    CoordSysEigen<T> X_a;
+    CoordSysEigen<T> X_b;
 
-    X_a.T() = V::make(-2.0, 0.0, 0.0);
-    X_a.Q() = Q::identity();
+    X_a.T() = EigenVector3<T>(-2.0, 0.0, 0.0);
+    X_a.Q() = EigenQuaternion<T>::Identity();
 
-    X_b.T() = V::make(2.0, 0.0, 0.0);
-    X_b.Q() = Q::identity();
+    X_b.T() = EigenVector3<T>(2.0, 0.0, 0.0);
+    X_b.Q() = EigenQuaternion<T>::Identity();
 
-    V p_a;
-    V p_b;
+    EigenVector3<T> p_a;
+    EigenVector3<T> p_b;
 
-    convex::compute_closest_points<M>(X_a, &A, X_b, &B, p_a, p_b);
+    convex::compute_closest_points<T>(X_a, &A, X_b, &B, p_a, p_b);
 
     BOOST_CHECK_CLOSE(p_a(0), -1.0, 0.1);
     BOOST_CHECK_CLOSE(p_a(1), 0.0, 0.1);

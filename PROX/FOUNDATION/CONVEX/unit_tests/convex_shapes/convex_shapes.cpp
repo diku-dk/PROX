@@ -12,16 +12,15 @@ BOOST_AUTO_TEST_SUITE(convex_shapes);
 
 BOOST_AUTO_TEST_CASE(case_by_case_testing)
 {
-    typedef tiny::MathTypes<double> M;
-    typedef M::vector3_type V;
+    using T = double;
 
-    geometry::Box<V> const box;
-    convex::Capsule<M> const capsule;
-    convex::Cone<M> const cone;
-    convex::ConvexHull<M> hull;
-    convex::Cylinder<M> const cylinder;
-    convex::Ellipsoid<M> const ellipsoid;
-    geometry::Sphere<V> const sphere;
+    geometry::BoxEigen<T> const box;
+    convex::Capsule<T> const capsule;
+    convex::Cone<T> const cone;
+    convex::ConvexHull<T> hull;
+    convex::Cylinder<T> const cylinder;
+    convex::Ellipsoid<T> const ellipsoid;
+    geometry::Sphere<T> const sphere;
 
     EigenVector3<double> zero{0.0, 0.0, 0.0};
     EigenVector3<double> up{0.0, 0.0, 1.0};

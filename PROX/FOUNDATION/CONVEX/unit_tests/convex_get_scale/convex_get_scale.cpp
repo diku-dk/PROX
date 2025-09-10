@@ -10,24 +10,26 @@
 
 #include <cmath>
 
-using M = tiny::MathTypes<double>;
+/*using M = tiny::MathTypes<double>;
 using Q = M::quaternion_type;
 using V = M::vector3_type;
 using T = M::real_type;
 using C = M::coordsys_type;
-using VT = M::value_traits;
+using VT = M::value_traits;*/
+
+using T = double;
 
 BOOST_AUTO_TEST_SUITE(convex_get_scale);
 
 BOOST_AUTO_TEST_CASE(get_scale)
 {
-    geometry::Box<V> box;
-    convex::Capsule<M> capsule;
-    convex::Cone<M> cone;
-    convex::ConvexHull<M> hull;
-    convex::Cylinder<M> cylinder;
-    convex::Ellipsoid<M> ellipsoid;
-    geometry::Sphere<V> sphere;
+    geometry::BoxEigen<T> box;
+    convex::Capsule<T> capsule;
+    convex::Cone<T> cone;
+    convex::ConvexHull<T> hull;
+    convex::Cylinder<T> cylinder;
+    convex::Ellipsoid<T> ellipsoid;
+    geometry::Sphere<T> sphere;
 
   //get_scale is supposed to return the minimum extent of the shape
   //spheres
@@ -90,37 +92,36 @@ BOOST_AUTO_TEST_CASE(get_scale)
     }
   //ellipsoid
     {
-        ellipsoid.scale()(0) = 1.40f;
-        ellipsoid.scale()(1) = 0.7f;
-        ellipsoid.scale()(2) = 0.35f;
+        ellipsoid.setScale(EigenVector3<T>(1.40f, 0.7f, 0.35f));
         BOOST_CHECK(ellipsoid.get_scale() == 0.7f);
-        ellipsoid.scale()(2) = 0.7f;
+        ellipsoid.scaleRef()(2) = 0.7f;
         BOOST_CHECK(ellipsoid.get_scale() == 1.4f);
-        ellipsoid.scale()(2) = 0.9f;
+        ellipsoid.scaleRef()(2) = 0.9f;
         BOOST_CHECK(ellipsoid.get_scale() == 1.4f);
-        ellipsoid.scale()(2) = 0.0f; //dropping one dimension, should not change the scale
+        ellipsoid.scaleRef()(2)
+            = 0.0f; //dropping one dimension, should not change the scale
         BOOST_CHECK(ellipsoid.get_scale() == 1.4f);
     }
   //convex hull
     {
-        hull.add_point(V::make(1.0, 4.0, 6.0));
-        hull.add_point(V::make(1.0, 6.0, 8.0));
-        hull.add_point(V::make(1.0, 7.0, 4.0));
-        hull.add_point(V::make(1.0, 8.0, 7.0));
-        hull.add_point(V::make(3.0, 5.0, 9.0));
-        hull.add_point(V::make(3.0, 7.0, 5.0));
-        hull.add_point(V::make(3.0, 9.0, 7.0));
-        hull.add_point(V::make(4.0, 7.0, 9.0));
-        hull.add_point(V::make(4.0, 9.0, 6.0));
-        hull.add_point(V::make(5.0, 6.0, 9.0));
-        hull.add_point(V::make(5.0, 7.0, 8.0));
-        hull.add_point(V::make(5.0, 8.0, 6.0));
+        hull.add_point(EigenVector3<T>(1.0, 4.0, 6.0));
+        hull.add_point(EigenVector3<T>(1.0, 6.0, 8.0));
+        hull.add_point(EigenVector3<T>(1.0, 7.0, 4.0));
+        hull.add_point(EigenVector3<T>(1.0, 8.0, 7.0));
+        hull.add_point(EigenVector3<T>(3.0, 5.0, 9.0));
+        hull.add_point(EigenVector3<T>(3.0, 7.0, 5.0));
+        hull.add_point(EigenVector3<T>(3.0, 9.0, 7.0));
+        hull.add_point(EigenVector3<T>(4.0, 7.0, 9.0));
+        hull.add_point(EigenVector3<T>(4.0, 9.0, 6.0));
+        hull.add_point(EigenVector3<T>(5.0, 6.0, 9.0));
+        hull.add_point(EigenVector3<T>(5.0, 7.0, 8.0));
+        hull.add_point(EigenVector3<T>(5.0, 8.0, 6.0));
         BOOST_CHECK(hull.get_scale() == 4.0f);
 
-        hull.add_point(V::make(10.0, 10.0, 10.0));
+        hull.add_point(EigenVector3<T>(10.0, 10.0, 10.0));
         BOOST_CHECK(hull.get_scale() == 6.0f);
 
-        hull.add_point(V::make(1.0, 4.0, 4.0));
+        hull.add_point(EigenVector3<T>(1.0, 4.0, 4.0));
         BOOST_CHECK(hull.get_scale() == 6.0f);
     }
 }

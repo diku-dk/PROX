@@ -11,23 +11,22 @@ BOOST_AUTO_TEST_SUITE(convex_reduce_simplex);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-    typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type vector3_type;
-    typedef convex::Simplex<vector3_type> simplex_type;
+    using T = double;
+    typedef convex::Simplex<T> simplex_type;
 
-    vector3_type const zero = vector3_type::make(0.0, 0.0, 0.0);
+    EigenVector3<T> const zero = EigenVector3<T>(0.0, 0.0, 0.0);
 
   // Simplex is a single point
     {
-        vector3_type const v1 = vector3_type::make(1.0, 1.0, 1.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, 1.0, 1.0);
 
         simplex_type S;
 
         convex::add_point_to_simplex(v1, v1, v1, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -39,17 +38,17 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is an edge that can not be reduced
     {
-        vector3_type const v1 = vector3_type::make(1.0, 0.0, 1.0);
-        vector3_type const v2 = vector3_type::make(1.0, 0.0, -1.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, 0.0, 1.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(1.0, 0.0, -1.0);
 
         simplex_type S;
 
         convex::add_point_to_simplex(v1, v1, v1, S);
         convex::add_point_to_simplex(v2, v2, v2, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -57,23 +56,23 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
 
         BOOST_CHECK(v == zero);
 
-        vector3_type const tst = vector3_type::make(1.0, 0.0, 0.0);
+        EigenVector3<T> const tst = EigenVector3<T>(1.0, 0.0, 0.0);
         BOOST_CHECK(a == tst);
         BOOST_CHECK(b == tst);
     }
   // Simplex is an edge that can be reduced to a single vertex
     {
-        vector3_type const v1 = vector3_type::make(1.0, 1.0, 1.0);
-        vector3_type const v2 = vector3_type::make(2.0, 2.0, 2.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, 1.0, 1.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(2.0, 2.0, 2.0);
 
         simplex_type S;
 
         convex::add_point_to_simplex(v1, v1, v1, S);
         convex::add_point_to_simplex(v2, v2, v2, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -85,9 +84,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is a triangle that can not be reduced
     {
-        vector3_type const v1 = vector3_type::make(1.0, 0.0, 0.0);
-        vector3_type const v2 = vector3_type::make(0.0, 1.0, 0.0);
-        vector3_type const v3 = vector3_type::make(0.0, 0.0, 1.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(0.0, 0.0, 1.0);
 
         simplex_type S;
 
@@ -95,9 +94,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v2, v2, v2, S);
         convex::add_point_to_simplex(v3, v3, v3, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -113,9 +112,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is a triangle that can be reduced to an edge
     {
-        vector3_type const v1 = vector3_type::make(1.0, -1.0, 0.0);
-        vector3_type const v2 = vector3_type::make(2.0, 0.0, 0.0);
-        vector3_type const v3 = vector3_type::make(1.0, 1.0, 0.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, -1.0, 0.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(2.0, 0.0, 0.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(1.0, 1.0, 0.0);
 
         simplex_type S;
 
@@ -123,9 +122,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v2, v2, v2, S);
         convex::add_point_to_simplex(v3, v3, v3, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -141,9 +140,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is a triangle that can be reduced to a point
     {
-        vector3_type const v1 = vector3_type::make(2.0, -1.0, 0.0);
-        vector3_type const v2 = vector3_type::make(2.0, 1.0, 0.0);
-        vector3_type const v3 = vector3_type::make(1.0, 0.0, 0.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(2.0, -1.0, 0.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(2.0, 1.0, 0.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(1.0, 0.0, 0.0);
 
         simplex_type S;
 
@@ -151,9 +150,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v2, v2, v2, S);
         convex::add_point_to_simplex(v3, v3, v3, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -169,10 +168,10 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Origin is inside a tetrahedron, so tetrahedron can not be reduced
     {
-        vector3_type const v1 = vector3_type::make(-1.0, 0.0, -1.0);
-        vector3_type const v2 = vector3_type::make(1.0, 0.0, -1.0);
-        vector3_type const v3 = vector3_type::make(0.0, -1.0, 1.0);
-        vector3_type const v4 = vector3_type::make(0.0, 1.0, 1.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(-1.0, 0.0, -1.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(1.0, 0.0, -1.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(0.0, -1.0, 1.0);
+        EigenVector3<T> const v4 = EigenVector3<T>(0.0, 1.0, 1.0);
 
         simplex_type S;
 
@@ -181,9 +180,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v3, v3, v3, S);
         convex::add_point_to_simplex(v4, v4, v4, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -195,10 +194,10 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is a tetrahedron that can be reduced to a triangle
     {
-        vector3_type const v1 = vector3_type::make(1.0, 0.0, 0.0);
-        vector3_type const v2 = vector3_type::make(0.0, 1.0, 0.0);
-        vector3_type const v3 = vector3_type::make(0.0, 0.0, 1.0);
-        vector3_type const v4 = vector3_type::make(2.0, 2.0, 2.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const v4 = EigenVector3<T>(2.0, 2.0, 2.0);
 
         simplex_type S;
 
@@ -207,9 +206,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v3, v3, v3, S);
         convex::add_point_to_simplex(v4, v4, v4, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -225,10 +224,10 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is a tetrahedron that can be reduced to a point
     {
-        vector3_type const v1 = vector3_type::make(1.0, 0.0, 0.0);
-        vector3_type const v2 = vector3_type::make(0.0, 1.0, 0.0);
-        vector3_type const v3 = vector3_type::make(0.0, 0.0, 1.0);
-        vector3_type const v4 = vector3_type::make(0.25, 0.25, 0.25);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, 0.0, 0.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(0.0, 1.0, 0.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(0.0, 0.0, 1.0);
+        EigenVector3<T> const v4 = EigenVector3<T>(0.25, 0.25, 0.25);
 
         simplex_type S;
 
@@ -237,9 +236,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v3, v3, v3, S);
         convex::add_point_to_simplex(v4, v4, v4, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 
@@ -251,10 +250,10 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
     }
   // Simplex is a tetrahedron that can be reduced to an edge
     {
-        vector3_type const v1 = vector3_type::make(1.0, -1.0, 0.0);
-        vector3_type const v2 = vector3_type::make(1.0, 1.0, 0.0);
-        vector3_type const v3 = vector3_type::make(2.0, 0.0, -1.0);
-        vector3_type const v4 = vector3_type::make(2.0, 0.0, 1.0);
+        EigenVector3<T> const v1 = EigenVector3<T>(1.0, -1.0, 0.0);
+        EigenVector3<T> const v2 = EigenVector3<T>(1.0, 1.0, 0.0);
+        EigenVector3<T> const v3 = EigenVector3<T>(2.0, 0.0, -1.0);
+        EigenVector3<T> const v4 = EigenVector3<T>(2.0, 0.0, 1.0);
 
         simplex_type S;
 
@@ -263,9 +262,9 @@ BOOST_AUTO_TEST_CASE(case_by_case_test)
         convex::add_point_to_simplex(v3, v3, v3, S);
         convex::add_point_to_simplex(v4, v4, v4, S);
 
-        vector3_type v;
-        vector3_type a;
-        vector3_type b;
+        EigenVector3<T> v;
+        EigenVector3<T> a;
+        EigenVector3<T> b;
 
         v = convex::reduce_simplex(S, a, b);
 

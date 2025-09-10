@@ -37,10 +37,12 @@ namespace convex
 
       EigenVector3<T>  m      = ( A-C).cross(B-C );
 
-    assert( tiny::inner_prod( m, m ) > 0 || !"signed_distance_to_edge_face_voronoi_plane(): Degenerate triangle encountered");
+      assert(dot(m, m) > 0
+             || !"signed_distance_to_edge_face_voronoi_plane(): Degenerate "
+                 "triangle encountered");
 
       EigenVector3<T>  l      = ( B-A).cross( m );
-    EigenVector3<T>  n      = ( l ).norm();
+      EigenVector3<T> n = (l).normalized();
 
       T sign_p = ( n).dot( p-B );
     T sign_C = ( n).dot( C-B );

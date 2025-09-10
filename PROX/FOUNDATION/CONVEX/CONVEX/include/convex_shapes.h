@@ -84,8 +84,9 @@ namespace convex
     void setScale(const EigenVector3<T>& vec);
     const EigenVector3<T>& scale() const;
     const EigenVector3<T>& scale();
+    EigenVector3<T>& scaleRef();
 
-  public:
+public:
 
     Ellipsoid();
 

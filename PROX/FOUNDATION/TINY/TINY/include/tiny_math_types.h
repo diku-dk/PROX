@@ -500,7 +500,10 @@ template <typename T> inline EigenVector3<T> randomEigen(const T& lower, const T
     return v;
 }
 
-template <typename T> inline EigenVector3<T> randomEigen() { return randomEigen(0, 1); }
+template <typename T> inline EigenVector3<T> randomEigen()
+{
+    return randomEigen<T>(0, 1);
+}
 
 namespace Eigen
 {
