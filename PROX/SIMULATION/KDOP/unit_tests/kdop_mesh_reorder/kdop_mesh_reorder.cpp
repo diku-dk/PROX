@@ -14,8 +14,7 @@ BOOST_AUTO_TEST_SUITE(kdop);
 
 BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_sphere)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::real_type T;
+    using T = float;
 
     mesh_array::T3Mesh surf;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;
@@ -74,8 +73,7 @@ BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_box)
 
 BOOST_AUTO_TEST_CASE(kdop_mesh_reorder_cone)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::real_type T;
+    using T = float;
 
     mesh_array::T3Mesh surf;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;

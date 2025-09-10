@@ -2,7 +2,6 @@
 #define MESH_ARRAY_MAKE_ELLIPSOID_H
 
 #include "mesh_array_make_sphere.h"
-#include "tiny_math_types.h"
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_vertex_attribute.h>
 #include <factory/mesh_array_scale.h>

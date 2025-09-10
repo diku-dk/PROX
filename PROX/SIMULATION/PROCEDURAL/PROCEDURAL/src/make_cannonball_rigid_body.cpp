@@ -41,8 +41,6 @@ size_t make_cannonball_rigid_body(content::API* engine, GeometryHandleEigen<T> c
     return rid;
 }
 
-using MTf = tiny::MathTypes<float>;
-
 template size_t make_cannonball_rigid_body<float>(content::API* engine, GeometryHandleEigen<float> const& ball,
                                                   const EigenVector3<float>& xbf, const EigenQuaternion<float>& Qbf,
                                                   const EigenVector3<float>& vbf, MaterialInfo<float> mat_info);

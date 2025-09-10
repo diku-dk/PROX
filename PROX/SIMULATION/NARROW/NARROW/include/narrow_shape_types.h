@@ -354,9 +354,6 @@ namespace narrow
                                    mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z)
           {
               using std::max;
-              using tiny::max;
-              using tiny::min;
-              using tiny::norm;
 
               kdop::mesh_reorder(mesh, X, Y, Z, m_mesh, m_X0, m_Y0, m_Z0);
 

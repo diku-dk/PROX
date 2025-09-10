@@ -34,10 +34,10 @@ void make_dome(content::API* engine, const EigenVector3<T>& position, const Eige
         // Initially the up-direction of the dome corresponds to the positive z-axis.
 
     T const offset_theta = 0;
-    T const delta_theta = 2 * std::numbers::pi_v<T> / boost::numeric_cast<T>(slices);
-    T const delta_phi = (std::numbers::pi_v<T> * 0.5f) / boost::numeric_cast<T>(segments + 1u);
+    T const delta_theta = 2 * std::numbers::pi_v<T> / T(slices);
+    T const delta_phi = (std::numbers::pi_v<T> * 0.5f) / T(segments + 1u);
     T const stone_density = get_material_density_eigen<T>(mat_info, "Stone");
-    T phi = delta_phi * boost::numeric_cast<T>(1.5f);
+    T phi = delta_phi * T(1.5f);
 
     for (size_t v = 0u; v < segments; ++v, phi += delta_phi)
     {

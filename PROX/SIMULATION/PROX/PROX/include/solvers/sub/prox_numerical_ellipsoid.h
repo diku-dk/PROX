@@ -2,7 +2,6 @@
 #define PROX_NUMERICAL_ELLIPSOID_H
 
 #include <algorithm>
-#include <tiny_is_number.h>
 
 #include <cmath>
 #include <cassert>

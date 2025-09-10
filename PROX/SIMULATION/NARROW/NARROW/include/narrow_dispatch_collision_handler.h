@@ -22,7 +22,6 @@ namespace narrow
                                   std::vector<TestPair<T>>& test_pairs)
   {
       assert( ! test_pairs.empty() || !"dispatch_primitives : test_pairs are empty" );
-      using M = tiny::MathTypes<T>;
       for (auto& elem : test_pairs)
       {
           const auto& geoA
@@ -72,7 +71,6 @@ namespace narrow
                              std::vector<TestPair<T>>& test_pairs)
   {
       assert( ! test_pairs.empty() || !"dispatch_mixed : test_pairs are empty" );
-      using M = tiny::MathTypes<T>;
       for (auto& elem : test_pairs)
       {
           auto const& geoA

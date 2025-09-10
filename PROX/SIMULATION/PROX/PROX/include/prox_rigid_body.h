@@ -4,9 +4,6 @@
 #include <narrow_object.h>   // Narrow phase collision detection interface support
 #include <broad_object.h>    // Broad phase collision detection interface support
 
-#include <tiny_matrix.h>
-#include <tiny_quaternion_functions.h>        // for tiny::unit
-
 #include <cassert>
 #include <vector>
 

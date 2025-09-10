@@ -8,7 +8,6 @@
 #include <util_log.h>
 
 #include <prox_rigid_body.h>
-#include <tiny_matrix.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>

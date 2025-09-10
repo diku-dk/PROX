@@ -76,8 +76,6 @@ void make_box_container(content::API* engine, const EigenVector3<T>& position, c
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-
 template void make_box_container<float>(content::API* engine, const EigenVector3<float>& position,
                                         const EigenQuaternion<float>& orientation, const float& width,
                                         const float& height, const float& depth, const float& wall_thickness,

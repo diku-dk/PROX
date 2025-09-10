@@ -300,7 +300,7 @@ namespace simulators
   public:
       void update(T const& time, rigid_body_type& body)
       {
-        using tiny::unit;
+
         using std::cos;
         using std::sin;
 

@@ -2,9 +2,7 @@
 #define PROX_STEPPER_PARAMS_H
 
 #include <prox_enums.h>    // Needed for common type defs
-
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <type_traits>
 
 namespace prox
 {

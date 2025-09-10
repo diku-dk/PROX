@@ -2,7 +2,6 @@
 #define PROX_GET_VELOCITY_VECTOR_H
 
 #include "eigenhelperfunctions.h"
-#include <tiny_is_number.h>
 
 namespace prox
 {

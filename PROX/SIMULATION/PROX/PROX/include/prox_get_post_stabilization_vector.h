@@ -4,8 +4,6 @@
 #include "eigenhelperfunctions.h"
 #include <steppers/prox_stepper_params.h>
 
-#include <tiny_is_number.h>
-
 #include <util_log.h>
 
 #include <cassert>

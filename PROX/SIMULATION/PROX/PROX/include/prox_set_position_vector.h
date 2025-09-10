@@ -2,7 +2,6 @@
 #define PROX_SET_POSITION_VECTOR_H
 
 #include "eigenhelperfunctions.h"
-#include <tiny_is_number.h>
 
 namespace prox
 {
