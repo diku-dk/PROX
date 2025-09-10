@@ -1,8 +1,7 @@
 #ifndef PROX_GET_PRE_STABILIZATION_VECTOR_H
 #define PROX_GET_PRE_STABILIZATION_VECTOR_H
 
-#include "prox_math.h"
-#include "tiny_math_types.h"
+#include "eigenhelperfunctions.h"
 #include <steppers/prox_stepper_params.h>
 
 #include <tiny_is_number.h>
@@ -11,9 +10,6 @@
 
 #include <cassert>
 #include <cmath>
-
-namespace prox
-{
 
 /**
    *
@@ -25,57 +21,6 @@ namespace prox
    * @param w                  Current relative contact point velocites, w = J*u
    *
    */
-template <typename T, typename Iterator>
-inline void get_pre_stabilization_vector(Iterator begin, Iterator end,
-                                         const StepperParams<T>& params, T timestep,
-                                         const NCVec4<T>& w, NCVec4<T>& g, size_t K)
-{
-    assert(timestep > 0 || !"get_pre_stabilization_vector(): time_step should be positive");
-
-    util::Log logging;
-
-    g.resize(K);
-
-    logging << "get_pre_stabilization_vector(): pre stabilizaiton = " << params.pre_stabilization()
-            << util::Log::newline();
-
-    if (!params.pre_stabilization()) return;
-
-    T const& reduction = params.gap_reduction();
-    T const& min_gap = params.min_gap();
-    T const& max_gap = params.max_gap();
-
-    assert(reduction >= 0
-           || !"get_pre_stabilization_vector(): gap reduction parameter should be positive");
-    assert(reduction <= 1
-           || !"get_pre_stabilization_vector(): gap reduction parameter should be less than or "
-               "equal to one");
-    assert(min_gap >= 0
-           || !"get_pre_stabilization_vector(): min gap correction should be non negative");
-    assert(max_gap > 0 || !"get_pre_stabilization_vector(): max gap correction should be positive");
-
-    T const k = reduction / timestep;
-    T const limit = -max_gap / timestep;
-    T const yield = -min_gap;
-
-    size_t index = 0u;
-    for (auto contact = begin; contact != end; ++contact, ++index)
-    {
-        auto& b = g(index);
-        auto const& v = w(index);
-        T const& v_n = v(0);
-        bool const add_correction = contact->depth <= yield && v_n <= 0;
-
-        b(0) = add_correction ? std::max(limit, k * contact->depth) : 0;
-        b(1) = 0;
-        b(2) = 0;
-        b(3) = 0;
-
-        assert(is_number(b(0)) || !"get_pre_stabilization_vector(): b(0) is not a number");
-    }
-}
-} //namespace prox
-
 namespace prox
 {
 template <typename T, typename Iterator>

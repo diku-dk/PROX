@@ -1,8 +1,7 @@
 #ifndef PROX_GET_POSITION_VECTOR_H
 #define PROX_GET_POSITION_VECTOR_H
 
-#include "prox_math.h"
-#include <tiny_is_number.h>
+#include "eigenhelperfunctions.h"
 
 namespace prox
 {
