@@ -7,7 +7,7 @@
 #include <gl3_texture_3d.h>
 #include <gl3_render_buffer.h>
 
-#include <tiny_power2.h>
+#include <eigenhelperfunctions.h>
 
 #include <util_log.h>
 

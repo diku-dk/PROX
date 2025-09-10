@@ -3,8 +3,6 @@
 
 /*#include <prox_update_inertia_tensor.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
 
 namespace prox
 {

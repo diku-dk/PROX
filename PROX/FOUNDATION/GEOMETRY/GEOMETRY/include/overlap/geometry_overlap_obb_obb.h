@@ -32,13 +32,6 @@
       const EigenMatrix3<T> R_a(A.orientation());
       const EigenMatrix3<T> R_b(B.orientation());
 
-      //    V const A0  = tiny::truncate( R_a.get_column_copy(0), std::numeric_limits<T>::epsilon()*10 );
-      //    V const A1  = tiny::truncate( R_a.get_column_copy(1), std::numeric_limits<T>::epsilon()*10 );
-      //    V const A2  = tiny::truncate( R_a.get_column_copy(2), std::numeric_limits<T>::epsilon()*10 );
-      //    V const B0  = tiny::truncate( R_b.get_column_copy(0), std::numeric_limits<T>::epsilon()*10 );
-      //    V const B1  = tiny::truncate( R_b.get_column_copy(1), std::numeric_limits<T>::epsilon()*10 );
-      //    V const B2  = tiny::truncate( R_b.get_column_copy(2), std::numeric_limits<T>::epsilon()*10 );
-
       const EigenVector3<T> A0  = R_a.col(0);
       const EigenVector3<T> A1  = R_a.col(1);
       const EigenVector3<T> A2  = R_a.col(2);

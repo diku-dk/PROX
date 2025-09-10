@@ -64,9 +64,6 @@ namespace content
                                           , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                           )
   {
-/*    typedef tiny::MathTypes<float>       MT;
-    typedef typename MT::vector3_type    V;
-    typedef typename MT::quaternion_type Q;*/
 
     for(size_t j=0u; j < engine->get_number_of_capsules(gid) ; ++j)
     {

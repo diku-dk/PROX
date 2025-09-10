@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE(mesh_array_compute_surface_map_sphere)
         EigenVector3<T> const p_m = EigenVector3<T>(
             X(tetrahedron.m()), Y(tetrahedron.m()), Z(tetrahedron.m()));
 
-        T const distance_i = fabs(radius - tiny::norm(p_i));
-        T const distance_j = fabs(radius - tiny::norm(p_j));
-        T const distance_k = fabs(radius - tiny::norm(p_k));
-        T const distance_m = fabs(radius - tiny::norm(p_m));
+        T const distance_i = fabs(radius - norm(p_i));
+        T const distance_j = fabs(radius - norm(p_j));
+        T const distance_k = fabs(radius - norm(p_k));
+        T const distance_m = fabs(radius - norm(p_m));
 
         bool const i_on_surface = distance_i > 10e-5 ? false : true;
         bool const j_on_surface = distance_j > 10e-5 ? false : true;

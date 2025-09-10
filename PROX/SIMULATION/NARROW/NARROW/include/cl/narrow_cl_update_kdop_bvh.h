@@ -30,19 +30,15 @@
 namespace narrow
 {
 
-  template<typename M>
-  inline void update_kdop_bvh(
-                                std::vector< KDopBvhUpdateWorkItem< M > > & update_kdop_bvh_objects
-                              , dikucl const & /* tag */
-                              , size_t open_cl_platform = 0
-                              , size_t open_cl_device = 0
-  )
-  {
+template <typename T>
+inline void
+update_kdop_bvh(std::vector<KDopBvhUpdateWorkItem<T>>& update_kdop_bvh_objects,
+                dikucl const& /* tag */
+                ,
+                size_t open_cl_platform = 0, size_t open_cl_device = 0)
+{
     assert( ! update_kdop_bvh_objects.empty() || !"update_kdop_bvh : update_kdop_bvh_objects are empty" );
 
-    typedef typename M::real_type     T;
-    typedef typename M::vector3_type  V;
-    typedef tiny::ValueTraits<T>     VT;
     const size_t K = 8;
     typedef typename std::vector< KDopBvhUpdateWorkItem< M > >::iterator object_iterator;
 
@@ -225,8 +221,8 @@ namespace narrow
       rotations[total_objects].s[2] = current->q()(2);
       rotations[total_objects].s[3] = current->q()(3);
 
-      Object<M> const & object     = current->object();
-      Geometry<M> const & geometry = current->geometry();
+      Object<T> const& object = current->object();
+      Geometry<T> const& geometry = current->geometry();
 
       size_t N = geometry.m_tetramesh.m_mesh.vertex_size();
       for(size_t n = 0u; n < N; ++n)
@@ -662,18 +658,20 @@ namespace narrow
     total_objects = 0;
     for (; current != end; ++current, ++total_objects)
     {
-      Object<M> & object = current->object();
-      Geometry<M> const & geometry = current->geometry();
+        Object<T>& object = current->object();
+        Geometry<T> const& geometry = current->geometry();
 
-      // Use the same calculations as above for figuring out all offsets.
-      for(size_t n = 0u; n < geometry.m_tetramesh.m_mesh.vertex_size(); ++n)
-      {
-        mesh_array::Vertex const & v = geometry.m_tetramesh.m_mesh.vertex(n);
+        // Use the same calculations as above for figuring out all offsets.
+        for (size_t n = 0u; n < geometry.m_tetramesh.m_mesh.vertex_size(); ++n)
+        {
+            mesh_array::Vertex const& v = geometry.m_tetramesh.m_mesh.vertex(n);
 
-        const size_t vertex_offset = (total_objects == 0 ? 0 : vertex_offsets[total_objects - 1]) + v.idx();
-        object.m_X(v) = vertices[vertex_offset].s[0];
-        object.m_Y(v) = vertices[vertex_offset].s[1];
-        object.m_Z(v) = vertices[vertex_offset].s[2];
+            const size_t vertex_offset
+                = (total_objects == 0 ? 0 : vertex_offsets[total_objects - 1])
+                + v.idx();
+            object.m_X(v) = vertices[vertex_offset].s[0];
+            object.m_Y(v) = vertices[vertex_offset].s[1];
+            object.m_Z(v) = vertices[vertex_offset].s[2];
       }
 
       size_t total_nodes_per_object = 0;
@@ -727,8 +725,7 @@ namespace narrow
     }
 
     RECORD_TIME("refit_tree", (double) refit_tree_kernel_time / 1000000.0);
-
-  }
+}
 
 } // namespace narrow
 

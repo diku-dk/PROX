@@ -18,8 +18,6 @@
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_vertex_attribute.h>
 
-#include <tiny_math_types.h>
-
 #include <util_config_file.h>
 
 namespace rigid_body

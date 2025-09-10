@@ -6,9 +6,6 @@
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_vertex_attribute.h>
 
-#include <tiny_math_types.h>
-#include <tiny_coordsys_functions.h>
-
 #include <util_log.h>
 
 #include <fstream>
@@ -25,23 +22,18 @@ namespace rigid_body
                                , content::API * engine
                                )
       {
-        typedef tiny::MathTypes<float> MT;
-        typedef MT::vector3_type       V;
-        typedef MT::quaternion_type    Q;
-        typedef MT::value_traits       VT;
-        typedef MT::coordsys_type      C;
+          using T = float;
+          std::ofstream file(filename.c_str());
 
-        std::ofstream file( filename.c_str() );
+          if (!file.is_open())
+          {
+              util::Log logging;
 
-        if(!file.is_open())
-        {
-          util::Log logging;
+              logging << "Could not open file = " << filename
+                      << util::Log::newline();
 
-
-          logging << "Could not open file = " << filename << util::Log::newline();
-
-          return;
-        }
+              return;
+          }
 
         float x  = 0;
         float y  = 0;
@@ -63,8 +55,8 @@ namespace rigid_body
           engine->get_rigid_body_position(rid,x,y,z);
           engine->get_rigid_body_orientation(rid,qs,qx,qy,qz);
 
-          V const T_b2w = V::make(x, y, z);
-          Q const Q_b2w = Q(qs, qx, qy, qz);
+          const EigenVector3<T> T_b2w = EigenVector3<T>(x, y, z);
+          const EigenQuaternion<T> Q_b2w = EigenQuaternion<T>(qs, qx, qy, qz);
 
           size_t const gid                = engine->get_rigid_body_collision_geometry(rid);
           size_t const number_of_convexes = engine->get_number_of_convexes(gid);
@@ -77,8 +69,8 @@ namespace rigid_body
           engine->get_convex_position( gid, convex_number , x, y, z );
           engine->get_convex_orientation( gid, convex_number, qs, qx, qy, qz );
 
-          V const T_s2b = V::make(x, y, z);
-          Q const Q_s2b = Q(qs, qx, qy, qz);
+          const EigenVector3<T> T_s2b = EigenVector3<T>(x, y, z);
+          const EigenQuaternion<T> Q_s2b = EigenQuaternion<T>(qs, qx, qy, qz);
 
           size_t no_points = 0u;
 
@@ -89,9 +81,9 @@ namespace rigid_body
 
           engine->get_convex_shape( gid, convex_number, &coordinates[0] );
 
-          C const X_s2b = C::make(T_s2b,Q_s2b);
-          C const X_b2w = C::make(T_b2w,Q_b2w);
-          C const X_s2w = tiny::prod(X_b2w, X_s2b);
+          CoordSysEigen<T> const X_s2b = CoordSysEigen<T>::make(T_s2b, Q_s2b);
+          CoordSysEigen<T> const X_b2w = CoordSysEigen<T>::make(T_b2w, Q_b2w);
+          CoordSysEigen<T> const X_s2w = prod(X_b2w, X_s2b);
 
           {
             util::Log logging;
@@ -101,12 +93,14 @@ namespace rigid_body
 
           for(size_t k=0u;k<no_points;++k)
           {
-            V const p = V::make( coordinates[3u*k], coordinates[3u*k+1u], coordinates[3u*k+2u]);
-            V const q = tiny::xform_point(X_s2w, p);//changed from X_s2b
-            file << "(" << q(0) << "," << q(1) << "," << q(2) << ")";
+              const EigenVector3<T> p = EigenVector3<T>(
+                  coordinates[3u * k], coordinates[3u * k + 1u],
+                  coordinates[3u * k + 2u]);
+              const EigenVector3<T> q
+                  = xform_point(X_s2w, p); //changed from X_s2b
+              file << "(" << q(0) << "," << q(1) << "," << q(2) << ")";
 
-            if(k < no_points-1)
-              file << ",";
+              if (k < no_points - 1) file << ",";
           }
           file << "\n";
         }

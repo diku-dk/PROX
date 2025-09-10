@@ -10,7 +10,6 @@
 #include <gl3_glm.h>
 
 #include <content.h>
-#include <tiny.h>
 
 #include <cmath> // std::acos, std::fabs
 

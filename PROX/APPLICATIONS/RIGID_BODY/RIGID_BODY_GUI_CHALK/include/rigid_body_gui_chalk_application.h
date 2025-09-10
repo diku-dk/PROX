@@ -26,7 +26,6 @@
 #include <gl3_texture_manager.h>
 #include <gl3_shader_program_manager.h>
 
-#include <tiny.h>
 #include <simulators.h>
 #include <procedural.h>
 
@@ -60,13 +59,7 @@ namespace rigid_body
       class Application
       {
       public:
-          using MT = tiny::MathTypes<float>;
-          using T = MT::real_type;
-          using V = MT::vector3_type;
-          using M = MT::matrix3x3_type;
-          using Q = MT::quaternion_type;
-          using C = MT::coordsys_type;
-          using VT = MT::value_traits;
+          using T = float;
 
           Widget* gl_widget;
 
@@ -181,7 +174,7 @@ namespace rigid_body
           m_output_path              = "";
 
           m_time      = 0;
-          m_time_step = VT::numeric_cast(0.01f);
+          m_time_step = T(0.01f);
 
           m_draw_debug           = false;
           m_draw_contacts        = false;
@@ -303,12 +296,8 @@ namespace rigid_body
           p_z   = m_camera.position().z;
         }
 
-        void get_ray(
-                     unsigned int const & screen_x
-                     , unsigned int const & screen_y
-                     , V & p
-                     , V & r
-                     )
+        void get_ray(unsigned int const& screen_x, unsigned int const& screen_y,
+                     EigenVector3<T>& p, EigenVector3<T>& r)
         {
           float p_x = 0.0f;
           float p_y = 0.0f;
@@ -319,8 +308,8 @@ namespace rigid_body
 
           get_ray(screen_x, screen_y, p_x, p_y, p_z, ray_x, ray_y, ray_z);
 
-          p = V::make(p_x,p_y,p_z);
-          r = V::make(ray_x,ray_y,ray_z);
+          p = EigenVector3<T>(p_x, p_y, p_z);
+          r = EigenVector3<T>(ray_x, ray_y, ray_z);
         }
 
       public:
@@ -436,7 +425,7 @@ namespace rigid_body
             procedural::Noise::on()    = util::to_value<bool>(   m_config_file.get_value("procedural_noise_on",    "false") );
             procedural::Noise::scale() = util::to_value<double>( m_config_file.get_value("procedural_noise_scale", "0.001") );
 
-            make_procedural_content<MT>(&m_engine, m_config_file);
+            make_procedural_content<T>(&m_engine, m_config_file);
           }
 
           //--- Count how big the configuraiton we are simulating is -------------------
@@ -892,12 +881,12 @@ namespace rigid_body
 
           if(ctrl)
           {
-            V p;
-            V r;
-            get_ray(cur_x, cur_y,p,r);
+              EigenVector3<T> p;
+              EigenVector3<T> r;
+              get_ray(cur_x, cur_y, p, r);
 
-            m_select_tool.select( p, r, &m_engine );
-            m_selection_mode = true;
+              m_select_tool.select(p, r, &m_engine);
+              m_selection_mode = true;
           }
         }
 
@@ -955,15 +944,18 @@ namespace rigid_body
 
           if(m_selection_mode)
           {
-            V p;
-            V r;
-            get_ray(cur_x, cur_y, p,r);
+              EigenVector3<T> p;
+              EigenVector3<T> r;
+              get_ray(cur_x, cur_y, p, r);
 
-            V const dof = V::make( m_camera.dof().x, m_camera.dof().y, m_camera.dof().z );
+              const EigenVector3<T> dof = EigenVector3<T>(
+                  m_camera.dof().x, m_camera.dof().y, m_camera.dof().z);
 
-            m_select_tool.move_selection(p, r, dof, &m_engine);
+              m_select_tool.move_selection(p, r, dof, &m_engine);
 
-            update_scene(m_scene_manager, &m_engine); // 2014-10-7 Kenny: This is expensive to update all objects when only one object has been manipulated
+              update_scene(
+                  m_scene_manager,
+                  &m_engine); // 2014-10-7 Kenny: This is expensive to update all objects when only one object has been manipulated
           }
         }
 

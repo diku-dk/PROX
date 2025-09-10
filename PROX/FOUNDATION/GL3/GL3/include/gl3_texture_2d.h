@@ -5,7 +5,7 @@
 #include <gl3_check_errors.h>
 #include <gl3_texture_types.h>
 
-#include <tiny_power2.h>
+#include <eigenhelperfunctions.h>
 
 #include <util_log.h>
 

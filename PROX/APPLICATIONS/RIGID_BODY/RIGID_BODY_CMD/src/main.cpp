@@ -1,4 +1,3 @@
-#include <tiny.h>
 #include <mass.h>
 #include <geometry.h>
 #include <mesh_array.h>
@@ -24,13 +23,7 @@ namespace cmd
 class Application
 {
 public:
-    using MT = tiny::MathTypes<float>;
-    using T = MT::real_type;
-    using V = MT::vector3_type;
-    using M = MT::matrix3x3_type;
-    using Q = MT::quaternion_type;
-    using C = MT::coordsys_type;
-    using VT = MT::value_traits;
+    using T = float;
 
 protected:
     T m_time;
@@ -65,8 +58,8 @@ protected:
         m_working_directory = "";
 
         m_time = 0;
-        m_time_step = VT::numeric_cast(0.01f);
-        m_fps = VT::numeric_cast(25.0f);
+        m_time_step = T(0.01f);
+        m_fps = T(25.0f);
 
         m_profiling = false;
         m_xml_record = false;

@@ -1,8 +1,6 @@
 #ifndef RIGID_BODY_GUI_SELECT_TOOL_H
 #define RIGID_BODY_GUI_SELECT_TOOL_H
 
-#include <tiny.h>
-
 #include <content.h>
 
 #include <cmath>
@@ -15,21 +13,15 @@ namespace rigid_body
     class SelectTool
     {
     public:
-        using MT = tiny::MathTypes<float>;
-        using T = MT::real_type;
-        using V = MT::vector3_type;
-        using M = MT::matrix3x3_type;
-        using Q = MT::quaternion_type;
-        using C = MT::coordsys_type;
-        using VT = MT::value_traits;
+        using T = float;
 
     protected:
         size_t m_id;                ///< Identifier of current selection. Only valid if m_is_selected is true.
         bool m_has_selected;       ///< Boolean flag indicating whether something is selected or not.
 
-        V m_ray_direction;
-        V m_ray_origin;
-        V m_hit_point;
+        EigenVector3<T> m_ray_direction;
+        EigenVector3<T> m_ray_origin;
+        EigenVector3<T> m_hit_point;
         T m_hit_distance;
 
         float m_anchor_x;   ///< Selection anchor point x coordinate.
@@ -61,14 +53,15 @@ namespace rigid_body
         m_has_selected = false;
       }
 
-      void select(V const & p, V const & r, content::API * engine)
+      void select(EigenVector3<T> const& p, const EigenVector3<T>& r,
+                  content::API* engine)
       {
         m_has_selected = false;
 
         m_ray_origin      = p;
         m_ray_direction   = r;
         m_hit_distance    = std::numeric_limits<T>::max();
-        m_hit_point       = V::zero();
+        m_hit_point = EigenVector3<T>(0, 0, 0);
 
         if(!engine)
           return;
@@ -89,7 +82,7 @@ namespace rigid_body
         if(! did_hit)
           return;
 
-        m_hit_point    = V::make( hit_x, hit_y, hit_z);
+        m_hit_point = EigenVector3<T>(hit_x, hit_y, hit_z);
         m_hit_distance = distance;
 
         engine->get_rigid_body_position( m_id, m_anchor_x, m_anchor_y, m_anchor_z );
@@ -102,23 +95,24 @@ namespace rigid_body
         m_has_selected = false;
       }
 
-      void move_selection(V const & p, V const & r, V const & dof, content::API * engine)
+      void move_selection(const EigenVector3<T>& p, const EigenVector3<T>& r,
+                          const EigenVector3<T>& dof, content::API* engine)
       {
         if(! m_has_selected)
           return;
 
         //--- scale ray direction vectors to start at p and end at view plane
-        T const s1    =  tiny::inner_prod(m_ray_direction, dof);
-        T const s2    =  tiny::inner_prod(r, dof);
-        V const r1    =  m_ray_direction/s1;
-        V const r2    =  r/s2;
+        T const s1 = dot(m_ray_direction, dof);
+        T const s2 = dot(r, dof);
+        const EigenVector3<T> r1 = m_ray_direction / s1;
+        const EigenVector3<T> r2 = r / s2;
 
         //--- Determine how the displacment on view plane scale to displacement in world
         T const scale =  m_hit_distance*s1;
 
         assert(scale>0 || !"move_selection(): internal error");
 
-        V const d =  (r2 - r1)*scale;
+        const EigenVector3<T> d = (r2 - r1) * scale;
 
         float x = m_anchor_x + d(0);
         float y = m_anchor_y + d(1);

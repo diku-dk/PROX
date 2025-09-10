@@ -1,6 +1,5 @@
 INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/MESH_ARRAY/MESH_ARRAY/include
-  ${PROJECT_SOURCE_DIR}/PROX/FOUNDATION/TINY/TINY/include
   ${Boost_INCLUDE_DIRS}
   )
 
@@ -12,7 +11,6 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
   unit_mesh_array_compute_surface_map
   mesh_array
-  tiny
   tetgen
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}

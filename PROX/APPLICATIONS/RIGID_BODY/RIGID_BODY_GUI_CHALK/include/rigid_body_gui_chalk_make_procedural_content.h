@@ -20,14 +20,10 @@ namespace rigid_body
       // Voxel size is either 25nm or 50nm
       // Images from which data is generated from 2056x2056x256 voxels
 
-
-
-      template<typename MT>
-      inline void make_procedural_content(content::API * engine, util::ConfigFile const & params)
-      {
-        typedef typename MT::real_type       T;
-        typedef typename MT::vector3_type    V;
-        typedef typename MT::quaternion_type Q;
+    template <typename T>
+    inline void make_procedural_content(content::API* engine,
+                                        util::ConfigFile const& params)
+    {
 
         mesh_array::TetGenSettings tetset = mesh_array::tetgen_default_settings();
         tetset.m_quality_ratio      = util::to_value<double>(params.get_value("tetgen_quality_ratio", "2.0"));

@@ -25,14 +25,6 @@ namespace simulators
 	{
   public:
       using T = float;
-/*      using MT = prox::MathPolicy<float>;
-      using TT = MT::tiny_types;
-      using V = TT::vector3_type;
-      using Q = TT::quaternion_type;
-      using T = TT::real_type;
-      static_assert(std::is_floating_point_v<T>);
-      using VT = TT::value_traits;
-      using M = TT::matrix3x3_type;*/
 
       using rigid_body_type = prox::RigidBody<T>;
       using contact_type = prox::ContactPoint<T>;

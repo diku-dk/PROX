@@ -5,7 +5,7 @@
 #include <gl3_check_errors.h>
 #include <gl3_texture_types.h>
 
-#include <tiny_power2.h>
+#include <eigenhelperfunctions.h>
 
 #include <util_log.h>
 
@@ -219,9 +219,12 @@ namespace gl3
     {
       gl3::check_errors("Texture3D");
 
-      assert( tiny::is_power2( m_width ) || !"Texture3D(): Texture width was not a power of two"  );
-      assert( tiny::is_power2( m_height) || !"Texture3D(): Texture height was not a power of two" );
-      assert( tiny::is_power2( m_depth ) || !"Texture3D(): Texture depth was not a power of two"  );
+      assert(is_power2(m_width)
+             || !"Texture3D(): Texture width was not a power of two");
+      assert(is_power2(m_height)
+             || !"Texture3D(): Texture height was not a power of two");
+      assert(is_power2(m_depth)
+             || !"Texture3D(): Texture depth was not a power of two");
 
       int const memory_size = check_texture_size(internal_format,m_width,m_height,m_depth,format,type);
 

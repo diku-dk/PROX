@@ -9,7 +9,6 @@
 
 #include <content.h>
 #include <mesh_array.h>
-#include <tiny.h>
 
 #include <cmath> // std::acos, std::fabs
 
@@ -23,8 +22,6 @@ namespace rigid_body
                                       , GeometryManager & geometry_manager
                                       )
     {
-      typedef tiny::MathTypes<float>       MT;
-      typedef typename MT::vector3_type    V;
       using T = float;
 
       gl3::Program & program = program_manager.get(2);
@@ -48,9 +45,10 @@ namespace rigid_body
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> headY;
       mesh_array::VertexAttribute<float, mesh_array::T3Mesh> headZ;
 
-      mesh_array::make_sphere<typename MT::real_type>(radius1, 12, 12, base, baseX, baseY, baseZ);
-      mesh_array::make_cone<typename MT::real_type>(radius1, height, 12, head, headX, headY, headZ);
-      mesh_array::make_cylinder<typename MT::real_type>(radius2, height, 12, shaft, shaftX, shaftY, shaftZ);
+      mesh_array::make_sphere<T>(radius1, 12, 12, base, baseX, baseY, baseZ);
+      mesh_array::make_cone<T>(radius1, height, 12, head, headX, headY, headZ);
+      mesh_array::make_cylinder<T>(radius2, height, 12, shaft, shaftX, shaftY,
+                                   shaftZ);
 
       mesh_array::translate<T>(EigenVector3<T>(0, height / 2, 0), shaft, shaftX,
                                shaftY, shaftZ);
