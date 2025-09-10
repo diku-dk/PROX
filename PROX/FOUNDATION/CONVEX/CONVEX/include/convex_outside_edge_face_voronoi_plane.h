@@ -1,10 +1,10 @@
 #ifndef CONVEX_OUTSIDE_EDGE_FACE_VORONOI_PLANE_H
 #define CONVEX_OUTSIDE_EDGE_FACE_VORONOI_PLANE_H
 
-#include <tiny_vector_functions.h>
 
 #include <cassert>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
+
 namespace convex
 {
 

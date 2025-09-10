@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_DIRECTION_TABLE_H
 #define GEOMETRY_DIRECTION_TABLE_H
 
-#include "tiny_math_types.h"
+#include <eigenhelperall.h>
 #include <cstddef> // Needed for size_t
 #include <cassert>
 

@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -11,9 +9,6 @@ namespace mass
 
 template <typename T> Properties<T> compute_sphere(T const& density, T const& radius)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> value_traits;
 
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");
@@ -22,9 +17,9 @@ template <typename T> Properties<T> compute_sphere(T const& density, T const& ra
     assert(is_finite(radius) || !"radius must be a finite number");
     assert(radius > 0 || !"radius must be positive");
 
-    T const volume = (4 * value_traits::pi() * radius * radius * radius) / 3;
+    T const volume = (4 * std::numbers::pi_v<T> * radius * radius * radius) / 3;
     T const mass = density * volume;
-    T const five = value_traits::numeric_cast(5.0);
+    T const five = T(5.0);
 
     Properties<T> value;
 

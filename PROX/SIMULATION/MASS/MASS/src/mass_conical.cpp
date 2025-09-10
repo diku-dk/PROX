@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -12,9 +10,6 @@ namespace mass
 template <typename T>
 Properties<T> compute_conical_solid(T const& density, T const& bottom_radius, T const& top_radius, T const& height)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> VT;
 
     assert(top_radius < bottom_radius || !"top radius must be smaller than bottom radius");
 

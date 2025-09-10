@@ -1,5 +1,5 @@
 #include <mesh_array.h>
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -16,9 +16,7 @@ BOOST_AUTO_TEST_CASE(mesh_array_compute_distance_map_sphere)
     using std::fabs;
     using std::sqrt;
 
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::real_type T;
-
+    using T = float;
     mesh_array::T3Mesh surf;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sY;
@@ -28,7 +26,7 @@ BOOST_AUTO_TEST_CASE(mesh_array_compute_distance_map_sphere)
     size_t const segments = 24u;
     T const radius = 12.0f;
 
-    mesh_array::make_sphere<MT>(radius, slices, segments, surf, sX, sY, sZ);
+    mesh_array::make_sphere<T>(radius, slices, segments, surf, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> X;

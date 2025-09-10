@@ -1,5 +1,5 @@
 #include <geometry.h>
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -7,16 +7,13 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
-
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(inside_aabb_test)
 {
 
     {
+        using T = float;
         EigenVector3<T> const min_coord = EigenVector3<T>(-1.0, -1.0, -1.0);
         EigenVector3<T> const max_coord = EigenVector3<T>(1.0, 1.0, 1.0);
 

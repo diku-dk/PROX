@@ -1,10 +1,8 @@
 #ifndef CONVEX_OUTSIDE_TRIANGLE_H
 #define CONVEX_OUTSIDE_TRIANGLE_H
 
-#include <tiny_vector_functions.h>
-
 #include <cassert>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace convex
 {

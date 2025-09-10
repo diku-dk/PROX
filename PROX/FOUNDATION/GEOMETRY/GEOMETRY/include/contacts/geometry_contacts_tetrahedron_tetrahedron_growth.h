@@ -5,7 +5,7 @@
 #include <overlap/geometry_overlap_tetrahedron_tetrahedron.h>
 #include <closest_points/geometry_closest_points_tetrahedron_tetrahedron.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <types/geometry_gauss_map_of_convex_polyhedra.h>
 

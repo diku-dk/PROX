@@ -3,8 +3,7 @@
 
 #include <procedural_factory.h>
 
-#include <tiny_math_types.h>
-#include <tiny_vector_functions.h>
+#include <eigenhelperall.h>
 
 #include <util_log.h>
 

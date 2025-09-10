@@ -1,4 +1,4 @@
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <geometry.h> // needed for geometry::Sphere
 #include <convex.h>
 
@@ -12,11 +12,6 @@ BOOST_AUTO_TEST_SUITE(motion_utils);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-/*    typedef tiny::MathTypes<double> M;
-    typedef M::vector3_type V;
-    typedef M::real_type T;
-    typedef M::quaternion_type Q;
-    typedef M::coordsys_type X;*/
 
     using T = double;
     CoordSysEigen<T> from;

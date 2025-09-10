@@ -1,6 +1,6 @@
 #include <factory/mesh_array_profile_sweep.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <vector>
 #include <cassert>

@@ -6,8 +6,7 @@
 #include "prox_update_inertia_tensor.h"
 #include <prox_force_callbacks.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 

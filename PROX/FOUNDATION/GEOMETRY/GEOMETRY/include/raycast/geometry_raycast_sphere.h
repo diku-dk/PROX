@@ -1,10 +1,8 @@
 #ifndef GEOMETRY_COMPUTE_RAYCAST_SPHERE_H
 #define GEOMETRY_COMPUTE_RAYCAST_SPHERE_H
 
-#include "tiny_vector_functions.h"
 #include <cmath> // needed for std::sqrt
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 #include <types/geometry_ray.h>
 #include <types/geometry_sphere.h>
 

@@ -1,6 +1,6 @@
 #include <mesh_array_io_obj.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <util_log.h>
 

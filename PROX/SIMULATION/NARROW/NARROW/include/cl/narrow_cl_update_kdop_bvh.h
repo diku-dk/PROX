@@ -20,8 +20,7 @@
 #include <narrow_tags.h>
 #include <narrow_update_kdop_bvh.h>
 
-#include <tiny_value_traits.h>
-
+#include <eigenhelperall.h>
 #include <util_profiling.h>
 
 #include <cassert>

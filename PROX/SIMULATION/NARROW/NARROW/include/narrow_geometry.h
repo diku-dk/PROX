@@ -3,9 +3,7 @@
 
 #include <narrow_shape_types.h>
 
-#include <tiny_quaternion_functions.h>
-#include <tiny_coordsys_functions.h>
-
+#include <eigenhelperall.h>
 #include <vector>
 #include <algorithm>
 #include <type_traits>
@@ -306,7 +304,7 @@ public:
               for (size_t j = 0u; j < this->m_hulls[i].data().size(); ++j)
               {
                   const EigenVector3<T> p = (this->m_hulls[i].data().get_point(j));
-                  const EigenVector3<T> q = tiny::xform_point(X, p);
+                  const EigenVector3<T> q = xform_point(X, p);
 
                   this->m_radius = max(this->m_radius, norm(q));
               }

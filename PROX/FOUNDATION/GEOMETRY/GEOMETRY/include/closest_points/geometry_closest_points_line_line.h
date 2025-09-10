@@ -3,11 +3,7 @@
 
 #include <types/geometry_line.h>
 
-#include <tiny_vector_functions.h>
-#include <tiny_value_traits.h>
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_precision.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 

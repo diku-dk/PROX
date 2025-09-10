@@ -124,9 +124,6 @@ void make_convex(std::vector<EigenVector3<T>> const& vertices, T3Mesh& mesh, Ver
     }
 }
 
-using MTf = tiny::MathTypes<float>;
-using MTd = tiny::MathTypes<double>;
-
 template void make_convex<float>(std::vector<EigenVector3<float>> const& vertices, T3Mesh& mesh,
                                  VertexAttribute<float, T3Mesh>& X, VertexAttribute<float, T3Mesh>& Y,
                                  VertexAttribute<float, T3Mesh>& Z);

@@ -4,7 +4,7 @@
 #include "narrow_geometry.h"
 #include <geometry.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 namespace narrow
 {

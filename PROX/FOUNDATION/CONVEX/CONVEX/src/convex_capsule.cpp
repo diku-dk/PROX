@@ -2,8 +2,7 @@
 
 #include <types/geometry_sphere.h>
 
-#include <tiny_math_types.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>   // needed for std::min and std::sqrt

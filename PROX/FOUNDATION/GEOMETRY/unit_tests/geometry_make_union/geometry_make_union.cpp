@@ -1,5 +1,5 @@
 #include <geometry.h>
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -9,11 +9,7 @@
 
 #include <vector>
 
-using MT = tiny::MathTypes<float>;
-using V = MT::vector3_type;
-using T = MT::real_type;
-using VT = MT::value_traits;
-
+using T = float;
 BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(make_union_test)

@@ -4,8 +4,7 @@
 #include <types/geometry_aabb.h>
 #include <types/geometry_ray.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <vector>

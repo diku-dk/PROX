@@ -3,7 +3,7 @@
 #include <factory/mesh_array_make_box.h>
 #include <factory/mesh_array_make_cuboid.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace mesh_array
 {

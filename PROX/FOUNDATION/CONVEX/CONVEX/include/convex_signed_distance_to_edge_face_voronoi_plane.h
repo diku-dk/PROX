@@ -1,12 +1,9 @@
 #ifndef CONVEX_SIGNED_DISTANCE_TO_EDGE_FACE_VORONOI_PLANE_H
 #define CONVEX_SIGNED_DISTANCE_TO_EDGE_FACE_VORONOI_PLANE_H
 
-#include <tiny_vector_functions.h>
-#include <tiny_is_number.h>
-
 #include <cmath>
 #include <cassert>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace convex
 {

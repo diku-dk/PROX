@@ -4,7 +4,7 @@
 #include <types/geometry_interval.h>
 #include <types/geometry_direction_table.h>
 
-#include <tiny_vector_functions.h>  // Needed for tiny::inner_prod
+#include <eigenhelperall.h>  // Needed for tiny::inner_prod
 
 #include <cstddef>     // Needed for size_t
 #include <algorithm>   // Needed for std::max and std::min

@@ -1,4 +1,4 @@
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <convex.h>
 
 #define BOOST_AUTO_TEST_MAIN
@@ -11,8 +11,6 @@ BOOST_AUTO_TEST_SUITE(convex_outside_edge_face);
 
 BOOST_AUTO_TEST_CASE(case_by_case_test)
 {
-    /*typedef tiny::MathTypes<double> math_types;
-    typedef math_types::vector3_type V;*/
 
     using T = double;
     const EigenVector3<T> a = EigenVector3<T>(0.0, 0.0, 0.0);

@@ -1,5 +1,5 @@
 #include <geometry.h>
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -13,11 +13,7 @@ BOOST_AUTO_TEST_SUITE(geometry);
 
 BOOST_AUTO_TEST_CASE(convert_test)
 {
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::vector3_type V;
-    typedef MT::value_traits VT;
-    typedef MT::real_type T;
-
+    using T = float;
     {
         EigenVector3<T> const center = EigenVector3<T>(0, 0, 0);
         T const radius = 1;

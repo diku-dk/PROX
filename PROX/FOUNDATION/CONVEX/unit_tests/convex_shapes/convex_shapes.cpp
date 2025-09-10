@@ -1,4 +1,4 @@
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <geometry.h>   // needed for geometry::Box, geometry::Sphere
 #include <convex_shapes.h>
 

@@ -8,7 +8,7 @@
 #include <mesh_array_vertex_attribute.h>
 #include <mesh_array_tetrahedron_attribute_t4mesh.h>
 
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cmath> // needed for std::sqrt
 

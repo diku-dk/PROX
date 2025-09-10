@@ -41,7 +41,6 @@ inline bool outside_dop( const EigenVector3<T2>& p, DOP<T,K> const & dop, T cons
   template<typename T, size_t K,typename T2>
   inline bool outside_dop( const EigenVector3<T2>& p, DOP<T,K> const & dop )
   {
-    typedef tiny::ValueTraits<T> VT;
 
     return outside_dop<T, K, T2>(p, dop, 0 );
   }

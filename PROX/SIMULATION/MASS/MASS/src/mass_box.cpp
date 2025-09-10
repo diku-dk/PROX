@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -12,7 +10,6 @@ namespace mass
 template <typename T>
 Properties<T> compute_box(T const& density, T const& half_width, T const& half_height, T const& half_depth)
 {
-    using namespace tiny;
 
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");

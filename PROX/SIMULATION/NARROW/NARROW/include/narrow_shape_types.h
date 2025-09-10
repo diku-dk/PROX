@@ -5,8 +5,7 @@
 #include <mesh_array.h>    // needed for mesh_array data types
 #include <kdop.h>
 
-#include <tiny_vector_functions.h>  // needed for tiny::norm
-
+#include <eigenhelperall.h>
 namespace narrow
 {
   namespace detail

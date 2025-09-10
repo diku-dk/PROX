@@ -1,7 +1,7 @@
 #include <mesh_array_io_xml.h>
 #include <util_string_helper.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <tinyxml.h>
 

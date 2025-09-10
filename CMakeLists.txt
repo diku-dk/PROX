@@ -13,6 +13,7 @@ PROJECT(PROX)
 find_package(Eigen3 REQUIRED)
 include_directories(EIGEN3_INCLUDE_DIR)
 include_directories(${CMAKE_SOURCE_DIR}/PROX/3RDPARTY/libigl/include)
+include_directories(${CMAKE_SOURCE_DIR}/PROX/3RDPARTY/eigenwrap/include)
 ##########################################################
 ##########################################################
 ##########################################################

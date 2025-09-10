@@ -1,6 +1,6 @@
 #include <mesh_array_io_tetgen.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <boost/filesystem.hpp>
 

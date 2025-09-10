@@ -6,7 +6,7 @@
 
 #include <geometry_transform.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <vector>

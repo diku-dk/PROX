@@ -1,7 +1,7 @@
 #include <geometry.h>  // needed for geometry::Sphere
 #include <convex.h>
 
-#include <tiny.h>  // for math types
+#include <eigenhelperall.h>
 
 #include <cmath>  // for std::sqrt
 #include <iostream>
@@ -13,13 +13,7 @@ void gjk_demo()
     std::cout << "GJK Demo" << std::endl;
 
   // Create some math types
-    typedef tiny::MathTypes<double> M;
-
-    typedef M::quaternion_type Q;
-    typedef M::vector3_type V;
-//  typedef M::real_type                            T;
-    typedef M::coordsys_type C;
-    typedef M::value_traits VT;
+    using T = double;
 
   // Parameters controlling the behaviour of the GJK
     size_t const max_iterations = 100u;

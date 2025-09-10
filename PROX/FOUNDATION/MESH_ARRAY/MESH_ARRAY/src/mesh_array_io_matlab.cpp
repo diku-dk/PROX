@@ -1,6 +1,6 @@
 #include <mesh_array_io_matlab.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <util_string_helper.h>
 

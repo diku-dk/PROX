@@ -4,9 +4,7 @@
 #include <types/geometry_support_mapping.h>
 #include <types/geometry_triangle.h>
 
-#include <tiny_vector_functions.h>
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>     // needed for std::fabs

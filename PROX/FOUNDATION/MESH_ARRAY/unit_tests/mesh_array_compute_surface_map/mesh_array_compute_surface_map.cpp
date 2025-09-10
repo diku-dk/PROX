@@ -1,5 +1,5 @@
 #include <mesh_array.h>
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -16,9 +16,7 @@ BOOST_AUTO_TEST_SUITE(mesh_array);
 BOOST_AUTO_TEST_CASE(mesh_array_compute_surface_map_sphere)
 {
 
-    typedef tiny::MathTypes<float> MT;
-    typedef MT::real_type T;
-    typedef MT::vector3_type V;
+    using T = float;
 
     mesh_array::T3Mesh surf;
     mesh_array::VertexAttribute<T, mesh_array::T3Mesh> sX;
@@ -29,7 +27,7 @@ BOOST_AUTO_TEST_CASE(mesh_array_compute_surface_map_sphere)
     size_t const segments = 24u;
     T const radius = 12.0f;
 
-    mesh_array::make_sphere<MT>(radius, slices, segments, surf, sX, sY, sZ);
+    mesh_array::make_sphere<T>(radius, slices, segments, surf, sX, sY, sZ);
 
     mesh_array::T4Mesh mesh;
     mesh_array::VertexAttribute<T, mesh_array::T4Mesh> X;
@@ -51,10 +49,14 @@ BOOST_AUTO_TEST_CASE(mesh_array_compute_surface_map_sphere)
         bool const opposite_k_on_surface = surface_map(tetrahedron).m_k;
         bool const opposite_m_on_surface = surface_map(tetrahedron).m_m;
 
-        V const p_i = V::make(X(tetrahedron.i()), Y(tetrahedron.i()), Z(tetrahedron.i()));
-        V const p_j = V::make(X(tetrahedron.j()), Y(tetrahedron.j()), Z(tetrahedron.j()));
-        V const p_k = V::make(X(tetrahedron.k()), Y(tetrahedron.k()), Z(tetrahedron.k()));
-        V const p_m = V::make(X(tetrahedron.m()), Y(tetrahedron.m()), Z(tetrahedron.m()));
+        EigenVector3<T> const p_i = EigenVector3<T>(
+            X(tetrahedron.i()), Y(tetrahedron.i()), Z(tetrahedron.i()));
+        EigenVector3<T> const p_j = EigenVector3<T>(
+            X(tetrahedron.j()), Y(tetrahedron.j()), Z(tetrahedron.j()));
+        EigenVector3<T> const p_k = EigenVector3<T>(
+            X(tetrahedron.k()), Y(tetrahedron.k()), Z(tetrahedron.k()));
+        EigenVector3<T> const p_m = EigenVector3<T>(
+            X(tetrahedron.m()), Y(tetrahedron.m()), Z(tetrahedron.m()));
 
         T const distance_i = fabs(radius - tiny::norm(p_i));
         T const distance_j = fabs(radius - tiny::norm(p_j));

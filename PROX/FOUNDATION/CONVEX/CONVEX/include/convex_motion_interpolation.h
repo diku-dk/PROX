@@ -1,7 +1,7 @@
 #ifndef CONVEX_MOTION_INTERPOLATION_H
 #define CONVEX_MOTION_INTERPOLATION_H
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <convex_conservative_advancement.h>
 #include <convex_compute_velocities.h>
 

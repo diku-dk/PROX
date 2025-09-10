@@ -1,14 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
-#include <tiny_precision.h>
-
-#include <tiny_math_types.h>
-#include <tiny_matrix_functions.h>       // needed for R = tiny::make( Q )
-#include <tiny_quaternion_functions.h>   // needed for Q = tiny::make( R )
-#include <tiny_eigen3x3.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>                         // needed for std::fabs
@@ -22,10 +14,7 @@ template <typename T>
 void rotate(T const& R00, T const& R01, T const& R02, T const& R10, T const& R11, T const& R12, T const& R20,
             T const& R21, T const& R22, T& Ixx, T& Iyy, T& Izz, T& Ixy, T& Ixz, T& Iyz)
 {
-    using namespace tiny;
     using std::fabs;
-
-    typedef ValueTraits<T> value_traits;
 
     assert(is_number(R00) || !"R00 must be a number");
     assert(is_finite(R00) || !"R00 must be a finite number");
@@ -58,22 +47,31 @@ void rotate(T const& R00, T const& R01, T const& R02, T const& R10, T const& R11
     assert(is_number(Iyz) || !"Iyz must be a number");
     assert(is_finite(Iyz) || !"Iyz must be a finite number");
 
-    assert(fabs(R00 * R00 + R01 * R01 + R02 * R02 - 1) <= working_precision<T>()
+    assert(fabs(R00 * R00 + R01 * R01 + R02 * R02 - 1)
+               <= std::numeric_limits<T>::epsilon() * 10
            || !"R is not special orthonormal matrix");
-    assert(fabs(R10 * R10 + R11 * R11 + R12 * R12 - 1) <= working_precision<T>()
+    assert(fabs(R10 * R10 + R11 * R11 + R12 * R12 - 1)
+               <= std::numeric_limits<T>::epsilon() * 10
            || !"R is not special orthonormal matrix");
-    assert(fabs(R20 * R20 + R21 * R21 + R22 * R22 - 1) <= working_precision<T>()
+    assert(fabs(R20 * R20 + R21 * R21 + R22 * R22 - 1)
+               <= std::numeric_limits<T>::epsilon() * 10
            || !"R is not special orthonormal matrix");
-    assert(fabs(R00 * R10 + R01 * R11 + R02 * R12) <= working_precision<T>() || !"R is not special orthonormal matrix");
-    assert(fabs(R00 * R20 + R01 * R21 + R02 * R22) <= working_precision<T>() || !"R is not special orthonormal matrix");
-    assert(fabs(R10 * R20 + R11 * R21 + R12 * R22) <= working_precision<T>() || !"R is not special orthonormal matrix");
+    assert(fabs(R00 * R10 + R01 * R11 + R02 * R12)
+               <= std::numeric_limits<T>::epsilon() * 10
+           || !"R is not special orthonormal matrix");
+    assert(fabs(R00 * R20 + R01 * R21 + R02 * R22)
+               <= std::numeric_limits<T>::epsilon() * 10
+           || !"R is not special orthonormal matrix");
+    assert(fabs(R10 * R20 + R11 * R21 + R12 * R22)
+               <= std::numeric_limits<T>::epsilon() * 10
+           || !"R is not special orthonormal matrix");
 
-      //--- The formulas below was computed using Matlab, that is
-      //---syms R00 R01 R02  R10 R11 R12 R20 R21 R22 real;
-      //---syms Jxx Jyy Jzz Jxy Jxz Jyz real;
-      //---I = [ Jxx, Jxy , Jxz; Jxy, Jyy, Jyz; Jxz, Jyz, Jzz]
-      //---R = [ R00, R01 , R02; R10, R11, R12; R20, R21, R22]
-      //---simplify(R*I*R')
+    //--- The formulas below was computed using Matlab, that is
+    //---syms R00 R01 R02  R10 R11 R12 R20 R21 R22 real;
+    //---syms Jxx Jyy Jzz Jxy Jxz Jyz real;
+    //---I = [ Jxx, Jxy , Jxz; Jxy, Jyy, Jyz; Jxz, Jyz, Jzz]
+    //---R = [ R00, R01 , R02; R10, R11, R12; R20, R21, R22]
+    //---simplify(R*I*R')
     T const& two = 2;
 
     T const Jxx = Ixx;
@@ -102,13 +100,12 @@ void rotate(T const& R00, T const& R01, T const& R02, T const& R10, T const& R11
 
 template <typename T> Properties<T> rotate(T const& qs, T const& qx, T const& qy, T const& qz, Properties<T> const& I)
 {
-    using namespace tiny;
     using std::fabs;
 
-    typedef MathTypes<T> types;
+    /*   typedef MathTypes<T> types;
     typedef typename types::quaternion_type Q;
     typedef typename types::matrix3x3_type M;
-    typedef typename types::value_traits VT;
+    typedef typename types::value_traits VT;*/
 
     assert(is_number(qs) || !"qs must be a number");
     assert(is_finite(qs) || !"qs must be a finite number");
@@ -118,24 +115,29 @@ template <typename T> Properties<T> rotate(T const& qs, T const& qx, T const& qy
     assert(is_finite(qy) || !"qy must be a finite number");
     assert(is_number(qz) || !"qz must be a number");
     assert(is_finite(qz) || !"qz must be a finite number");
-    assert(fabs((qs * qs + qx * qx + qy * qy + qz * qz) - 1) <= working_precision<T>() || !"Q is not unit quaterion");
+    assert(fabs((qs * qs + qx * qx + qy * qy + qz * qz) - 1)
+               <= std::numeric_limits<T>::epsilon() * 10
+           || !"Q is not unit quaterion");
 
     Properties<T> value = I;
 
-    Q const q1 = Q(I.m_Qs, I.m_Qx, I.m_Qy, I.m_Qz);
-    Q const q2 = Q(qs, qx, qy, qz);    // Create a tiny quaterion from the given input
-    M const R = make(q2);             // Using tiny to convert unit-quaterion to corresponding rotation matrix
+    const EigenQuaternion<T> q1
+        = EigenQuaternion<T>(I.m_Qs, I.m_Qx, I.m_Qy, I.m_Qz);
+    const EigenQuaternion<T> q2 = EigenQuaternion<T>(
+        qs, qx, qy, qz); // Create a tiny quaterion from the given input
+    EigenMatrix3<T> const R(
+        q2); // Using tiny to convert unit-quaterion to corresponding rotation matrix
 
     // Now simply use matrix version of this function
     detail::rotate(R(0, 0), R(0, 1), R(0, 2), R(1, 0), R(1, 1), R(1, 2), R(2, 0), R(2, 1), R(2, 2), value.m_Ixx,
                    value.m_Iyy, value.m_Izz, value.m_Ixy, value.m_Ixz, value.m_Iyz);
 
-    Q const q3 = q2 * q1;
+    const EigenQuaternion<T> q3 = q2 * q1;
 
-    value.m_Qs = q3.real();
-    value.m_Qx = q3.imag()[0];
-    value.m_Qy = q3.imag()[1];
-    value.m_Qz = q3.imag()[2];
+    value.m_Qs = q3.w();
+    value.m_Qx = q3.x();
+    value.m_Qy = q3.y();
+    value.m_Qz = q3.z();
 
     return value;
 }
@@ -143,14 +145,8 @@ template <typename T> Properties<T> rotate(T const& qs, T const& qx, T const& qy
 template <typename T> Properties<T> rotate_to_body_frame(Properties<T> const& Imodel)
 {
 
-    using namespace tiny;
     using std::fabs;
 
-    typedef MathTypes<T> types;
-    typedef typename types::quaternion_type Q;
-    typedef typename types::matrix3x3_type M;
-    typedef typename types::vector3_type V;
-    typedef typename types::value_traits VT;
 
     assert(is_number(Imodel.m_Ixx) || !"Ixx must be a number");
     assert(is_finite(Imodel.m_Ixx) || !"Ixx must be a finite number");
@@ -167,18 +163,25 @@ template <typename T> Properties<T> rotate_to_body_frame(Properties<T> const& Im
 
     Properties<T> value = Imodel;
 
-    assert(fabs(1 - Imodel.m_Qs) < working_precision<T>() || !"Internal error");
-    assert(fabs(Imodel.m_Qx) < working_precision<T>() || !"Internal error");
-    assert(fabs(Imodel.m_Qy) < working_precision<T>() || !"Internal error");
-    assert(fabs(Imodel.m_Qz) < working_precision<T>() || !"Internal error");
+    assert(fabs(1 - Imodel.m_Qs) < std::numeric_limits<T>::epsilon() * 10
+           || !"Internal error");
+    assert(fabs(Imodel.m_Qx) < std::numeric_limits<T>::epsilon() * 10
+           || !"Internal error");
+    assert(fabs(Imodel.m_Qy) < std::numeric_limits<T>::epsilon() * 10
+           || !"Internal error");
+    assert(fabs(Imodel.m_Qz) < std::numeric_limits<T>::epsilon() * 10
+           || !"Internal error");
 
     //--- Convert input into a tiny matrix that holds the inertia tensor matrix
-    M const A = M::make(Imodel.m_Ixx, Imodel.m_Ixy, Imodel.m_Ixz, Imodel.m_Ixy, Imodel.m_Iyy, Imodel.m_Iyz,
-                        Imodel.m_Ixz, Imodel.m_Iyz, Imodel.m_Izz);
+    EigenMatrix3<T> const A = EigenMatrix3<T>{
+        {Imodel.m_Ixx, Imodel.m_Ixy, Imodel.m_Ixz},
+        {Imodel.m_Ixy, Imodel.m_Iyy, Imodel.m_Iyz},
+        {Imodel.m_Ixz, Imodel.m_Iyz, Imodel.m_Izz}
+    };
 
     //--- Do eigenvalue decomposition, A = R diag(d) R^T,
-    M R;
-    V d;
+    EigenMatrix3<T> R;
+    EigenVector3<T> d;
     eigen(A, R, d);
 
     //--- Next we select a permuation of the eigenvalues such that d0 >= d1 >= d2
@@ -219,24 +222,28 @@ template <typename T> Properties<T> rotate_to_body_frame(Properties<T> const& Im
     }
 
     //--- Now we create the rotation matrix corresponding the new eigenvalue order
-    M RR = M::make(R(0, order[0]), R(0, order[1]), R(0, order[2]), R(1, order[0]), R(1, order[1]), R(1, order[2]),
-                   R(2, order[0]), R(2, order[1]), R(2, order[2]));
+    EigenMatrix3<T> RR = EigenMatrix3<T>{
+        {R(0, order[0]), R(0, order[1]), R(0, order[2])},
+        {R(1, order[0]), R(1, order[1]), R(1, order[2])},
+        {R(2, order[0]), R(2, order[1]), R(2, order[2])}
+    };
 
     //--- We need to make sure that the eigenvectors form a special orthogonal matrix
-    if (det(RR) < 0)
+    if (RR.determinant() < 0)
     {
         RR(0, 0) = -RR(0, 0);
         RR(1, 0) = -RR(1, 0);
         RR(2, 0) = -RR(2, 0);
     }
 
-    Q const q = make(RR);  // Convert rotation matrix to corresponding quaternion
+    const EigenQuaternion<T> q(
+        RR); // Convert rotation matrix to corresponding quaternion
 
     // Convert from tiny data types into raw POD types
-    value.m_Qs = q.real();
-    value.m_Qx = q.imag()[0];
-    value.m_Qy = q.imag()[1];
-    value.m_Qz = q.imag()[2];
+    value.m_Qs = q.w();
+    value.m_Qx = q.x();
+    value.m_Qy = q.y();
+    value.m_Qz = q.z();
 
     value.m_Ixx = d(order[0]);
     value.m_Iyy = d(order[1]);

@@ -1,4 +1,4 @@
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <geometry.h>  // needed for geometry::Box and geometry::Sphere
 #include <convex.h>
 
@@ -10,12 +10,6 @@
 
 #include <cmath>
 
-/*using M = tiny::MathTypes<double>;
-using Q = M::quaternion_type;
-using V = M::vector3_type;
-using T = M::real_type;
-using C = M::coordsys_type;
-using VT = M::value_traits;*/
 using T = double;
 
 BOOST_AUTO_TEST_SUITE(convex_compute_closest_points);

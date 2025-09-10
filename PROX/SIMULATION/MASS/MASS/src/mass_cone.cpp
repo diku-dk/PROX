@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -11,14 +9,11 @@ namespace mass
 
 template <typename T> Properties<T> compute_cone(T const& density, T const& base_radius, T const& height)
 {
-    using namespace tiny;
 
-    typedef ValueTraits<T> VT;
-
-    T const pi = VT::pi();
-    T const k1 = VT::numeric_cast(1.0 / 10.0);
-    T const k2 = VT::numeric_cast(3.0 / 20.0);
-    T const k3 = VT::numeric_cast(3.0 / 10.0);
+    T const pi = std::numbers::pi_v<T>;
+    T const k1 = T(1.0 / 10.0);
+    T const k2 = T(3.0 / 20.0);
+    T const k3 = T(3.0 / 10.0);
 
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");

@@ -7,8 +7,7 @@
 
 #include <mesh_array.h>
 
-#include <tiny_math_types.h>
-#include <tiny_coordsys_functions.h>
+#include <eigenhelperall.h>
 #include <mass.h>
 #include <util_string_helper.h>
 

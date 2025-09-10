@@ -1,4 +1,4 @@
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <narrow.h>
 
 #define BOOST_AUTO_TEST_MAIN

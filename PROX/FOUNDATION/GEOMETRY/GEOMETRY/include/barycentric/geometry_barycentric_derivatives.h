@@ -1,9 +1,7 @@
 #ifndef GEOMETRY_BARYCENTRIC_DERIVATIVES_H
 #define GEOMETRY_BARYCENTRIC_DERIVATIVES_H
 
-#include <tiny_value_traits.h>
-#include <tiny_vector_functions.h>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 #include <cassert>
 
 namespace geometry

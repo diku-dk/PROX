@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_CONTACT_POINT_H
 #define GEOMETRY_CONTACT_POINT_H
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace geometry
 {

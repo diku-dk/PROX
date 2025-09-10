@@ -4,7 +4,7 @@
 
 #include <mass.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 #include <util_string_helper.h>
 
 #include <string>

@@ -3,7 +3,7 @@
 
 #include <types/geometry_obb.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <vector>

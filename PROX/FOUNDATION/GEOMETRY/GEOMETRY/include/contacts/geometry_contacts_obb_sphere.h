@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_CONTACTS_OBB_SPHERE_H
 #define GEOMETRY_CONTACTS_OBB_SPHERE_H
 
-#include "tiny_coordsys_functions.h"
+#include <eigenhelperall.h>
 #include <types/geometry_obb.h>
 #include <types/geometry_sphere.h>
 #include <contacts/geometry_contacts_callback.h>

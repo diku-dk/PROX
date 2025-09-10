@@ -5,8 +5,7 @@
 
 #include <contacts/geometry_contacts_callback.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 

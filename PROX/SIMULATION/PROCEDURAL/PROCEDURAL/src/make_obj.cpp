@@ -2,7 +2,7 @@
 
 #include <procedural_factory.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace procedural
 {

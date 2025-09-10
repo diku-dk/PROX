@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -11,9 +9,6 @@ namespace mass
 
 template <typename T> Properties<T> compute_cylinder(T const& density, T const& radius, T const& half_height)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> value_traits;
 
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");
@@ -27,7 +22,7 @@ template <typename T> Properties<T> compute_cylinder(T const& density, T const& 
 
     T const& r = radius;
     T const& h = 2 * half_height;
-    T const volume = value_traits::pi() * r * r * h;
+    T const volume = std::numbers::pi_v<T> * r * r * h;
     T const mass = density * volume;
 
     Properties<T> value;

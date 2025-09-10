@@ -1,6 +1,6 @@
 #include <factory/mesh_array_make_cuboid.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace mesh_array
 {
@@ -82,22 +82,21 @@ void make_cuboid(EigenVector3<T> const& v0, EigenVector3<T> const& v1, EigenVect
     Z(vertices[7]) = v7(2);
 }
 
-using MTf = tiny::MathTypes<float>;
-using MTd = tiny::MathTypes<double>;
+template void
+make_cuboid<float>(EigenVector3<float> const& v0, EigenVector3<float> const& v1,
+                   EigenVector3<float> const& v2, EigenVector3<float> const& v3,
+                   EigenVector3<float> const& v4, EigenVector3<float> const& v5,
+                   EigenVector3<float> const& v6, EigenVector3<float> const& v7,
+                   T3Mesh& mesh, VertexAttribute<float, T3Mesh>& X,
+                   VertexAttribute<float, T3Mesh>& Y,
+                   VertexAttribute<float, T3Mesh>& Z);
 
-template void make_cuboid<float>(EigenVector3<float> const& v0, EigenVector3<float> const& v1,
-                                 EigenVector3<float> const& v2, EigenVector3<float> const& v3,
-                                 EigenVector3<float> const& v4, EigenVector3<float> const& v5,
-                                 EigenVector3<float> const& v6, EigenVector3<float> const& v7, T3Mesh& mesh,
-                                 VertexAttribute<MTf::real_type, T3Mesh>& X, VertexAttribute<MTf::real_type, T3Mesh>& Y,
-                                 VertexAttribute<MTf::real_type, T3Mesh>& Z);
-
-template void make_cuboid<double>(EigenVector3<double> const& v0, EigenVector3<double> const& v1,
-                                  EigenVector3<double> const& v2, EigenVector3<double> const& v3,
-                                  EigenVector3<double> const& v4, EigenVector3<double> const& v5,
-                                  EigenVector3<double> const& v6, EigenVector3<double> const& v7, T3Mesh& mesh,
-                                  VertexAttribute<MTd::real_type, T3Mesh>& X,
-                                  VertexAttribute<MTd::real_type, T3Mesh>& Y,
-                                  VertexAttribute<MTd::real_type, T3Mesh>& Z);
+template void make_cuboid<double>(
+    EigenVector3<double> const& v0, EigenVector3<double> const& v1,
+    EigenVector3<double> const& v2, EigenVector3<double> const& v3,
+    EigenVector3<double> const& v4, EigenVector3<double> const& v5,
+    EigenVector3<double> const& v6, EigenVector3<double> const& v7,
+    T3Mesh& mesh, VertexAttribute<double, T3Mesh>& X,
+    VertexAttribute<double, T3Mesh>& Y, VertexAttribute<double, T3Mesh>& Z);
 
 } //namespace mesh_array

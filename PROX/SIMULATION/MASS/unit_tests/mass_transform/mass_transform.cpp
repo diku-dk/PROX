@@ -1,6 +1,5 @@
 #include <mass.h>
-#include <tiny.h>
-
+#include <eigenhelperall.h>
 #include <algorithm> // needed for std::min and std::max
 #include <cmath>     // needed for std::fabs
 
@@ -10,9 +9,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-using math_types = tiny::MathTypes<double>;
-using V = math_types::vector3_type;
-using Q = math_types::quaternion_type;
+using T2 = double;
 
 class CuboidMesh : public mass::FaceCallbackInterface<double>
 {
@@ -68,7 +65,10 @@ public:
     }
 
 public:
-    CuboidMesh(V const& v1, V const& v2, V const& v3, V const& v4, V const& v5, V const& v6, V const& v7, V const& v8)
+    CuboidMesh(const EigenVector3<T2>& v1, const EigenVector3<T2>& v2,
+               const EigenVector3<T2>& v3, const EigenVector3<T2>& v4,
+               const EigenVector3<T2>& v5, const EigenVector3<T2>& v6,
+               const EigenVector3<T2>& v7, const EigenVector3<T2>& v8)
     {
     // front face
         m_x1[0] = v1(0);
@@ -189,20 +189,27 @@ BOOST_AUTO_TEST_CASE(test_transform)
 
     for (size_t i = 0u; i < 20u; ++i)
     {
+
     // Make random rotation and translation
-        Q const q = tiny::unit(Q::random());
-        V const T = V::random(-10, 10);
+        const EigenQuaternion<T2> q
+            = EigenQuaternion<T2>(Eigen::Vector4d::Random().cwiseAbs())
+                  .normalized();
+        const EigenVector3<T2> T = randomEigen<T2>(T2(-10), T2(10));
 
     // Apply transform to a 2x2x2 box
-        V const v1 = tiny::rotate(q, V::make(-W, -H, D)) + T;
-        V const v2 = tiny::rotate(q, V::make(W, -H, D)) + T;
-        V const v3 = tiny::rotate(q, V::make(W, H, D)) + T;
-        V const v4 = tiny::rotate(q, V::make(-W, H, D)) + T;
+        const EigenVector3<T2> v1
+            = ::rotate(q, EigenVector3<T2>(-W, -H, D)) + T;
+        const EigenVector3<T2> v2 = ::rotate(q, EigenVector3<T2>(W, -H, D)) + T;
+        const EigenVector3<T2> v3 = ::rotate(q, EigenVector3<T2>(W, H, D)) + T;
+        const EigenVector3<T2> v4 = ::rotate(q, EigenVector3<T2>(-W, H, D)) + T;
 
-        V const v5 = tiny::rotate(q, V::make(-W, -H, -D)) + T;
-        V const v6 = tiny::rotate(q, V::make(W, -H, -D)) + T;
-        V const v7 = tiny::rotate(q, V::make(W, H, -D)) + T;
-        V const v8 = tiny::rotate(q, V::make(-W, H, -D)) + T;
+        const EigenVector3<T2> v5
+            = ::rotate(q, EigenVector3<T2>(-W, -H, -D)) + T;
+        const EigenVector3<T2> v6
+            = ::rotate(q, EigenVector3<T2>(W, -H, -D)) + T;
+        const EigenVector3<T2> v7 = ::rotate(q, EigenVector3<T2>(W, H, -D)) + T;
+        const EigenVector3<T2> v8
+            = ::rotate(q, EigenVector3<T2>(-W, H, -D)) + T;
 
     // Compute mass
         CuboidMesh const callback = CuboidMesh(v1, v2, v3, v4, v5, v6, v7, v8);
@@ -211,7 +218,8 @@ BOOST_AUTO_TEST_CASE(test_transform)
 
     // Transform body frame ground truth box values into same
     // model frame as compute_mesh is using
-        mass::Properties<double> Binter = mass::rotate(q.real(), q.imag()(0), q.imag()(1), q.imag()(2), Bbody);
+        mass::Properties<double> Binter
+            = mass::rotate(q.w(), q.x(), q.y(), q.z(), Bbody);
         mass::Properties<double> Bmodel = mass::translate_to_model_frame(T(0), T(1), T(2), Binter);
 
     // Make sure compute_mesh has computed the correct values!

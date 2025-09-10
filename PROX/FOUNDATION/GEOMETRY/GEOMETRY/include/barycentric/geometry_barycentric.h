@@ -1,12 +1,7 @@
 #ifndef GEOMETRY_BARYCENTRIC_H
 #define GEOMETRY_BARYCENTRIC_H
 
-#include <tiny_math_types.h>
-#include <tiny_is_number.h>
-#include <tiny_type_traits.h>
-#include <tiny_vector.h>
-#include <tiny_vector_functions.h>
-#include <tiny_matrix_functions.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <cassert>

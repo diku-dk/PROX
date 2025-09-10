@@ -3,9 +3,7 @@
 
 #include <types/geometry_support_mapping.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <cmath> // needed for std::sqrt
 #include <cassert>

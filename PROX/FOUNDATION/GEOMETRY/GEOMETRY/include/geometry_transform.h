@@ -4,7 +4,7 @@
 #include <types/geometry_obb.h>
 #include <types/geometry_cylinder.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 

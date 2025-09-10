@@ -5,7 +5,7 @@
 #include <types/geometry_triangle.h>
 #include <contacts/geometry_contacts_tetrahedron_tetrahedron.h>  // Needed for UnscaledPlane stuff
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <vector>
 #include <cassert>

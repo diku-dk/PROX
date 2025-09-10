@@ -1,12 +1,11 @@
 #ifndef CONVEX_SIGNED_DISTANCE_TO_TRIANGLE_H
 #define CONVEX_SIGNED_DISTANCE_TO_TRIANGLE_H
 
-#include <tiny_vector_functions.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <cassert>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace convex
 {

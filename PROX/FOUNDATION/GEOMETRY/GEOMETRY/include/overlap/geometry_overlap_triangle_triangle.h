@@ -4,7 +4,7 @@
 #include <types/geometry_triangle.h>
 #include <types/geometry_plane.h>
 
-#include <tiny_vector_functions.h>
+#include <eigenhelperall.h>
 
 namespace geometry
 {

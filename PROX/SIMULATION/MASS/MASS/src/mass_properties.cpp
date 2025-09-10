@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <ostream>
@@ -85,8 +83,6 @@ template <typename T> bool Properties<T>::is_body_space() const { return !(this-
   //-------------------------------------------------------------------------
 template <typename T> bool Properties<T>::is_model_space() const
 {
-    using namespace tiny;
-    typedef ValueTraits<T> VT;
 
     assert(this->m_m >= 0 || !"Internal error");
     assert(this->m_Ixx >= 0 || !"Internal error");
@@ -140,8 +136,6 @@ template <typename T> bool Properties<T>::is_model_space() const
   //-------------------------------------------------------------------------
 template <typename T> void Properties<T>::clear()
 {
-    using namespace tiny;
-    typedef ValueTraits<T> VT;
 
     this->m_m = 0;
     this->m_Ixx = 0;

@@ -7,8 +7,7 @@
 #include <procedural_types.h>
 #include <procedural_noise.h>
 
-#include <tiny_math_types.h>
-#include <tiny_coordsys_functions.h>
+#include <eigenhelperall.h>
 #include <mesh_array.h>
 #include <mass.h>
 #include <util_string_helper.h>

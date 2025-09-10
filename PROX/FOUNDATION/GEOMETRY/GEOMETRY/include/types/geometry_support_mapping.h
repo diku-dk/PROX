@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_SUPPORT_MAPPING
 #define GEOMETRY_SUPPORT_MAPPING
 
-#include "tiny_math_types.h"
+#include <eigenhelperall.h>
 
 namespace geometry
 {

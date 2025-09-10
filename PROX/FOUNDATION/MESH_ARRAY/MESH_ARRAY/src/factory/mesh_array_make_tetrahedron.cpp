@@ -1,6 +1,6 @@
 #include <factory/mesh_array_make_tetrahedron.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace mesh_array
 {

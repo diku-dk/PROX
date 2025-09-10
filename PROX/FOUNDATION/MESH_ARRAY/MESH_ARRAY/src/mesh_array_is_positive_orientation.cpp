@@ -1,6 +1,6 @@
 #include <mesh_array_is_positive_orientation.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -11,10 +11,6 @@ template <typename T>
 bool is_positive_orientation(T4Mesh& mesh, VertexAttribute<T, T4Mesh>& X, VertexAttribute<T, T4Mesh>& Y,
                              VertexAttribute<T, T4Mesh>& Z)
 {
-
-    typedef tiny::MathTypes<T> M;
-    typedef typename M::vector3_type V;
-    typedef typename M::value_traits VT;
 
     size_t const cntT = mesh.tetrahedron_size();
 
@@ -27,16 +23,16 @@ bool is_positive_orientation(T4Mesh& mesh, VertexAttribute<T, T4Mesh>& X, Vertex
         Vertex const vk = mesh.vertex(tetrahedron.k());
         Vertex const vm = mesh.vertex(tetrahedron.m());
 
-        V const pi = V::make(X(vi), Y(vi), Z(vi));
-        V const pj = V::make(X(vj), Y(vj), Z(vj));
-        V const pk = V::make(X(vk), Y(vk), Z(vk));
-        V const pm = V::make(X(vm), Y(vm), Z(vm));
+        const EigenVector3<T> pi = EigenVector3<T>(X(vi), Y(vi), Z(vi));
+        EigenVector3<T> const pj = EigenVector3<T>(X(vj), Y(vj), Z(vj));
+        EigenVector3<T> const pk = EigenVector3<T>(X(vk), Y(vk), Z(vk));
+        EigenVector3<T> const pm = EigenVector3<T>(X(vm), Y(vm), Z(vm));
 
-        V const e_ji = pj - pi;
-        V const e_ki = pk - pi;
-        V const e_mi = pm - pi;
+        EigenVector3<T> const e_ji = pj - pi;
+        EigenVector3<T> const e_ki = pk - pi;
+        EigenVector3<T> const e_mi = pm - pi;
 
-        T const volume = (e_mi * cross(e_ji, e_ki)) / VT::numeric_cast(6.0);
+        T const volume = (dot(e_mi, cross(e_ji, e_ki))) / T(6.0);
 
         if (volume <= 0) return false;
     }

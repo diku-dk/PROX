@@ -5,7 +5,7 @@
 
 #include <mesh_array.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 namespace content
 {

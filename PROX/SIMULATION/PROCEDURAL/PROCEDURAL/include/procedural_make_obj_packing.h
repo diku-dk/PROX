@@ -5,7 +5,7 @@
 
 #include <mesh_array.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <vector>
 

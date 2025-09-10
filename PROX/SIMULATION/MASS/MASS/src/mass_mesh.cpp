@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>
@@ -56,11 +54,9 @@ public:
 
     void init(size_t const& N, T const* x, T const* y, T const* z)
     {
-        using namespace tiny;
         using std::fabs;
         using std::sqrt;
 
-        typedef ValueTraits<T> VT;
 
         assert(N >= 3u || !"N was less than 3");
         assert(x || !"x coord pointer was null");
@@ -146,8 +142,6 @@ public:
 
 template <typename T> class ProjectionIntegralInfo
 {
-public:
-    using VT = typename tiny::ValueTraits<T>;
 
 public:
     T m_P1;
@@ -179,10 +173,7 @@ public:
 
 template <typename T> ProjectionIntegralInfo<T> compute_projected_face_integral(FaceInfo<T> const& face)
 {
-    using namespace tiny;
     using std::fabs;
-
-    typedef ValueTraits<T> VT;
 
     ProjectionIntegralInfo<T> result;
 
@@ -236,23 +227,21 @@ template <typename T> ProjectionIntegralInfo<T> compute_projected_face_integral(
     }
 
     result.m_P1 /= 2;
-    result.m_Pa /= VT::numeric_cast(6.0);
-    result.m_Paa /= VT::numeric_cast(12.0);
-    result.m_Paaa /= VT::numeric_cast(20.0);
-    result.m_Pb /= -VT::numeric_cast(6.0);
-    result.m_Pbb /= -VT::numeric_cast(12.0);
-    result.m_Pbbb /= -VT::numeric_cast(20.0);
-    result.m_Pab /= VT::numeric_cast(24.0);
-    result.m_Paab /= VT::numeric_cast(60.0);
-    result.m_Pabb /= -VT::numeric_cast(60.0);
+    result.m_Pa /= T(6.0);
+    result.m_Paa /= T(12.0);
+    result.m_Paaa /= T(20.0);
+    result.m_Pb /= -T(6.0);
+    result.m_Pbb /= -T(12.0);
+    result.m_Pbbb /= -T(20.0);
+    result.m_Pab /= T(24.0);
+    result.m_Paab /= T(60.0);
+    result.m_Pabb /= -T(60.0);
 
     return result;
 }
 
 template <typename T> class FaceIntegralInfo
 {
-public:
-    using VT = typename tiny::ValueTraits<T>;
 
 public:
     T m_Fa;
@@ -288,10 +277,8 @@ public:
 
 template <typename T> FaceIntegralInfo<T> compute_face_integral(FaceInfo<T> const& face)
 {
-    using namespace tiny;
     using std::fabs;
 
-    typedef ValueTraits<T> VT;
 
     FaceIntegralInfo<T> result;
 
@@ -335,9 +322,6 @@ template <typename T> FaceIntegralInfo<T> compute_face_integral(FaceInfo<T> cons
 
 template <typename T> class VolumeIntegralInfo
 {
-public:
-    using VT = typename tiny::ValueTraits<T>;
-
 public:
     T m_T0;
     T m_T1[3];
@@ -394,10 +378,8 @@ public:
 template <typename T>
 VolumeIntegralInfo<T> compute_volume_integral(size_t const K, FaceCallbackInterface<T> const* callback)
 {
-    using namespace tiny;
     using std::fabs;
 
-    typedef ValueTraits<T> VT;
 
     VolumeIntegralInfo<T> result;
 
@@ -460,9 +442,6 @@ VolumeIntegralInfo<T> compute_volume_integral(size_t const K, FaceCallbackInterf
 template <typename T>
 Properties<T> compute_mesh(T const& density, size_t const K, FaceCallbackInterface<T> const* callback)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> VT;
 
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");

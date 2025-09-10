@@ -2,11 +2,11 @@
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_t4mesh.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace mesh_array
 {
-template <typename V, typename M> IndexedVertexAttribute<V, M>::~IndexedVertexAttribute() {}
+/*template <typename V, typename M> IndexedVertexAttribute<V, M>::~IndexedVertexAttribute() {}
 
 template <typename V, typename M>
 IndexedVertexAttribute<V, M>::IndexedVertexAttribute(size_t const& idx, VertexAttribute<V, M>& data)
@@ -69,6 +69,6 @@ using MTd = tiny::MathTypes<double>;
 template class IndexedVertexAttribute<MTf::vector3_type, T3Mesh>;
 template class IndexedVertexAttribute<MTf::vector3_type, T4Mesh>;
 template class IndexedVertexAttribute<MTd::vector3_type, T3Mesh>;
-template class IndexedVertexAttribute<MTd::vector3_type, T4Mesh>;
+template class IndexedVertexAttribute<MTd::vector3_type, T4Mesh>;*/
 
 } // end namespace mesh_array

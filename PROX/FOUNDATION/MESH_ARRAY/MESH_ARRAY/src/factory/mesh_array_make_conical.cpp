@@ -1,7 +1,7 @@
 #include <factory/mesh_array_make_conical.h>
 #include <factory/mesh_array_profile_sweep.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <vector>
 
@@ -23,9 +23,6 @@ void make_conical(T const& bottom_radius, T const& top_radius, T const& height, 
 
     profile_sweep<T>(profile, slices, mesh, X, Y, Z);
 }
-
-using MTf = tiny::MathTypes<float>;
-using MTd = tiny::MathTypes<double>;
 
 template void make_conical<float>(float const& bottom_radius, float const& top_radius, float const& height,
                                   size_t const& slices, T3Mesh& mesh, VertexAttribute<float, T3Mesh>& X,

@@ -1,52 +1,53 @@
 #ifndef GEOMETRY_AABB_H
 #define GEOMETRY_AABB_H
 
-#include "tiny_math_types.h"
+#include <eigenhelperall.h>
 
-  namespace geometry
-  {
+namespace geometry
+{
 
-  template<typename T>
-  class AABBEigen
-  {
-  protected:
-      EigenVector3<T> m_min_coord;
-      EigenVector3<T> m_max_coord;
+template <typename T> class AABBEigen
+{
+protected:
+    EigenVector3<T> m_min_coord;
+    EigenVector3<T> m_max_coord;
 
-  public:
+public:
+    const EigenVector3<T>& min() const { return this->m_min_coord; }
+    EigenVector3<T>& min() { return this->m_min_coord; }
 
-      const EigenVector3<T>& min() const { return this->m_min_coord; }
-      EigenVector3<T>& min()       { return this->m_min_coord; }
+    const EigenVector3<T>& max() const { return this->m_max_coord; }
+    EigenVector3<T>& max() { return this->m_max_coord; }
 
-      const EigenVector3<T>& max() const { return this->m_max_coord; }
-      EigenVector3<T>& max()       { return this->m_max_coord; }
+public:
+    AABBEigen()
+        : m_min_coord(EigenVector3<T>(-0.5f, -0.5f, -0.5f))
+        , m_max_coord(EigenVector3<T>(0.5f, 0.5f, 0.5f))
+    {
+    }
 
-  public:
+    AABBEigen(const EigenVector3<T>& min_coord,
+              const EigenVector3<T>& max_coord)
+        : m_min_coord(min_coord)
+        , m_max_coord(max_coord)
+    {
+    }
 
-      AABBEigen()
-          : m_min_coord( EigenVector3<T>(-0.5f,-0.5f,-0.5f) )
-          , m_max_coord( EigenVector3<T>( 0.5f, 0.5f, 0.5f) )
-      {}
+    AABBEigen(AABBEigen const& aabb)
+        : m_min_coord(aabb.m_min_coord)
+        , m_max_coord(aabb.m_max_coord)
+    {
+    }
 
-      AABBEigen(const EigenVector3<T>& min_coord, const EigenVector3<T>& max_coord)
-          : m_min_coord( min_coord )
-          , m_max_coord( max_coord )
-      {}
-
-      AABBEigen(AABBEigen const & aabb)
-          : m_min_coord(aabb.m_min_coord)
-          , m_max_coord(aabb.m_max_coord)
-      {}
-
-      AABBEigen& operator=(AABBEigen const & aabb)
-      {
-          if(this!=&aabb)
-          {
-              this->m_min_coord = aabb.m_min_coord;
-              this->m_max_coord = aabb.m_max_coord;
-          }
-          return *this;
-      }
+    AABBEigen& operator=(AABBEigen const& aabb)
+    {
+        if (this != &aabb)
+        {
+            this->m_min_coord = aabb.m_min_coord;
+            this->m_max_coord = aabb.m_max_coord;
+        }
+        return *this;
+    }
 
   };
 

@@ -1,11 +1,10 @@
 #ifndef CONVEX_SIMPLEX_H
 #define CONVEX_SIMPLEX_H
 
-#include <tiny.h>
-
 #include <stdexcept>
 #include <cassert>
 #include <limits>
+#include <eigenhelperall.h>
 
 namespace convex
 {
@@ -435,20 +434,21 @@ namespace convex
   template<typename T>
   inline bool is_degenerate_point(const EigenVector3<T>& p, const Simplex<T>& S)
   {
-    T const precision = tiny::machine_precision<T>();
-    int used_bit = 1;
+      T const precision = std::numeric_limits<T>::epsilon();
+      int used_bit = 1;
 
-    auto newP = p;
+      auto newP = p;
 
-    for(size_t i = 0u; i < 4u; ++i)
-    {
+      for (size_t i = 0u; i < 4u; ++i)
+      {
 
-      // 2011-11-12 Kenny: Just an idea, but points should be at least collision envelope apart otherwise this will just result in sliver and thin tetrahedra lying inside the collision envelope?
+          // 2011-11-12 Kenny: Just an idea, but points should be at least collision envelope apart otherwise this will just result in sliver and thin tetrahedra lying inside the collision envelope?
 
-      //check point versus point
-      if( (S.m_bitmask & used_bit) && ((newP-S.m_v[i]).dot(newP-S.m_v[i]) < precision) )
-        return true;
-      used_bit <<= 1;
+          //check point versus point
+          if ((S.m_bitmask & used_bit)
+              && ((newP - S.m_v[i]).dot(newP - S.m_v[i]) < precision))
+              return true;
+          used_bit <<= 1;
     }
 
     T dist;

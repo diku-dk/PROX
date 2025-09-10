@@ -2,7 +2,7 @@
 #define CONVEX_CONSERVATIVE_ADVANCEMENT_H
 
 #include <cassert>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 #include <convex_compute_closest_points.h>
 #include <convex_integrate_motion.h>
 

@@ -1,4 +1,4 @@
-#include <tiny.h>
+#include <eigenhelperall.h>
 #include <geometry.h>
 #include <convex.h>
 
@@ -9,13 +9,6 @@
 #include <boost/test/test_tools.hpp>
 
 #include <cmath>
-
-/*using M = tiny::MathTypes<double>;
-using Q = M::quaternion_type;
-using V = M::vector3_type;
-using T = M::real_type;
-using C = M::coordsys_type;
-using VT = M::value_traits;*/
 
 using T = double;
 

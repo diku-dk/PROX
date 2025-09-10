@@ -4,9 +4,8 @@
 #include <convex_outside_vertex_edge_voronoi_plane.h>
 
 #include <barycentric/geometry_barycentric.h>
-#include <tiny_vector_functions.h>
+#include <eigenhelperall.h>
 #include <convex_simplex.h>
-
 
 namespace convex
 {

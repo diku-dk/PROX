@@ -4,8 +4,7 @@
 #include "contacts/contact_point.h"
 #include <prox_rigid_body.h>
 
-#include <tiny_precision.h>   // needed for working precision
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <cmath> // needed for std::fabs
 #include <cassert> // needed for assert

@@ -7,7 +7,7 @@
 
 #include <geometry_inside.h>
 
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <cassert>

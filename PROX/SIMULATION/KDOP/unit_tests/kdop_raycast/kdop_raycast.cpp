@@ -1,7 +1,7 @@
 #include <kdop.h>
 #include <mesh_array.h>
 #include <geometry.h>
-#include <tiny.h>
+#include <eigenhelperall.h>
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>

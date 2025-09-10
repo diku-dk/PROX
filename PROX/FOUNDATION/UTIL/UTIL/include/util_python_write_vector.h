@@ -4,9 +4,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <tiny_vector.h>
+#include <eigenhelperall.h>
 #include <prox_rigid_body.h>
-#include <tiny_math_types.h>
 
 namespace util
 {

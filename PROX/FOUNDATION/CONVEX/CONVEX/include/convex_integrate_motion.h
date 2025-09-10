@@ -4,7 +4,7 @@
 #include <cmath>
 #include <cassert>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace convex
 {

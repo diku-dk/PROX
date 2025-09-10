@@ -12,7 +12,7 @@
 #include <procedural_make_cliff_edge.h>
 #include <procedural_make_internal_edge.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <content.h>
 #include <mesh_array.h>

@@ -1,7 +1,7 @@
 #include <factory/mesh_array_make_cone.h>
 #include <factory/mesh_array_profile_sweep.h>
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <vector>
 

@@ -3,7 +3,7 @@
 
 #include "prox_enums.h"
 #include "prox_math.h"
-#include "tiny_math_types.h"
+#include "eigenhelperall.h"
 
 namespace prox
 {

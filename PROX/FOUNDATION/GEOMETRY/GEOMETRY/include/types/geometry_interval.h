@@ -1,9 +1,7 @@
 #ifndef GEOMETRY_INTERVAL_H
 #define GEOMETRY_INTERVAL_H
 
-#include <tiny_value_traits.h>
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 namespace geometry
 {

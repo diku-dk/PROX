@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>         // needed for std::fabs
@@ -15,10 +13,8 @@ Properties<T> compute_tetrahedron(T const& density, T const& x1, T const& y1, T 
                                   T const& z2, T const& x3, T const& y3, T const& z3, T const& x4, T const& y4,
                                   T const& z4)
 {
-    using namespace tiny;
     using std::fabs;
 
-    typedef ValueTraits<T> value_traits;
 
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");
@@ -70,7 +66,7 @@ Properties<T> compute_tetrahedron(T const& density, T const& x1, T const& y1, T 
 
     T const j = fabs(E00 * (E11 * E22 - E21 * E12) - E01 * (E10 * E22 - E20 * E12) + E02 * (E10 * E21 - E20 * E11));
 
-    T const volume = j / value_traits::numeric_cast(6.0);
+    T const volume = j / T(6.0);
 
     T const mass = density * volume;
 
@@ -78,22 +74,28 @@ Properties<T> compute_tetrahedron(T const& density, T const& x1, T const& y1, T 
 
     value.m_m = mass;
 
-    value.m_Ixx = density * j * (y_poly + z_poly) / value_traits::numeric_cast(60.0);
-    value.m_Iyy = density * j * (x_poly + z_poly) / value_traits::numeric_cast(60.0);
-    value.m_Izz = density * j * (x_poly + y_poly) / value_traits::numeric_cast(60.0);
+    value.m_Ixx = density * j * (y_poly + z_poly) / T(60.0);
+    value.m_Iyy = density * j * (x_poly + z_poly) / T(60.0);
+    value.m_Izz = density * j * (x_poly + y_poly) / T(60.0);
 
-    value.m_Ixy = density * j
-                * (two * x1 * y1 + x1 * y2 + x1 * y3 + x1 * y4 + x2 * y1 + two * x2 * y2 + x2 * y3 + x2 * y4 + x3 * y1
-                   + x3 * y2 + two * x3 * y3 + x3 * y4 + x4 * y1 + x4 * y2 + x4 * y3 + two * x4 * y4)
-                / value_traits::numeric_cast(120.0);
-    value.m_Ixz = density * j
-                * (two * x1 * z1 + x1 * z2 + x1 * z3 + x1 * z4 + x2 * z1 + two * x2 * z2 + x2 * z3 + x2 * z4 + x3 * z1
-                   + x3 * z2 + two * x3 * z3 + x3 * z4 + x4 * z1 + x4 * z2 + x4 * z3 + two * x4 * z4)
-                / value_traits::numeric_cast(120.0);
-    value.m_Iyz = density * j
-                * (two * y1 * z1 + y1 * z2 + y1 * z3 + y1 * z4 + y2 * z1 + two * y2 * z2 + y2 * z3 + y2 * z4 + y3 * z1
-                   + y3 * z2 + two * y3 * z3 + y3 * z4 + y4 * z1 + y4 * z2 + y4 * z3 + two * y4 * z4)
-                / value_traits::numeric_cast(120.0);
+    value.m_Ixy
+        = density * j
+        * (two * x1 * y1 + x1 * y2 + x1 * y3 + x1 * y4 + x2 * y1 + two * x2 * y2
+           + x2 * y3 + x2 * y4 + x3 * y1 + x3 * y2 + two * x3 * y3 + x3 * y4
+           + x4 * y1 + x4 * y2 + x4 * y3 + two * x4 * y4)
+        / T(120.0);
+    value.m_Ixz
+        = density * j
+        * (two * x1 * z1 + x1 * z2 + x1 * z3 + x1 * z4 + x2 * z1 + two * x2 * z2
+           + x2 * z3 + x2 * z4 + x3 * z1 + x3 * z2 + two * x3 * z3 + x3 * z4
+           + x4 * z1 + x4 * z2 + x4 * z3 + two * x4 * z4)
+        / T(120.0);
+    value.m_Iyz
+        = density * j
+        * (two * y1 * z1 + y1 * z2 + y1 * z3 + y1 * z4 + y2 * z1 + two * y2 * z2
+           + y2 * z3 + y2 * z4 + y3 * z1 + y3 * z2 + two * y3 * z3 + y3 * z4
+           + y4 * z1 + y4 * z2 + y4 * z3 + two * y4 * z4)
+        / T(120.0);
 
     value.m_x = (x1 + x2 + x3 + x4) / 4;
     value.m_y = (y1 + y2 + y3 + y4) / 4;

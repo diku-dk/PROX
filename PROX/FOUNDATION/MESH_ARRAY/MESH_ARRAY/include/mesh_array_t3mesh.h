@@ -3,7 +3,7 @@
 
 #include <mesh_array_vertex.h>
 #include <mesh_array_triangle.h>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 #include <vector>
 
 namespace mesh_array

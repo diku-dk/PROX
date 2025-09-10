@@ -2,10 +2,10 @@
 #define PROCEDURAL_TYPES_H
 
 #include <cstdlib>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
-        namespace procedural
-        {
+namespace procedural
+{
         /**
          * A Geometry Handle.
      * A geometry handle points to a body space geometry stored
@@ -26,63 +26,57 @@
      * scene by simply changing the local frame to world coordinate frame
      * transformation.
          */
-        template<typename T>
-        class GeometryHandleEigen
-        {
+template <typename T> class GeometryHandleEigen
+{
 
-        public:
-            T m_m;    ///< Total mass
-            T m_Ixx;  ///< Body frame inertia tensor
-            T m_Iyy;  ///< Body frame inertia tensor
-            T m_Izz;  ///< Body frame inertia tensor
-            EigenVector3<T> m_T;    ///< Body to model transformation
-            EigenQuaternion<T> m_Q;    ///< Body to model transformation
-            size_t m_gid;  ///< unique identifier of the geometry in the physics engine
+public:
+    T m_m;    ///< Total mass
+    T m_Ixx;  ///< Body frame inertia tensor
+    T m_Iyy;  ///< Body frame inertia tensor
+    T m_Izz;  ///< Body frame inertia tensor
+    EigenVector3<T> m_T;    ///< Body to model transformation
+    EigenQuaternion<T> m_Q;    ///< Body to model transformation
+    size_t m_gid; ///< unique identifier of the geometry in the physics engine
 
-        public:
-            GeometryHandleEigen()
-                : m_m(0)
-                , m_Ixx(0)
-                , m_Iyy(0)
-                , m_Izz(0)
-                , m_T()
-                , m_Q()
-                , m_gid()
-            {}
+public:
+    GeometryHandleEigen()
+        : m_m(0)
+        , m_Ixx(0)
+        , m_Iyy(0)
+        , m_Izz(0)
+        , m_T()
+        , m_Q()
+        , m_gid()
+    {
+    }
 
-            GeometryHandleEigen(
-                T const & m
-                , T const & Ixx
-                , T const & Iyy
-                , T const & Izz
-                , const EigenVector3<T>& t
-                , const EigenQuaternion<T>& q
-                , size_t const & g
-                )
-                : m_m(m)
-                , m_Ixx(Ixx)
-                , m_Iyy(Iyy)
-                , m_Izz(Izz)
-                , m_T(t)
-                , m_Q(q)
-                , m_gid(g)
-            {}
+    GeometryHandleEigen(T const& m, T const& Ixx, T const& Iyy, T const& Izz,
+                        const EigenVector3<T>& t, const EigenQuaternion<T>& q,
+                        size_t const& g)
+        : m_m(m)
+        , m_Ixx(Ixx)
+        , m_Iyy(Iyy)
+        , m_Izz(Izz)
+        , m_T(t)
+        , m_Q(q)
+        , m_gid(g)
+    {
+    }
 
-        public:
-
-            /**
+public:
+    /**
        * Get Translation
        *
        * @return   body to model frame translation
        */
-            const EigenVector3<T>& Tb2m() const { return m_T;  }
+    const EigenVector3<T>& Tb2m() const { return m_T; }
 
-            /**
+    /**
        * Get Rotation.
        *
        * @return   body to model frame rotation
        */
-            const EigenQuaternion<T>& Qb2m() const { return m_Q;  }
+    const EigenQuaternion<T>& Qb2m() const { return m_Q; }
         };
 
         template <typename T> class MaterialInfo

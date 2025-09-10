@@ -4,8 +4,7 @@
 #include <types/geometry_line.h>
 #include <types/geometry_plane.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>  // needed for std::fabs

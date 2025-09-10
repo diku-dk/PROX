@@ -10,7 +10,7 @@
 
 #include <overlap/geometry_overlap_triangle_triangle.h>
 
-#include <tiny_precision.h>        // needed for tiny::working_precision
+#include <eigenhelperall.h>
 
 #include <cmath>                   // needed for std::min and std::max
 #include <vector>

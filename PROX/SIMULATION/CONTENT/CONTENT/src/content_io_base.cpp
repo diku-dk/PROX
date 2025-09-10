@@ -1,7 +1,6 @@
 #include <content_io_base.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <stdexcept>  // needed for std::runtime_error

@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -11,9 +9,6 @@ namespace mass
 template <typename T>
 Properties<T> translate_to_model_frame(T const& dx, T const& dy, T const& dz, Properties<T> const& Ibody)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> value_traits;
 
     assert(is_number(Ibody.m_m) || !"mass must be a number");
     assert(is_finite(Ibody.m_m) || !"mass must be a finite number");
@@ -55,9 +50,6 @@ Properties<T> translate_to_model_frame(T const& dx, T const& dy, T const& dz, Pr
 
 template <typename T> Properties<T> translate_to_body_frame(Properties<T> const& Imodel)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> value_traits;
 
     assert(is_number(Imodel.m_m) || !"mass must be a number");
     assert(is_finite(Imodel.m_m) || !"mass must be a finite number");

@@ -1,6 +1,5 @@
 #include <mass.h>
-#include <tiny_math_types.h>
-
+#include <eigenhelperall.h>
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_suite.hpp>
@@ -11,18 +10,14 @@ BOOST_AUTO_TEST_SUITE(mass);
 
 BOOST_AUTO_TEST_CASE(rotate_test)
 {
-    using namespace tiny;
 
-    typedef MathTypes<double> types;
-    typedef types::quaternion_type Q;
-    typedef types::value_traits VT;
+    using T = double;
+    EigenQuaternion<T> q = Rotatex(convert_to_radians_eigen(10.0));
 
-    Q q = Q::Rx(VT::convert_to_radians(10.0));
-
-    double const Qs = q.real();
-    double const Qx = q.imag()(0);
-    double const Qy = q.imag()(1);
-    double const Qz = q.imag()(2);
+    double const Qs = q.w();
+    double const Qx = q.x();
+    double const Qy = q.y();
+    double const Qz = q.z();
 
     mass::Properties<double> P;
 

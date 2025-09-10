@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_CONTACTS_CALLBACK_H
 #define GEOMETRY_CONTACTS_CALLBACK_H
 
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace geometry
 {

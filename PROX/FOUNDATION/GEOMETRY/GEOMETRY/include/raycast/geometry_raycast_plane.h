@@ -2,8 +2,7 @@
 #define GEOMETRY_COMPUTE_RAYCAST_PLANE_H
 
 #include <cmath>
-#include <tiny.h>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 #include <types/geometry_ray.h>
 
 namespace geometry

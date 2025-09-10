@@ -7,9 +7,7 @@
 
 #include <types/geometry_support_mapping.h>
 
-#include <tiny_quaternion_functions.h>
-#include <tiny_vector_functions.h>
-#include <tiny_coordsys_functions.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <stdexcept>

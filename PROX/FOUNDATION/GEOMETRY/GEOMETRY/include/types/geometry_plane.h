@@ -3,8 +3,7 @@
 
 #include <types/geometry_triangle.h>
 
-#include <tiny_precision.h>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 

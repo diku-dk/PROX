@@ -3,8 +3,7 @@
 
 #include <broad_object.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 
 #include <algorithm>   // needed for std::copy and std::max
 #include <vector>      // needed for std::vector

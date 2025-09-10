@@ -4,7 +4,6 @@
 #include <mesh_array_t3mesh.h>
 #include <mesh_array_vertex_attribute.h>
 
-#include <tiny_math_types.h>
 namespace mesh_array
 {
 template<typename T>

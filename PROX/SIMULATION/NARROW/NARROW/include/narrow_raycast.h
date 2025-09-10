@@ -4,8 +4,7 @@
 #include <narrow_object.h>
 #include <narrow_geometry.h>
 
-#include <tiny.h>
-
+#include <eigenhelperall.h>
 #include <geometry.h>
 
 #include <kdop_raycast.h>

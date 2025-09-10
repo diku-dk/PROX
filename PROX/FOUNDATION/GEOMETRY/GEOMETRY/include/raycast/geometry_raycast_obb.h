@@ -3,8 +3,7 @@
 
 #include "geometry_transform.h"
 #include <cmath>
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 #include <types/geometry_obb.h>
 #include <types/geometry_ray.h>
 #include <vector>

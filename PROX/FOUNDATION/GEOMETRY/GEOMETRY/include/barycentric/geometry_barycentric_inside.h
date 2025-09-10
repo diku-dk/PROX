@@ -1,9 +1,7 @@
 #ifndef GEOMETRY_BARYCENTRIC_INSIDE_H
 #define GEOMETRY_BARYCENTRIC_INSIDE_H
 
-#include <tiny_value_traits.h>
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
+#include <eigenhelperall.h>
 
 #include <cmath>
 #include <cassert>
@@ -85,7 +83,6 @@ namespace geometry
   template<typename T>
   inline bool barycentric_inside(T const & w1, T const & w2, T const & w3, T const & w4)
   {
-    typedef typename tiny::ValueTraits<T> VT;
 
     assert( is_number(w1) || !"barycentric_inside(): NaN encountered");
     assert( is_number(w2) || !"barycentric_inside(): NaN encountered");

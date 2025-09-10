@@ -14,7 +14,7 @@
 #include <types/geometry_cylinder.h>
 #include <types/geometry_aabb.h>
 
-#include <tiny_precision.h>   // needed for tiny::working_precision
+#include <eigenhelperall.h>   // needed for tiny::working_precision
 
 #include <cmath>
 

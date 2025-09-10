@@ -141,7 +141,7 @@ namespace tiny
         //---
         Quaternion<T> q;
 
-        if(fabs(1- tiny::inner_prod(QA, QB)) < working_precision<R>())
+        if (fabs(1 - tiny::inner_prod(QA, QB)) < working_precision<R>())
         {
             q = Quaternion<T>::identity();
         }

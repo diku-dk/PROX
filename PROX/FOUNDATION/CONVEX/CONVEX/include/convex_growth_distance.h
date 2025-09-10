@@ -3,13 +3,10 @@
 
 #include <convex_compute_closest_points.h>
 
-#include <tiny_quaternion_functions.h>
-#include <tiny_vector_functions.h>
-#include <tiny_coordsys_functions.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 #include <cmath>    // needed for std::sqrt
-#include <tiny_math_types.h>
 
 namespace convex
 {

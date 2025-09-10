@@ -9,7 +9,7 @@
 #include <narrow_object.h>
 #include <narrow_tags.h>
 
-#include <tiny_quaternion_functions.h>
+#include <eigenhelperall.h>
 
 #include <util_profiling.h>
 

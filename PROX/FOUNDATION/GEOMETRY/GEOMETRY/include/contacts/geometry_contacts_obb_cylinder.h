@@ -7,8 +7,7 @@
 #include <overlap/geometry_overlap_obb_capsule.h>
 #include <contacts/geometry_contacts_callback.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
+#include <eigenhelperall.h>
 
 #include <cmath>              // needed for std::fabs and std::sqrt, std::cos, std::sin
 #include <vector>
