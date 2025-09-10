@@ -1,10 +1,8 @@
 #ifndef PROX_GJK_ELLIPSOID_H
 #define PROX_GJK_ELLIPSOID_H
 
-#include <prox_math_policy.h>
 #include <geometry.h>   // needed for geometry::Point
 #include <convex.h>
-#include <tiny_is_number.h>
 #include <cassert>
 
 namespace prox
@@ -67,9 +65,9 @@ namespace prox
             ellipsoid.setScale({a,b,c});  // TODO check this is how to setup the scale!
 
             size_t    const max_iterations       = 100u;
-            T const absolute_tolerance   = boost::numeric_cast<T>(10e-6);
-            T const relative_tolerance   = boost::numeric_cast<T>(10e-6);
-            T const stagnation_tolerance = boost::numeric_cast<T>(10e-15);
+            T const absolute_tolerance = T(10e-6);
+            T const relative_tolerance = T(10e-6);
+            T const stagnation_tolerance = T(10e-15);
 
             CoordSysEigen<T> transformA;
             CoordSysEigen<T> transformB;

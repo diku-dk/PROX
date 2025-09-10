@@ -1,8 +1,6 @@
 #ifndef PROX_BOX_MODEL_H
 #define PROX_BOX_MODEL_H
 
-#include <tiny_is_number.h>
-#include <prox_math_policy.h>
 #include <cmath>
 #include <cassert>
 

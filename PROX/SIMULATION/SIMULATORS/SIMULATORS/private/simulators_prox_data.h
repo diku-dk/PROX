@@ -1,7 +1,6 @@
 #ifndef SIMULATORS_PROX_DATA_H
 #define SIMULATORS_PROX_DATA_H
 
-#include <prox_math_policy.h>
 #include <prox_rigid_body.h>
 #include <prox_contact_point.h>
 #include <prox_property.h>
