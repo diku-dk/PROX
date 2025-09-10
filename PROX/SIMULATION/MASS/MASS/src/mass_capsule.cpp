@@ -1,8 +1,6 @@
 #include <mass.h>
 
-#include <tiny_is_finite.h>
-#include <tiny_is_number.h>
-#include <tiny_value_traits.h>
+#include <eigenhelperall.h>
 
 #include <cassert>
 
@@ -11,10 +9,6 @@ namespace mass
 
 template <typename T> Properties<T> compute_capsule(T const& density, T const& radius, T const& half_height)
 {
-    using namespace tiny;
-
-    typedef ValueTraits<T> value_traits;
-
     assert(is_number(density) || !"density must be a number");
     assert(is_finite(density) || !"density must be a finite number");
     assert(density > 0 || !"density must be positive");

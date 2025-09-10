@@ -9,7 +9,7 @@
 #include <mesh_array.h>
 
 #include <util_profiling.h>
-#include <tiny_math_types.h>
+#include <eigenhelperall.h>
 
 namespace kdop
 {

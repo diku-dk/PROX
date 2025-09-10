@@ -8,7 +8,7 @@
 #include <mesh_array_t4mesh.h>
 #include <mesh_array_vertex_attribute.h>
 
-#include <tiny_power2.h>
+#include <eigenhelperall.h>
 
 #include <algorithm>   // Needed for std::min
 #include <cassert>     // Needed for assert
@@ -209,7 +209,9 @@ namespace kdop
       // However, the maximum number of possible nodes may not be a power of 2,
       // which is needed to create a perfect balanced binary tree.
       // There is no need to have more than is needed for one full BVH.
-      size_t const N_perfect = min(tiny::lower_power2(N_max), tiny::upper_power2(mesh.tetrahedron_size() * 2)) - 1;
+      size_t const N_perfect
+          = min(lower_power2(N_max), upper_power2(mesh.tetrahedron_size() * 2))
+          - 1;
       size_t const L
           = (N_perfect + 1)
           / 2; // So if we have a single tree of N nodes (assuming binary balanced tree) then how many leaves will such a tree have? The total number of nodes in a perfect binary tree is N = 2 L  - 1 where L is number of leaf nodes

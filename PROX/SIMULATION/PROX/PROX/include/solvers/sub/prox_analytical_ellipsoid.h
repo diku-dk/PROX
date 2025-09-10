@@ -1,9 +1,7 @@
 #ifndef PROX_ANALYTICAL_ELLIPSOID_H
 #define PROX_ANALYTICAL_ELLIPSOID_H
 
-#include <tiny_is_number.h>
-#include <tiny_polynomial_roots.h>
-#include <tiny.h>
+#include <eigenhelperfunctions.h>
 
 namespace prox
 {
@@ -29,7 +27,6 @@ namespace prox
 
       )
     {
-      typedef tiny::ValueTraits<T>   value_traits;
 
       if(lambda_n <= 0)
       {
@@ -127,7 +124,8 @@ namespace prox
 
         T roots[4] = {0, 0, 0, 0};
 
-        tiny::compute_polynomial_roots(coef0,coef1,coef2,coef3,coef4,count, roots );
+        compute_polynomial_roots(coef0, coef1, coef2, coef3, coef4, count,
+                                 roots);
 
         for(size_t i =0;i < count;++i)
           t = ( roots[i] > t ) ? roots[i] : t;
