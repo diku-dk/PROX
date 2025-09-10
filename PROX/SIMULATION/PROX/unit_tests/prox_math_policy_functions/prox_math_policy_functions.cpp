@@ -2,6 +2,7 @@
 #include "solvers/prox_jacobi_solver.h"
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Sparse>
+#include "eigenhelperfunctions.h"
 
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/unit_test.hpp>
