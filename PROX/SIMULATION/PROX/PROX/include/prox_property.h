@@ -1,7 +1,7 @@
 #ifndef PROX_PROPERTY_H
 #define PROX_PROPERTY_H
 
-#include "tiny_math_types.h"
+#include "eigenhelperfunctions.h"
 #include <cstdlib>  // for std::size_t
 #include <type_traits>
 

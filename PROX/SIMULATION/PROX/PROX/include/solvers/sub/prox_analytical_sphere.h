@@ -1,8 +1,6 @@
 #ifndef PROX_ANALYTICAL_SPHERE_H
 #define PROX_ANALYTICAL_SPHERE_H
 
-#include <tiny_is_number.h>
-#include <prox_math_policy.h>
 #include <cmath>
 #include <cassert>
 

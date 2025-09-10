@@ -1,7 +1,7 @@
 #ifndef PROX_UPDATE_INERTIA_TENSOR_H
 #define PROX_UPDATE_INERTIA_TENSOR_H
 
-#include "tiny_math_types.h"
+#include <eigenhelperfunctions.h>
 
 #include <type_traits>
 

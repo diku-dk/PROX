@@ -1,8 +1,6 @@
 #ifndef PROX_COLLISION_DETECTION_H
 #define PROX_COLLISION_DETECTION_H
 
-#include "prox_math_policy.h"
-#include "tiny_math_types.h"
 #include <broad.h>
 #include <broad_statistics.h>
 
