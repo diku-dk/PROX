@@ -4,9 +4,7 @@
 #include "prox_math.h"
 #include <prox_update_inertia_tensor.h>
 
-#include <tiny_is_number.h>
-#include <tiny_is_finite.h>
-#include <tiny_matrix_functions.h>
+#include <eigenhelperfunctions.h>
 
 #include <cassert>
 
@@ -15,7 +13,7 @@ namespace prox
 
   // 2009-08-13 Kenny code reivew: Optimization replace diagonal6x6_type with diagonal_mass_type, maybe wait to optimize until all it working
 
-template <typename T, typename Iterator>
+/*template <typename T, typename Iterator>
 inline void get_inverse_mass_matrix(Iterator begin, Iterator end, DiagonalMatrix<6, T>& W)
 {
     size_t const N = std::distance(begin,end);
@@ -65,7 +63,7 @@ inline void get_inverse_mass_matrix(Iterator begin, Iterator end, DiagonalMatrix
       b(5,4) = inv_I(2,1);
       b(5,5) = inv_I(2,2);
     }
-}
+}*/
 
 template <typename T, typename Iterator>
 inline void get_inverse_mass_matrix_eigen(Iterator begin, Iterator end,
