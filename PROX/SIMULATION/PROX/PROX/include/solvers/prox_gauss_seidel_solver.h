@@ -113,9 +113,16 @@ void gauss_seidel_solver_Eigen(const Eigen::SparseMatrix<T>& J,
 
     T residual_norm;
 
+    Eigen::SparseMatrix<T, Eigen::RowMajor> J_row = J; // convert once if needed
+    J_row.makeCompressed(); // ensure compressed storage
+    // WJT: keep as column-major (Eigen default). Make sure it's compressed:
+    Eigen::SparseMatrix<T> WJT_col = WJT;
+    WJT_col.makeCompressed();
+
     // Gauss-Seidel loops
     for (size_t iteration = 0; iteration < params.max_iterations(); ++iteration)
     {
+        std::cerr << "Iteration " << iteration << "\n";
         // Safety guard for R factor
         T val = (R.size() == 1) ? R[0](1, 1) : R[1](1, 1);
         RECORD_VECTOR_PUSH("rfactor", val);
@@ -123,28 +130,63 @@ void gauss_seidel_solver_Eigen(const Eigen::SparseMatrix<T>& J,
         // Loop over contact points
         for (size_t k = 0; k < K_blocks; ++k)
         {
-            Eigen::Matrix<T, 4, 1> mu_k = get_block4(mu, k);
-            Eigen::Matrix<T, 4, 1> x_k = get_block4(x, k);
-            Eigen::Matrix<T, 4, 1> delta_x = x_k; // save old value
+            //std::cerr << "k: " << k << "/" << K_blocks << "\n";
+            using Vec4 = Eigen::Matrix<T, 4, 1>;
 
-            Eigen::Matrix<T, 4, 1> b_k = get_block4(b, k);
-            Eigen::Matrix<T, 4, 1> z_k;
-            computeZk_Eigen(x_k, w, R[k], J, b_k, z_k, k);
+            // map the 4-element blocks directly into the big vectors (no copy)
+            Eigen::Map<Vec4> xk_map(x.data()
+                                    + 4 * k); // references x[4*k..4*k+3]
+            Eigen::Map<const Vec4> b_k_map(b.data() + 4 * k);
+            Eigen::Map<const Vec4> mu_k_map(mu.data() + 4 * k);
 
-            // Solve normal and friction components
-            normalSolver(params.normal_sub_solver(), z_k(0), x_k(0));
+            // save old x_k
+            Vec4 old_xk = xk_map;
+
+            //compute Jw = J_k * w  (J_k = rows 4*k .. 4*k+3)
+            Vec4 Jw;
+            Jw.setZero();
+            for (int r = 0; r < 4; ++r)
+            {
+                int row = static_cast<int>(4 * k + r);
+                for (typename Eigen::SparseMatrix<
+                         T, Eigen::RowMajor>::InnerIterator it(J_row, row);
+                     it; ++it)
+                {
+                    // it.col() is the column index; w[it.col()] is dense-vector access
+                    Jw(r) += it.value() * w[it.col()];
+                }
+            }
+
+            // z_k = x_k - R[k] * (Jw + b_k)
+            Vec4 z_k = xk_map - R[k] * (Jw + b_k_map);
+
+            // solve local (these are scalar calls that update xk_map in place)
+            // note: normalSolver and frictionSolver expect scalars; adapt to how they modify x_k
+            // Copy z_k components into temporaries if your solvers require references
+            normalSolver(params.normal_sub_solver(), z_k(0), xk_map(0));
             frictionSolver(params.friction_sub_solver(), z_k(1), z_k(2), z_k(3),
-                           mu_k(1), mu_k(2), mu_k(3), x_k(0), x_k(1), x_k(2),
-                           x_k(3));
+                           mu_k_map(1), mu_k_map(2), mu_k_map(3), xk_map(0),
+                           xk_map(1), xk_map(2), xk_map(3));
 
-            // Update delta_x
-            delta_x = x_k - delta_x;
+            // delta_x = x_k_new - old_xk
+            Vec4 delta_x = xk_map - old_xk;
 
-            // Update w: w += WJT.middleCols(4*k, 4) * delta_x
-            w += WJT.middleCols(4 * k, 4) * delta_x;
-
-            // Store updated x_k back to flat vector
-            set_block4(x, k, x_k);
+            // update w: w += WJT.blockColumns(4*k..4*k+3) * delta_x
+            // efficient column-wise accumulation (WJT_col is column-major)
+            int baseCol = 4 * static_cast<int>(k);
+            for (int local_col = 0; local_col < 4; ++local_col)
+            {
+                int col = baseCol + local_col;
+                T coeff = delta_x(local_col); // scalar
+                if (coeff == T(0)) continue; // small cheap optimization
+                for (typename Eigen::SparseMatrix<T>::InnerIterator it(WJT_col,
+                                                                       col);
+                     it; ++it)
+                {
+                    // it.row() gives row index into w
+                    w[it.row()] += it.value() * coeff;
+                }
+            }
         }
 
         // Compute residual
