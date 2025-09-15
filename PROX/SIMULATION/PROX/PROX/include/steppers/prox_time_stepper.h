@@ -101,7 +101,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
 
     unsigned int const number_of_contacts = contacts.size();
 
-    logging << "thyme_stepper(): Number of contacts = " << number_of_contacts
+    logging << "time_stepper(): Number of contacts = " << number_of_contacts
             << util::Log::newline();
 
     //EigenSparseVec6<T> hNew;
@@ -182,6 +182,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
     {
         position_update_eigen(qNew, uNew, dt, qNew);
     }
+    //Else empty?
 
     //set_position_vector(bodies.begin(), bodies.end(), q);
     set_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
