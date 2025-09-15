@@ -180,6 +180,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
     }
     else if (stepperType == semi_implicit)
     {
+        //q^{t+1} = q^t + dt* u^{t+1}
         position_update_eigen(qNew, uNew, dt, qNew);
     }
     //Else empty?
