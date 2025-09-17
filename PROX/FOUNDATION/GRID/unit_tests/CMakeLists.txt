@@ -1,1 +1,2 @@
 ADD_SUBDIRECTORY(grid_test_grid)
+ADD_SUBDIRECTORY(grid_local_strategy)

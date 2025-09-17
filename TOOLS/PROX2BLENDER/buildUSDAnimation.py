@@ -304,7 +304,8 @@ def buildUsd(frames, rigidNames, outUsd, meshUsdDir, gizmoMeshPath, gizmoMeshPat
         for frameNumber, frame in enumerate(frames):
             pos = frame["positions"][i]
             ori = frame["orientations"][i]
-            x, y, z, w = ori[0], ori[1], ori[2], ori[3]
+            #x, y, z, w = ori[0], ori[1], ori[2], ori[3]
+            w, x, y, z = ori[0], ori[1], ori[2], ori[3]
             usdQuat = Gf.Quatf(w, x, y, z)
             tcode = Usd.TimeCode(frameNumber)
             translateOp.Set(Gf.Vec3d(pos[0], pos[1], pos[2]), tcode)

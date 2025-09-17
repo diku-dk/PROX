@@ -46,7 +46,18 @@ namespace grid
         Eigen::Matrix<size_t, 3, 1> nodes1;
         enclosing_indices( grid, pos, nodes0, nodes1);
 
-        D const d000 = grid( nodes0);
+        nodes0 = Eigen::Matrix<size_t, 3, 1>(
+            std::max<size_t>(std::min<T>(nodes0.x(), grid.I() - 1), size_t(0)),
+            std::max<size_t>(std::min<T>(nodes0.y(), grid.J() - 1), size_t(0)),
+            std::max<size_t>(std::min<T>(nodes0.z(), grid.K() - 1), size_t(0)));
+        nodes1 = Eigen::Matrix<size_t, 3, 1>(
+            std::max<size_t>(std::min<size_t>(nodes1.x(), grid.I() - 1),
+                             size_t(0)),
+            std::max<size_t>(std::min<size_t>(nodes1.y(), grid.J() - 1),
+                             size_t(0)),
+            std::max<size_t>(std::min<size_t>(nodes1.z(), grid.K() - 1),
+                             size_t(0)));
+        D const d000 = grid(nodes0);
         D const d001 = grid( Eigen::Matrix<size_t, 3, 1>(nodes1.x(), nodes0.y(), nodes0.z()) );
         D const d010 = grid( Eigen::Matrix<size_t, 3, 1>(nodes0.x(), nodes1.y(), nodes0.z()) );
         D const d011 = grid( Eigen::Matrix<size_t, 3, 1>(nodes1.x(), nodes1.y(), nodes0.z()) );

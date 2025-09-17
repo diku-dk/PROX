@@ -15,9 +15,10 @@ namespace util
    * This version fo the write_vector is usefull for writing indices into
    * python scripts.
    */
-  template<typename T>
-  inline std::string python_write_vector(std::vector<T> const & values, size_t const & size)
-  {
+template <typename T>
+inline std::string python_write_vector(std::vector<T> const& values,
+                                       size_t const& size)
+{
     std::stringstream output;
 
     output << "[";
@@ -41,35 +42,62 @@ namespace util
     output.flush();
 
     return output.str();
-  }
+}
 
-  template<typename T>
-  inline std::string python_write_vector(std::vector<T> const & values )
-  {
+template <typename T>
+inline std::string
+python_write_vector_eigen(std::vector<EigenVector3<T>> const& values)
+{
+    std::stringstream output;
+
+    output << "[";
+
+    for (size_t i = 0u; i < values.size(); ++i)
+    {
+        if (i == values.size() - 1)
+        {
+            output << "[" << values[i][0] << "," << values[i][1] << ","
+                   << values[i][2] << "]";
+        }
+        else
+        {
+            output << "[" << values[i][0] << "," << values[i][1] << ","
+                   << values[i][2] << "],";
+        }
+    }
+
+    output << "]";
+
+    output.flush();
+
+    return output.str();
+}
+
+template <typename T>
+inline std::string python_write_vector(std::vector<T> const& values)
+{
     return python_write_vector(values, values.size());
-  }
+}
 
-  inline std::string python_write_quaternion(std::vector<EigenQuaternion<float>> QUAT)
-  {
-      std::stringstream output;
+inline std::string
+python_write_quaternion(std::vector<EigenQuaternion<float>> QUAT)
+{
+    std::stringstream output;
 
-      output << "[";
+    output << "[";
 
-      for(size_t i = 0u; i < QUAT.size(); ++i)
-      {
-          output << "[" << QUAT[i].w() << ", " << QUAT[i].x() << ", " << QUAT[i].y() << ", "
-                 << QUAT[i].z() << "]";
-          if (i != QUAT.size()-1)
-          {
-              output << ", ";
-          }
-      }
-      output << "]";
+    for (size_t i = 0u; i < QUAT.size(); ++i)
+    {
+        output << "[" << QUAT[i].w() << ", " << QUAT[i].x() << ", "
+               << QUAT[i].y() << ", " << QUAT[i].z() << "]";
+        if (i != QUAT.size() - 1) { output << ", "; }
+    }
+    output << "]";
 
-      output.flush();
+    output.flush();
 
-      return output.str();
-  }
+    return output.str();
+}
 
   template<typename T>
   inline std::string python_write_vector(std::string const & name

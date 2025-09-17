@@ -462,11 +462,15 @@ bool ProxEngine::writeRigidBodiesData(std::string const& filename, unsigned int 
 
     python << "rigidNames_" << frameNumber << " = " << util::python_write_vector(objectNames) << ";" << "\n";
     python << "inertiabfs_" << frameNumber << " = " << util::python_write_matrix_vector<3>(inertiabfs) << ";" << "\n";
-    python << "masses_" << frameNumber << " = " << util::python_write_vector(masses) << ";" << "\n";
+    python << "masses_" << frameNumber << " = "
+           << util::python_write_vector(masses) << ";" << "\n";
     python << "orientations_" << frameNumber << " = " << util::python_write_quaternion(orientations) << ";" << "\n";
-    python << "positions_" << frameNumber << " = " << util::python_write_vector(positions) << ";" << "\n";
-    python << "spin_" << frameNumber << " = " << util::python_write_vector(spin) << ";" << "\n";
-    python << "velocities_" << frameNumber << " = " << util::python_write_vector(velocities) << ";" << "\n";
+    python << "positions_" << frameNumber << " = "
+           << util::python_write_vector_eigen(positions) << ";" << "\n";
+    python << "spin_" << frameNumber << " = "
+           << util::python_write_vector_eigen(spin) << ";" << "\n";
+    python << "velocities_" << frameNumber << " = "
+           << util::python_write_vector_eigen(velocities) << ";" << "\n";
     python << "materials_" << frameNumber << " = " << util::python_write_vector(materialNames) << ";" << "\n";
 
         //Same as below, however write to our .py file

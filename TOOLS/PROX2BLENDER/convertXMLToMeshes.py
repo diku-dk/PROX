@@ -17,7 +17,7 @@ def quaternionToMatrix(qw, qx, qy, qz):
 
 def parseTransform(elem):
     #If we have non-tetrahedral, return identity matrix, identity translation
-    if elem is None: 
+    if elem is None:
         return np.eye(3), np.zeros(3)
     translation = np.array([float(elem.get("x",0)), float(elem.get("y",0)), float(elem.get("z",0))])
     rotationMatrix = quaternionToMatrix(float(elem.get("qs",1)), float(elem.get("qx",0)),
@@ -29,15 +29,7 @@ def compose(rot_a, trans_a, rot_b, trans_b):
     trans = rot_a.dot(trans_b) + trans_a
     return rot, trans
 
-#Convert tetrahedrals to displayable triangles
-def tetsToTrianglesOld(tets):
-    faces = []
-    for (a,b,c,d) in tets:
-        faces += [(a,b,c),(a,b,d),(a,c,d),(b,c,d)]
-    counts = Counter(tuple(sorted(f)) for f in faces)
-    boundary = [f for f in faces if counts[tuple(sorted(f))] == 1]
-    return np.array(boundary, dtype=int)
-    
+#Convert tetrahedrals to displayable triangles (fast, duplicates allowed)
 def tetsToTriangles(tets):
     faces = []
     for (a, b, c, d) in tets:
@@ -62,23 +54,36 @@ def sceneToObjects(xmlPath, outDir):
         convexRotation, convexTranslation = np.eye(3), np.zeros(3)
         if conv is not None:
             #We parse and collect all points in our convex.
-            convexPoints = [(float(p.get("x")), float(p.get("y")), float(p.get("z"))) for p in conv.findall("point")]   
-            #Savel transform
+            convexPoints = [(float(p.get("x")), float(p.get("y")), float(p.get("z"))) for p in conv.findall("point")]
+            #Save transform
             cr, ct = parseTransform(conv.find("transform"))
             convexRotation, convexTranslation = cr, ct
+
+        # --- sphere primitive (optional) ---
+        sph = geom.find("sphere")
+        sphereRadius = None
+        sphereRotation, sphereTranslation = np.eye(3), np.zeros(3)
+        if sph is not None:
+            sphereRadius = float(sph.get("radius", 1.0))
+            sr, st = parseTransform(sph.find("transform"))
+            sphereRotation, sphereTranslation = sr, st
+
+        # tetramesh (optional) — do NOT raise if missing (may be sphere/convex)
         tet = geom.find("tetramesh")
         verts, tets = None, None
-        if tet is None:
-            raise ValueError("Ecpected a tetramesh, check file -- maybe I missed something with how its defined (maybe convex after tetra?)")
         if tet is not None:
             vmap = {}
             for v in tet.findall("vertex"):
                 idx = int(v.get("idx")); vmap[idx] = (float(v.get("x")),float(v.get("y")),float(v.get("z")))
+            # build ordered list (assumes indices 0..N-1 present)
             verts = np.array([vmap[i] for i in range(len(vmap))], dtype=float)
             tets = np.array([[int(t.get(k)) for k in ("i","j","k","m")] for t in tet.findall("tetrahedron")], dtype=int)
+
         geoms[name] = dict(geomRotation=geomRotation, geomTranslation=geomTranslation,
                            convexPoints=np.array(convexPoints) if convexPoints else None,
                            convexRotation=convexRotation, convexTranslation=convexTranslation,
+                           # include sphere data
+                           sphereRadius=sphereRadius, sphereRotation=sphereRotation, sphereTranslation=sphereTranslation,
                            verts=verts, tets=tets)
 
     os.makedirs(outDir, exist_ok=True)
@@ -94,23 +99,44 @@ def sceneToObjects(xmlPath, outDir):
             print("(ERROR?) skipped: ", name); continue
         geometries = geoms[ref]
 
-        #Convex transform (if any) with our body transform. I am not sure if the objects in convex are always non-rotated or.
-        tmpRotation, tmpTranslation = compose(geometries["geomRotation"], geometries["geomTranslation"], geometries["convexRotation"], geometries["convexTranslation"])
+        #Convex transform (if any) with our body transform.
+        tmpRotation, tmpTranslation = compose(geometries["geomRotation"], geometries["geomTranslation"],
+                                              geometries["convexRotation"], geometries["convexTranslation"])
         totalRotation, totalTranslation = compose(objRotation, objTranslation, tmpRotation, tmpTranslation)
         totalRotation = np.eye(3)
         totalTranslation = np.zeros(3)
+        # --- Decide which representation to use ---
+        mesh = None
 
-        if geometries["tets"] is not None:
+        # 1) tetramesh if present
+        if geometries["tets"] is not None and geometries["verts"] is not None:
             faces = tetsToTriangles(geometries["tets"])
             vertsWorld = (totalRotation.dot(geometries["verts"].T).T + totalTranslation)
             mesh = trimesh.Trimesh(vertices=vertsWorld, faces=faces, process=False)
-        else:
+
+        # 2) sphere primitive when no tets are present
+        elif geometries.get("sphereRadius", None) is not None:
+            # compose geometry-level + sphere-local transforms
+            tmpR_s, tmpT_s = compose(geometries["geomRotation"], geometries["geomTranslation"],
+                                      geometries["sphereRotation"], geometries["sphereTranslation"])
+            totalR_s, totalT_s = compose(objRotation, objTranslation, tmpR_s, tmpT_s)
+            # create icosphere and apply transform
+            mesh = trimesh.creation.icosphere(subdivisions=3, radius=geometries["sphereRadius"])
+            H = np.eye(4)
+            H[:3,:3] = totalR_s
+            H[:3,3] = totalT_s
+            mesh.apply_transform(H)
+
+        # 3) convex points -> convex hull
+        elif geometries["convexPoints"] is not None:
             ptsWorld = (totalRotation.dot(geometries["convexPoints"].T).T + totalTranslation)
-            #convex hull I think is what we are meant to do hwere
             hull = ConvexHull(ptsWorld)
             faces = hull.simplices
             mesh = trimesh.Trimesh(vertices=ptsWorld, faces=faces, process=False)
-    
+
+        else:
+            print(f"Warning: geometry '{ref}' for object '{name}' has no supported shape -> skipping.")
+            continue
 
         #Unfortunately Blender uses Z as the up-axis and OpenGL uses Y. Thus we
         # have to rotate 90 deg in the x-axis to get a Y-to-Z conversion.
@@ -125,7 +151,7 @@ def sceneToObjects(xmlPath, outDir):
         mesh.export(os.path.join(outDir, f"{name}.obj"))
 
         print("wrote", name + ".obj")
-        
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python convertXMLToMeshes.py inputScene.xml outDir")

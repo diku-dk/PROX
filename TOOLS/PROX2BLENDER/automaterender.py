@@ -99,14 +99,14 @@ camera.data.clip_end = cameraDistance * 3
 scene = bpy.context.scene
 scene.render.fps = 100
 #scene.render.engine = "BLENDER_EEVEE_NEXT"
-scene.render.engine = "BLENDER_EEVEE_NEXT"
+scene.render.engine = "BLENDER_EEVEE"
 #scene.eevee.taa_samples = 128
 
 eevee = scene.eevee
 
 try:
     eevee.taa_samples = 64
-    eevee.taa_render_samples = 1024
+    eevee.taa_render_samples = 128
 except Exception:
     pass
 

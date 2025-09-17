@@ -36,6 +36,8 @@ namespace narrow
           const auto& geoA = system.get_geometry(objA.get_geometry_idx());
           const auto& geoB = system.get_geometry(objB.get_geometry_idx());
 
+          //Callback is a reference to our pairs, so we go from pairs to be tested to
+          // making a kdop-pair-type
           kdop_pair_type const test_pair = kdop_pair_type(
               objA.m_tree, objB.m_tree, geoA.m_tetramesh.m_mesh,
               geoB.m_tetramesh.m_mesh, objA.m_X, objB.m_X, objA.m_Y, objB.m_Y,

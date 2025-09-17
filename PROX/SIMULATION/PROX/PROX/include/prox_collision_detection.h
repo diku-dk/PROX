@@ -263,7 +263,6 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
 
         std::vector<callback_type>
             callbacks; // 2014-10-19 Kenny: Argh, I hate this design choice.... really ugly
-        // 2025-09-06: Yup. Absolutely no disagreement, I am completely with you.
         callbacks.resize(overlaps.size());
         auto callback = callbacks.begin();
 
