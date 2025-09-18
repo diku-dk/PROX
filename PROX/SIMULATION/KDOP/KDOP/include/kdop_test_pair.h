@@ -1,6 +1,7 @@
 #ifndef KDOP_TEST_PAIR_H
 #define	KDOP_TEST_PAIR_H
 
+#include "grid_grid.h"
 #include <kdop_tree.h>
 
 #include <contacts/geometry_contacts_callback.h>
@@ -81,6 +82,55 @@ public:
         , m_surface_map_b(&surface_map_b)
         , m_callback(&callback)
     {}
+};
+
+template <size_t K, typename T> class TestPairSDF
+{
+public:
+    Tree<T, K> const* m_tree_a;
+    mesh_array::T4Mesh const* m_mesh_a;
+
+    mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const* m_x_a;
+    mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const* m_y_a;
+    mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const* m_z_a;
+
+    mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                     mesh_array::T4Mesh> const* m_surface_map_a;
+    const grid::Grid<T, T>* m_grid_b;
+    geometry::ContactsCallback<T>* m_callback;
+
+public:
+    TestPairSDF()
+        : m_tree_a(0)
+        , m_mesh_a(nullptr)
+        , m_x_a(0)
+        , m_y_a(0)
+        , m_z_a(0)
+        , m_surface_map_a(nullptr)
+        , m_grid_b(nullptr)
+        , m_callback(0)
+    {
+    }
+
+    TestPairSDF(
+        Tree<T, K> const& tree_A, mesh_array::T4Mesh const& mesh_A,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_A,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_A,
+        mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_A,
+        mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                         mesh_array::T4Mesh> const&
+            surface_map_a,
+        const grid::Grid<T, T>& grid_b, geometry::ContactsCallback<T>& callback)
+        : m_tree_a(&tree_A)
+        , m_mesh_a(&mesh_A)
+        , m_x_a(&X_A)
+        , m_y_a(&Y_A)
+        , m_z_a(&Z_A)
+        , m_surface_map_a(&surface_map_a)
+        , m_grid_b(&grid_b)
+        , m_callback(&callback)
+    {
+    }
 };
 
 } // namespace kdop

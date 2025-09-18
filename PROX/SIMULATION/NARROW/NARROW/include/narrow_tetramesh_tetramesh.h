@@ -25,8 +25,9 @@ namespace narrow
   {
       assert( ! test_pairs.empty() || !"dispatch_tetramesh_tetramesh : test_pairs are empty" );
       typedef typename kdop::TestPair<8, T> kdop_pair_type;
+//      typedef typename kdop::TestPairSDF<8, T> kdop_sdf_pair_type;
 
-      std::vector< kdop_pair_type > kdop_test_pairs;
+      std::vector<kdop_pair_type> kdop_test_pairs;
 
       for (auto& current : test_pairs)
       {
@@ -70,6 +71,71 @@ namespace narrow
 
         // use regular tandem traversal if DIKUCL is not available or should not be used
         kdop::tandem_traversal<8, T>(kdop_test_pairs, kdop::sequential());
+
+#ifdef HAS_DIKUCL
+      }
+#endif // HAS_DIKUCL
+  }
+
+  } // namespace details
+
+  namespace details
+  {
+
+  template <typename T>
+  inline void dispatch_tetramesh_sdf(System<T> const& system,
+                                     std::vector<TestPair<T>>& test_pairs)
+  {
+      assert(!test_pairs.empty()
+             || !"dispatch_tetramesh_tetramesh : test_pairs are empty");
+      typedef typename kdop::TestPairSDF<8, T> kdop_sdf_pair_type;
+
+      std::vector<kdop_sdf_pair_type> kdop_test_sdf_pairs;
+
+      for (auto& current : test_pairs)
+      {
+          const auto& objA = current.obj_a();
+          const auto& objB = current.obj_b();
+
+          const auto& geoA = system.get_geometry(objA.get_geometry_idx());
+          const auto& geoB = system.get_geometry(objB.get_geometry_idx());
+
+          //Callback is a reference to our pairs, so we go from pairs to be tested to
+          // making a kdop-pair-type
+          const kdop_sdf_pair_type test_pair = kdop_sdf_pair_type(
+              objA.m_tree, geoA.m_tetramesh.m_mesh, objA.m_X, objA.m_Y,
+              objA.m_Z, geoA.m_tetramesh.m_surface_map,
+              geoB.m_signedDistanceMap, current.callback());
+
+          kdop_test_sdf_pairs.push_back(test_pair);
+      }
+#ifdef HAS_DIKUCL
+
+      if (system.params().use_open_cl())
+      {
+          if (system.params().use_gproximity())
+          {
+
+              kdop::tandem_traversal<8, T>(kdop_test_pairs,
+                                           kdop::dikucl::gproximity(),
+                                           system.params().open_cl_platform(),
+                                           system.params().open_cl_device());
+          }
+          else
+          {
+
+              kdop::tandem_traversal<8, T>(kdop_test_pairs, kdop::dikucl(),
+                                           system.params().open_cl_platform(),
+                                           system.params().open_cl_device());
+          }
+      }
+      else
+      {
+#endif // HAS_DIKUCL
+
+          // use regular tandem traversal if DIKUCL is not available or should not be used
+          kdop::tandem_traversal_sdf<8, T>(kdop_test_sdf_pairs,
+                                           kdop::sequential());
 
 #ifdef HAS_DIKUCL
       }

@@ -1,10 +1,12 @@
 #ifndef KDOP_TANDEM_TRAVERSAL_H
 #define KDOP_TANDEM_TRAVERSAL_H
 
+#include "grid_grid.h"
 #include <kdop_tags.h>
 #include <kdop_test_pair.h>
 #include <kdop_tree.h>
 #include <kdop_select_contact_point_algorithm.h>
+#include <types/geometry_dop.h>
 
 #include <mesh_array.h>
 
@@ -38,8 +40,7 @@ namespace kdop
       Node<T,K> const & node_A = branch_A.m_nodes[node_idx_A];
       Node<T,K> const & node_B = branch_B.m_nodes[node_idx_B];
 
-      if(!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume))
-        return;
+      if (!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume)) return;
 
       bool const A_is_leaf = node_A.is_leaf();
       bool const B_is_leaf = node_B.is_leaf();
@@ -216,7 +217,210 @@ namespace kdop
     STOP_TIMER("tandem_traversal");
   }
 
-}// namespace kdop
+  }// namespace kdop
 
-// KDOP_TANDEM_TRAVERSAL_H
+  namespace kdop
+  {
+  template <size_t K, typename T>
+  inline bool
+  overlap_dop_aabb(geometry::DOP<T, K> const& dop,
+                   Eigen::AlignedBox<T, 3> const& aabb,
+                   geometry::DirectionTable<T, K / 2> const& directions)
+  {
+      size_t const N = K / 2;
+
+      // Get AABB center and half-extents
+      Eigen::Vector3<T> center = (aabb.min() + aabb.max()) * 0.5;
+      Eigen::Vector3<T> half_extents = (aabb.max() - aabb.min()) * 0.5;
+
+      for (size_t k = 0u; k < N; ++k)
+      {
+          // Get the axis direction
+          Eigen::Vector3<T> axis = directions(k);
+
+          // Project AABB onto the axis
+          T projection_center = center.dot(axis);
+          T projection_radius = half_extents.x() * std::abs(axis.x())
+                              + half_extents.y() * std::abs(axis.y())
+                              + half_extents.z() * std::abs(axis.z());
+
+          // Create interval for AABB projection
+          geometry::Interval<T> aabb_interval(
+              projection_center - projection_radius,
+              projection_center + projection_radius);
+
+          // Get DOP interval for this axis
+          geometry::Interval<T> dop_interval = dop(k);
+
+          // Check for separation along this axis
+          if (!overlap_interval_interval(aabb_interval, dop_interval))
+              return false;
+      }
+
+      return true;
+  }
+
+  // Updated traversal function for SDF vs TetraMesh
+  template <size_t K, typename T>
+  inline void traversal_sdf(
+      size_t const& node_idx, SubTree<T, K> const& branch,
+      mesh_array::T4Mesh const& mesh,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map,
+      const grid::Grid<T, T>& sdf,
+      geometry::DirectionTable<T, K / 2> const& directions,
+      geometry::ContactsCallback<T>& callback)
+  {
+      using namespace mesh_array;
+
+      Node<T, K> const& node = branch.m_nodes[node_idx];
+
+      // Get SDF bounding box (min and max corners)
+/*      auto sdf_bbox = sdf.getBoundingBox();
+      Eigen::AlignedBox<T, 3> sdf_aabb(
+          Eigen::Vector3<T>(sdf_bbox.min_x, sdf_bbox.min_y, sdf_bbox.min_z),
+          Eigen::Vector3<T>(sdf_bbox.max_x, sdf_bbox.max_y, sdf_bbox.max_z));*/
+      Eigen::Matrix<T, 3, 1> sdfMin = sdf.min();
+      Eigen::Matrix<T, 3, 1> sdfMax = sdf.max();
+      Eigen::AlignedBox<T, 3> sdf_aabb(
+          Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
+          Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
+
+      // Apply SDF transform to the AABB
+      auto transform = sdf.getTransform();
+      sdf_aabb = transform * sdf_aabb;
+
+      // Check if node's DOP overlaps with SDF's AABB
+      if (!overlap_dop_aabb(node.m_volume, sdf_aabb, directions)) return;
+
+      if (node.is_leaf())
+      {
+          PAUSE_TIMER("tandem_traversal");
+          RESUME_TIMER("exact_test");
+
+          Tetrahedron const& tet = mesh.tetrahedron(node.m_start);
+
+          // Check if any face is a surface face
+          bool const& surface_i = surface_map(tet).m_i;
+          bool const& surface_j = surface_map(tet).m_j;
+          bool const& surface_k = surface_map(tet).m_k;
+          bool const& surface_m = surface_map(tet).m_m;
+
+          if (!surface_i && !surface_j && !surface_k && !surface_m)
+          {
+              PAUSE_TIMER("exact_test");
+              RESUME_TIMER("tandem_traversal");
+              return; // all faces are internal
+          }
+
+          // Get vertex positions
+          const EigenVector3<T> v0
+              = EigenVector3<T>(X(tet.i()), Y(tet.i()), Z(tet.i()));
+          const EigenVector3<T> v1
+              = EigenVector3<T>(X(tet.j()), Y(tet.j()), Z(tet.j()));
+          const EigenVector3<T> v2
+              = EigenVector3<T>(X(tet.k()), Y(tet.k()), Z(tet.k()));
+          const EigenVector3<T> v3
+              = EigenVector3<T>(X(tet.m()), Y(tet.m()), Z(tet.m()));
+
+          // Check each surface triangle against SDF
+          if (surface_i)
+          { // Face opposite vertex i (vertices j,k,m)
+              if (auto pt = sdf.getCollisionPoint(v1, v2, v3); pt)
+                  callback(*pt);
+          }
+          if (surface_j)
+          { // Face opposite vertex j (vertices i,k,m)
+              if (auto pt = sdf.getCollisionPoint(v0, v2, v3); pt)
+                  callback(*pt);
+          }
+          if (surface_k)
+          { // Face opposite vertex k (vertices i,j,m)
+              if (auto pt = sdf.getCollisionPoint(v0, v1, v3); pt)
+                  callback(*pt);
+          }
+          if (surface_m)
+          { // Face opposite vertex m (vertices i,j,k)
+              if (auto pt = sdf.getCollisionPoint(v0, v1, v2); pt)
+                  callback(*pt);
+          }
+
+          PAUSE_TIMER("exact_test");
+          RESUME_TIMER("tandem_traversal");
+      }
+      else
+      {
+          // Recursively process child nodes
+          for (size_t i = node.m_start; i <= node.m_end; ++i)
+          {
+              traversal_sdf<K, T>(i, branch, mesh, X, Y, Z, surface_map, sdf,
+                                  directions, callback);
+          }
+      }
+  }
+
+  // Top-level function for SDF vs TetraMesh collision
+  template <size_t K, typename T>
+  inline void tandem_traversal_sdf(kdop::TestPairSDF<K, T>& work_item)
+  {
+      if (!work_item.m_tree || !work_item.m_sdf) return;
+
+      // Get SDF bounding box and transform it
+      auto sdf_bbox = work_item.m_sdf->getBoundingBox();
+      Eigen::AlignedBox<T, 3> sdf_aabb(
+          Eigen::Vector3<T>(sdf_bbox.min_x, sdf_bbox.min_y, sdf_bbox.min_z),
+          Eigen::Vector3<T>(sdf_bbox.max_x, sdf_bbox.max_y, sdf_bbox.max_z));
+
+      auto transform = work_item.m_sdf->getTransform();
+      sdf_aabb = transform * sdf_aabb;
+
+      // Check root-level overlap
+      if (!overlap_dop_aabb(work_item.m_tree->m_root.m_volume, sdf_aabb,
+                            work_item.m_directions))
+          return;
+
+      // Process all branches
+      for (auto const& branch : work_item.m_tree->branches())
+      {
+          traversal_sdf<K, T>(0, branch, *(work_item.m_mesh), *(work_item.m_x),
+                              *(work_item.m_y), *(work_item.m_z),
+                              *(work_item.m_surface_map), *(work_item.m_sdf),
+                              work_item.m_directions, *(work_item.m_callback));
+      }
+  }
+
+  template <size_t K, typename T>
+  inline void
+  tandem_traversal_sdf(std::vector<kdop::TestPairSDF<K, T>>& work_pool,
+                       sequential const& /*tag*/
+  )
+  {
+      if (work_pool.empty()) return;
+
+      typedef TestPair<K, T> work_item_type;
+      typedef std::vector<work_item_type> work_pool_type;
+      typedef typename work_pool_type::iterator work_item_iterator;
+
+      START_TIMER("tandem_traversal");
+      START_TIMER("exact_test");
+      PAUSE_TIMER("exact_test");
+
+      work_item_iterator end = work_pool.end();
+      work_item_iterator current = work_pool.begin();
+
+      for (; current != end; ++current)
+      {
+          tandem_traversal_sdf<K, T>(*current);
+      }
+
+      RESUME_TIMER("exact_test");
+      STOP_TIMER("exact_test");
+      STOP_TIMER("tandem_traversal");
+  }
+  } // namespace kdop
+
+  // KDOP_TANDEM_TRAVERSAL_H
 #endif
