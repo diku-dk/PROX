@@ -6,7 +6,6 @@
 #include <grid_iterators.h>
 #include <grid_node_position.h>
 #include <grid_value_at.h>
-
-
+#include <grid_helpers.h>
 
 #endif //GRID_H

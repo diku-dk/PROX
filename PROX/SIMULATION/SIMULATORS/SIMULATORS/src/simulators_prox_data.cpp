@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include <steppers/prox_time_stepper.h>
+#include <grid_helpers.h>
 
 namespace simulators
 {
@@ -114,6 +115,7 @@ bool ProxData::compute_raycast(float const& p_x, float const& p_y, float const& 
     return did_hit;
 }
 
+//Inconsistent call, but after doing setTetrameshShape, also generate a sdf?
 void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Mesh const& surface_in,
                                        mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& surface_X_in,
                                        mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& surface_Y_in,
@@ -150,7 +152,18 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
     mesh_array::tetgen(surface, surface_X, surface_Y, surface_Z, volume, volume_X, volume_Y, volume_Z,
                        m_tetgen_settings);
 
-    geometry.m_tetramesh.set_tetramesh_shape(volume, volume_X, volume_Y, volume_Z);
+    geometry.m_tetramesh.set_tetramesh_shape(volume, volume_X, volume_Y,
+                                             volume_Z);
+    grid::Grid<T, T> grid;
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+    grid::build_VF_from_T3Mesh(surface, surface_X, surface_Y, surface_Z, V, F);
+    grid = grid::projectGridToSDF<T, T>(
+        V, F, Eigen::Matrix<size_t, 3, 1>(32, 32, 32));
+    grid::writeGridToFiles<T, T>(grid, 1);
+/*    grid::Grid<T, T> grid;
+    grid.create() geometry.m_signedDistanceMap =*/
+//    geometry.add_shape()
 }
 
 void ProxData::get_total_energy(float& kinetic, float& potential)
