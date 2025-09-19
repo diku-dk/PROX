@@ -186,6 +186,7 @@ bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
     // Calculate final results
     contactPoint = x;
     std::cerr << "CONTACT POINT" << contactPoint << "\n";
+
     penetration = grid::value_at(cone, contactPoint);
     normal = computeGradient<D, T>(contactPoint, cone);
 

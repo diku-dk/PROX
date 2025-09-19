@@ -90,7 +90,8 @@ namespace narrow
              || !"dispatch_tetramesh_tetramesh : test_pairs are empty");
       typedef typename kdop::TestPairSDF<8, T> kdop_sdf_pair_type;
 
-      std::vector<kdop_sdf_pair_type> kdop_test_sdf_pairs;
+      std::vector<kdop::TestPairSDFStruct<8, T>> kdop_test_sdf_pairs;
+      kdop::TestPairSDFStruct<8, T> sdf_pair_type;
 
       for (auto& current : test_pairs)
       {
@@ -102,12 +103,24 @@ namespace narrow
 
           //Callback is a reference to our pairs, so we go from pairs to be tested to
           // making a kdop-pair-type
-          const kdop_sdf_pair_type test_pair = kdop_sdf_pair_type(
+          /*          const kdop_sdf_pair_type test_pair = kdop_sdf_pair_type(
               objA.m_tree, geoA.m_tetramesh.m_mesh, objA.m_X, objA.m_Y,
               objA.m_Z, geoA.m_tetramesh.m_surface_map,
-              geoB.m_signedDistanceMap, current.callback());
+              geoB.m_signedDistanceMap, current.callback());*/
 
-          kdop_test_sdf_pairs.push_back(test_pair);
+          sdf_pair_type.m_mesh_a = &geoA.m_tetramesh.m_mesh;
+          sdf_pair_type.m_tree_a = &objA.m_tree;
+          sdf_pair_type.m_x_a = &objA.m_X;
+          sdf_pair_type.m_y_a = &objA.m_Y;
+          sdf_pair_type.m_z_a = &objA.m_Z;
+          sdf_pair_type.m_grid_b
+              = &geoB.m_signedDistanceMap.getSignedDistanceGrid();
+          sdf_pair_type.m_surface_map_a = &geoA.m_tetramesh.m_surface_map;
+          sdf_pair_type.m_transformTranslation_b = &current.t_b();
+          sdf_pair_type.m_transformRotation_b = &current.Q_b();
+          sdf_pair_type.m_callback = &current.callback();
+
+          kdop_test_sdf_pairs.push_back(sdf_pair_type);
       }
 #ifdef HAS_DIKUCL
 

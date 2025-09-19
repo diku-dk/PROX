@@ -153,6 +153,12 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
                     body->get_orientation());
                 kdop_bvh_update_work_pool.push_back(work_item);
             }
+            /*if (geometry.m_signedDistanceMap.hasData())
+            {
+                CoordSysEigen<T> data(body->get_position(),
+                                      body->get_orientation());
+                geometry.m_signedDistanceMap.setSignedDistanceTransform(data);
+            }*/
         }
         STOP_TIMER("collision_detection_creating_kdop_work_pool");
 

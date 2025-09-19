@@ -1,7 +1,7 @@
 #ifndef KDOP_TANDEM_TRAVERSAL_H
 #define KDOP_TANDEM_TRAVERSAL_H
 
-#include "grid_grid.h"
+#include <grid.h>
 #include <kdop_tags.h>
 #include <kdop_test_pair.h>
 #include <kdop_tree.h>
@@ -219,6 +219,33 @@ namespace kdop
 
   }// namespace kdop
 
+  template <typename T>
+  Eigen::AlignedBox<T, 3>
+  transformAABB(const Eigen::AlignedBox<T, 3>& aabb,
+                const Eigen::Quaternion<T>& rotation,
+                const Eigen::Matrix<T, 3, 1>& translation)
+  {
+      // Create transformation matrix from rotation and translation
+      Eigen::Transform<T, 3, Eigen::Affine> transform
+          = Eigen::Transform<T, 3, Eigen::Affine>::Identity();
+      transform.rotate(rotation);
+      transform.translate(translation);
+
+      // Transform all 8 corners of the AABB and create a new AABB that contains them
+      Eigen::AlignedBox<T, 3> transformed_aabb;
+
+      for (int i = 0; i < 8; ++i)
+      {
+          // Get the corner using the enum values from Eigen::AlignedBox
+          auto corner_type
+              = static_cast<typename Eigen::AlignedBox<T, 3>::CornerType>(i);
+          Eigen::Vector3<T> corner = aabb.corner(corner_type);
+          transformed_aabb.extend(transform * corner);
+      }
+
+      return transformed_aabb;
+  }
+
   namespace kdop
   {
   template <size_t K, typename T>
@@ -245,9 +272,10 @@ namespace kdop
                               + half_extents.z() * std::abs(axis.z());
 
           // Create interval for AABB projection
-          geometry::Interval<T> aabb_interval(
-              projection_center - projection_radius,
-              projection_center + projection_radius);
+          geometry::Interval<T> aabb_interval;
+          aabb_interval.lower() = (projection_center - projection_radius);
+
+          aabb_interval.upper() = (projection_center + projection_radius);
 
           // Get DOP interval for this axis
           geometry::Interval<T> dop_interval = dop(k);
@@ -260,7 +288,6 @@ namespace kdop
       return true;
   }
 
-  // Updated traversal function for SDF vs TetraMesh
   template <size_t K, typename T>
   inline void traversal_sdf(
       size_t const& node_idx, SubTree<T, K> const& branch,
@@ -270,7 +297,8 @@ namespace kdop
       mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
       mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
                                        mesh_array::T4Mesh> const& surface_map,
-      const grid::Grid<T, T>& sdf,
+      const grid::Grid<T, T>& sdf, const EigenVector3<T>& transformTranslation,
+      const EigenQuaternion<T>& transformRotation,
       geometry::DirectionTable<T, K / 2> const& directions,
       geometry::ContactsCallback<T>& callback)
   {
@@ -279,7 +307,7 @@ namespace kdop
       Node<T, K> const& node = branch.m_nodes[node_idx];
 
       // Get SDF bounding box (min and max corners)
-/*      auto sdf_bbox = sdf.getBoundingBox();
+      /*      auto sdf_bbox = sdf.getBoundingBox();
       Eigen::AlignedBox<T, 3> sdf_aabb(
           Eigen::Vector3<T>(sdf_bbox.min_x, sdf_bbox.min_y, sdf_bbox.min_z),
           Eigen::Vector3<T>(sdf_bbox.max_x, sdf_bbox.max_y, sdf_bbox.max_z));*/
@@ -290,11 +318,15 @@ namespace kdop
           Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
 
       // Apply SDF transform to the AABB
-      auto transform = sdf.getTransform();
-      sdf_aabb = transform * sdf_aabb;
+      //auto transform = work_item.m_sdf->getTransform();
+      auto translation = transformTranslation;
+      auto rotation = transformRotation;
+      //sdf_aabb = transform * sdf_aabb;
+      sdf_aabb = transformAABB(sdf_aabb, rotation, translation);
+      //      sdf_aabb = transform * sdf_aabb;
 
       // Check if node's DOP overlaps with SDF's AABB
-      if (!overlap_dop_aabb(node.m_volume, sdf_aabb, directions)) return;
+      // if (!overlap_dop_aabb(node.m_volume, sdf_aabb, directions)) return;
 
       if (node.is_leaf())
       {
@@ -326,26 +358,54 @@ namespace kdop
           const EigenVector3<T> v3
               = EigenVector3<T>(X(tet.m()), Y(tet.m()), Z(tet.m()));
 
+          std::cerr << "V0: " << v0 << "\n";
+          std::cerr << "V1: " << v1 << "\n";
+          std::cerr << "V2: " << v2 << "\n";
+          std::cerr << "V3: " << v3 << "\n";
+          Eigen::Vector3<T> vRes = v0 + v1 + v2 + v3;
+
           // Check each surface triangle against SDF
           if (surface_i)
           { // Face opposite vertex i (vertices j,k,m)
-              if (auto pt = sdf.getCollisionPoint(v1, v2, v3); pt)
-                  callback(*pt);
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v1, v2, v3, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
           }
           if (surface_j)
           { // Face opposite vertex j (vertices i,k,m)
-              if (auto pt = sdf.getCollisionPoint(v0, v2, v3); pt)
-                  callback(*pt);
+
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v0, v1, v2, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
           }
           if (surface_k)
           { // Face opposite vertex k (vertices i,j,m)
-              if (auto pt = sdf.getCollisionPoint(v0, v1, v3); pt)
-                  callback(*pt);
+
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v0, v1, v3, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
           }
           if (surface_m)
           { // Face opposite vertex m (vertices i,j,k)
-              if (auto pt = sdf.getCollisionPoint(v0, v1, v2); pt)
-                  callback(*pt);
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v0, v1, v2, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
           }
 
           PAUSE_TIMER("exact_test");
@@ -357,6 +417,143 @@ namespace kdop
           for (size_t i = node.m_start; i <= node.m_end; ++i)
           {
               traversal_sdf<K, T>(i, branch, mesh, X, Y, Z, surface_map, sdf,
+                                  transformTranslation, transformRotation,
+                                  directions, callback);
+          }
+      }
+  }
+
+  // Updated traversal function for SDF vs TetraMesh
+  template <size_t K, typename T>
+  inline void traversal_sdf_old(
+      size_t const& node_idx, SubTree<T, K> const& branch,
+      mesh_array::T4Mesh const& mesh,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map,
+      const grid::Grid<T, T>& sdf, const EigenVector3<T>& transformTranslation,
+      const EigenQuaternion<T>& transformRotation,
+      geometry::DirectionTable<T, K / 2> const& directions,
+      geometry::ContactsCallback<T>& callback)
+  {
+      using namespace mesh_array;
+
+      Node<T, K> const& node = branch.m_nodes[node_idx];
+
+      // Get SDF bounding box (min and max corners)
+/*      auto sdf_bbox = sdf.getBoundingBox();
+      Eigen::AlignedBox<T, 3> sdf_aabb(
+          Eigen::Vector3<T>(sdf_bbox.min_x, sdf_bbox.min_y, sdf_bbox.min_z),
+          Eigen::Vector3<T>(sdf_bbox.max_x, sdf_bbox.max_y, sdf_bbox.max_z));*/
+      Eigen::Matrix<T, 3, 1> sdfMin = sdf.min();
+      Eigen::Matrix<T, 3, 1> sdfMax = sdf.max();
+      Eigen::AlignedBox<T, 3> sdf_aabb(
+          Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
+          Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
+
+      // Apply SDF transform to the AABB
+      //auto transform = work_item.m_sdf->getTransform();
+      auto translation = transformTranslation;
+      auto rotation = transformRotation;
+      //sdf_aabb = transform * sdf_aabb;
+      sdf_aabb = transformAABB(sdf_aabb, rotation, translation);
+      //      sdf_aabb = transform * sdf_aabb;
+
+      // Check if node's DOP overlaps with SDF's AABB
+      // if (!overlap_dop_aabb(node.m_volume, sdf_aabb, directions)) return;
+
+      if (node.is_leaf())
+      {
+          PAUSE_TIMER("tandem_traversal");
+          RESUME_TIMER("exact_test");
+
+          Tetrahedron const& tet = mesh.tetrahedron(node.m_start);
+
+          // Check if any face is a surface face
+          bool const& surface_i = surface_map(tet).m_i;
+          bool const& surface_j = surface_map(tet).m_j;
+          bool const& surface_k = surface_map(tet).m_k;
+          bool const& surface_m = surface_map(tet).m_m;
+
+          if (!surface_i && !surface_j && !surface_k && !surface_m)
+          {
+              PAUSE_TIMER("exact_test");
+              RESUME_TIMER("tandem_traversal");
+              return; // all faces are internal
+          }
+
+          // Get vertex positions
+          const EigenVector3<T> v0
+              = EigenVector3<T>(X(tet.i()), Y(tet.i()), Z(tet.i()));
+          const EigenVector3<T> v1
+              = EigenVector3<T>(X(tet.j()), Y(tet.j()), Z(tet.j()));
+          const EigenVector3<T> v2
+              = EigenVector3<T>(X(tet.k()), Y(tet.k()), Z(tet.k()));
+          const EigenVector3<T> v3
+              = EigenVector3<T>(X(tet.m()), Y(tet.m()), Z(tet.m()));
+
+          std::cerr << "V0: " << v0 << "\n";
+          std::cerr << "V1: " << v1 << "\n";
+          std::cerr << "V2: " << v2 << "\n";
+          std::cerr << "V3: " << v3 << "\n";
+          Eigen::Vector3<T> vRes = v0 + v1 + v2 + v3;
+
+          // Check each surface triangle against SDF
+          if (surface_i)
+          { // Face opposite vertex i (vertices j,k,m)
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v1, v2, v3, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
+          }
+          if (surface_j)
+          { // Face opposite vertex j (vertices i,k,m)
+
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v0, v1, v2, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
+          }
+          if (surface_k)
+          { // Face opposite vertex k (vertices i,j,m)
+
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v0, v1, v3, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
+          }
+          if (surface_m)
+          { // Face opposite vertex m (vertices i,j,k)
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+                  v0, v1, v2, translation, rotation, sdf, contactPoint, normal,
+                  penetration);
+              if (isPenetrating) callback(contactPoint, normal, penetration);
+          }
+
+          PAUSE_TIMER("exact_test");
+          RESUME_TIMER("tandem_traversal");
+      }
+      else
+      {
+          // Recursively process child nodes
+          for (size_t i = node.m_start; i <= node.m_end; ++i)
+          {
+              traversal_sdf<K, T>(i, branch, mesh, X, Y, Z, surface_map, sdf,
+                                  transformTranslation, transformRotation,
                                   directions, callback);
           }
       }
@@ -364,57 +561,56 @@ namespace kdop
 
   // Top-level function for SDF vs TetraMesh collision
   template <size_t K, typename T>
-  inline void tandem_traversal_sdf(kdop::TestPairSDF<K, T>& work_item)
+  inline void tandem_traversal_sdf(kdop::TestPairSDFStruct<K, T>& work_item)
   {
-      if (!work_item.m_tree || !work_item.m_sdf) return;
+      if (!work_item.m_tree_a || !work_item.m_grid_b) return;
 
       // Get SDF bounding box and transform it
-      auto sdf_bbox = work_item.m_sdf->getBoundingBox();
+      Eigen::Matrix<T, 3, 1> sdfMin = work_item.m_grid_b->min();
+      Eigen::Matrix<T, 3, 1> sdfMax = work_item.m_grid_b->max();
       Eigen::AlignedBox<T, 3> sdf_aabb(
-          Eigen::Vector3<T>(sdf_bbox.min_x, sdf_bbox.min_y, sdf_bbox.min_z),
-          Eigen::Vector3<T>(sdf_bbox.max_x, sdf_bbox.max_y, sdf_bbox.max_z));
+          Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
+          Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
 
-      auto transform = work_item.m_sdf->getTransform();
-      sdf_aabb = transform * sdf_aabb;
+      //auto transform = work_item.m_sdf->getTransform();
+      const Eigen::Matrix<T, 3, 1>* translation
+          = work_item.m_transformTranslation_b;
+      const Eigen::Quaternion<T>* rotation = work_item.m_transformRotation_b;
+      //sdf_aabb = transform * sdf_aabb;
+      sdf_aabb = transformAABB(sdf_aabb, *rotation, *translation);
 
+      geometry::DirectionTable<T, K / 2> directions
+          = geometry::DirectionTableHelper<T, K / 2>::make();
       // Check root-level overlap
-      if (!overlap_dop_aabb(work_item.m_tree->m_root.m_volume, sdf_aabb,
-                            work_item.m_directions))
-          return;
+      //if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
+      //return;
 
       // Process all branches
-      for (auto const& branch : work_item.m_tree->branches())
+      for (auto const& branch : work_item.m_tree_a->branches())
       {
-          traversal_sdf<K, T>(0, branch, *(work_item.m_mesh), *(work_item.m_x),
-                              *(work_item.m_y), *(work_item.m_z),
-                              *(work_item.m_surface_map), *(work_item.m_sdf),
-                              work_item.m_directions, *(work_item.m_callback));
+          traversal_sdf<K, T>(0, branch, *(work_item.m_mesh_a),
+                              *(work_item.m_x_a), *(work_item.m_y_a),
+                              *(work_item.m_z_a), *(work_item.m_surface_map_a),
+                              *(work_item.m_grid_b),
+                              *(work_item.m_transformTranslation_b),
+                              *(work_item.m_transformRotation_b), directions,
+                              *(work_item.m_callback));
       }
   }
 
   template <size_t K, typename T>
   inline void
-  tandem_traversal_sdf(std::vector<kdop::TestPairSDF<K, T>>& work_pool,
+  tandem_traversal_sdf(std::vector<kdop::TestPairSDFStruct<K, T>>& work_pool,
                        sequential const& /*tag*/
   )
   {
       if (work_pool.empty()) return;
 
-      typedef TestPair<K, T> work_item_type;
-      typedef std::vector<work_item_type> work_pool_type;
-      typedef typename work_pool_type::iterator work_item_iterator;
-
       START_TIMER("tandem_traversal");
       START_TIMER("exact_test");
       PAUSE_TIMER("exact_test");
 
-      work_item_iterator end = work_pool.end();
-      work_item_iterator current = work_pool.begin();
-
-      for (; current != end; ++current)
-      {
-          tandem_traversal_sdf<K, T>(*current);
-      }
+      for (auto& item : work_pool) { tandem_traversal_sdf<K, T>(item); }
 
       RESUME_TIMER("exact_test");
       STOP_TIMER("exact_test");

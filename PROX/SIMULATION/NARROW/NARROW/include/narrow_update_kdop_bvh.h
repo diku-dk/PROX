@@ -147,10 +147,19 @@ inline void update_kdop_bvh(std::vector<KDopBvhUpdateWorkItem<T>>& work_pool,
             object.m_Z(v) = r(2);
         }
 
+        //if (object.sdf.hasData())
+
         kdop::refit_tree<8, T>(object.m_tree, geometry.m_tetramesh.m_mesh,
                                object.m_X, object.m_Y, object.m_Z,
                                kdop::sequential());
     }
+
+    /*if (geometry.m_signedDistanceMap.hasData())
+    {
+        CoordSysEigen<T> data(body->get_position(),
+                              body->get_orientation());
+        geometry.m_signedDistanceMap.setSignedDistanceTransform(data);
+    }*/
 
     STOP_TIMER("refit_tree");
 }

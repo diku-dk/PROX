@@ -7,5 +7,6 @@
 #include <grid_node_position.h>
 #include <grid_value_at.h>
 #include <grid_helpers.h>
+#include <grid_local_optimization.hpp>
 
 #endif //GRID_H

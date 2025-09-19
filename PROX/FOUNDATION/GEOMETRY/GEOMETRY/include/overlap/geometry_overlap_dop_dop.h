@@ -14,7 +14,7 @@ namespace geometry
   {
     size_t const N = K/2;
 
-    for(size_t k =  0u; k < N; ++k)
+    for (size_t k = 0u; k < N; ++k)
     {
       bool const separation = ! overlap_interval_interval( A(k), B(k) );
       if( separation )

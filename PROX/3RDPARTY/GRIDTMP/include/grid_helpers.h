@@ -6,16 +6,53 @@
 #include <filesystem>
 #include <grid_grid.h>
 #include <mesh_array_vertex_attribute.h>
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Sparse>
 #include <ostream>
 #include <fstream>
 #include <random>
 
 namespace grid
 {
+
+template <typename T> void rotate_Zup_to_Yup(Eigen::MatrixXd& V)
+{
+    const double a = -M_PI / 2.0; // inverse
+    const double c = std::cos(a);
+    const double s = std::sin(a);
+    Eigen::Matrix3d R;
+    R << 1, 0, 0, 0, c, -s, 0, s, c;
+    V = (R * V.transpose()).transpose();
+}
+
+template <typename T> void rotate_Yup_to_Zup(Eigen::MatrixXd& V)
+{
+    const double a = M_PI / 2.0; // +90deg
+    const double c = std::cos(a);
+    const double s = std::sin(a);
+    Eigen::Matrix3d R;
+    R << 1, 0, 0, 0, c, -s, 0, s, c;
+    // V is #V x 3; apply R to each row:
+    V = (R * V.transpose()).transpose();
+}
+
+template <typename T> void rot_Xup_to_Zup(Eigen::MatrixXd& V)
+{
+    // Rotate -90° about Y: X -> Z
+    double a = -M_PI / 2.0;
+    double c = std::cos(a), s = std::sin(a);
+    Eigen::Matrix3d R;
+    R << c, 0, s, 0, 1, 0, -s, 0, c;
+    V = (R * V.transpose()).transpose();
+}
+
 template <typename D, typename T>
 Grid<D, T> projectGridToSDF(Eigen::MatrixXd verts, Eigen::MatrixXi indices,
                             Eigen::Matrix<size_t, 3, 1> res)
 {
+    //rotate_Yup_to_Zup<T>(verts);
+    rot_Xup_to_Zup<T>(verts);
+    //rotate_Zup_to_Yup<T>(verts);
     Eigen::RowVector3d minv = verts.colwise().minCoeff();
     Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
     Eigen::RowVector3d diag = maxv - minv;

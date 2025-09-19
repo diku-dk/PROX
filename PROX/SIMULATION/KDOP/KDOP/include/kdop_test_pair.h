@@ -133,6 +133,25 @@ public:
     }
 };
 
+template <size_t K, typename T> struct TestPairSDFStruct
+{
+    // pointers are default-initialized to nullptr
+    const Tree<T, K>* m_tree_a = nullptr;
+    const mesh_array::T4Mesh* m_mesh_a = nullptr;
+
+    const mesh_array::VertexAttribute<T, mesh_array::T4Mesh>* m_x_a = nullptr;
+    const mesh_array::VertexAttribute<T, mesh_array::T4Mesh>* m_y_a = nullptr;
+    const mesh_array::VertexAttribute<T, mesh_array::T4Mesh>* m_z_a = nullptr;
+
+    const mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                           mesh_array::T4Mesh>* m_surface_map_a
+        = nullptr;
+    const grid::Grid<T, T>* m_grid_b = nullptr;
+    const EigenVector3<T>* m_transformTranslation_b = nullptr;
+    const EigenQuaternion<T>* m_transformRotation_b = nullptr;
+    geometry::ContactsCallback<T>* m_callback = nullptr;
+};
+
 } // namespace kdop
 
 // KDOP_TEST_PAIR_H

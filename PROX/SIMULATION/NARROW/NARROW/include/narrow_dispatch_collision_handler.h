@@ -142,7 +142,13 @@ namespace narrow
       if (!primitive_pairs.empty())
           details::dispatch_primitives(system, primitive_pairs);
       if (!tetramesh_pairs.empty())
-          details::dispatch_tetramesh_tetramesh(system, tetramesh_pairs);
+      {
+          if (!system.params().useSdf())
+          {
+              details::dispatch_tetramesh_tetramesh(system, tetramesh_pairs);
+          }
+          else { details::dispatch_tetramesh_sdf<T>(system, tetramesh_pairs); }
+      }
       if (!mixed_pairs.empty()) details::dispatch_mixed(system, mixed_pairs);
   }
 

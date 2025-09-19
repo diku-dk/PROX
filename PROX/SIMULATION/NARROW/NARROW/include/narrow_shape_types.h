@@ -98,9 +98,10 @@ namespace narrow
       {
       protected:
           grid::Grid<T, T> m_grid;
+          CoordSysEigen<T> m_transform;
 
       public:
-          SignedDistanceMap() {}
+          SignedDistanceMap() { m_transform = CoordSysEigen<T>::identity(); }
 
           virtual ~SignedDistanceMap() {}
 
@@ -111,6 +112,22 @@ namespace narrow
           }
 
           grid::Grid<T, T>& getSignedDistanceGrid() { return m_grid; }
+
+          void setSignedDistanceGrid(grid::Grid<T, T>& grid) { m_grid = grid; }
+
+          CoordSysEigen<T>& getSignedDistanceTransform() { return m_transform; }
+
+          void setSignedDistanceTransform(CoordSysEigen<T>& transform)
+          {
+              m_transform = transform;
+          }
+
+          void setSignedDistanceTransform(EigenVector3<T>& transformTranslation,
+                                          EigenQuaternion<T> transformRotation)
+          {
+              m_transform.Q() = transformRotation;
+              m_transform.T() = transformTranslation;
+          }
 
           bool hasData() const
           {

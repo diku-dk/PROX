@@ -160,6 +160,7 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
     grid::build_VF_from_T3Mesh(surface, surface_X, surface_Y, surface_Z, V, F);
     grid = grid::projectGridToSDF<T, T>(
         V, F, Eigen::Matrix<size_t, 3, 1>(32, 32, 32));
+    geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
     grid::writeGridToFiles<T, T>(grid, 1);
 /*    grid::Grid<T, T> grid;
     grid.create() geometry.m_signedDistanceMap =*/

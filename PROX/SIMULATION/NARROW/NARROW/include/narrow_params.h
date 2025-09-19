@@ -67,7 +67,7 @@ protected:
           , m_open_cl_device(0)
           , m_use_gproximity(false)
           , m_use_batching(true)
-          , m_useSDF(false)
+          , m_useSDF(true)
           , m_envelope(0.01)
           , m_chunk_bytes(8000)
       {
