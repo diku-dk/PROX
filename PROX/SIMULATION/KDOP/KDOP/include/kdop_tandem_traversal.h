@@ -607,6 +607,86 @@ namespace kdop
       STOP_TIMER("exact_test");
       STOP_TIMER("tandem_traversal");
   }
+
+  template <size_t K, typename T>
+  inline void
+  tandem_traversal_sdf_simple(kdop::TestPairSDFStruct<K, T>& work_item)
+  {
+      if (!work_item.m_triangles_a || !work_item.m_grid_b) return;
+
+      EigenVector3<T> transformTranslation_a
+          = *(work_item.m_transformTranslation_a);
+      EigenVector3<T> transformTranslation_b
+          = *(work_item.m_transformTranslation_b);
+      EigenQuaternion<T> transformRotation_a
+          = *(work_item.m_transformRotation_a);
+      EigenQuaternion<T> transformRotation_b
+          = *(work_item.m_transformRotation_b);
+      const std::vector<grid::GridTriangle<T>>& tris
+          = *(work_item.m_triangles_a);
+      for (size_t i = 0; i < tris.size(); ++i)
+      {
+          grid::GridTriangle<T> tri = tris[i];
+          EigenVector3<T> contactPoint;
+          EigenVector3<T> normal;
+          T penetration;
+
+          Eigen::Matrix<T, 3, 1> v0w
+              = transformRotation_b * tri.v0 + transformTranslation_b;
+          Eigen::Matrix<T, 3, 1> v1w
+              = transformRotation_b * tri.v1 + transformTranslation_b;
+          Eigen::Matrix<T, 3, 1> v2w
+              = transformRotation_b * tri.v2 + transformTranslation_b;
+
+          // world -> A-local
+          // use inverse() which works whether rotA is unit or not.
+          Eigen::Matrix<T, 3, 1> v0A
+              = transformRotation_a.inverse() * (v0w - transformTranslation_a);
+          Eigen::Matrix<T, 3, 1> v1A
+              = transformRotation_a.inverse() * (v1w - transformTranslation_a);
+          Eigen::Matrix<T, 3, 1> v2A
+              = transformRotation_a.inverse() * (v2w - transformTranslation_a);
+          /*          bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
+              tri.v0, tri.v1, tri.v2, work_item.m_transformTranslation_b,
+              work_item.m_transformRotation_b, work_item.m_grid_b, contactPoint,
+              normal, penetration);*/
+          bool isPenetrating = grid::optimizeTriangleFW_Working(
+              v0A, v1A, v2A, *(work_item.m_grid_b), contactPoint, normal,
+              penetration);
+          std::cerr << "PENETRATION: " << penetration << "\n";
+          if (isPenetrating)
+          {
+              geometry::ContactsCallback<T>& callback_ref
+                  = *(work_item.m_callback);
+              contactPoint
+                  = transformRotation_b * contactPoint + transformTranslation_b;
+              normal = (transformRotation_b * normal).normalized();
+
+              callback_ref(contactPoint, -normal, penetration);
+              //callback_ref(contactPoint, normal, penetration);
+          }
+      }
+  }
+
+  template <size_t K, typename T>
+  inline void tandem_traversal_sdf_simple(
+      std::vector<kdop::TestPairSDFStruct<K, T>>& work_pool,
+      sequential const& /*tag*/
+  )
+  {
+      if (work_pool.empty()) return;
+
+      START_TIMER("tandem_traversal");
+      START_TIMER("exact_test");
+      PAUSE_TIMER("exact_test");
+
+      for (auto& item : work_pool) { tandem_traversal_sdf_simple<K, T>(item); }
+
+      RESUME_TIMER("exact_test");
+      STOP_TIMER("exact_test");
+      STOP_TIMER("tandem_traversal");
+  }
+
   } // namespace kdop
 
   // KDOP_TANDEM_TRAVERSAL_H

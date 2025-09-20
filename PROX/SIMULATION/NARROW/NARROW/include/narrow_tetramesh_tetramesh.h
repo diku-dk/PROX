@@ -88,7 +88,7 @@ namespace narrow
   {
       assert(!test_pairs.empty()
              || !"dispatch_tetramesh_tetramesh : test_pairs are empty");
-      typedef typename kdop::TestPairSDF<8, T> kdop_sdf_pair_type;
+      //typedef typename kdop::TestPairSDF<8, T> kdop_sdf_pair_type;
 
       std::vector<kdop::TestPairSDFStruct<8, T>> kdop_test_sdf_pairs;
       kdop::TestPairSDFStruct<8, T> sdf_pair_type;
@@ -116,10 +116,32 @@ namespace narrow
           sdf_pair_type.m_grid_b
               = &geoB.m_signedDistanceMap.getSignedDistanceGrid();
           sdf_pair_type.m_surface_map_a = &geoA.m_tetramesh.m_surface_map;
+          sdf_pair_type.m_triangles_a
+              = &geoA.m_signedDistanceMap.getSignedDistanceGrid()
+                     .m_temporaryGridStructure;
+          sdf_pair_type.m_transformTranslation_a = &current.t_a();
+          sdf_pair_type.m_transformRotation_a = &current.Q_a();
           sdf_pair_type.m_transformTranslation_b = &current.t_b();
           sdf_pair_type.m_transformRotation_b = &current.Q_b();
           sdf_pair_type.m_callback = &current.callback();
 
+          kdop_test_sdf_pairs.push_back(sdf_pair_type);
+          sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;
+          sdf_pair_type.m_tree_a = &objB.m_tree;
+          sdf_pair_type.m_x_a = &objB.m_X;
+          sdf_pair_type.m_y_a = &objB.m_Y;
+          sdf_pair_type.m_z_a = &objB.m_Z;
+          sdf_pair_type.m_grid_b
+              = &geoA.m_signedDistanceMap.getSignedDistanceGrid();
+          sdf_pair_type.m_surface_map_a = &geoB.m_tetramesh.m_surface_map;
+          sdf_pair_type.m_triangles_a
+              = &geoB.m_signedDistanceMap.getSignedDistanceGrid()
+                     .m_temporaryGridStructure;
+          sdf_pair_type.m_transformTranslation_a = &current.t_b();
+          sdf_pair_type.m_transformRotation_a = &current.Q_b();
+          sdf_pair_type.m_transformTranslation_b = &current.t_a();
+          sdf_pair_type.m_transformRotation_b = &current.Q_a();
+          sdf_pair_type.m_callback = &current.callback();
           kdop_test_sdf_pairs.push_back(sdf_pair_type);
       }
 #ifdef HAS_DIKUCL
@@ -147,8 +169,8 @@ namespace narrow
 #endif // HAS_DIKUCL
 
           // use regular tandem traversal if DIKUCL is not available or should not be used
-          kdop::tandem_traversal_sdf<8, T>(kdop_test_sdf_pairs,
-                                           kdop::sequential());
+          kdop::tandem_traversal_sdf_simple<8, T>(kdop_test_sdf_pairs,
+                                                  kdop::sequential());
 
 #ifdef HAS_DIKUCL
       }

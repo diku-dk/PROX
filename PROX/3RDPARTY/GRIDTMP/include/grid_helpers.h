@@ -114,51 +114,51 @@ Grid<D, T> projectGridToSDF(Eigen::MatrixXd verts, Eigen::MatrixXi indices,
                             Eigen::Matrix<size_t, 3, 1> res)
 {
 //    rotate_Yup_to_Zup<T>(verts);
-//    rot_Xup_to_Zup<T>(verts);
+rot_Xup_to_Zup<T>(verts);
 //    rotate_Zup_to_Yup<T>(verts);
 //rotateY<T>(verts, -90.0);
-//rot_Xup_to_Zup_and_rotX<T>(verts);
-    Eigen::RowVector3d minv = verts.colwise().minCoeff();
-    Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
-    Eigen::RowVector3d diag = maxv - minv;
-    double longest = diag.maxCoeff();
+//    rot_Xup_to_Zup_and_rotX<T>(verts);
+Eigen::RowVector3d minv = verts.colwise().minCoeff();
+Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
+Eigen::RowVector3d diag = maxv - minv;
+double longest = diag.maxCoeff();
     //10% padding to our bounding box!
-    double pad = 0.10 * longest;
-    Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
-                                (T)(minv.z() - pad));
-    Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
-                                (T)(maxv.z() + pad));
+double pad = 0.10 * longest;
+Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
+                            (T)(minv.z() - pad));
+Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
+                            (T)(maxv.z() + pad));
 
     //create grid (res^3 nodes)
-    Eigen::Matrix<size_t, 3, 1> nodes((size_t)res.x(), (size_t)res.y(),
-                                      (size_t)res.z());
-    Grid<D, T> G;
-    G.create(gmin, gmax, nodes);
-    std::cerr << "GMIN " << gmin << "\n";
-    std::cerr << "GMAX " << gmax << "\n";
-    const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
-    std::cout << "Created grid: " << G.I() << " x " << G.J() << " x " << G.K()
-              << "  (total nodes = " << total << ")\n";
+Eigen::Matrix<size_t, 3, 1> nodes((size_t)res.x(), (size_t)res.y(),
+                                  (size_t)res.z());
+Grid<D, T> G;
+G.create(gmin, gmax, nodes);
+std::cerr << "GMIN " << gmin << "\n";
+std::cerr << "GMAX " << gmax << "\n";
+const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
+std::cout << "Created grid: " << G.I() << " x " << G.J() << " x " << G.K()
+          << "  (total nodes = " << total << ")\n";
 
-    //Build the query points matrix P (total x 3) in the same linear order used by grid
-    Eigen::MatrixXd P((Eigen::Index)total, 3);
-    size_t idx_lin = 0;
-    for (size_t k = 0; k < G.K(); ++k)
+//Build the query points matrix P (total x 3) in the same linear order used by grid
+Eigen::MatrixXd P((Eigen::Index)total, 3);
+size_t idx_lin = 0;
+for (size_t k = 0; k < G.K(); ++k)
+{
+    for (size_t j = 0; j < G.J(); ++j)
     {
-        for (size_t j = 0; j < G.J(); ++j)
+        for (size_t i = 0; i < G.I(); ++i)
         {
-            for (size_t i = 0; i < G.I(); ++i)
-            {
-                Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
-                Eigen::Matrix<T, 3, 1> p;
-                grid::node_position(G, idx, p);
-                P((Eigen::Index)idx_lin, 0) = p.x();
-                P((Eigen::Index)idx_lin, 1) = p.y();
-                P((Eigen::Index)idx_lin, 2) = p.z();
-                ++idx_lin;
-            }
+            Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
+            Eigen::Matrix<T, 3, 1> p;
+            grid::node_position(G, idx, p);
+            P((Eigen::Index)idx_lin, 0) = p.x();
+            P((Eigen::Index)idx_lin, 1) = p.y();
+            P((Eigen::Index)idx_lin, 2) = p.z();
+            ++idx_lin;
         }
     }
+}
 
     std::cout << "Computing signed distances (libigl::signed_distance)...\n";
     Eigen::VectorXd S; // signed distances

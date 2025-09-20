@@ -129,34 +129,34 @@ template <typename D, typename T>
 Eigen::Matrix<T, 3, 1> computeGradient(const Eigen::Matrix<T, 3, 1>& p,
                                        const grid::Grid<D, T>& grid)
 {
-    float h = 0.075;
-    float dx
-        = (grid::value_at(grid, Eigen::Matrix<T, 3, 1>(p.x() + h, p.y(), p.z()))
-           - grid::value_at(grid,
-                            Eigen::Matrix<T, 3, 1>(p.x() - h, p.y(), p.z())))
-        / (2 * h);
-    float dy
-        = (grid::value_at(grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y() + h, p.z()))
-           - grid::value_at(grid,
-                            Eigen::Matrix<T, 3, 1>(p.x(), p.y() - h, p.z())))
-        / (2 * h);
-    float dz
-        = (grid::value_at(grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() + h))
-           - grid::value_at(grid,
-                            Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() - h)))
-        / (2 * h);
+    float h = 0.0075;
+    float dx = (grid::value_at_2(
+                    grid, Eigen::Matrix<T, 3, 1>(p.x() + h, p.y(), p.z()))
+                - grid::value_at_2(
+                    grid, Eigen::Matrix<T, 3, 1>(p.x() - h, p.y(), p.z())))
+             / (2 * h);
+    float dy = (grid::value_at_2(
+                    grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y() + h, p.z()))
+                - grid::value_at_2(
+                    grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y() - h, p.z())))
+             / (2 * h);
+    float dz = (grid::value_at_2(
+                    grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() + h))
+                - grid::value_at_2(
+                    grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() - h)))
+             / (2 * h);
     return Eigen::Matrix<T, 3, 1>(dx, dy, dz).normalized();
 }
 
 // Frank-Wolfe optimization for triangle-SDF collision detection
 template <typename D, typename T>
-bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
-                        const Eigen::Matrix<T, 3, 1>& q,
-                        const Eigen::Matrix<T, 3, 1>& r,
-                        const grid::Grid<D, T>& cone,
-                        Eigen::Matrix<T, 3, 1>& contactPoint,
-                        Eigen::Matrix<T, 3, 1>& normal, float& penetration,
-                        int maxIterations = 20)
+bool optimizeTriangleFWBad(const Eigen::Matrix<T, 3, 1>& p,
+                           const Eigen::Matrix<T, 3, 1>& q,
+                           const Eigen::Matrix<T, 3, 1>& r,
+                           const grid::Grid<D, T>& cone,
+                           Eigen::Matrix<T, 3, 1>& contactPoint,
+                           Eigen::Matrix<T, 3, 1>& normal, T& penetration,
+                           int maxIterations = 20)
 {
     // Initialize to triangle centroid
     Eigen::Matrix<T, 3, 1> x = (p + q + r) / 3.0f;
@@ -167,9 +167,9 @@ bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
         Eigen::Matrix<T, 3, 1> gradPhi = computeGradient<D, T>(x, cone);
 
         // Find the vertex that minimizes s^T * ∇φ(x_i)
-        float pDot = p.dot(gradPhi);
-        float qDot = q.dot(gradPhi);
-        float rDot = r.dot(gradPhi);
+        T pDot = p.dot(gradPhi);
+        T qDot = q.dot(gradPhi);
+        T rDot = r.dot(gradPhi);
 
         Eigen::Matrix<T, 3, 1> s;
         if (pDot <= qDot && pDot <= rDot) { s = p; }
@@ -177,7 +177,7 @@ bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
         else { s = r; }
 
         // Frank-Wolfe step size
-        float alpha = 2.0f / (i + 2.0f);
+        T alpha = 2.0f / (i + 2.0f);
 
         // Update position
         x = x + alpha * (s - x);
@@ -187,11 +187,276 @@ bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
     contactPoint = x;
     std::cerr << "CONTACT POINT" << contactPoint << "\n";
 
-    penetration = grid::value_at(cone, contactPoint);
+    penetration = grid::value_at_2(cone, contactPoint);
     normal = computeGradient<D, T>(contactPoint, cone);
 
     // Return true if penetration is negative (inside the object)
     return penetration < 0.0f;
+}
+
+template <typename T> void project_onto_simplex(Eigen::Matrix<T, 3, 1>& v)
+{
+    // Sort the vector in descending order
+    Eigen::Matrix<T, 3, 1> u = v;
+    std::sort(u.data(), u.data() + 3, std::greater<T>());
+
+    T sum = 0.0;
+    int rho = -1;
+    for (int j = 0; j < 3; j++)
+    {
+        sum += u(j);
+        if (u(j) + (1.0f - sum) / (j + 1) > 0) { rho = j; }
+    }
+
+    T lambda = (1.0f - u.head(rho + 1).sum()) / (rho + 1);
+    v = (v.array() + lambda).cwiseMax(0.0f);
+}
+
+template <typename D, typename T>
+Eigen::Matrix<T, 3, 1> computeGradient2(const Eigen::Matrix<T, 3, 1>& p,
+                                        const grid::Grid<D, T>& grid)
+{
+    // Calculate grid cell size based on resolution and bounds
+    Eigen::Matrix<T, 3, 1> diff = (grid.m_max - grid.m_min);
+    Eigen::Matrix<T, 3, 1> cell_size = Eigen::Matrix<T, 3, 1>(
+        diff.x() / (grid.m_nodes.x() - 1), diff.y() / (grid.m_nodes.y() - 1),
+        diff.z() / (grid.m_nodes.z() - 1));
+
+    // Use cell size for finite differences
+    T hx = cell_size.x();
+    T hy = cell_size.y();
+    T hz = cell_size.z();
+
+    // Central difference for gradient approximation
+    T dx = (grid::value_at_2(grid,
+                             Eigen::Matrix<T, 3, 1>(p.x() + hx, p.y(), p.z()))
+            - grid::value_at_2(
+                grid, Eigen::Matrix<T, 3, 1>(p.x() - hx, p.y(), p.z())))
+         / (2 * hx);
+
+    T dy = (grid::value_at_2(grid,
+                             Eigen::Matrix<T, 3, 1>(p.x(), p.y() + hy, p.z()))
+            - grid::value_at_2(
+                grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y() - hy, p.z())))
+         / (2 * hy);
+
+    T dz = (grid::value_at_2(grid,
+                             Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() + hz))
+            - grid::value_at_2(
+                grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() - hz)))
+         / (2 * hz);
+
+    return Eigen::Matrix<T, 3, 1>(dx, dy, dz);
+}
+
+// Frank-Wolfe optimization for triangle-SDF collision detection
+template <typename D, typename T>
+bool optimizeTriangleFW2(const Eigen::Matrix<T, 3, 1>& p,
+                         const Eigen::Matrix<T, 3, 1>& q,
+                         const Eigen::Matrix<T, 3, 1>& r,
+                         const grid::Grid<D, T>& cone,
+                         Eigen::Matrix<T, 3, 1>& contactPoint,
+                         Eigen::Matrix<T, 3, 1>& normal, T& penetration,
+                         int maxIterations = 32, T tolerance = 1e-4f)
+{
+    // Better initialization: evaluate at vertices and choose the one with smallest SDF value
+    T phi_p = grid::value_at_2<D, T>(cone, p);
+    T phi_q = grid::value_at_2<D, T>(cone, q);
+    T phi_r = grid::value_at_2<D, T>(cone, r);
+
+    Eigen::Matrix<T, 3, 1> x;
+    if (phi_p <= phi_q && phi_p <= phi_r) { x = p; }
+    else if (phi_q <= phi_p && phi_q <= phi_r) { x = q; }
+    else { x = r; }
+
+    T prev_obj_value = std::numeric_limits<T>::max();
+
+    for (int i = 0; i < maxIterations; i++)
+    {
+        // Compute gradient at current position
+        Eigen::Matrix<T, 3, 1> gradPhi = computeGradient2<D, T>(x, cone);
+
+        // Find the vertex that minimizes s^T * ∇φ(x_i)
+        T pDot = p.dot(gradPhi);
+        T qDot = q.dot(gradPhi);
+        T rDot = r.dot(gradPhi);
+
+        Eigen::Matrix<T, 3, 1> s;
+        if (pDot <= qDot && pDot <= rDot) { s = p; }
+        else if (qDot <= pDot && qDot <= rDot) { s = q; }
+        else { s = r; }
+
+        // Frank-Wolfe step size (decreasing as suggested in the paper)
+        T alpha = static_cast<T>(2.0 / (i + 2.0));
+
+        // Update position
+        Eigen::Matrix<T, 3, 1> new_x = x + alpha * (s - x);
+
+        // Check for convergence
+        T obj_value = grid::value_at_2<D, T>(cone, new_x);
+        T improvement = std::abs(prev_obj_value - obj_value);
+
+        if (improvement < tolerance)
+        {
+            x = new_x;
+            break;
+        }
+
+        x = new_x;
+        prev_obj_value = obj_value;
+    }
+
+    // Calculate final results
+    contactPoint = x;
+    penetration = grid::value_at_2<D, T>(cone, contactPoint);
+    normal = computeGradient2<D, T>(contactPoint, cone);
+
+    // Normalize the normal (but only if it's not zero)
+    T norm = normal.norm();
+    if (norm > std::numeric_limits<T>::epsilon()) { normal /= norm; }
+
+    // Return true if penetration is negative (inside the object)
+    return penetration < static_cast<T>(0);
+}
+
+template <typename D, typename T>
+bool optimizeTriangleFW3(const Eigen::Matrix<T, 3, 1>& p,
+                         const Eigen::Matrix<T, 3, 1>& q,
+                         const Eigen::Matrix<T, 3, 1>& r,
+                         const grid::Grid<D, T>& sdf,
+                         Eigen::Matrix<T, 3, 1>& contactPoint,
+                         Eigen::Matrix<T, 3, 1>& normal, T& penetration,
+                         size_t maxIterations = 320)
+{
+    // Better initialization: evaluate at vertices and choose the one with smallest SDF value
+    T phi_p = grid::value_at_2<D, T>(sdf, p);
+    T phi_q = grid::value_at_2<D, T>(sdf, q);
+    T phi_r = grid::value_at_2<D, T>(sdf, r);
+
+    Eigen::Matrix<T, 3, 1> x;
+    if (phi_p <= phi_q && phi_p <= phi_r) { x = p; }
+    else if (phi_q <= phi_p && phi_q <= phi_r) { x = q; }
+    else { x = r; }
+
+    for (size_t i = 0; i < maxIterations; ++i)
+    {
+        Eigen::Matrix<T, 3, 1> gradient = computeGradient2(x, sdf);
+        Eigen::Matrix<T, 3, 1> gradientTransposed = gradient.transpose();
+        T Lp = gradientTransposed.dot(p);
+        T Lq = gradientTransposed.dot(q);
+        T Lr = gradientTransposed.dot(r);
+        Eigen::Matrix<T, 3, 1> si;
+        if (Lp <= Lq && Lp <= Lr) { si = p; }
+        else if (Lq <= Lp && Lq <= Lr) { si = q; }
+        else { si = r; }
+
+        //Eigen::Matrix<T, 3, 1> sitmp = (si.transpose().eval()).dot(gradient);
+        T alpha = T(2) / (T(i) + T(2));
+        //xi+1 = xi...
+        x = x + alpha * (si - x);
+    }
+
+    contactPoint = x;
+    normal = computeGradient2(x, sdf);
+    penetration = grid::value_at_2<D, T>(sdf, x);
+    return penetration <= T(0);
+}
+
+// Projected Gradient Descent optimization for triangle-SDF collision detection
+template <typename D, typename T>
+bool optimizeTrianglePGD(const Eigen::Matrix<T, 3, 1>& p,
+                         const Eigen::Matrix<T, 3, 1>& q,
+                         const Eigen::Matrix<T, 3, 1>& r,
+                         const grid::Grid<D, T>& sdfGrid,
+                         Eigen::Matrix<T, 3, 1>& contactPoint,
+                         Eigen::Matrix<T, 3, 1>& normal, T& penetration,
+                         int maxIterations = 1000, T initialAlpha = 0.001f)
+{
+    // Initialize to the vertex with minimum SDF value
+    T phi_p = grid::value_at_2<D, T>(sdfGrid, p);
+    T phi_q = grid::value_at_2<D, T>(sdfGrid, q);
+    T phi_r = grid::value_at_2<D, T>(sdfGrid, r);
+    T phi_centroid = grid::value_at_2<D, T>(sdfGrid, (p + q + r) / T(3));
+
+    Eigen::Matrix<T, 3, 1> c;
+    if (phi_p <= phi_q && phi_p <= phi_r)
+    {
+        c = Eigen::Matrix<T, 3, 1>(1.0f, 0.0f, 0.0f);
+    }
+    else if (phi_q <= phi_p && phi_q <= phi_r)
+    {
+        c = Eigen::Matrix<T, 3, 1>(0.0f, 1.0f, 0.0f);
+    }
+    else { c = Eigen::Matrix<T, 3, 1>(0.0f, 0.0f, 1.0f); }
+    if (phi_centroid <= phi_p && phi_centroid <= phi_q && phi_centroid <= phi_r)
+    {
+        c = (p + q + r) / T(3);
+    }
+
+    T alpha = initialAlpha;
+    T prev_phi = std::numeric_limits<T>::max();
+
+    for (int i = 0; i < maxIterations; i++)
+    {
+        // Compute spatial point from barycent ric coordinates
+        Eigen::Matrix<T, 3, 1> x = c[0] * p + c[1] * q + c[2] * r;
+
+        // Compute SDF value and gradient at current position
+        T current_phi = grid::value_at_2(sdfGrid, x);
+        Eigen::Matrix<T, 3, 1> gradPhi = computeGradient<D, T>(x, sdfGrid);
+
+        // Check for convergence
+        if (std::abs(current_phi - prev_phi) < 1e-6f) { break; }
+        prev_phi = current_phi;
+
+        // Compute gradient with respect to barycentric coordinates
+        Eigen::Matrix<T, 3, 1> d;
+        d[0] = gradPhi.dot(p);
+        d[1] = gradPhi.dot(q);
+        d[2] = gradPhi.dot(r);
+
+        // Normalize the gradient to handle large triangles
+        T grad_magnitude = d.norm();
+        if (grad_magnitude > 1e-6f) { d = d / grad_magnitude; }
+
+        // Adaptive step size based on triangle size
+        T triangle_size = (p - q).norm() + (q - r).norm() + (r - p).norm();
+        T adaptive_alpha = alpha / (1.0f + triangle_size * 0.1f);
+
+        // Update barycentric coordinates
+        Eigen::Matrix<T, 3, 1> c_new = c - adaptive_alpha * d;
+
+        // Project onto simplex constraint
+        project_onto_simplex(c_new);
+
+        // Check if we're making progress
+        Eigen::Matrix<T, 3, 1> x_new
+            = c_new[0] * p + c_new[1] * q + c_new[2] * r;
+        T new_phi = grid::value_at_2(sdfGrid, x_new);
+
+        if (new_phi < current_phi)
+        {
+            c = c_new;
+            // Increase step size slightly if we're making good progress
+            alpha *= 1.1f;
+        }
+        else
+        {
+            // Reduce step size if not making progress
+            alpha *= 0.5f;
+        }
+
+        // Clamp step size to reasonable bounds
+        alpha = std::max<T>(1e-5f, std::min<T>(alpha, 1.0f));
+    }
+
+    // Calculate final results
+    contactPoint = c[0] * p + c[1] * q + c[2] * r;
+    penetration = grid::value_at_2(sdfGrid, contactPoint);
+    normal = computeGradient<D, T>(contactPoint, sdfGrid);
+
+    // Return true if penetration is negative (inside the object)
+    return penetration < 0.05f;
 }
 
 void create_cone(double r, double h, int s, Eigen::MatrixXd& V,
@@ -350,12 +615,12 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
         }
         //=========================================
         //NEW COLLISION LOOP
-        float triangleSize = 0.5f;
-        Eigen::Matrix<T, 3, 1> p(-triangleSize, -triangleSize, 2.5f);
-        Eigen::Matrix<T, 3, 1> q(triangleSize, -triangleSize, 2.5f);
-        Eigen::Matrix<T, 3, 1> r(0.0f, triangleSize, 2.5f);
+        float triangleSize = 10.0f;
+        Eigen::Matrix<T, 3, 1> p(-triangleSize, -triangleSize, 2.0f);
+        Eigen::Matrix<T, 3, 1> q(triangleSize, -triangleSize, 3.25f);
+        Eigen::Matrix<T, 3, 1> r(0.0f, triangleSize, 4.5f);
         Eigen::Matrix<T, 3, 1> contactPoint, normal;
-        float penetration;
+        T penetration;
 
         bool colliding = false;
 
@@ -371,13 +636,13 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             Eigen::Matrix<T, 3, 1> r_new = r + offset;
 
             // Check for collision
-            colliding = optimizeTriangleFW<D, T>(
+            colliding = optimizeTriangleFW3<D, T>(
                 p_new, q_new, r_new, G, contactPoint, normal, penetration);
             std::cerr << "PENETRATION" << penetration << "\n";
 
             if (colliding)
             {
-                std::cout << "Collision detected at y = " << y << std::endl;
+                std::cout << "Collision detected at z = " << y << std::endl;
                 std::cout << "Contact point: " << contactPoint.transpose()
                           << std::endl;
                 std::cout << "Penetration: " << penetration << std::endl;
@@ -388,7 +653,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                 r = r_new;
                 break;
             }
-            else { std::cerr << "No collision for y = " << y << "\n"; }
+            else { std::cerr << "No collision for z = " << y << "\n"; }
         }
 
         conePathFull

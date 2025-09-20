@@ -146,7 +146,10 @@ template <size_t K, typename T> struct TestPairSDFStruct
     const mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
                                            mesh_array::T4Mesh>* m_surface_map_a
         = nullptr;
+    const std::vector<grid::GridTriangle<T>>* m_triangles_a = nullptr;
     const grid::Grid<T, T>* m_grid_b = nullptr;
+    const EigenVector3<T>* m_transformTranslation_a = nullptr;
+    const EigenQuaternion<T>* m_transformRotation_a = nullptr;
     const EigenVector3<T>* m_transformTranslation_b = nullptr;
     const EigenQuaternion<T>* m_transformRotation_b = nullptr;
     geometry::ContactsCallback<T>* m_callback = nullptr;

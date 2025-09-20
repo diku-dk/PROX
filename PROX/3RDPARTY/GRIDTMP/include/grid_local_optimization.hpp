@@ -76,6 +76,86 @@ bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
 }
 
 template <typename D, typename T>
+Eigen::Matrix<T, 3, 1> computeGradient_Working(const Eigen::Matrix<T, 3, 1>& p,
+                                               const grid::Grid<D, T>& grid)
+{
+    // Calculate grid cell size based on resolution and bounds
+    Eigen::Matrix<T, 3, 1> diff = (grid.m_max - grid.m_min);
+    Eigen::Matrix<T, 3, 1> cell_size = Eigen::Matrix<T, 3, 1>(
+        diff.x() / (grid.m_nodes.x() - 1), diff.y() / (grid.m_nodes.y() - 1),
+        diff.z() / (grid.m_nodes.z() - 1));
+
+    // Use cell size for finite differences
+    T hx = cell_size.x();
+    T hy = cell_size.y();
+    T hz = cell_size.z();
+
+    // Central difference for gradient approximation
+    T dx = (grid::value_at_2(grid,
+                             Eigen::Matrix<T, 3, 1>(p.x() + hx, p.y(), p.z()))
+            - grid::value_at_2(
+                grid, Eigen::Matrix<T, 3, 1>(p.x() - hx, p.y(), p.z())))
+         / (2 * hx);
+
+    T dy = (grid::value_at_2(grid,
+                             Eigen::Matrix<T, 3, 1>(p.x(), p.y() + hy, p.z()))
+            - grid::value_at_2(
+                grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y() - hy, p.z())))
+         / (2 * hy);
+
+    T dz = (grid::value_at_2(grid,
+                             Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() + hz))
+            - grid::value_at_2(
+                grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() - hz)))
+         / (2 * hz);
+
+    return Eigen::Matrix<T, 3, 1>(dx, dy, dz);
+}
+
+template <typename D, typename T>
+bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
+                                const Eigen::Matrix<T, 3, 1>& q,
+                                const Eigen::Matrix<T, 3, 1>& r,
+                                const grid::Grid<D, T>& sdf,
+                                Eigen::Matrix<T, 3, 1>& contactPoint,
+                                Eigen::Matrix<T, 3, 1>& normal, T& penetration,
+                                size_t maxIterations = 320)
+{
+    // Better initialization: evaluate at vertices and choose the one with smallest SDF value
+    T phi_p = grid::value_at_2<D, T>(sdf, p);
+    T phi_q = grid::value_at_2<D, T>(sdf, q);
+    T phi_r = grid::value_at_2<D, T>(sdf, r);
+
+    Eigen::Matrix<T, 3, 1> x;
+    if (phi_p <= phi_q && phi_p <= phi_r) { x = p; }
+    else if (phi_q <= phi_p && phi_q <= phi_r) { x = q; }
+    else { x = r; }
+
+    for (size_t i = 0; i < maxIterations; ++i)
+    {
+        Eigen::Matrix<T, 3, 1> gradient = computeGradient_Working(x, sdf);
+        Eigen::Matrix<T, 3, 1> gradientTransposed = gradient.transpose();
+        T Lp = gradientTransposed.dot(p);
+        T Lq = gradientTransposed.dot(q);
+        T Lr = gradientTransposed.dot(r);
+        Eigen::Matrix<T, 3, 1> si;
+        if (Lp <= Lq && Lp <= Lr) { si = p; }
+        else if (Lq <= Lp && Lq <= Lr) { si = q; }
+        else { si = r; }
+
+        //Eigen::Matrix<T, 3, 1> sitmp = (si.transpose().eval()).dot(gradient);
+        T alpha = T(2) / (T(i) + T(2));
+        //xi+1 = xi...
+        x = x + alpha * (si - x);
+    }
+
+    contactPoint = x;
+    normal = computeGradient_Working(x, sdf).normalized();
+    penetration = grid::value_at_2<D, T>(sdf, x);
+    return penetration <= T(0);
+}
+
+template <typename D, typename T>
 bool optimizeTriangleFWTransform(
     const Eigen::Matrix<T, 3, 1>& p, const Eigen::Matrix<T, 3, 1>& q,
     const Eigen::Matrix<T, 3, 1>& r, const Eigen::Matrix<T, 3, 1>& translation,
@@ -95,7 +175,7 @@ bool optimizeTriangleFWTransform(
     Eigen::Matrix<T, 3, 1> newQ = (RTrans) * (q - translation);
     Eigen::Matrix<T, 3, 1> newR = (RTrans) * (r - translation);
 
-/*    Eigen::Matrix<T, 3, 1> newP = p;
+    /*    Eigen::Matrix<T, 3, 1> newP = p;
     Eigen::Matrix<T, 3, 1> newQ = q;
     Eigen::Matrix<T, 3, 1> newR = r;*/
     T a = value_at(cone, newP);
@@ -132,7 +212,7 @@ bool optimizeTriangleFWTransform(
     }
     return false;
 
-/*    return optimizeTriangleFW<D, T>(newP, newQ, newR, cone, contactPoint,
+    /*    return optimizeTriangleFW<D, T>(newP, newQ, newR, cone, contactPoint,
                                     normal, penetration, maxIterations);*/
 }
 } // namespace grid

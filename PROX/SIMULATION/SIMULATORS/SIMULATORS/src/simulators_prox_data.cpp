@@ -229,11 +229,11 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
     Eigen::MatrixXi F;
 
     grid::build_VF_from_T3Mesh(surface, surface_X, surface_Y, surface_Z, V, F);
-    grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
-        surface, surface_X, surface_Y, surface_Z);
     //grid::build_VF_from_tris_dedup_exact(tris, V, F);
     grid = grid::projectGridToSDF<T, T>(
-        V, F, Eigen::Matrix<size_t, 3, 1>(32, 32, 32));
+        V, F, Eigen::Matrix<size_t, 3, 1>(64, 64, 64));
+    grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
+        surface, surface_X, surface_Y, surface_Z);
     geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
     grid::writeGridToFiles<T, T>(grid, 1);
 /*    grid::Grid<T, T> grid;
