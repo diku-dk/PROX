@@ -154,10 +154,84 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
 
     geometry.m_tetramesh.set_tetramesh_shape(volume, volume_X, volume_Y,
                                              volume_Z);
+
+    /*std::vector<geometry::Triangle<T>> tris;
+    for (uint32_t i = 0; i < geometry.m_tetramesh.m_mesh.tetrahedron_size();
+         ++i)
+    {
+        mesh_array::Tetrahedron tet_A
+            = geometry.m_tetramesh.m_mesh.tetrahedron(i);
+        bool const& surface_Ai = geometry.m_tetramesh.m_surface_map(tet_A).m_i;
+        bool const& surface_Aj = geometry.m_tetramesh.m_surface_map(tet_A).m_j;
+        bool const& surface_Ak = geometry.m_tetramesh.m_surface_map(tet_A).m_k;
+        bool const& surface_Am = geometry.m_tetramesh.m_surface_map(tet_A).m_m;
+
+        const EigenVector3<T> a0 = EigenVector3<T>(
+            volume_X(tet_A.i()), volume_Y(tet_A.i()), volume_Z(tet_A.i()));
+        const EigenVector3<T> a1 = EigenVector3<T>(
+            volume_X(tet_A.j()), volume_Y(tet_A.j()), volume_Z(tet_A.j()));
+        const EigenVector3<T> a2 = EigenVector3<T>(
+            volume_X(tet_A.k()), volume_Y(tet_A.k()), volume_Z(tet_A.k()));
+        const EigenVector3<T> a3 = EigenVector3<T>(
+            volume_X(tet_A.m()), volume_Y(tet_A.m()), volume_Z(tet_A.m()));
+
+        geometry::TetrahedronEigen<T> const gtet_A
+            = geometry::make_tetrahedron((a0), (a1), (a2), (a3));
+
+        geometry::Triangle<T> tri0 = geometry::get_opposite_face(0, gtet_A);
+        geometry::Triangle<T> tri1 = geometry::get_opposite_face(1, gtet_A);
+        geometry::Triangle<T> tri2 = geometry::get_opposite_face(2, gtet_A);
+        geometry::Triangle<T> tri3 = geometry::get_opposite_face(3, gtet_A);
+        if (surface_Ai || true)
+        {
+            std::cerr << "Ai -- p0: " << "(" << tri0.p(0).x() << ", "
+                      << tri0.p(0).y() << ", " << tri0.p(0).z() << ")" << "\n";
+            std::cerr << "Ai -- p1: " << "(" << tri0.p(1).x() << ", "
+                      << tri0.p(1).y() << ", " << tri0.p(1).z() << ")" << "\n";
+            std::cerr << "Ai -- p2: " << "(" << tri0.p(2).x() << ", "
+                      << tri0.p(2).y() << ", " << tri0.p(2).z() << ")" << "\n";
+            tris.push_back(tri0);
+        }
+        if (surface_Aj || true)
+        {
+            std::cerr << "Aj -- p0: " << "(" << tri1.p(0).x() << ", "
+                      << tri1.p(0).y() << ", " << tri1.p(0).z() << ")" << "\n";
+            std::cerr << "Aj -- p1: " << "(" << tri1.p(1).x() << ", "
+                      << tri1.p(1).y() << ", " << tri1.p(1).z() << ")" << "\n";
+            std::cerr << "Aj -- p2: " << "(" << tri1.p(2).x() << ", "
+                      << tri1.p(2).y() << ", " << tri1.p(2).z() << ")" << "\n";
+            tris.push_back(tri1);
+        }
+        if (surface_Ak || true)
+        {
+            std::cerr << "Ak -- p0: " << "(" << tri2.p(0).x() << ", "
+                      << tri2.p(0).y() << ", " << tri2.p(0).z() << ")" << "\n";
+            std::cerr << "Ak -- p1: " << "(" << tri2.p(1).x() << ", "
+                      << tri2.p(1).y() << ", " << tri2.p(1).z() << ")" << "\n";
+            std::cerr << "Ak -- p2: " << "(" << tri2.p(2).x() << ", "
+                      << tri2.p(2).y() << ", " << tri2.p(2).z() << ")" << "\n";
+            tris.push_back(tri2);
+        }
+        if (surface_Am || true)
+        {
+            std::cerr << "Am -- p0: " << "(" << tri3.p(0).x() << ", "
+                      << tri3.p(0).y() << ", " << tri3.p(0).z() << ")" << "\n";
+            std::cerr << "Am -- p1: " << "(" << tri3.p(1).x() << ", "
+                      << tri3.p(1).y() << ", " << tri3.p(1).z() << ")" << "\n";
+            std::cerr << "Am -- p2: " << "(" << tri3.p(2).x() << ", "
+                      << tri3.p(2).y() << ", " << tri3.p(2).z() << ")" << "\n";
+            tris.push_back(tri3);
+        }
+    }*/
+
     grid::Grid<T, T> grid;
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;
+
     grid::build_VF_from_T3Mesh(surface, surface_X, surface_Y, surface_Z, V, F);
+    grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
+        surface, surface_X, surface_Y, surface_Z);
+    //grid::build_VF_from_tris_dedup_exact(tris, V, F);
     grid = grid::projectGridToSDF<T, T>(
         V, F, Eigen::Matrix<size_t, 3, 1>(32, 32, 32));
     geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);

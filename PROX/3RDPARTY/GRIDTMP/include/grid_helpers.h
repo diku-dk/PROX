@@ -3,6 +3,7 @@
 
 #include "grid_node_position.h"
 #include "igl/signed_distance.h"
+#include "types/geometry_triangle.h"
 #include <filesystem>
 #include <grid_grid.h>
 #include <mesh_array_vertex_attribute.h>
@@ -46,13 +47,77 @@ template <typename T> void rot_Xup_to_Zup(Eigen::MatrixXd& V)
     V = (R * V.transpose()).transpose();
 }
 
+template <typename T> void rot_Xup_to_Zup_and_rotX(Eigen::MatrixXd& V)
+{
+    // Step 1: Rotate -90° about Y: X -> Z
+    double a = -M_PI / 2.0;
+    double c = std::cos(a), s = std::sin(a);
+    Eigen::Matrix3d R_y;
+    R_y << c, 0, s, 0, 1, 0, -s, 0, c;
+
+    // Step 2: Rotate +90° about X
+    double b = M_PI / 2.0;
+    double cx = std::cos(b), sx = std::sin(b);
+    Eigen::Matrix3d R_x;
+    R_x << 1, 0, 0, 0, cx, -sx, 0, sx, cx;
+
+    // Combine rotations: R = R_x * R_y
+    Eigen::Matrix3d R = R_x * R_y;
+
+    // Apply to vertices
+    V = (R * V.transpose()).transpose();
+}
+
+static inline double deg2rad(double deg) { return deg * M_PI / 180.0; }
+
+// Ensure matrix has 3 columns (x,y,z)
+template <typename T> static inline void ensure_is_xyz(const Eigen::MatrixXd& V)
+{
+    if (V.cols() != 3)
+        throw std::invalid_argument(
+            "Vertex matrix must have 3 columns (x,y,z)");
+}
+
+// Rotate in-place: N x 3 matrix, degrees can be any real number
+template <typename T> inline void rotateX(Eigen::MatrixXd& V, double degrees)
+{
+//    ensure_is_xyz<T>(V);
+    double a = deg2rad(degrees);
+    double c = std::cos(a), s = std::sin(a);
+    Eigen::Matrix3d R;
+    R << 1, 0, 0, 0, c, -s, 0, s, c;
+    V = (R * V.transpose()).transpose();
+}
+
+template <typename T> inline void rotateY(Eigen::MatrixXd& V, double degrees)
+{
+   // ensure_is_xyz(V);
+    double a = deg2rad(degrees);
+    double c = std::cos(a), s = std::sin(a);
+    Eigen::Matrix3d R;
+    R << c, 0, s, 0, 1, 0, -s, 0, c;
+    V = (R * V.transpose()).transpose();
+}
+
+template <typename T> inline void rotateZ(Eigen::MatrixXd& V, double degrees)
+{
+  //  ensure_is_xyz(V);
+    double a = deg2rad(degrees);
+    double c = std::cos(a), s = std::sin(a);
+    Eigen::Matrix3d R;
+    R << c, -s, 0, s, c, 0, 0, 0, 1;
+    V = (R * V.transpose()).transpose();
+}
+
 template <typename D, typename T>
 Grid<D, T> projectGridToSDF(Eigen::MatrixXd verts, Eigen::MatrixXi indices,
                             Eigen::Matrix<size_t, 3, 1> res)
 {
-    //rotate_Yup_to_Zup<T>(verts);
-    rot_Xup_to_Zup<T>(verts);
-    //rotate_Zup_to_Yup<T>(verts);
+//    rotate_Yup_to_Zup<T>(verts);
+//    rot_Xup_to_Zup<T>(verts);
+//    rotate_Zup_to_Yup<T>(verts);
+//rotateY<T>(verts, -90.0);
+//rot_Xup_to_Zup_and_rotX<T>(verts);
     Eigen::RowVector3d minv = verts.colwise().minCoeff();
     Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
     Eigen::RowVector3d diag = maxv - minv;
@@ -69,6 +134,8 @@ Grid<D, T> projectGridToSDF(Eigen::MatrixXd verts, Eigen::MatrixXi indices,
                                       (size_t)res.z());
     Grid<D, T> G;
     G.create(gmin, gmax, nodes);
+    std::cerr << "GMIN " << gmin << "\n";
+    std::cerr << "GMAX " << gmax << "\n";
     const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
     std::cout << "Created grid: " << G.I() << " x " << G.J() << " x " << G.K()
               << "  (total nodes = " << total << ")\n";
@@ -165,6 +232,41 @@ void build_VF_from_T3Mesh(
         // int b = static_cast<int>( tri[1].idx() );
         // int c = static_cast<int>( tri[2].idx() );
     }
+}
+
+template <typename T>
+std::vector<GridTriangle<T>> build_triangle_list_from_T3Mesh(
+    mesh_array::T3Mesh const& mesh,
+    mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& X,
+    mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& Y,
+    mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& Z)
+{
+    size_t nF = mesh.triangle_size();
+    std::vector<GridTriangle<T>> tris;
+    tris.reserve(nF);
+
+    for (size_t t = 0; t < nF; ++t)
+    {
+        auto const& tri = mesh.triangle(t);
+
+        // primary assumption: tri.i(), tri.j(), tri.k() give integer vertex indices
+        int ia = static_cast<int>(tri.i());
+        int ib = static_cast<int>(tri.j());
+        int ic = static_cast<int>(tri.k());
+
+        auto va = mesh.vertex((size_t)ia);
+        auto vb = mesh.vertex((size_t)ib);
+        auto vc = mesh.vertex((size_t)ic);
+
+        GridTriangle<T> tri_xyz;
+        tri_xyz.v0 << X(va), Y(va), Z(va);
+        tri_xyz.v1 << X(vb), Y(vb), Z(vb);
+        tri_xyz.v2 << X(vc), Y(vc), Z(vc);
+
+        tris.push_back(tri_xyz);
+    }
+
+    return tris;
 }
 
 template <typename D, typename T>

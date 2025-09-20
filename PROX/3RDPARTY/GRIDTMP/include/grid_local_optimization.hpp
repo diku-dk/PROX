@@ -66,9 +66,9 @@ bool optimizeTriangleFW(const Eigen::Matrix<T, 3, 1>& p,
 
     // Calculate final results
     contactPoint = x;
+    penetration = grid::value_at(cone, contactPoint);
     std::cerr << "CONTACT POINT" << contactPoint << "\n";
     std::cerr << "PENETRATION: " << penetration << "\n";
-    penetration = grid::value_at(cone, contactPoint);
     normal = computeGradient<D, T>(contactPoint, cone);
 
     // Return true if penetration is negative (inside the object)
@@ -90,10 +90,10 @@ bool optimizeTriangleFWTransform(
 
     //CURR
     Eigen::Matrix3<T> R = rotation.toRotationMatrix();
-    R = R.inverse().eval();
-    Eigen::Matrix<T, 3, 1> newP = (R) * (p - translation);
-    Eigen::Matrix<T, 3, 1> newQ = (R) * (q - translation);
-    Eigen::Matrix<T, 3, 1> newR = (R) * (r - translation);
+    Eigen::Matrix3<T> RTrans = R.transpose().eval();
+    Eigen::Matrix<T, 3, 1> newP = (RTrans) * (p - translation);
+    Eigen::Matrix<T, 3, 1> newQ = (RTrans) * (q - translation);
+    Eigen::Matrix<T, 3, 1> newR = (RTrans) * (r - translation);
 
 /*    Eigen::Matrix<T, 3, 1> newP = p;
     Eigen::Matrix<T, 3, 1> newQ = q;
@@ -102,18 +102,23 @@ bool optimizeTriangleFWTransform(
     T b = value_at(cone, newQ);
     T c = value_at(cone, newR);
 
+    std::cerr << "MIN BOUNDS " << cone.min() << "\n";
+    std::cerr << "MAX BOUNDS " << cone.max() << "\n";
+
     if (a <= 0.0)
     {
         normal = computeGradient<D, T>(newP, cone);
-        contactPoint = newP;
+        contactPoint = R * newP + translation;
         penetration = a;
         return true;
     }
 
     if (b <= 0.0)
     {
+        std::cerr << "DATA" << "\n";
+        std::cerr << cone.data();
         normal = computeGradient<D, T>(newQ, cone);
-        contactPoint = newQ;
+        contactPoint = R * newQ + translation;
         penetration = b;
         return true;
     }
@@ -121,7 +126,7 @@ bool optimizeTriangleFWTransform(
     if (c <= 0.0)
     {
         normal = computeGradient<D, T>(newR, cone);
-        contactPoint = newR;
+        contactPoint = R * newR + translation;
         penetration = c;
         return true;
     }

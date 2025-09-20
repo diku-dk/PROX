@@ -290,13 +290,13 @@ namespace kdop
 
   template <size_t K, typename T>
   inline void traversal_sdf(
-      size_t const& node_idx, SubTree<T, K> const& branch,
-      mesh_array::T4Mesh const& mesh,
-      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X,
-      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y,
-      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z,
+      size_t const& node_idx_A, SubTree<T, K> const& branch_A,
+      mesh_array::T4Mesh const& mesh_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_A,
       mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
-                                       mesh_array::T4Mesh> const& surface_map,
+                                       mesh_array::T4Mesh> const& surface_map_A,
       const grid::Grid<T, T>& sdf, const EigenVector3<T>& transformTranslation,
       const EigenQuaternion<T>& transformRotation,
       geometry::DirectionTable<T, K / 2> const& directions,
@@ -304,121 +304,112 @@ namespace kdop
   {
       using namespace mesh_array;
 
-      Node<T, K> const& node = branch.m_nodes[node_idx];
+      Node<T, K> const& node_A = branch_A.m_nodes[node_idx_A];
 
-      // Get SDF bounding box (min and max corners)
-      /*      auto sdf_bbox = sdf.getBoundingBox();
-      Eigen::AlignedBox<T, 3> sdf_aabb(
-          Eigen::Vector3<T>(sdf_bbox.min_x, sdf_bbox.min_y, sdf_bbox.min_z),
-          Eigen::Vector3<T>(sdf_bbox.max_x, sdf_bbox.max_y, sdf_bbox.max_z));*/
-      Eigen::Matrix<T, 3, 1> sdfMin = sdf.min();
-      Eigen::Matrix<T, 3, 1> sdfMax = sdf.max();
-      Eigen::AlignedBox<T, 3> sdf_aabb(
-          Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
-          Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
+      //      if (!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume)) return;
 
-      // Apply SDF transform to the AABB
-      //auto transform = work_item.m_sdf->getTransform();
-      auto translation = transformTranslation;
-      auto rotation = transformRotation;
-      //sdf_aabb = transform * sdf_aabb;
-      sdf_aabb = transformAABB(sdf_aabb, rotation, translation);
-      //      sdf_aabb = transform * sdf_aabb;
+      bool const A_is_leaf = node_A.is_leaf();
 
-      // Check if node's DOP overlaps with SDF's AABB
-      // if (!overlap_dop_aabb(node.m_volume, sdf_aabb, directions)) return;
-
-      if (node.is_leaf())
+      if (A_is_leaf)
       {
           PAUSE_TIMER("tandem_traversal");
           RESUME_TIMER("exact_test");
 
-          Tetrahedron const& tet = mesh.tetrahedron(node.m_start);
+          Tetrahedron const& tet_A = mesh_A.tetrahedron(node_A.m_start);
 
-          // Check if any face is a surface face
-          bool const& surface_i = surface_map(tet).m_i;
-          bool const& surface_j = surface_map(tet).m_j;
-          bool const& surface_k = surface_map(tet).m_k;
-          bool const& surface_m = surface_map(tet).m_m;
+          bool const& surface_Ai = surface_map_A(tet_A).m_i;
+          bool const& surface_Aj = surface_map_A(tet_A).m_j;
+          bool const& surface_Ak = surface_map_A(tet_A).m_k;
+          bool const& surface_Am = surface_map_A(tet_A).m_m;
 
-          if (!surface_i && !surface_j && !surface_k && !surface_m)
+          if (!surface_Ai && !surface_Aj && !surface_Ak && !surface_Am)
           {
               PAUSE_TIMER("exact_test");
               RESUME_TIMER("tandem_traversal");
-              return; // all faces are internal
+              return;
           }
 
-          // Get vertex positions
-          const EigenVector3<T> v0
-              = EigenVector3<T>(X(tet.i()), Y(tet.i()), Z(tet.i()));
-          const EigenVector3<T> v1
-              = EigenVector3<T>(X(tet.j()), Y(tet.j()), Z(tet.j()));
-          const EigenVector3<T> v2
-              = EigenVector3<T>(X(tet.k()), Y(tet.k()), Z(tet.k()));
-          const EigenVector3<T> v3
-              = EigenVector3<T>(X(tet.m()), Y(tet.m()), Z(tet.m()));
+          const EigenVector3<T> a0
+              = EigenVector3<T>(X_A(tet_A.i()), Y_A(tet_A.i()), Z_A(tet_A.i()));
+          const EigenVector3<T> a1
+              = EigenVector3<T>(X_A(tet_A.j()), Y_A(tet_A.j()), Z_A(tet_A.j()));
+          const EigenVector3<T> a2
+              = EigenVector3<T>(X_A(tet_A.k()), Y_A(tet_A.k()), Z_A(tet_A.k()));
+          const EigenVector3<T> a3
+              = EigenVector3<T>(X_A(tet_A.m()), Y_A(tet_A.m()), Z_A(tet_A.m()));
 
-          std::cerr << "V0: " << v0 << "\n";
-          std::cerr << "V1: " << v1 << "\n";
-          std::cerr << "V2: " << v2 << "\n";
-          std::cerr << "V3: " << v3 << "\n";
-          Eigen::Vector3<T> vRes = v0 + v1 + v2 + v3;
+          std::vector<bool> surface_A(4u, false);
 
+          geometry::TetrahedronEigen<T> const gtet_A
+              = geometry::make_tetrahedron((a0), (a1), (a2), (a3));
+
+          surface_A[0] = surface_Ai;
+          surface_A[1] = surface_Aj;
+          surface_A[2] = surface_Ak;
+          surface_A[3] = surface_Am;
+
+          /*          SelectContactPointAlgorithm::call_algorithm(gtet_A, gtet_B, callback,
+                                                      surface_A, surface_B);*/
           // Check each surface triangle against SDF
-          if (surface_i)
+
+          geometry::Triangle<T> tri0 = geometry::get_opposite_face(0, gtet_A);
+          geometry::Triangle<T> tri1 = geometry::get_opposite_face(1, gtet_A);
+          geometry::Triangle<T> tri2 = geometry::get_opposite_face(2, gtet_A);
+          geometry::Triangle<T> tri3 = geometry::get_opposite_face(3, gtet_A);
+
+          if (surface_A[0] || true)
           { // Face opposite vertex i (vertices j,k,m)
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
               bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  v1, v2, v3, translation, rotation, sdf, contactPoint, normal,
-                  penetration);
+                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
+                  transformRotation, sdf, contactPoint, normal, penetration);
               if (isPenetrating) callback(contactPoint, normal, penetration);
           }
-          if (surface_j)
+          if (surface_A[1] || true)
           { // Face opposite vertex j (vertices i,k,m)
 
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
               bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  v0, v1, v2, translation, rotation, sdf, contactPoint, normal,
-                  penetration);
+                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
+                  transformRotation, sdf, contactPoint, normal, penetration);
               if (isPenetrating) callback(contactPoint, normal, penetration);
           }
-          if (surface_k)
+          if (surface_A[2] || true)
           { // Face opposite vertex k (vertices i,j,m)
 
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
               bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  v0, v1, v3, translation, rotation, sdf, contactPoint, normal,
-                  penetration);
+                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
+                  transformRotation, sdf, contactPoint, normal, penetration);
               if (isPenetrating) callback(contactPoint, normal, penetration);
           }
-          if (surface_m)
+          if (surface_A[3] || true)
           { // Face opposite vertex m (vertices i,j,k)
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
               bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  v0, v1, v2, translation, rotation, sdf, contactPoint, normal,
-                  penetration);
+                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
+                  transformRotation, sdf, contactPoint, normal, penetration);
               if (isPenetrating) callback(contactPoint, normal, penetration);
           }
 
           PAUSE_TIMER("exact_test");
           RESUME_TIMER("tandem_traversal");
       }
-      else
+      else if (!A_is_leaf)
       {
-          // Recursively process child nodes
-          for (size_t i = node.m_start; i <= node.m_end; ++i)
+          for (size_t a = node_A.m_start; a <= node_A.m_end; ++a)
           {
-              traversal_sdf<K, T>(i, branch, mesh, X, Y, Z, surface_map, sdf,
-                                  transformTranslation, transformRotation,
-                                  directions, callback);
+              traversal_sdf<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A,
+                                  surface_map_A, sdf, transformTranslation,
+                                  transformRotation, directions, callback);
           }
       }
   }

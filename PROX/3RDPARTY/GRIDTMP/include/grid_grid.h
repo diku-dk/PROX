@@ -6,10 +6,15 @@
 
 #include "eigen3/Eigen/Dense"
 
-
-
 namespace grid
 {
+
+template <typename T> struct GridTriangle
+{
+    Eigen::Matrix<T, 3, 1> v0;
+    Eigen::Matrix<T, 3, 1> v1;
+    Eigen::Matrix<T, 3, 1> v2;
+};
 template < typename D, typename T>
 class Grid
 {
@@ -19,6 +24,7 @@ public:
     Eigen::Matrix<T, 3, 1> m_max;
     Eigen::Matrix<T, 3, 1> m_dir;
     Eigen::Matrix<size_t, 3, 1> m_nodes;
+    std::vector<GridTriangle<T>> m_temporaryGridStructure;
 
     //vvv The data values stored at the grid nodes.
     //Internal data stored as Eigen::Matrix (rows = total nodes, cols = 1)
