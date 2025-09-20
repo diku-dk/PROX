@@ -107,7 +107,7 @@ namespace narrow
               objA.m_tree, geoA.m_tetramesh.m_mesh, objA.m_X, objA.m_Y,
               objA.m_Z, geoA.m_tetramesh.m_surface_map,
               geoB.m_signedDistanceMap, current.callback());*/
-
+          /*2
           sdf_pair_type.m_mesh_a = &geoA.m_tetramesh.m_mesh;
           sdf_pair_type.m_tree_a = &objA.m_tree;
           sdf_pair_type.m_x_a = &objA.m_X;
@@ -123,7 +123,7 @@ namespace narrow
           sdf_pair_type.m_transformRotation_a = &current.Q_a();
           sdf_pair_type.m_transformTranslation_b = &current.t_b();
           sdf_pair_type.m_transformRotation_b = &current.Q_b();
-          sdf_pair_type.m_callback = &current.callback();
+          sdf_pair_type.m_callback = &current.callback();*/
 
           kdop_test_sdf_pairs.push_back(sdf_pair_type);
           sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;

@@ -632,20 +632,20 @@ namespace kdop
           T penetration;
 
           Eigen::Matrix<T, 3, 1> v0w
-              = transformRotation_b * tri.v0 + transformTranslation_b;
+              = transformRotation_a * tri.v0 + transformTranslation_a;
           Eigen::Matrix<T, 3, 1> v1w
-              = transformRotation_b * tri.v1 + transformTranslation_b;
+              = transformRotation_a * tri.v1 + transformTranslation_a;
           Eigen::Matrix<T, 3, 1> v2w
-              = transformRotation_b * tri.v2 + transformTranslation_b;
+              = transformRotation_a * tri.v2 + transformTranslation_a;
 
           // world -> A-local
           // use inverse() which works whether rotA is unit or not.
           Eigen::Matrix<T, 3, 1> v0A
-              = transformRotation_a.inverse() * (v0w - transformTranslation_a);
+              = transformRotation_b.inverse() * (v0w - transformTranslation_b);
           Eigen::Matrix<T, 3, 1> v1A
-              = transformRotation_a.inverse() * (v1w - transformTranslation_a);
+              = transformRotation_b.inverse() * (v1w - transformTranslation_b);
           Eigen::Matrix<T, 3, 1> v2A
-              = transformRotation_a.inverse() * (v2w - transformTranslation_a);
+              = transformRotation_b.inverse() * (v2w - transformTranslation_b);
           /*          bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
               tri.v0, tri.v1, tri.v2, work_item.m_transformTranslation_b,
               work_item.m_transformRotation_b, work_item.m_grid_b, contactPoint,
@@ -662,6 +662,7 @@ namespace kdop
                   = transformRotation_b * contactPoint + transformTranslation_b;
               normal = (transformRotation_b * normal).normalized();
 
+              callback_ref(contactPoint, normal, penetration);
               callback_ref(contactPoint, -normal, penetration);
               //callback_ref(contactPoint, normal, penetration);
           }

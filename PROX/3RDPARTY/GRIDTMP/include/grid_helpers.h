@@ -123,7 +123,7 @@ Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
 Eigen::RowVector3d diag = maxv - minv;
 double longest = diag.maxCoeff();
     //10% padding to our bounding box!
-double pad = 0.10 * longest;
+double pad = 0.025 * longest;
 Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
                             (T)(minv.z() - pad));
 Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
