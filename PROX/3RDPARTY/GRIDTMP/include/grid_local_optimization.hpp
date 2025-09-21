@@ -119,9 +119,28 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
                                 const grid::Grid<D, T>& sdf,
                                 Eigen::Matrix<T, 3, 1>& contactPoint,
                                 Eigen::Matrix<T, 3, 1>& normal, T& penetration,
-                                size_t maxIterations = 320)
+                                size_t maxIterations = 32)
 {
-    // Better initialization: evaluate at vertices and choose the one with smallest SDF value
+    //Early out: If sphere-radius r of tri is less than the sampled centroid x_c in our SDF, i.e. \phi(x_c) < r, ignore!
+    Eigen::Matrix<T, 3, 1> centroid = (p + q + r) * (T(1) / T(3));
+
+    T d0 = (p - centroid).squaredNorm();
+    T d1 = (q - centroid).squaredNorm();
+    T d2 = (r - centroid).squaredNorm();
+
+    //pairwise max without initializer-list temporaries
+    T max_sq = d0 > d1 ? d0 : d1;
+    max_sq = d2 > max_sq ? d2 : max_sq;
+
+    // Avoid sqrt: radius = sqrt(max_sq).
+    // Condition phi_centroid >= radius  <=>  phi_centroid >= 0 && phi_centroid*phi_centroid >= max_sq
+    T phi_centroid = grid::value_at_2<D, T>(sdf, centroid);
+    if (phi_centroid >= T(0) && (phi_centroid * phi_centroid) >= max_sq)
+    {
+        return false;
+    }
+
+    //Better initialization: evaluate at vertices and choose the one with smallest SDF value
     T phi_p = grid::value_at_2<D, T>(sdf, p);
     T phi_q = grid::value_at_2<D, T>(sdf, q);
     T phi_r = grid::value_at_2<D, T>(sdf, r);
@@ -131,6 +150,7 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
     else if (phi_q <= phi_p && phi_q <= phi_r) { x = q; }
     else { x = r; }
 
+    T threshold = 1e-12;
     for (size_t i = 0; i < maxIterations; ++i)
     {
         Eigen::Matrix<T, 3, 1> gradient = computeGradient_Working(x, sdf);
@@ -142,6 +162,13 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
         if (Lp <= Lq && Lp <= Lr) { si = p; }
         else if (Lq <= Lp && Lq <= Lr) { si = q; }
         else { si = r; }
+
+        /*        T subproblem = (si.transpose()).dot(- gradient);
+        if (subproblem < threshold)
+        {
+            //Converged
+            break;
+        }*/
 
         //Eigen::Matrix<T, 3, 1> sitmp = (si.transpose().eval()).dot(gradient);
         T alpha = T(2) / (T(i) + T(2));
