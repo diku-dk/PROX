@@ -169,8 +169,8 @@ namespace narrow
 #endif // HAS_DIKUCL
 
           // use regular tandem traversal if DIKUCL is not available or should not be used
-          kdop::tandem_traversal_sdf_simple<8, T>(kdop_test_sdf_pairs,
-                                                  kdop::sequential());
+          kdop::tandem_traversal_sdf<8, T>(kdop_test_sdf_pairs,
+                                           kdop::sequential());
 
 #ifdef HAS_DIKUCL
       }

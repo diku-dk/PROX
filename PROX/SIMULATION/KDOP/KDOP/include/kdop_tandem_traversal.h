@@ -306,7 +306,7 @@ namespace kdop
 
       Node<T, K> const& node_A = branch_A.m_nodes[node_idx_A];
 
-      //      if (!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume)) return;
+      //if (!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume)) return;
 
       bool const A_is_leaf = node_A.is_leaf();
 
@@ -357,47 +357,96 @@ namespace kdop
           geometry::Triangle<T> tri2 = geometry::get_opposite_face(2, gtet_A);
           geometry::Triangle<T> tri3 = geometry::get_opposite_face(3, gtet_A);
 
-          if (surface_A[0] || true)
+          if (surface_A[0])
           { // Face opposite vertex i (vertices j,k,m)
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
-              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
-                  transformRotation, sdf, contactPoint, normal, penetration);
-              if (isPenetrating) callback(contactPoint, normal, penetration);
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri0.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri0.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri0.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
           }
-          if (surface_A[1] || true)
+          if (surface_A[1])
           { // Face opposite vertex j (vertices i,k,m)
 
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
-              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
-                  transformRotation, sdf, contactPoint, normal, penetration);
-              if (isPenetrating) callback(contactPoint, normal, penetration);
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri1.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri1.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri1.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
           }
-          if (surface_A[2] || true)
+          if (surface_A[2])
           { // Face opposite vertex k (vertices i,j,m)
 
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
-              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
-                  transformRotation, sdf, contactPoint, normal, penetration);
-              if (isPenetrating) callback(contactPoint, normal, penetration);
+
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri2.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri2.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri2.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
           }
-          if (surface_A[3] || true)
+          if (surface_A[3])
           { // Face opposite vertex m (vertices i,j,k)
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
-              bool isPenetrating = grid::optimizeTriangleFWTransform<T, T>(
-                  tri0.p(0), tri0.p(1), tri0.p(2), transformTranslation,
-                  transformRotation, sdf, contactPoint, normal, penetration);
-              if (isPenetrating) callback(contactPoint, normal, penetration);
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri3.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri3.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri3.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
           }
 
           PAUSE_TIMER("exact_test");
@@ -405,6 +454,15 @@ namespace kdop
       }
       else if (!A_is_leaf)
       {
+          Eigen::Matrix<T, 3, 1> sdfMin = sdf.min();
+          Eigen::Matrix<T, 3, 1> sdfMax = sdf.max();
+          Eigen::AlignedBox<T, 3> sdf_aabb(
+              Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
+              Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
+          sdf_aabb = transformAABB(sdf_aabb, transformRotation,
+                                   transformTranslation);
+
+          if (!overlap_dop_aabb(node_A.m_volume, sdf_aabb, directions)) return;
           for (size_t a = node_A.m_start; a <= node_A.m_end; ++a)
           {
               traversal_sdf<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A,
@@ -573,8 +631,10 @@ namespace kdop
       geometry::DirectionTable<T, K / 2> directions
           = geometry::DirectionTableHelper<T, K / 2>::make();
       // Check root-level overlap
-      //if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
-      //return;
+      if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
+      {
+          return;
+      }
 
       // Process all branches
       for (auto const& branch : work_item.m_tree_a->branches())
