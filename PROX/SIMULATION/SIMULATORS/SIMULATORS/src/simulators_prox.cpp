@@ -1077,6 +1077,37 @@ size_t ProxEngine::get_number_of_tetrameshes(size_t const& geometry_index)
     return geometry.number_of_tetrameshes();
 }
 
+size_t ProxEngine::get_number_of_sdfs(size_t const& geometry_index)
+{
+    ProxData::geometry_type& geometry
+        = m_data->m_narrow.get_geometry(geometry_index);
+
+    return geometry.number_of_signedDistanceFields();
+}
+
+const grid::Grid<float, float>&
+ProxEngine::get_sdf_shape(size_t const& geometry_index, float typeInference)
+{
+    assert(m_data || !"internal error: null pointer");
+
+    ProxData::geometry_type& geometry
+        = m_data->m_narrow.get_geometry(geometry_index);
+
+    return geometry.m_signedDistanceMap.getSignedDistanceGrid();
+}
+
+const grid::Grid<double, double>&
+ProxEngine::get_sdf_shape(size_t const& geometry_index, double typeInference)
+{
+    assert(m_data || !"internal error: null pointer");
+
+    ProxData::geometry_type& geometry
+        = m_data->m_narrow.get_geometry(geometry_index);
+
+    throw std::runtime_error("Should never be able to reach here!");
+    //return geometry.m_signedDistanceMap.getSignedDistanceGrid();
+}
+
 void ProxEngine::get_tetramesh_shape(size_t const& geometry_index, size_t& N, size_t& K)
 {
     assert(m_data || !"internal error: null pointer");

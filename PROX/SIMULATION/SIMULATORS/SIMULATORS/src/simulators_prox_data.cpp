@@ -232,6 +232,7 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
     //grid::build_VF_from_tris_dedup_exact(tris, V, F);
     grid = grid::projectGridToSDF<T, T>(
         V, F, Eigen::Matrix<size_t, 3, 1>(64, 64, 64));
+    grid::extractIsosurfaceFromGrid<T, T>(grid);
     grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
         surface, surface_X, surface_Y, surface_Z);
     geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);

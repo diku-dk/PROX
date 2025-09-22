@@ -62,30 +62,60 @@ namespace rigid_body
         mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Y;
         mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Z;
 
-        if( engine->get_number_of_tetrameshes(gid) > 0)
+        if (engine->get_number_of_sdfs(gid) > 0)
         {
-          content::add_visual_mesh_of_tetrameshes( gid, engine, mesh, X, Y, Z );
+            Eigen::MatrixXd verts;
+            Eigen::MatrixXi faces;
+            content::add_visual_mesh_of_sdf<float>(gid, engine, verts, faces);
+            Geometry geometry;
+
+            geometry.m_gid = gid;
+            geometry.m_vbo = gl3::uploadEigenMeshToVBO<float>(verts, faces);
+            geometry.m_solid_vao = gl3::make_vao(geometry.m_vbo, solid_program,
+                                                 "position", "normal");
+            geometry.m_wire_vao = gl3::make_vao(geometry.m_vbo, wire_program,
+                                                "position", "normal");
+            geometry.m_shadow_vao
+                = gl3::make_vao(geometry.m_vbo, shadow_program, "position");
+
+            geometry_manager.add(geometry);
         }
         else
         {
-          content::add_visual_mesh_of_boxes( gid, engine, mesh, X, Y, Z );
-          content::add_visual_mesh_of_capsules( gid, engine, mesh, X, Y, Z );
-          content::add_visual_mesh_of_cones( gid, engine, mesh, X, Y, Z );
-          content::add_visual_mesh_of_convexes( gid, engine, mesh, X, Y, Z );
-          content::add_visual_mesh_of_cylinders( gid, engine, mesh, X, Y, Z );
-          content::add_visual_mesh_of_ellipsoids( gid, engine, mesh, X, Y, Z );
-          content::add_visual_mesh_of_spheres( gid, engine, mesh, X, Y, Z );
+
+            if (engine->get_number_of_tetrameshes(gid) > 0)
+            {
+                content::add_visual_mesh_of_tetrameshes(gid, engine, mesh, X, Y,
+                                                        Z);
+            }
+            else
+            {
+                content::add_visual_mesh_of_boxes(gid, engine, mesh, X, Y, Z);
+                content::add_visual_mesh_of_capsules(gid, engine, mesh, X, Y,
+                                                     Z);
+                content::add_visual_mesh_of_cones(gid, engine, mesh, X, Y, Z);
+                content::add_visual_mesh_of_convexes(gid, engine, mesh, X, Y,
+                                                     Z);
+                content::add_visual_mesh_of_cylinders(gid, engine, mesh, X, Y,
+                                                      Z);
+                content::add_visual_mesh_of_ellipsoids(gid, engine, mesh, X, Y,
+                                                       Z);
+                content::add_visual_mesh_of_spheres(gid, engine, mesh, X, Y, Z);
+            }
+
+            Geometry geometry;
+
+            geometry.m_gid = gid;
+            geometry.m_vbo = gl3::make_vbo(mesh, X, Y, Z);
+            geometry.m_solid_vao = gl3::make_vao(geometry.m_vbo, solid_program,
+                                                 "position", "normal");
+            geometry.m_wire_vao = gl3::make_vao(geometry.m_vbo, wire_program,
+                                                "position", "normal");
+            geometry.m_shadow_vao
+                = gl3::make_vao(geometry.m_vbo, shadow_program, "position");
+
+            geometry_manager.add(geometry);
         }
-
-        Geometry geometry;
-
-        geometry.m_gid       = gid;
-        geometry.m_vbo       = gl3::make_vbo(mesh, X, Y, Z);
-        geometry.m_solid_vao = gl3::make_vao(geometry.m_vbo, solid_program, "position", "normal");
-        geometry.m_wire_vao  = gl3::make_vao(geometry.m_vbo, wire_program, "position", "normal");
-        geometry.m_shadow_vao  = gl3::make_vao(geometry.m_vbo, shadow_program, "position");
-
-        geometry_manager.add( geometry );
       }
 
       std::vector<size_t> rids;

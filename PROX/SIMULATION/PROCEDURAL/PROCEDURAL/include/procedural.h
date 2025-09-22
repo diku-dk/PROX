@@ -11,6 +11,7 @@
 #include <procedural_make_point_in_crack.h>
 #include <procedural_make_cliff_edge.h>
 #include <procedural_make_internal_edge.h>
+#include <procedural_make_ccd_sdf_scenes.h>
 
 #include <eigenhelperall.h>
 
@@ -166,6 +167,22 @@ void make_cliff_edge(content::API* engine, const EigenVector3<T>& position, cons
 template <typename T>
 void make_internal_edge(content::API* engine, const EigenVector3<T>& position, const EigenQuaternion<T>& orientation,
                         const T& scene_size, MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_sdf_thin_object_drop(content::API* engine,
+                               const EigenVector3<T>& position,
+                               const EigenQuaternion<T>& orientation,
+                               const T& scene_size,
+                               MaterialInfo<T> const& mat_info,
+                               mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_sdf_thin_thin_object_drop(content::API* engine,
+                                    const EigenVector3<T>& position,
+                                    const EigenQuaternion<T>& orientation,
+                                    const T& scene_size,
+                                    MaterialInfo<T> const& mat_info,
+                                    mesh_array::TetGenSettings tetset);
 
 template <typename T> MaterialInfo<T> create_material_info(content::API* engine);
 

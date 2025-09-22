@@ -15,6 +15,13 @@ template <typename T> struct GridTriangle
     Eigen::Matrix<T, 3, 1> v1;
     Eigen::Matrix<T, 3, 1> v2;
 };
+
+template <typename T> struct GridIsosurface
+{
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+    bool isInitialized = false;
+};
 template < typename D, typename T>
 class Grid
 {
@@ -25,6 +32,7 @@ public:
     Eigen::Matrix<T, 3, 1> m_dir;
     Eigen::Matrix<size_t, 3, 1> m_nodes;
     std::vector<GridTriangle<T>> m_temporaryGridStructure;
+    GridIsosurface<T> m_gridIsosurface;
 
     //vvv The data values stored at the grid nodes.
     //Internal data stored as Eigen::Matrix (rows = total nodes, cols = 1)
@@ -32,12 +40,14 @@ public:
 
 public:
     using value_type = D;
+
     Grid()
-        : m_min(T(0),T(0),T(0))
-        , m_max(T(0),T(0),T(0))
-        , m_dir(T(0),T(0),T(0))
-        , m_nodes(0u,0u,0u)
+        : m_min(T(0), T(0), T(0))
+        , m_max(T(0), T(0), T(0))
+        , m_dir(T(0), T(0), T(0))
+        , m_nodes(0u, 0u, 0u)
         , m_data()
+        , m_gridIsosurface()
     {}
 
     Grid(Grid<D,T> const & G) = default;

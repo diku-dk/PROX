@@ -1,6 +1,7 @@
 #ifndef SIMULATORS_PROX_H
 #define SIMULATORS_PROX_H
 
+#include "grid_grid.h"
 #include <content_api.h>
 
 #include <vector>
@@ -553,10 +554,14 @@ namespace simulators
 
     size_t get_number_of_tetrameshes( size_t const & geometry_index );
 
-    void get_tetramesh_shape(  size_t const & geometry_idx
-                             , size_t       & N
-                             , size_t       & K
-                             );
+    size_t get_number_of_sdfs(size_t const& geometry_index);
+    const grid::Grid<float, float>& get_sdf_shape(size_t const& geometry_index,
+                                                  float typeInference);
+
+    const grid::Grid<double, double>&
+    get_sdf_shape(size_t const& geometry_index, double typeInference);
+
+    void get_tetramesh_shape(size_t const& geometry_idx, size_t& N, size_t& K);
 
     void get_tetramesh_shape(  size_t const & geometry_idx
                              , size_t * vertices

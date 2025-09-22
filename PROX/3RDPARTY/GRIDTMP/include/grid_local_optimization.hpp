@@ -137,7 +137,7 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
     T phi_centroid = grid::value_at_2<D, T>(sdf, centroid);
     if (phi_centroid >= T(0) && (phi_centroid * phi_centroid) >= max_sq)
     {
-        return false;
+        //return false;
     }
 
     //Better initialization: evaluate at vertices and choose the one with smallest SDF value

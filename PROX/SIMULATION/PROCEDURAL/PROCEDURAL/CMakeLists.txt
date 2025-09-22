@@ -22,6 +22,7 @@ ADD_LIBRARY(
   procedural
   ${PROCEDURAL_SOURCES}
   ${PROCEDURAL_HEADERS}
+  include/procedural_make_ccd_sdf_scenes.h
 )
 
 TARGET_LINK_LIBRARIES(

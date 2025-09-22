@@ -48,6 +48,7 @@ public:
     sphere_container m_spheres;
     convex_container m_hulls;
     tetramesh_type m_tetramesh;
+
     signedDistanceMapType m_signedDistanceMap;
 
     T m_radius;

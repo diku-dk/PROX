@@ -3,6 +3,7 @@
 
 #include "grid_node_position.h"
 #include "igl/signed_distance.h"
+#include <igl/marching_cubes.h>
 #include "types/geometry_triangle.h"
 #include <filesystem>
 #include <grid_grid.h>
@@ -113,52 +114,56 @@ template <typename D, typename T>
 Grid<D, T> projectGridToSDF(Eigen::MatrixXd verts, Eigen::MatrixXi indices,
                             Eigen::Matrix<size_t, 3, 1> res)
 {
-//    rotate_Yup_to_Zup<T>(verts);
-rot_Xup_to_Zup<T>(verts);
-//    rotate_Zup_to_Yup<T>(verts);
-//rotateY<T>(verts, -90.0);
-//    rot_Xup_to_Zup_and_rotX<T>(verts);
-Eigen::RowVector3d minv = verts.colwise().minCoeff();
-Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
-Eigen::RowVector3d diag = maxv - minv;
-double longest = diag.maxCoeff();
-    //10% padding to our bounding box!
-double pad = 0.025 * longest;
-Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
-                            (T)(minv.z() - pad));
-Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
-                            (T)(maxv.z() + pad));
+    //    rotate_Yup_to_Zup<T>(verts);
 
-    //create grid (res^3 nodes)
-Eigen::Matrix<size_t, 3, 1> nodes((size_t)res.x(), (size_t)res.y(),
-                                  (size_t)res.z());
-Grid<D, T> G;
-G.create(gmin, gmax, nodes);
-std::cerr << "GMIN " << gmin << "\n";
-std::cerr << "GMAX " << gmax << "\n";
-const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
-std::cout << "Created grid: " << G.I() << " x " << G.J() << " x " << G.K()
-          << "  (total nodes = " << total << ")\n";
+    //uncomment this?
+    //rot_Xup_to_Zup<T>(verts);
 
-//Build the query points matrix P (total x 3) in the same linear order used by grid
-Eigen::MatrixXd P((Eigen::Index)total, 3);
-size_t idx_lin = 0;
-for (size_t k = 0; k < G.K(); ++k)
-{
-    for (size_t j = 0; j < G.J(); ++j)
+    //    rotate_Zup_to_Yup<T>(verts);
+    //rotateY<T>(verts, -90.0);
+    //    rot_Xup_to_Zup_and_rotX<T>(verts);
+    Eigen::RowVector3d minv = verts.colwise().minCoeff();
+    Eigen::RowVector3d maxv = verts.colwise().maxCoeff();
+    Eigen::RowVector3d diag = maxv - minv;
+    double longest = diag.maxCoeff();
+        //10% padding to our bounding box!
+    //Note this is REQUIRED to get correct gradients!
+    double pad = 0.025 * longest;
+    Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
+                                (T)(minv.z() - pad));
+    Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
+                                (T)(maxv.z() + pad));
+
+        //create grid (res^3 nodes)
+    Eigen::Matrix<size_t, 3, 1> nodes((size_t)res.x(), (size_t)res.y(),
+                                      (size_t)res.z());
+    Grid<D, T> G;
+    G.create(gmin, gmax, nodes);
+    std::cerr << "GMIN " << gmin << "\n";
+    std::cerr << "GMAX " << gmax << "\n";
+    const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
+    std::cout << "Created grid: " << G.I() << " x " << G.J() << " x " << G.K()
+              << "  (total nodes = " << total << ")\n";
+
+    //Build the query points matrix P (total x 3) in the same linear order used by grid
+    Eigen::MatrixXd P((Eigen::Index)total, 3);
+    size_t idx_lin = 0;
+    for (size_t k = 0; k < G.K(); ++k)
     {
-        for (size_t i = 0; i < G.I(); ++i)
+        for (size_t j = 0; j < G.J(); ++j)
         {
-            Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
-            Eigen::Matrix<T, 3, 1> p;
-            grid::node_position(G, idx, p);
-            P((Eigen::Index)idx_lin, 0) = p.x();
-            P((Eigen::Index)idx_lin, 1) = p.y();
-            P((Eigen::Index)idx_lin, 2) = p.z();
-            ++idx_lin;
+            for (size_t i = 0; i < G.I(); ++i)
+            {
+                Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
+                Eigen::Matrix<T, 3, 1> p;
+                grid::node_position(G, idx, p);
+                P((Eigen::Index)idx_lin, 0) = p.x();
+                P((Eigen::Index)idx_lin, 1) = p.y();
+                P((Eigen::Index)idx_lin, 2) = p.z();
+                ++idx_lin;
+            }
         }
     }
-}
 
     std::cout << "Computing signed distances (libigl::signed_distance)...\n";
     Eigen::VectorXd S; // signed distances
@@ -174,6 +179,57 @@ for (size_t k = 0; k < G.K(); ++k)
         G.data()[s] = static_cast<D>(S((Eigen::Index)s));
     }
     return G;
+}
+
+template <typename D, typename T>
+void extractIsosurfaceFromGrid(Grid<D, T>& G, double isovalue = 0.0)
+{
+    //GridIsosurface<T> isosurface;
+    // total number of grid vertices (same as in projectGridToSDF)
+    const size_t total = G.I() * G.J() * G.K();
+
+    // Prepare marching_cubes inputs (same ordering: for k, for j, for i -> idx_lin++)
+    Eigen::VectorXd values((Eigen::Index)total);
+    Eigen::MatrixXd points((Eigen::Index)total, 3);
+
+    size_t idx_lin = 0;
+    for (size_t k = 0; k < G.K(); ++k)
+    {
+        for (size_t j = 0; j < G.J(); ++j)
+        {
+            for (size_t i = 0; i < G.I(); ++i)
+            {
+                Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
+                Eigen::Matrix<T, 3, 1> p;
+                grid::node_position(
+                    G, idx, p); // same call you used in projectGridToSDF
+
+                points((Eigen::Index)idx_lin, 0) = p.x();
+                points((Eigen::Index)idx_lin, 1) = p.y();
+                points((Eigen::Index)idx_lin, 2) = p.z();
+
+                // G.data() was populated with the signed distance in projectGridToSDF
+                // marching_cubes finds the zero level, so subtract isovalue now if needed
+                values((Eigen::Index)idx_lin)
+                    = static_cast<double>(G.data()[idx_lin]) - isovalue;
+
+                ++idx_lin;
+            }
+        }
+    }
+
+    // Call libigl marching_cubes
+    // signature: igl::marching_cubes(values, points, nx, ny, nz, V, F);
+    igl::marching_cubes(values, points, static_cast<unsigned>(G.I()),
+                        static_cast<unsigned>(G.J()),
+                        static_cast<unsigned>(G.K()), isovalue,
+                        G.m_gridIsosurface.V, G.m_gridIsosurface.F);
+
+    G.m_gridIsosurface.isInitialized = true;
+
+    // compute per-vertex normals if we need them
+    // Eigen::MatrixXd N;
+    // igl::per_vertex_normals(V, F, N);
 }
 
 template <typename T>

@@ -314,6 +314,17 @@ namespace content
     }
   }
 
+  template <typename T>
+  inline void add_visual_mesh_of_sdf(size_t const& gid, content::API* engine,
+                                     Eigen::MatrixXd& verts,
+                                     Eigen::MatrixXi& faces)
+
+  {
+      grid::Grid<T, T> grid = engine->get_sdf_shape(gid, 0.0f);
+      verts = grid.m_gridIsosurface.V;
+      faces = grid.m_gridIsosurface.F;
+  }
+
   inline void add_visual_mesh_of_tetrameshes(
                                              size_t const & gid
                                              , content::API * engine
@@ -323,47 +334,47 @@ namespace content
                                              , mesh_array::VertexAttribute<float, mesh_array::T3Mesh> & Z
                                              )
   {
-    for(size_t j=0u; j < engine->get_number_of_tetrameshes(gid) ; ++j)
-    {
+
+      for (size_t j = 0u; j < engine->get_number_of_tetrameshes(gid); ++j)
+      {
       // Get raw data from engine
-      size_t N = 0u; ///< Number of vertices
-      size_t K = 0u; ///< Number of tetrahedra
+          size_t N = 0u; ///< Number of vertices
+          size_t K = 0u; ///< Number of tetrahedra
 
-      engine->get_tetramesh_shape(  gid, N, K);
+          engine->get_tetramesh_shape(gid, N, K);
 
-      if(N==0 || K==0)  // Test if empty mesh and skip if this is the case
-        continue;
+          if (N == 0
+              || K == 0)  // Test if empty mesh and skip if this is the case
+              continue;
 
-      std::vector<size_t> vertices(N);
-      std::vector<size_t> tetrahedra(K*4);
-      std::vector<float>  coordinates(3*N);
+          std::vector<size_t> vertices(N);
+          std::vector<size_t> tetrahedra(K * 4);
+          std::vector<float> coordinates(3 * N);
 
-      engine->get_tetramesh_shape(  gid
-                                  , &vertices[0]
-                                  , &tetrahedra[0]
-                                  , &coordinates[0]
-                                  );
-
+          engine->get_tetramesh_shape(gid, &vertices[0], &tetrahedra[0],
+                                      &coordinates[0]);
 
       // Convert from raw data to a T4Mesh
-      mesh_array::T4Mesh tetmesh;
-      mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetX;
-      mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetY;
-      mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetZ;
+          mesh_array::T4Mesh tetmesh;
+          mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetX;
+          mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetY;
+          mesh_array::VertexAttribute<float, mesh_array::T4Mesh> tetZ;
 
-      mesh_array::convert(N, K, &vertices[0], &tetrahedra[0], &coordinates[0], tetmesh, tetX, tetY, tetZ);
+          mesh_array::convert(N, K, &vertices[0], &tetrahedra[0],
+                              &coordinates[0], tetmesh, tetX, tetY, tetZ);
 
       // Extract T3Mesh surface of T4Mesh
-      mesh_array::T3Mesh submesh;
-      mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subX;
-      mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
-      mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
+          mesh_array::T3Mesh submesh;
+          mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subX;
+          mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subY;
+          mesh_array::VertexAttribute<float, mesh_array::T3Mesh> subZ;
 
-      mesh_array::make_t3mesh( tetmesh, tetX, tetY, tetZ, submesh, subX, subY,subZ );
+          mesh_array::make_t3mesh(tetmesh, tetX, tetY, tetZ, submesh, subX,
+                                  subY, subZ);
 
-      mesh_array::concatenation<float>( submesh, subX, subY, subZ, mesh, X, Y, Z );
-    }
-
+          mesh_array::concatenation<float>(submesh, subX, subY, subZ, mesh, X,
+                                           Y, Z);
+      }
   }
 
 }//namespace content

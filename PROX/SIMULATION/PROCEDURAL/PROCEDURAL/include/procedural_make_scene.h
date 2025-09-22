@@ -679,6 +679,41 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
                                            ,
                                            mat_info);
     }
+    if (scene.compare("sdf_thin_object_drop") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_sdf_thin_object_drop<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+    if (scene.compare("sdf_thin_thin_object_drop") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_sdf_thin_thin_object_drop<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
     if (scene.compare("sliding_point") == 0)
     {
         auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));

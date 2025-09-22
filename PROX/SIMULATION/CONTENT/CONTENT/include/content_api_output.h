@@ -2,6 +2,7 @@
 #define CONTENT_API_OUTPUT_H
 
 #include <string>
+#include <grid_grid.h>
 
 namespace content
 {
@@ -605,7 +606,13 @@ namespace content
        *                          geometry only can have one tetramesh shape.
        */
       virtual size_t get_number_of_tetrameshes( size_t const & geometry_index ) = 0;
-
+      virtual size_t get_number_of_sdfs(size_t const& geometry_index) = 0;
+      virtual const grid::Grid<float, float>&
+      get_sdf_shape(size_t const& geometry_index, float typeInference)
+          = 0;
+      virtual const grid::Grid<double, double>&
+      get_sdf_shape(size_t const& geometry_index, double typeInference)
+          = 0;
       /**
        * Get Tetramesh Size Parameters.
        * Observe that a shape can only have one tetramesh and tetrameshes live in body space by definition

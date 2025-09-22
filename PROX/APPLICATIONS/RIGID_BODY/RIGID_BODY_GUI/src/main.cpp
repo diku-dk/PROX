@@ -10,7 +10,10 @@
 int main(int argc, char* argv[])
 {
     int fullscreen = -1;
-    for (int i = 0; i < argc && fullscreen != 0; ++i) { fullscreen = strcmp(argv[i], "--fullscreen"); }
+    for (int i = 0; i < argc && fullscreen != 0; ++i)
+    {
+        fullscreen = strcmp(argv[i], "--fullscreen");
+    }
 
     QApplication app(argc, argv);
 

@@ -927,13 +927,23 @@ namespace rigid_body
           case 'o': load_config_file(m_working_directory + "pile.cfg");               break;
           case 'p': load_config_file(m_working_directory + "slide.cfg");              break;
           case 'q': load_config_file(m_working_directory + "dropping.cfg");           break;
-          case 'r': load_config_file(m_working_directory + "heavy_light.cfg");        break;
+          case 'r':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "sdf_thin_object_drop.cfg");
+              break;
+          case 's':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "sdf_thin_thin_object_drop.cfg");
+              break;
+          case 't':
+              load_config_file(m_working_directory + "sliding_point.cfg");
+              break;
+              /*case 'r': load_config_file(m_working_directory + "heavy_light.cfg");        break;
           case 's': load_config_file(m_working_directory + "wall_pins.cfg");          break;
-          case 't': load_config_file(m_working_directory + "sliding_point.cfg");      break;
           case 'u': load_config_file(m_working_directory + "two_points.cfg");         break;
           case 'v': load_config_file(m_working_directory + "point_in_crack.cfg");     break;
           case 'x': load_config_file(m_working_directory + "cliff_edge.cfg");        break;
-          case 'y': load_config_file(m_working_directory + "internal_edge.cfg");     break;
+          case 'y': load_config_file(m_working_directory + "internal_edge.cfg");     break;*/
 
           case 'W': m_draw_wireframe       = !m_draw_wireframe;                         break;
           case 'C': m_draw_contacts        = !m_draw_contacts;                          break;

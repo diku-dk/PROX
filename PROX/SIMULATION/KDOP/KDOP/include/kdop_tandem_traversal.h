@@ -462,7 +462,7 @@ namespace kdop
           sdf_aabb = transformAABB(sdf_aabb, transformRotation,
                                    transformTranslation);
 
-          if (!overlap_dop_aabb(node_A.m_volume, sdf_aabb, directions)) return;
+          //if (!overlap_dop_aabb(node_A.m_volume, sdf_aabb, directions)) return;
           for (size_t a = node_A.m_start; a <= node_A.m_end; ++a)
           {
               traversal_sdf<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A,
@@ -633,7 +633,7 @@ namespace kdop
       // Check root-level overlap
       if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
       {
-          return;
+          //return;
       }
 
       // Process all branches

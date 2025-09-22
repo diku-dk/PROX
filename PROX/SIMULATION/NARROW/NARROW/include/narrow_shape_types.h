@@ -134,9 +134,9 @@ namespace narrow
               if (m_grid.m_nodes.x() == 0 && m_grid.m_nodes.y() == 0
                   && m_grid.m_nodes.z() == 0)
               {
-                  return true;
+                  return false;
               }
-              return false;
+              return true;
           }
 
           void clear()

@@ -1,6 +1,7 @@
 #ifndef GL3_VBO_H
 #define GL3_VBO_H
 
+#include "igl/per_vertex_normals.h"
 #include <gl3.h>
 #include <gl3_check_errors.h>
 
@@ -115,13 +116,10 @@ namespace gl3
       gl3::check_errors("VBO::clear() finished");
     }
 
-    template<typename VBO_TYPE_TAG>
-    void create(
-                std::vector<unsigned int> const & indices
-                , std::vector<Vertex> const & vertices
-                , bool const is_triangles
-                , VBO_TYPE_TAG const & tag
-                )
+    template <typename VBO_TYPE_TAG>
+    void create(std::vector<unsigned int> const& indices,
+                std::vector<Vertex> const& vertices, bool const is_triangles,
+                VBO_TYPE_TAG const& tag)
     {
       gl3::check_errors("VBO::create() invoked");
 
@@ -198,18 +196,63 @@ namespace gl3
                      BUFFER_OFFSET(0)                           // Element array buffer offset
                      );
     }
-
   };
 
+  template <typename T>
+  inline VBO uploadEigenMeshToVBO(
+      const Eigen::MatrixXd& V, // #V x 3 (positions)
+      const Eigen::MatrixXi& F // #F x 3 (triangles)
+      //Eigen::MatrixXd N, // #V x 3 (normals) - can be empty or wrong size
+  )
+  {
+
+      Eigen::MatrixXd N;
+      // If normals not provided or wrong size, compute them
+      if (N.rows() != V.rows())
+      {
+          Eigen::MatrixXd computedN;
+          igl::per_vertex_normals(V, F, computedN);
+          N = computedN;
+      }
+
+      // Build vertices vector
+      std::vector<VBO::Vertex> vertices;
+      vertices.reserve(static_cast<size_t>(V.rows()));
+      for (Eigen::Index i = 0; i < V.rows(); ++i)
+      {
+          VBO::Vertex vert;
+          vert.m_x = static_cast<float>(V(i, 0));
+          vert.m_y = static_cast<float>(V(i, 1));
+          vert.m_z = static_cast<float>(V(i, 2));
+          vert.m_nx = static_cast<float>(N(i, 0));
+          vert.m_ny = static_cast<float>(N(i, 1));
+          vert.m_nz = static_cast<float>(N(i, 2));
+          vertices.push_back(vert);
+      }
+
+      std::vector<unsigned int> indices;
+      indices.reserve(static_cast<size_t>(F.rows()) * 3u);
+      for (Eigen::Index f = 0; f < F.rows(); ++f)
+      {
+          indices.push_back(static_cast<unsigned int>(F(f, 0)));
+          indices.push_back(static_cast<unsigned int>(F(f, 1)));
+          indices.push_back(static_cast<unsigned int>(F(f, 2)));
+      }
+
+      VBO vbo;
+
+      vbo.create(indices, vertices, true, gl3::STATIC_VBO());
+
+      return vbo;
+  }
 
   template <typename T, typename VBO_TYPE_TAG>
-  inline VBO make_vbo(
-                      mesh_array::T3Mesh const & mesh
-                      , mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const & X
-                      , mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const & Y
-                      , mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const & Z
-                      , VBO_TYPE_TAG const & tag
-                      )
+  inline VBO
+  make_vbo(mesh_array::T3Mesh const& mesh,
+           mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& X,
+           mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& Y,
+           mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& Z,
+           VBO_TYPE_TAG const& tag)
   {
     typedef typename VBO::Vertex vertex_type;
     using std::sqrt;
@@ -322,14 +365,12 @@ namespace gl3
     vbo.update( vertices );
   }
 
-
   template <typename T>
-  inline VBO make_vbo(
-                      mesh_array::T3Mesh const & mesh
-                      , mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const & X
-                      , mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const & Y
-                      , mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const & Z
-                      )
+  inline VBO
+  make_vbo(mesh_array::T3Mesh const& mesh,
+           mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& X,
+           mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& Y,
+           mesh_array::VertexAttribute<T, mesh_array::T3Mesh> const& Z)
   {
     return make_vbo( mesh, X, Y, Z, STATIC_VBO() );
   }
