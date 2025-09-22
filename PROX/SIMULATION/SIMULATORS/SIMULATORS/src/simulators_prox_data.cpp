@@ -236,7 +236,7 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
     grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
         surface, surface_X, surface_Y, surface_Z);
     geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
-    grid::writeGridToFiles<T, T>(grid, 1);
+    //grid::writeGridToFiles<T, T>(grid, 1);
 /*    grid::Grid<T, T> grid;
     grid.create() geometry.m_signedDistanceMap =*/
 //    geometry.add_shape()

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<physics>
+    <params>
+        <envelope value="0.010000" />
+        <timestep value="0.010000" />
+    </params>
+    <materials>
+        <properties />
+    </materials>
+    <configuration>
+        <geometries />
+        <forces>
+            <gravity x="0.000000" y="1.000000" z="0.000000" acc="9.810000" />
+            <damping linear="0.010000" angular="0.010000" />
+        </forces>
+        <scripted_motions />
+        <objects />
+    </configuration>
+    <channels />
+</physics>
