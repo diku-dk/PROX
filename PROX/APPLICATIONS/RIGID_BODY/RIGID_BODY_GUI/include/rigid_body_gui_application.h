@@ -924,9 +924,14 @@ namespace rigid_body
           case 'l': load_config_file(m_working_directory + "sphere_cube.cfg");        break;
           case 'm': load_config_file(m_working_directory + "packing.cfg");            break;
           case 'n': load_config_file(m_working_directory + "funnel.cfg");             break;
-          case 'o': load_config_file(m_working_directory + "pile.cfg");               break;
-          case 'p': load_config_file(m_working_directory + "slide.cfg");              break;
-          case 'q': load_config_file(m_working_directory + "dropping.cfg");           break;
+          case 'o': load_config_file(m_working_directory + "slide.cfg"); break;
+          case 'p':
+              load_config_file(m_working_directory + "dropping.cfg");
+              break;
+          case 'q':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_large_large_fast.cfg");
+              break;
           case 'r':
               load_config_file(m_working_directory + "ccd_sdf_tests/"
                                + "sdf_thin_object_drop.cfg");
@@ -937,6 +942,30 @@ namespace rigid_body
               break;
           case 't':
               load_config_file(m_working_directory + "sliding_point.cfg");
+              break;
+          case 'u':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_thin_thin_object_shoot.cfg");
+              break;
+          case 'v':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_cannonball_fast_shoot.cfg");
+              break;
+          case 'w':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_drop_fast_thin.cfg");
+              break;
+          case 'x':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_cones_fast_towards_eachother.cfg");
+              break;
+          case 'y':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_multiple_bounces_in_one_iteration.cfg");
+              break;
+          case 'z':
+              load_config_file(m_working_directory + "ccd_sdf_tests/"
+                               + "ccd_small_space.cfg");
               break;
               /*case 'r': load_config_file(m_working_directory + "heavy_light.cfg");        break;
           case 's': load_config_file(m_working_directory + "wall_pins.cfg");          break;

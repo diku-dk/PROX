@@ -62,7 +62,9 @@ namespace rigid_body
         mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Y;
         mesh_array::VertexAttribute<float, mesh_array::T3Mesh> Z;
 
-        if (engine->get_number_of_sdfs(gid) > 0)
+        if (engine->get_number_of_sdfs(gid) > 0
+            && util::to_value<bool>(
+                params.get_value("show_sdf_representation", "false")))
         {
             Eigen::MatrixXd verts;
             Eigen::MatrixXi faces;

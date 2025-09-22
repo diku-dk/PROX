@@ -714,6 +714,131 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             EigenQuaternion<T>::Identity(), scene_size, mat_info);
     }
 
+    if (scene.compare("ccd_thin_thin_object_shoot") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_thin_thin_object_shoot<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
+    if (scene.compare("ccd_cannonball_fast_shoot") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_cannonball_fast_shoot<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
+    if (scene.compare("ccd_drop_fast_thin") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_drop_fast_thin<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
+    if (scene.compare("ccd_cones_fast_towards_eachother") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_cones_fast_towards_eachother<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
+    if (scene.compare("ccd_multiple_bounces_in_one_iteration") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_multiple_bounces_in_one_iteration<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
+    if (scene.compare("ccd_small_space") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_small_space<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+    if (scene.compare("ccd_large_large_fast") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+
+        procedural::make_ccd_large_large_fast<T>(
+            engine, EigenVector3<T>(0.0, 0.0, 0.0),
+            EigenQuaternion<T>::Identity(), scene_size, mat_info);
+    }
+
     if (scene.compare("sliding_point") == 0)
     {
         auto const scene_size = util::to_value<float>(params.get_value("procedural_param_1", "10.0"));

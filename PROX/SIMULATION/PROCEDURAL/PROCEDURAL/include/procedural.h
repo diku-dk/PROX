@@ -184,6 +184,56 @@ void make_sdf_thin_thin_object_drop(content::API* engine,
                                     MaterialInfo<T> const& mat_info,
                                     mesh_array::TetGenSettings tetset);
 
+template <typename T>
+void make_ccd_thin_thin_object_shoot(content::API* engine,
+                                     const EigenVector3<T>& position,
+                                     const EigenQuaternion<T>& orientation,
+                                     const T& scene_size,
+                                     MaterialInfo<T> const& mat_info,
+                                     mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_cannonball_fast_shoot(content::API* engine,
+                                    const EigenVector3<T>& position,
+                                    const EigenQuaternion<T>& orientation,
+                                    const T& scene_size,
+                                    MaterialInfo<T> const& mat_info,
+                                    mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_drop_fast_thin(content::API* engine,
+                             const EigenVector3<T>& position,
+                             const EigenQuaternion<T>& orientation,
+                             const T& scene_size,
+                             MaterialInfo<T> const& mat_info,
+                             mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_cones_fast_towards_eachother(
+    content::API* engine, const EigenVector3<T>& position,
+    const EigenQuaternion<T>& orientation, const T& scene_size,
+    MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_multiple_bounces_in_one_iteration(
+    content::API* engine, const EigenVector3<T>& position,
+    const EigenQuaternion<T>& orientation, const T& scene_size,
+    MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_small_space(content::API* engine, const EigenVector3<T>& position,
+                          const EigenQuaternion<T>& orientation,
+                          const T& scene_size, MaterialInfo<T> const& mat_info,
+                          mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_large_large_fast(content::API* engine,
+                               const EigenVector3<T>& position,
+                               const EigenQuaternion<T>& orientation,
+                               const T& scene_size,
+                               MaterialInfo<T> const& mat_info,
+                               mesh_array::TetGenSettings tetset);
+
 template <typename T> MaterialInfo<T> create_material_info(content::API* engine);
 
 } //namespace procedural
