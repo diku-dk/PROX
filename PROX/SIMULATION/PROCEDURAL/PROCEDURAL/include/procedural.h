@@ -234,7 +234,98 @@ void make_ccd_large_large_fast(content::API* engine,
                                MaterialInfo<T> const& mat_info,
                                mesh_array::TetGenSettings tetset);
 
-template <typename T> MaterialInfo<T> create_material_info(content::API* engine);
+//======================================
+//|             PORTFOLIO              |
+//======================================
+template <typename T>
+void make_ccd_bunny_bunny(content::API* engine, const EigenVector3<T>& position,
+                          const EigenQuaternion<T>& orientation,
+                          const T& scene_size, MaterialInfo<T> const& mat_info,
+                          mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_plane_dropped_on_spikes(content::API* engine,
+                                      const EigenVector3<T>& position,
+                                      const EigenQuaternion<T>& orientation,
+                                      const T& scene_size,
+                                      MaterialInfo<T> const& mat_info,
+                                      mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_spinning_object_shot(content::API* engine,
+                                   const EigenVector3<T>& position,
+                                   const EigenQuaternion<T>& orientation,
+                                   const T& scene_size,
+                                   MaterialInfo<T> const& mat_info,
+                                   mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_tight_space_drop(content::API* engine,
+                               const EigenVector3<T>& position,
+                               const EigenQuaternion<T>& orientation,
+                               const T& scene_size,
+                               MaterialInfo<T> const& mat_info,
+                               mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_toi_negative(content::API* engine,
+                           const EigenVector3<T>& position,
+                           const EigenQuaternion<T>& orientation,
+                           const T& scene_size, MaterialInfo<T> const& mat_info,
+                           mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_toi_zero_towards_wall(content::API* engine,
+                                    const EigenVector3<T>& position,
+                                    const EigenQuaternion<T>& orientation,
+                                    const T& scene_size,
+                                    MaterialInfo<T> const& mat_info,
+                                    mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_toi_zero_towards_wall_very_close(
+    content::API* engine, const EigenVector3<T>& position,
+    const EigenQuaternion<T>& orientation, const T& scene_size,
+    MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_two_objects_shot_fast_eachother(
+    content::API* engine, const EigenVector3<T>& position,
+    const EigenQuaternion<T>& orientation, const T& scene_size,
+    MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_objects_large_spin(content::API* engine,
+                                 const EigenVector3<T>& position,
+                                 const EigenQuaternion<T>& orientation,
+                                 const T& scene_size,
+                                 MaterialInfo<T> const& mat_info,
+                                 mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_sphere_through_torus(content::API* engine,
+                                   const EigenVector3<T>& position,
+                                   const EigenQuaternion<T>& orientation,
+                                   const T& scene_size,
+                                   MaterialInfo<T> const& mat_info,
+                                   mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_two_fast_spinning_objects_shot_fast_eachother(
+    content::API* engine, const EigenVector3<T>& position,
+    const EigenQuaternion<T>& orientation, const T& scene_size,
+    MaterialInfo<T> const& mat_info, mesh_array::TetGenSettings tetset);
+
+template <typename T>
+void make_ccd_very_large_triangle_pyramid(content::API* engine,
+                                          const EigenVector3<T>& position,
+                                          const EigenQuaternion<T>& orientation,
+                                          const T& scene_size,
+                                          MaterialInfo<T> const& mat_info,
+                                          mesh_array::TetGenSettings tetset);
+
+template <typename T>
+MaterialInfo<T> create_material_info(content::API* engine);
 
 } //namespace procedural
 

@@ -1,6 +1,7 @@
 #ifndef CONTENT_API_INPUT_H
 #define CONTENT_API_INPUT_H
 
+#include "grid_grid.h"
 #include <string>
 
 namespace content
@@ -686,7 +687,14 @@ namespace content
                                   , float const * coordinates
                                   ) = 0;
 
+    //Kind of ugly...
+    virtual void set_geometry_type(const size_t geometryIndex,
+                                   grid::Grid<float, float> grid)
+        = 0;
 
+    virtual void set_geometry_type(const size_t geometryIndex,
+                                   grid::Grid<double, double> grid)
+        = 0;
 
     /**
      * Connect external forces to a rigid body.

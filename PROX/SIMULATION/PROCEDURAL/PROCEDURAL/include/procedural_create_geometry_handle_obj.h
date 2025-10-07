@@ -1,6 +1,7 @@
 #ifndef PROCEDURAL_CREATE_GEOMETRY_HANDLE_OBJ_H
 #define PROCEDURAL_CREATE_GEOMETRY_HANDLE_OBJ_H
 
+#include "grid_helpers.h"
 #include <content.h>
 
 #include <procedural_factory_types.h>
@@ -84,6 +85,21 @@ create_geometry_handle_obj(content::API* engine, std::string const& rel_file_nam
     }
 
     engine->set_tetramesh_shape(gid, N, K, &verts[0], &tets[0], &coords[0]);
+
+    grid::Grid<T, T> grid;
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+
+    grid::build_VF_from_T3Mesh(data.m_mesh, data.m_X, data.m_Y, data.m_Z, V, F);
+    //grid::build_VF_from_tris_dedup_exact(tris, V, F);
+    grid = grid::projectGridToSDF<T, T>(
+        V, F, Eigen::Matrix<size_t, 3, 1>(64, 64, 64));
+    grid::extractIsosurfaceFromGrid<T, T>(grid);
+    grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
+        data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    //ProxData::geometry_type& geometry = engine->get_geometry_type(gid);
+    //geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
+    engine->set_geometry_type(gid, grid);
 
     return GeometryHandleEigen<T>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz,
                                   EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z),
@@ -192,6 +208,22 @@ create_geometry_handle_obj(content::API* engine, std::string const& rel_file_nam
       }
 
       engine->set_tetramesh_shape(gid, N, K, &verts[0], &tets[0], &coords[0]);
+
+      grid::Grid<T, T> grid;
+      Eigen::MatrixXd V;
+      Eigen::MatrixXi F;
+
+      grid::build_VF_from_T3Mesh(data.m_mesh, data.m_X, data.m_Y, data.m_Z, V,
+                                 F);
+      //grid::build_VF_from_tris_dedup_exact(tris, V, F);
+      grid = grid::projectGridToSDF<T, T>(
+          V, F, Eigen::Matrix<size_t, 3, 1>(64, 64, 64));
+      grid::extractIsosurfaceFromGrid<T, T>(grid);
+      grid.m_temporaryGridStructure = grid::build_triangle_list_from_T3Mesh(
+          data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+      //ProxData::geometry_type& geometry = engine->get_geometry_type(gid);
+      //geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
+      engine->set_geometry_type(gid, grid);
 
       return GeometryHandleEigen<T>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz,
                                     EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z),

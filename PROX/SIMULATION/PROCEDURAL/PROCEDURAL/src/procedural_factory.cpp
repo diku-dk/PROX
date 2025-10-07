@@ -27,7 +27,8 @@ GeometryHandleEigen<T> create_geometry_handle_convex(content::API* engine, std::
     detail::MeshData<T> data;
 
     //fix vertex sequence
-    mesh_array::make_convex<T>(vertices, data.m_mesh, data.m_X, data.m_Y, data.m_Z);
+    mesh_array::make_convex<T>(vertices, data.m_mesh, data.m_X, data.m_Y,
+                               data.m_Z);
 
     mass::Properties<T> props_mf = mass::compute_mesh<T>(1, data.m_mesh.triangle_size(), &data);
     mass::Properties<T> props_bf = mass::translate_to_body_frame(props_mf);
@@ -289,7 +290,6 @@ GeometryHandleEigen<T> create_geometry_handle_pillar_segment(content::API* engin
         tets[4 * i + 2] = t.k();
         tets[4 * i + 3] = t.m();
     }
-
     engine->set_tetramesh_shape(gid, N, K, &verts[0], &tets[0], &coords[0]);
 
     return GeometryHandleEigen<T>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz,

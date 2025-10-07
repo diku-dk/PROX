@@ -16,6 +16,11 @@ void make_convex(
     )
 ;
 
+template <typename T>
+void make_convex_2(std::vector<EigenVector3<T>> const& vertices, T3Mesh& mesh,
+                   VertexAttribute<T, T3Mesh>& X, VertexAttribute<T, T3Mesh>& Y,
+                   VertexAttribute<T, T3Mesh>& Z);
+
 } //namespace mesh_array
 
 // MESH_ARRAY_MAKE_CONVEX_H

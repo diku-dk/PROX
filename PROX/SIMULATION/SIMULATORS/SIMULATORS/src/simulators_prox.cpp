@@ -725,6 +725,30 @@ size_t ProxEngine::create_tetramesh_shape(size_t const& geometry_index)
     return 0u;
 }
 
+void ProxEngine::set_geometry_type(const size_t geometryIndex,
+                                   grid::Grid<float, float> grid)
+{
+    assert(m_data || !"internal error: null pointer");
+
+    ProxData::geometry_type& geometry
+        = m_data->m_narrow.get_geometry(geometryIndex);
+
+    geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
+}
+
+void ProxEngine::set_geometry_type(const size_t geometryIndex,
+                                   grid::Grid<double, double> grid)
+{
+
+    assert(m_data || !"internal error: null pointer");
+
+    ProxData::geometry_type& geometry
+        = m_data->m_narrow.get_geometry(geometryIndex);
+
+    throw std::runtime_error("TODO: Add support for double precision grids!\n");
+    //    geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
+}
+
 void ProxEngine::set_tetramesh_shape(size_t const& geometry_index, size_t const& N, size_t const& K,
                                      size_t const* vertices, size_t const* tetrahedra, float const* coordinates)
 {

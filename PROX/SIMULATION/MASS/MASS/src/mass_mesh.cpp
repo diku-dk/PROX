@@ -1,3 +1,4 @@
+#include <iostream>
 #include <mass.h>
 
 #include <eigenhelperall.h>
@@ -16,7 +17,7 @@ template <typename T> class FaceInfo
 protected:
     std::vector<T> m_coord[3];
 
-    T m_n[3];
+    T m_n[3] = {T(0), T(1), T(0)};
 
     size_t m_A;
     size_t m_B;
@@ -84,6 +85,9 @@ public:
 
           //--- Find face normal from the cross-product of the two edges that span the largest area
         T max_area = 0;
+        m_n[0] = 0;
+        m_n[1] = 1;
+        m_n[2] = 0;
 
         for (size_t i = 0u; i < N; ++i)
         {
@@ -93,10 +97,22 @@ public:
             T const dx_1 = x[j] - x[i];
             T const dy_1 = y[j] - y[i];
             T const dz_1 = z[j] - z[i];
+            /*std::cerr << "i, j: (" << i << ", " << j << ")  and x[j], x[i] = ("
+                      << x[j] << " , " << x[i] << ")\n";
+            std::cerr << "i, j: (" << i << ", " << j << ")  and y[j], y[i] = ("
+                      << y[j] << " , " << y[i] << ")\n";
+            std::cerr << "i, j: (" << i << ", " << j << ")  and z[j], z[i] = ("
+                      << z[j] << " , " << z[i] << ")\n";*/
 
             T const dx_2 = x[k] - x[j];
             T const dy_2 = y[k] - y[j];
             T const dz_2 = z[k] - z[j];
+            /*std::cerr << "k, j: (" << i << ", " << j << ")  and x[k], x[j] = ("
+                      << x[k] << " , " << x[j] << ")\n";
+            std::cerr << "k, j: (" << i << ", " << j << ")  and y[k], y[j] = ("
+                      << y[k] << " , " << y[j] << ")\n";
+            std::cerr << "k, j: (" << i << ", " << j << ")  and z[k], z[j] = ("
+                      << z[k] << " , " << z[j] << ")\n";*/
 
             T const nx = dy_1 * dz_2 - dy_2 * dz_1;
             T const ny = dx_2 * dz_1 - dx_1 * dz_2;
@@ -111,6 +127,10 @@ public:
                 m_n[1] = ny;
                 m_n[2] = nz;
             }
+            /*if (max_area < 0)
+            {
+                std::cerr << "MAX AREA TOO SMALL: " << max_area << "\n";
+            }*/
         }
 
           //--- Normalize the best triangle normal and use it as face normal
@@ -144,16 +164,16 @@ template <typename T> class ProjectionIntegralInfo
 {
 
 public:
-    T m_P1;
-    T m_Pa;
-    T m_Pb;
-    T m_Paa;
-    T m_Pab;
-    T m_Pbb;
-    T m_Paaa;
-    T m_Paab;
-    T m_Pabb;
-    T m_Pbbb;
+    T m_P1 = T(0.0);
+    T m_Pa = T(0.0);
+    T m_Pb = T(0.0);
+    T m_Paa = T(0.0);
+    T m_Pab = T(0.0);
+    T m_Pbb = T(0.0);
+    T m_Paaa = T(0.0);
+    T m_Paab = T(0.0);
+    T m_Pabb = T(0.0);
+    T m_Pbbb = T(0.0);
 
 public:
     ProjectionIntegralInfo()

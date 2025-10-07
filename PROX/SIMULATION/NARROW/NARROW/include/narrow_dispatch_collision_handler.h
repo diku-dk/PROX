@@ -143,7 +143,7 @@ namespace narrow
           details::dispatch_primitives(system, primitive_pairs);
       if (!tetramesh_pairs.empty())
       {
-          if (!system.params().useSdf() || false)
+          if (!system.params().useSdf() && false)
           {
               details::dispatch_tetramesh_tetramesh(system, tetramesh_pairs);
           }

@@ -1,8 +1,8 @@
 #ifndef SIMULATORS_PROX_H
 #define SIMULATORS_PROX_H
 
-#include "grid_grid.h"
 #include <content_api.h>
+#include "grid_grid.h"
 
 #include <vector>
 
@@ -347,15 +347,12 @@ namespace simulators
                                 , float const & Qz
                                 );
 
-    size_t create_tetramesh_shape( size_t const & geometry_idx );
+    size_t create_tetramesh_shape(size_t const& geometry_idx);
 
-    void set_tetramesh_shape(  size_t const & geometry_idx
-                             , size_t const & N
-                             , size_t const & K
-                             , size_t const * vertices
-                             , size_t const * tetrahedra
-                             , float const * coordinates
-                             );
+    void set_tetramesh_shape(size_t const& geometry_idx, size_t const& N,
+                             size_t const& K, size_t const* vertices,
+                             size_t const* tetrahedra,
+                             float const* coordinates);
 
     float get_collision_envelope();
 
@@ -402,6 +399,12 @@ namespace simulators
                               , float & y
                               , float & z
                               );
+
+    void set_geometry_type(const size_t geometryIndex,
+                           grid::Grid<float, float> grid);
+
+    void set_geometry_type(const size_t geometryIndex,
+                           grid::Grid<double, double> grid);
 
     float get_restitution( size_t const & first_index
                           , size_t const & second_index

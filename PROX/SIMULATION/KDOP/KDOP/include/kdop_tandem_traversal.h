@@ -631,10 +631,10 @@ namespace kdop
       geometry::DirectionTable<T, K / 2> directions
           = geometry::DirectionTableHelper<T, K / 2>::make();
       // Check root-level overlap
-      if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
+      /*if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
       {
-          //return;
-      }
+          return;
+      }*/
 
       // Process all branches
       for (auto const& branch : work_item.m_tree_a->branches())

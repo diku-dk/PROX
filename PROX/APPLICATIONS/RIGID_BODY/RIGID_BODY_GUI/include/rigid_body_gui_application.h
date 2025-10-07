@@ -899,142 +899,351 @@ namespace rigid_body
       {
         util::Log logging;
 
-        switch(choice)
+        bool portFolio = true;
+        if (!portFolio)
         {
-          case '1': load_config_file(m_working_directory + "pillar.cfg");             break;
-          case '2': load_config_file(m_working_directory + "arch.cfg");               break;
-          case '3': load_config_file(m_working_directory + "wall.cfg");               break;
-          case '4': load_config_file(m_working_directory + "tower.cfg");              break;
-          case '5': load_config_file(m_working_directory + "cuboid_tower.cfg");       break;
-          case '6': load_config_file(m_working_directory + "dome.cfg");               break;
-          case '7': load_config_file(m_working_directory + "scripted_motions.cfg");   break;
-          case '8': load_config_file(m_working_directory + "funnel_dims.cfg");        break;
-          case '9': load_config_file(m_working_directory + "glass_glasses.cfg");      break;
-          case 'a': load_config_file(m_working_directory + "colosseum.cfg");          break;
-          case 'b': load_config_file(m_working_directory + "pantheon.cfg");           break;
-          case 'c': load_config_file(m_working_directory + "temple.cfg");             break;
-          case 'd': load_config_file(m_working_directory + "earthquake.cfg");         break;
-          case 'e': load_config_file(m_working_directory + "shoot.cfg");              break;
-          case 'f': load_config_file(m_working_directory + "bunny_boxes.cfg");        break;
-          case 'g': load_config_file(m_working_directory + "stack.cfg");              break;
-          case 'h': load_config_file(m_working_directory + "twist.cfg");              break;
-          case 'i': load_config_file(m_working_directory + "glass_dims.cfg");         break;
-          case 'j': load_config_file(m_working_directory + "glass_spheres.cfg");      break;
-          case 'k': load_config_file(m_working_directory + "propella_glass.cfg");     break;
-          case 'l': load_config_file(m_working_directory + "sphere_cube.cfg");        break;
-          case 'm': load_config_file(m_working_directory + "packing.cfg");            break;
-          case 'n': load_config_file(m_working_directory + "funnel.cfg");             break;
-          case 'o': load_config_file(m_working_directory + "slide.cfg"); break;
-          case 'p':
-              load_config_file(m_working_directory + "dropping.cfg");
-              break;
-          case 'q':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_large_large_fast.cfg");
-              break;
-          case 'r':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "sdf_thin_object_drop.cfg");
-              break;
-          case 's':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "sdf_thin_thin_object_drop.cfg");
-              break;
-          case 't':
-              load_config_file(m_working_directory + "sliding_point.cfg");
-              break;
-          case 'u':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_thin_thin_object_shoot.cfg");
-              break;
-          case 'v':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_cannonball_fast_shoot.cfg");
-              break;
-          case 'w':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_drop_fast_thin.cfg");
-              break;
-          case 'x':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_cones_fast_towards_eachother.cfg");
-              break;
-          case 'y':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_multiple_bounces_in_one_iteration.cfg");
-              break;
-          case 'z':
-              load_config_file(m_working_directory + "ccd_sdf_tests/"
-                               + "ccd_small_space.cfg");
-              break;
-              /*case 'r': load_config_file(m_working_directory + "heavy_light.cfg");        break;
+            switch (choice)
+            {
+            case '1':
+                load_config_file(m_working_directory + "pillar.cfg");
+                break;
+            case '2': load_config_file(m_working_directory + "arch.cfg"); break;
+            case '3': load_config_file(m_working_directory + "wall.cfg"); break;
+            case '4':
+                load_config_file(m_working_directory + "tower.cfg");
+                break;
+            case '5':
+                load_config_file(m_working_directory + "cuboid_tower.cfg");
+                break;
+            case '6': load_config_file(m_working_directory + "dome.cfg"); break;
+            case '7':
+                load_config_file(m_working_directory + "scripted_motions.cfg");
+                break;
+            case '8':
+                load_config_file(m_working_directory + "funnel_dims.cfg");
+                break;
+            case '9':
+                load_config_file(m_working_directory + "glass_glasses.cfg");
+                break;
+            case 'a':
+                load_config_file(m_working_directory + "colosseum.cfg");
+                break;
+            case 'b':
+                load_config_file(m_working_directory + "pantheon.cfg");
+                break;
+            case 'c':
+                load_config_file(m_working_directory + "temple.cfg");
+                break;
+            case 'd':
+                load_config_file(m_working_directory + "earthquake.cfg");
+                break;
+            case 'e':
+                load_config_file(m_working_directory + "shoot.cfg");
+                break;
+            case 'f':
+                load_config_file(m_working_directory + "bunny_boxes.cfg");
+                break;
+            case 'g':
+                load_config_file(m_working_directory + "stack.cfg");
+                break;
+            case 'h':
+                load_config_file(m_working_directory + "twist.cfg");
+                break;
+            case 'i':
+                load_config_file(m_working_directory + "glass_dims.cfg");
+                break;
+            case 'j':
+                load_config_file(m_working_directory + "glass_spheres.cfg");
+                break;
+            case 'k':
+                load_config_file(m_working_directory + "propella_glass.cfg");
+                break;
+            case 'l':
+                load_config_file(m_working_directory + "sphere_cube.cfg");
+                break;
+            //          case 'm': load_config_file(m_working_directory + "packing.cfg");            break;
+            case 'm':
+                load_config_file(m_working_directory + "point_in_crack.cfg");
+                break;
+                break;
+            case 'n':
+                load_config_file(m_working_directory + "funnel.cfg");
+                break;
+            case 'o':
+                load_config_file(m_working_directory + "slide.cfg");
+                break;
+            case 'p':
+                load_config_file(m_working_directory + "dropping.cfg");
+                break;
+            case 'q':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_large_large_fast.cfg");
+                break;
+            case 'r':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "sdf_thin_object_drop.cfg");
+                break;
+            case 's':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "sdf_thin_thin_object_drop.cfg");
+                break;
+            case 't':
+                load_config_file(m_working_directory + "sliding_point.cfg");
+                break;
+            case 'u':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_thin_thin_object_shoot.cfg");
+                break;
+            case 'v':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_cannonball_fast_shoot.cfg");
+                break;
+            case 'w':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_drop_fast_thin.cfg");
+                break;
+            case 'x':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_cones_fast_towards_eachother.cfg");
+                break;
+            case 'y':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_multiple_bounces_in_one_iteration.cfg");
+                break;
+            case 'z':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_small_space.cfg");
+                break;
+                /*case 'r': load_config_file(m_working_directory + "heavy_light.cfg");        break;
           case 's': load_config_file(m_working_directory + "wall_pins.cfg");          break;
           case 'u': load_config_file(m_working_directory + "two_points.cfg");         break;
           case 'v': load_config_file(m_working_directory + "point_in_crack.cfg");     break;
           case 'x': load_config_file(m_working_directory + "cliff_edge.cfg");        break;
           case 'y': load_config_file(m_working_directory + "internal_edge.cfg");     break;*/
 
-          case 'W': m_draw_wireframe       = !m_draw_wireframe;                         break;
-          case 'C': m_draw_contacts        = !m_draw_contacts;                          break;
-          case 'A': m_draw_aabbs           = !m_draw_aabbs;                             break;
-          case 'F': m_framegrab            = !m_framegrab;                              break;
-          case 'D': m_draw_debug           = !m_draw_debug;                             break;
-          case 'B': m_save_contact_data    = !m_save_contact_data;                      break;
+            case 'W': m_draw_wireframe = !m_draw_wireframe; break;
+            case 'C': m_draw_contacts = !m_draw_contacts; break;
+            case 'A': m_draw_aabbs = !m_draw_aabbs; break;
+            case 'F': m_framegrab = !m_framegrab; break;
+            case 'D': m_draw_debug = !m_draw_debug; break;
+            case 'B': m_save_contact_data = !m_save_contact_data; break;
 
-          case 'P':
+            case 'P':
 
-            m_xml_play = !m_xml_play;
+                m_xml_play = !m_xml_play;
 
-            if(m_xml_play)
+                if (m_xml_play)
+                {
+                    m_xml_record = false;
+                    m_time = 0;
+                }
+                break;
+
+            case 'R':
+
+                m_xml_record = !m_xml_record;
+
+                if (m_xml_record) { m_xml_play = false; }
+
+                break;
+
+            case 'M':
+                m_engine.write_profiling(m_output_path + m_matlab_file);
+                break;
+            case 'L': load_xml_file(); break;
+            case 'S': save_xml_file(); break;
+            case 'V': save_contact_data(); break;
+            case 'G':
+                m_capture_first_frame = true;
+                m_currentFrame = 0;
+                //Save xml file...
+                //save_xml_file();
+                prepareRigidBodyScripts();
+                break;
+            case 'H': m_profiling = true; logging << "Profiling ON.";
+            case '+': run(); break;
+
+            case 'O':
+                this->m_camera.orbit_mode() = !this->m_camera.orbit_mode();
+                if (this->m_camera.orbit_mode())
+                    logging << "orbit mode on" << util::Log::newline();
+                else
+                    logging << "orbit mode off " << util::Log::newline();
+                break;
+
+            case 'I':
+                this->m_camera.target_locked()
+                    = !this->m_camera.target_locked();
+                if (this->m_camera.target_locked())
+                    logging << "target is locked" << util::Log::newline();
+                else
+                    logging << "target is free " << util::Log::newline();
+                break;
+            };
+        }
+        else
+        {
+            switch (choice)
             {
-              m_xml_record = false;
-              m_time       = 0;
-            }
-            break;
+            case '1':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/ccd_bunny_bunny.cfg");
+                break;
+            case '2':
+                load_config_file(
+                    m_working_directory
+                    + "ccd_sdf_portfolio/ccd_plane_dropped_on_spikes.cfg");
+                break;
+            case '3':
+                load_config_file(
+                    m_working_directory
+                    + "ccd_sdf_portfolio/ccd_spinning_object_shot.cfg");
+                break;
+            case '4':
+                load_config_file(
+                    m_working_directory
+                    + "ccd_sdf_portfolio/ccd_tight_space_drop.cfg");
+                break;
+            case '5':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/ccd_toi_negative.cfg");
+                break;
+            case '6':
+                load_config_file(
+                    m_working_directory
+                    + "ccd_sdf_portfolio/ccd_toi_zero_towards_wall.cfg");
+                break;
+            case '7':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/"
+                                   "ccd_toi_zero_towards_wall_very_close.cfg");
+                break;
+            case '8':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/potentialFailures/"
+                                   "ccd_objects_large_spin.cfg");
+                break;
+            case '9':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/potentialFailures/"
+                                   "ccd_sphere_through_torus.cfg");
+                break;
+            case 'a':
+                load_config_file(
+                    m_working_directory
+                    + "ccd_sdf_portfolio/potentialFailures/"
+                      "ccd_two_fast_spinning_objects_shot_fast_eachother.cfg");
+                break;
+            case 'b':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/potentialFailures/"
+                                   "ccd_very_large_triangle_pyramid.cfg");
+                break;
+            case 'c':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/"
+                                   "ccd_two_objects_shot_fast_eachother.cfg");
+                break;
+            case 'q':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_large_large_fast.cfg");
+                break;
+            case 'r':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "sdf_thin_object_drop.cfg");
+                break;
+            case 's':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "sdf_thin_thin_object_drop.cfg");
+                break;
+            case 't':
+                load_config_file(m_working_directory + "sliding_point.cfg");
+                break;
+            case 'u':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_thin_thin_object_shoot.cfg");
+                break;
+            case 'v':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_cannonball_fast_shoot.cfg");
+                break;
+            case 'w':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_drop_fast_thin.cfg");
+                break;
+            case 'x':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_cones_fast_towards_eachother.cfg");
+                break;
+            case 'y':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_multiple_bounces_in_one_iteration.cfg");
+                break;
+            case 'z':
+                load_config_file(m_working_directory + "ccd_sdf_tests/"
+                                 + "ccd_small_space.cfg");
+                break;
 
-          case 'R':
+            case 'W': m_draw_wireframe = !m_draw_wireframe; break;
+            case 'C': m_draw_contacts = !m_draw_contacts; break;
+            case 'A': m_draw_aabbs = !m_draw_aabbs; break;
+            case 'F': m_framegrab = !m_framegrab; break;
+            case 'D': m_draw_debug = !m_draw_debug; break;
+            case 'B': m_save_contact_data = !m_save_contact_data; break;
 
-            m_xml_record = !m_xml_record;
+            case 'P':
 
-            if(m_xml_record)
-            {
-              m_xml_play = false;
-            }
+                m_xml_play = !m_xml_play;
 
-            break;
+                if (m_xml_play)
+                {
+                    m_xml_record = false;
+                    m_time = 0;
+                }
+                break;
 
-          case 'M': m_engine.write_profiling( m_output_path + m_matlab_file ); break;
-          case 'L': load_xml_file(); break;
-          case 'S': save_xml_file(); break;
-          case 'V': save_contact_data(); break;
-          case 'G':
-              m_capture_first_frame = true;
-              m_currentFrame = 0;
-              //Save xml file...
-              //save_xml_file();
-              prepareRigidBodyScripts();
-              break;
-          case 'H':
-                m_profiling = true;
-                logging << "Profiling ON.";
-          case '+': run(); break;
+            case 'R':
 
-          case 'O':
-            this->m_camera.orbit_mode() = ! this->m_camera.orbit_mode();
-            if(this->m_camera.orbit_mode())
-              logging << "orbit mode on" << util::Log::newline();
-            else
-              logging << "orbit mode off " << util::Log::newline();
-            break;
+                m_xml_record = !m_xml_record;
 
-          case 'I':
-            this->m_camera.target_locked() = ! this->m_camera.target_locked();
-            if(this->m_camera.target_locked())
-              logging << "target is locked" << util::Log::newline();
-            else
-              logging << "target is free " << util::Log::newline();
-            break;
-        };
+                if (m_xml_record) { m_xml_play = false; }
+
+                break;
+
+            case 'M':
+                m_engine.write_profiling(m_output_path + m_matlab_file);
+                break;
+            case 'L': load_xml_file(); break;
+            case 'S': save_xml_file(); break;
+            case 'V': save_contact_data(); break;
+            case 'G':
+                m_capture_first_frame = true;
+                m_currentFrame = 0;
+                //Save xml file...
+                //save_xml_file();
+                prepareRigidBodyScripts();
+                break;
+            case 'H': m_profiling = true; logging << "Profiling ON.";
+            case '+': run(); break;
+
+            case 'O':
+                this->m_camera.orbit_mode() = !this->m_camera.orbit_mode();
+                if (this->m_camera.orbit_mode())
+                    logging << "orbit mode on" << util::Log::newline();
+                else
+                    logging << "orbit mode off " << util::Log::newline();
+                break;
+
+            case 'I':
+                this->m_camera.target_locked()
+                    = !this->m_camera.target_locked();
+                if (this->m_camera.target_locked())
+                    logging << "target is locked" << util::Log::newline();
+                else
+                    logging << "target is free " << util::Log::newline();
+                break;
+            };
+        }
       }
 
       void init()
