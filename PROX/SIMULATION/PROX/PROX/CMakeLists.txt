@@ -34,6 +34,7 @@ ADD_LIBRARY(
   prox
   ${PROX_SOURCES}
   ${PROX_HEADERS}
+  include/ccd/prox_golden_section_search.hpp
 )
 
 TARGET_LINK_LIBRARIES(
