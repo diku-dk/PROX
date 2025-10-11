@@ -1,12 +1,10 @@
-#ifndef PROX_GOLDEN_SECTION_SEARCH_HPP
-#define PROX_GOLDEN_SECTION_SEARCH_HPP
+#ifndef GRID_CCD_GOLDEN_SECTION_SEARCH_HPP
+#define GRID_CCD_GOLDEN_SECTION_SEARCH_HPP
 
-#include "eigenhelperfunctions.h"
-#include "grid_grid.h"
-#include "grid_local_optimization.hpp"
-#include <functional>
+#include <grid_grid.h>
+#include <grid_local_optimization.hpp>
 
-namespace prox
+namespace grid
 {
 /*enum FuncType
 {
@@ -421,7 +419,5 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         }
     }
 }
-
-} // namespace prox
-
-#endif // PROX_GOLDEN_SECTION_SEARCH_HPP
+} // namespace grid
+#endif // GRID_CCD_GOLDEN_SECTION_SEARCH_HPP

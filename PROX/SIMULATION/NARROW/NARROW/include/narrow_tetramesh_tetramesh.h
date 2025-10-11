@@ -177,6 +177,75 @@ namespace narrow
 #endif // HAS_DIKUCL
   }
 
+  template <typename T>
+  inline void dispatch_tetramesh_sdf_CCD(System<T> const& system,
+                                         std::vector<TestPair<T>>& test_pairs,
+                                         T startTime, T endTime)
+  {
+      assert(!test_pairs.empty()
+             || !"dispatch_tetramesh_tetramesh : test_pairs are empty");
+      //typedef typename kdop::TestPairSDF<8, T> kdop_sdf_pair_type;
+
+      std::vector<kdop::TestPairSDFStruct<8, T>> kdop_test_sdf_pairs;
+      kdop::TestPairSDFStruct<8, T> sdf_pair_type;
+
+      for (auto& current : test_pairs)
+      {
+          const auto& objA = current.obj_a();
+          const auto& objB = current.obj_b();
+
+          const auto& geoA = system.get_geometry(objA.get_geometry_idx());
+          const auto& geoB = system.get_geometry(objB.get_geometry_idx());
+
+          //Callback is a reference to our pairs, so we go from pairs to be tested to
+          // making a kdop-pair-type
+          /*          const kdop_sdf_pair_type test_pair = kdop_sdf_pair_type(
+              objA.m_tree, geoA.m_tetramesh.m_mesh, objA.m_X, objA.m_Y,
+              objA.m_Z, geoA.m_tetramesh.m_surface_map,
+              geoB.m_signedDistanceMap, current.callback());*/
+          /*2
+          sdf_pair_type.m_mesh_a = &geoA.m_tetramesh.m_mesh;
+          sdf_pair_type.m_tree_a = &objA.m_tree;
+          sdf_pair_type.m_x_a = &objA.m_X;
+          sdf_pair_type.m_y_a = &objA.m_Y;
+          sdf_pair_type.m_z_a = &objA.m_Z;
+          sdf_pair_type.m_grid_b
+              = &geoB.m_signedDistanceMap.getSignedDistanceGrid();
+          sdf_pair_type.m_surface_map_a = &geoA.m_tetramesh.m_surface_map;
+          sdf_pair_type.m_triangles_a
+              = &geoA.m_signedDistanceMap.getSignedDistanceGrid()
+                     .m_temporaryGridStructure;
+          sdf_pair_type.m_transformTranslation_a = &current.t_a();
+          sdf_pair_type.m_transformRotation_a = &current.Q_a();
+          sdf_pair_type.m_transformTranslation_b = &current.t_b();
+          sdf_pair_type.m_transformRotation_b = &current.Q_b();
+          sdf_pair_type.m_callback = &current.callback();*/
+
+          kdop_test_sdf_pairs.push_back(sdf_pair_type);
+          sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;
+          sdf_pair_type.m_tree_a = &objB.m_tree;
+          sdf_pair_type.m_x_a = &objB.m_X;
+          sdf_pair_type.m_y_a = &objB.m_Y;
+          sdf_pair_type.m_z_a = &objB.m_Z;
+          sdf_pair_type.m_grid_b
+              = &geoA.m_signedDistanceMap.getSignedDistanceGrid();
+          sdf_pair_type.m_surface_map_a = &geoB.m_tetramesh.m_surface_map;
+          sdf_pair_type.m_triangles_a
+              = &geoB.m_signedDistanceMap.getSignedDistanceGrid()
+                     .m_temporaryGridStructure;
+          sdf_pair_type.m_transformTranslation_a = &current.t_b();
+          sdf_pair_type.m_transformRotation_a = &current.Q_b();
+          sdf_pair_type.m_transformTranslation_b = &current.t_a();
+          sdf_pair_type.m_transformRotation_b = &current.Q_a();
+          sdf_pair_type.m_callback = &current.callback();
+          kdop_test_sdf_pairs.push_back(sdf_pair_type);
+      }
+
+      std::vector<T> TOIs;
+      kdop::tandem_traversal_sdf_CCD<8, T>(
+          kdop_test_sdf_pairs, kdop::sequential(), TOIs, startTime, endTime);
+  }
+
   } // namespace details
 
 } //namespace narrow

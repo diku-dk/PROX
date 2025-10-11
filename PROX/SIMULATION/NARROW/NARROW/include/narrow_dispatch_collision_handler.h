@@ -152,6 +152,65 @@ namespace narrow
       if (!mixed_pairs.empty()) details::dispatch_mixed(system, mixed_pairs);
   }
 
+  //Returns the earliest TOI T. We may need to make a smarter data structure to handle stick/slip behaviour, as TOI<=0.0, is NOT supported!!!
+  template <typename T>
+  inline T
+  dispatch_collision_handlers_CCD(const System<T>& system,
+                                  const std::vector<TestPair<T>>& test_pairs,
+                                  T startTime, T endTime)
+  {
+      assert(!test_pairs.empty()
+             || !"dispatch_collision_handlers : test_pairs are empty");
+
+      std::vector<TestPair<T>> tetramesh_pairs;
+
+      for (const auto& elem : test_pairs)
+      {
+          bool const A_is_tetramesh
+              = system.get_geometry(elem.obj_a().get_geometry_idx())
+                    .m_tetramesh.has_data();
+          bool const B_is_tetramesh
+              = system.get_geometry(elem.obj_b().get_geometry_idx())
+                    .m_tetramesh.has_data();
+
+          if (A_is_tetramesh && B_is_tetramesh)
+          {
+              tetramesh_pairs.push_back(elem);
+          }
+          else if (A_is_tetramesh && !B_is_tetramesh)
+          {
+              throw std::runtime_error("Error: No non tetrameshes supported "
+                                       "for CCD (got mixed pairs)");
+          }
+          else if (!A_is_tetramesh && B_is_tetramesh)
+          {
+              throw std::runtime_error("Error: No non tetrameshes supported "
+                                       "for CCD (got mixed pairs)");
+          }
+          else
+          {
+              throw std::runtime_error("Error: No non tetrameshes supported "
+                                       "for CCD (got primitive pairs)");
+          }
+      }
+
+      if (!tetramesh_pairs.empty())
+      {
+          if (!system.params().useSdf())
+          {
+              throw std::runtime_error(
+                  "Error: Dispatching tetramesh-tetramesh pair without SDF is "
+                  "not supported for SDF. Sorry!");
+              //details::dispatch_tetramesh_tetramesh(system, tetramesh_pairs);
+          }
+          else
+          {
+              details::dispatch_tetramesh_sdf_CCD<T>(system, tetramesh_pairs,
+                                                     startTime, endTime);
+          }
+      }
+  }
+
 } //namespace narrow
 
 // NARROW_DISPATCH_COLLISION_HANDLER_H

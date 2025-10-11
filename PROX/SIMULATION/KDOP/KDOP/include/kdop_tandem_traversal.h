@@ -7,6 +7,7 @@
 #include <kdop_tree.h>
 #include <kdop_select_contact_point_algorithm.h>
 #include <types/geometry_dop.h>
+#include <grid_ccd_golden_section_search.hpp>
 
 #include <mesh_array.h>
 
@@ -748,6 +749,270 @@ namespace kdop
       STOP_TIMER("tandem_traversal");
   }
 
+  } // namespace kdop
+
+  namespace kdop
+  {
+  template <size_t K, typename T>
+  inline void traversal_sdf_CCD(
+      size_t const& node_idx_A, SubTree<T, K> const& branch_A,
+      mesh_array::T4Mesh const& mesh_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& X_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Y_A,
+      mesh_array::VertexAttribute<T, mesh_array::T4Mesh> const& Z_A,
+      mesh_array::TetrahedronAttribute<mesh_array::TetrahedronSurfaceInfo,
+                                       mesh_array::T4Mesh> const& surface_map_A,
+      const grid::Grid<T, T>& sdf, const EigenVector3<T>& transformTranslation,
+      const EigenQuaternion<T>& transformRotation,
+      geometry::DirectionTable<T, K / 2> const& directions,
+      geometry::ContactsCallback<T>& callback, std::vector<T>& TOIs,
+      T startTime, T endTime)
+  {
+      using namespace mesh_array;
+
+      Node<T, K> const& node_A = branch_A.m_nodes[node_idx_A];
+
+      //if (!geometry::overlap_dop_dop(node_A.m_volume, node_B.m_volume)) return;
+
+      bool const A_is_leaf = node_A.is_leaf();
+
+      if (A_is_leaf)
+      {
+          PAUSE_TIMER("tandem_traversal");
+          RESUME_TIMER("exact_test");
+
+          Tetrahedron const& tet_A = mesh_A.tetrahedron(node_A.m_start);
+
+          bool const& surface_Ai = surface_map_A(tet_A).m_i;
+          bool const& surface_Aj = surface_map_A(tet_A).m_j;
+          bool const& surface_Ak = surface_map_A(tet_A).m_k;
+          bool const& surface_Am = surface_map_A(tet_A).m_m;
+
+          if (!surface_Ai && !surface_Aj && !surface_Ak && !surface_Am)
+          {
+              PAUSE_TIMER("exact_test");
+              RESUME_TIMER("tandem_traversal");
+              return;
+          }
+
+          const EigenVector3<T> a0
+              = EigenVector3<T>(X_A(tet_A.i()), Y_A(tet_A.i()), Z_A(tet_A.i()));
+          const EigenVector3<T> a1
+              = EigenVector3<T>(X_A(tet_A.j()), Y_A(tet_A.j()), Z_A(tet_A.j()));
+          const EigenVector3<T> a2
+              = EigenVector3<T>(X_A(tet_A.k()), Y_A(tet_A.k()), Z_A(tet_A.k()));
+          const EigenVector3<T> a3
+              = EigenVector3<T>(X_A(tet_A.m()), Y_A(tet_A.m()), Z_A(tet_A.m()));
+
+          std::vector<bool> surface_A(4u, false);
+
+          geometry::TetrahedronEigen<T> const gtet_A
+              = geometry::make_tetrahedron((a0), (a1), (a2), (a3));
+
+          surface_A[0] = surface_Ai;
+          surface_A[1] = surface_Aj;
+          surface_A[2] = surface_Ak;
+          surface_A[3] = surface_Am;
+
+          /*          SelectContactPointAlgorithm::call_algorithm(gtet_A, gtet_B, callback,
+                                                      surface_A, surface_B);*/
+          // Check each surface triangle against SDF
+
+          geometry::Triangle<T> tri0 = geometry::get_opposite_face(0, gtet_A);
+          geometry::Triangle<T> tri1 = geometry::get_opposite_face(1, gtet_A);
+          geometry::Triangle<T> tri2 = geometry::get_opposite_face(2, gtet_A);
+          geometry::Triangle<T> tri3 = geometry::get_opposite_face(3, gtet_A);
+
+          if (surface_A[0])
+          { // Face opposite vertex i (vertices j,k,m)
+              /*EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri0.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri0.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri0.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }*/
+              grid::RigidBodyInfo<T> rigidBody;
+              rigidBody.A_p0 = &tri0.p(0);
+              rigidBody.A_p1 = &tri0.p(1);
+              rigidBody.A_p2 = &tri0.p(2);
+              rigidBody.B_sdf = &sdf;
+              rigidBody.A_angularVel = ;
+              rigidBody.B_angularVel = ;
+              rigidBody.A_centerTranslation = ;
+              rigidBody.B_centerTranslation = ;
+              rigidBody.A_linearVel = ;
+              rigidBody.B_linearVel = ;
+              T getToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+          }
+          if (surface_A[1])
+          { // Face opposite vertex j (vertices i,k,m)
+
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri1.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri1.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri1.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
+          }
+          if (surface_A[2])
+          { // Face opposite vertex k (vertices i,j,m)
+
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri2.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri2.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri2.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
+          }
+          if (surface_A[3])
+          { // Face opposite vertex m (vertices i,j,k)
+              EigenVector3<T> contactPoint;
+              EigenVector3<T> normal;
+              T penetration;
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+                  transformRotation.inverse()
+                      * (tri3.p(0) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri3.p(1) - transformTranslation),
+                  transformRotation.inverse()
+                      * (tri3.p(2) - transformTranslation),
+                  sdf, contactPoint, normal, penetration);
+              if (isPenetrating)
+              {
+                  contactPoint
+                      = transformRotation * contactPoint + transformTranslation;
+                  normal = (transformRotation * normal).normalized();
+                  callback(contactPoint, -normal, penetration);
+                  callback(contactPoint, normal, penetration);
+              }
+          }
+
+          PAUSE_TIMER("exact_test");
+          RESUME_TIMER("tandem_traversal");
+      }
+      else if (!A_is_leaf)
+      {
+          Eigen::Matrix<T, 3, 1> sdfMin = sdf.min();
+          Eigen::Matrix<T, 3, 1> sdfMax = sdf.max();
+          Eigen::AlignedBox<T, 3> sdf_aabb(
+              Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
+              Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
+          sdf_aabb = transformAABB(sdf_aabb, transformRotation,
+                                   transformTranslation);
+
+          //if (!overlap_dop_aabb(node_A.m_volume, sdf_aabb, directions)) return;
+          for (size_t a = node_A.m_start; a <= node_A.m_end; ++a)
+          {
+              traversal_sdf_CCD<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A,
+                                      surface_map_A, sdf, transformTranslation,
+                                      transformRotation, directions, callback);
+          }
+      }
+  }
+
+  // Top-level function for SDF vs TetraMesh collision
+  template <size_t K, typename T>
+  inline void tandem_traversal_sdf_CCD(kdop::TestPairSDFStruct<K, T>& work_item,
+                                       std::vector<T>& TOIs, T startTime,
+                                       T endTime)
+  {
+      if (!work_item.m_tree_a || !work_item.m_grid_b) return;
+
+      // Get SDF bounding box and transform it
+      Eigen::Matrix<T, 3, 1> sdfMin = work_item.m_grid_b->min();
+      Eigen::Matrix<T, 3, 1> sdfMax = work_item.m_grid_b->max();
+      Eigen::AlignedBox<T, 3> sdf_aabb(
+          Eigen::Vector3<T>(sdfMin.x(), sdfMin.y(), sdfMin.z()),
+          Eigen::Vector3<T>(sdfMax.x(), sdfMax.y(), sdfMax.z()));
+
+      //auto transform = work_item.m_sdf->getTransform();
+      const Eigen::Matrix<T, 3, 1>* translation
+          = work_item.m_transformTranslation_b;
+      const Eigen::Quaternion<T>* rotation = work_item.m_transformRotation_b;
+      //sdf_aabb = transform * sdf_aabb;
+      sdf_aabb = transformAABB(sdf_aabb, *rotation, *translation);
+
+      geometry::DirectionTable<T, K / 2> directions
+          = geometry::DirectionTableHelper<T, K / 2>::make();
+      // Check root-level overlap
+      /*if (!overlap_dop_aabb(work_item.m_tree_a->m_root, sdf_aabb, directions))
+      {
+          return;
+      }*/
+
+      // Process all branches
+      for (auto const& branch : work_item.m_tree_a->branches())
+      {
+          traversal_sdf_CCD<K, T>(
+              0, branch, *(work_item.m_mesh_a), *(work_item.m_x_a),
+              *(work_item.m_y_a), *(work_item.m_z_a),
+              *(work_item.m_surface_map_a), *(work_item.m_grid_b),
+              *(work_item.m_transformTranslation_b),
+              *(work_item.m_transformRotation_b), directions,
+              *(work_item.m_callback), TOIs, startTime, endTime);
+      }
+  }
+
+  template <size_t K, typename T>
+  inline void tandem_traversal_sdf_CCD(
+      std::vector<kdop::TestPairSDFStruct<K, T>>& work_pool,
+      sequential const& /*tag*/, std::vector<T>& TOIs, T startTime, T endTime)
+  {
+      if (work_pool.empty()) return;
+
+      START_TIMER("tandem_traversal");
+      START_TIMER("exact_test");
+      PAUSE_TIMER("exact_test");
+
+      for (auto& item : work_pool)
+      {
+          tandem_traversal_sdf_CCD<K, T>(item, TOIs, startTime, endTime);
+      }
+
+      RESUME_TIMER("exact_test");
+      STOP_TIMER("exact_test");
+      STOP_TIMER("tandem_traversal");
+  }
   } // namespace kdop
 
   // KDOP_TANDEM_TRAVERSAL_H
