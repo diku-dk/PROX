@@ -473,7 +473,6 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
 
             auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
             auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
-            ;
 
             //--- Verify if we need to test the two bodies or if we can skip them --
             if (bodyA->is_fixed() && bodyB->is_fixed()) continue;
@@ -520,6 +519,7 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
         narrow_test_pairs.clear();
         bodyVels.clear();
     }
+    std::cerr << "WE HAVE A TOI OF " << earliestTOI << "\n";
     STOP_TIMER("continuous_collision_detection");
     return earliestTOI;
 }

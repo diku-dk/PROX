@@ -205,10 +205,12 @@ namespace narrow
           }
           else
           {
-              details::dispatch_tetramesh_sdf_CCD<T>(
+              T earliestTOI = details::dispatch_tetramesh_sdf_CCD<T>(
                   system, tetramesh_pairs, startTime, endTime, bodyContacts);
+              return earliestTOI;
           }
       }
+      return std::numeric_limits<T>::max();
   }
 
 } //namespace narrow
