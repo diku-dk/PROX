@@ -154,10 +154,10 @@ namespace narrow
 
   //Returns the earliest TOI T. We may need to make a smarter data structure to handle stick/slip behaviour, as TOI<=0.0, is NOT supported!!!
   template <typename T>
-  inline T
-  dispatch_collision_handlers_CCD(const System<T>& system,
-                                  const std::vector<TestPair<T>>& test_pairs,
-                                  T startTime, T endTime)
+  inline T dispatch_collision_handlers_CCD(
+      const System<T>& system, const std::vector<TestPair<T>>& test_pairs,
+      T startTime, T endTime,
+      std::vector<kdop::BodyVelocities<T>>& bodyContacts)
   {
       assert(!test_pairs.empty()
              || !"dispatch_collision_handlers : test_pairs are empty");
@@ -205,8 +205,8 @@ namespace narrow
           }
           else
           {
-              details::dispatch_tetramesh_sdf_CCD<T>(system, tetramesh_pairs,
-                                                     startTime, endTime);
+              details::dispatch_tetramesh_sdf_CCD<T>(
+                  system, tetramesh_pairs, startTime, endTime, bodyContacts);
           }
       }
   }

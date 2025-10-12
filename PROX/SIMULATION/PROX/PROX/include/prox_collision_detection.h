@@ -430,8 +430,6 @@ public:
 namespace prox
 {
 
-namespace detail
-{
 /**
    * Inovoke collision detection system.
    * This function basically wraps the entire collision detection system into one functional ``unit''.
@@ -461,9 +459,10 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     typedef detail::ContactCallbackFunctor<T> callback_type;
 
     std::vector<callback_type> callbacks;
-    //callbacks.resize(n);
+    callbacks.resize(n);
     auto callback = callbacks.begin();
     std::vector<ContactPoint<T>> contacts;
+    std::vector<kdop::BodyVelocities<T>> bodyVels;
     T earliestTOI = std::numeric_limits<T>::max();
     for (std::size_t i = 0; i < n; ++i)
     {
@@ -472,8 +471,9 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
             RigidBody<T>* pair_body_A = &bodies[i];
             RigidBody<T>* pair_body_B = &bodies[j];
 
-            auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A->first);
-            auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B->second);
+            auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
+            auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
+            ;
 
             //--- Verify if we need to test the two bodies or if we can skip them --
             if (bodyA->is_fixed() && bodyB->is_fixed()) continue;
@@ -488,22 +488,37 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
                 (bodyA->get_orientation()), (bodyB->get_position()),
                 (bodyB->get_orientation()), (*callback));
 
+            kdop::BodyVelocities<T> body{
+                .bodyALinVel = &pair_body_A->get_velocity(),
+                .bodyAAngVel = &pair_body_A->get_spin(),
+                .bodyACenterTranslation = &pair_body_A->get_position(),
+                .bodyACenterRotation = &pair_body_A->get_orientation(),
+                .bodyBLinVel = &pair_body_B->get_velocity(),
+                .bodyBAngVel = &pair_body_B->get_spin(),
+                .bodyBCenterTranslation = &pair_body_B->get_position(),
+                .bodyBCenterRotation = &pair_body_B->get_orientation(),
+            };
+
             narrow_test_pairs.push_back(narrow_pair);
+            bodyVels.push_back(body);
             if (!narrow_system.params().use_batching())
             {
                 T toi = narrow::dispatch_collision_handlers_CCD(
-                    narrow_system, narrow_test_pairs, startTime, endTime);
+                    narrow_system, narrow_test_pairs, startTime, endTime,
+                    bodyVels);
                 earliestTOI = std::min<T>(toi, earliestTOI);
                 narrow_test_pairs.clear();
+                bodyVels.clear();
             }
         }
     }
     if (!narrow_system.params().use_batching())
     {
         T toi = narrow::dispatch_collision_handlers_CCD(
-            narrow_system, narrow_test_pairs, startTime, endTime);
+            narrow_system, narrow_test_pairs, startTime, endTime, bodyVels);
         earliestTOI = std::min<T>(toi, earliestTOI);
         narrow_test_pairs.clear();
+        bodyVels.clear();
     }
     STOP_TIMER("continuous_collision_detection");
     return earliestTOI;
@@ -732,7 +747,6 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
         penetration_monitor->clear();
     }*/
 
-} // namespace detail
 } // namespace prox
 
 // PROX_COLLISION_DETECTION_H

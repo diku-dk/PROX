@@ -178,9 +178,11 @@ namespace narrow
   }
 
   template <typename T>
-  inline void dispatch_tetramesh_sdf_CCD(System<T> const& system,
-                                         std::vector<TestPair<T>>& test_pairs,
-                                         T startTime, T endTime)
+  inline void
+  dispatch_tetramesh_sdf_CCD(System<T> const& system,
+                             std::vector<TestPair<T>>& test_pairs, T startTime,
+                             T endTime,
+                             std::vector<kdop::BodyVelocities<T>>& bodyContacts)
   {
       assert(!test_pairs.empty()
              || !"dispatch_tetramesh_tetramesh : test_pairs are empty");
@@ -242,8 +244,9 @@ namespace narrow
       }
 
       std::vector<T> TOIs;
-      kdop::tandem_traversal_sdf_CCD<8, T>(
-          kdop_test_sdf_pairs, kdop::sequential(), TOIs, startTime, endTime);
+      kdop::tandem_traversal_sdf_CCD<8, T>(kdop_test_sdf_pairs,
+                                           kdop::sequential(), TOIs, startTime,
+                                           endTime, bodyContacts);
   }
 
   } // namespace details

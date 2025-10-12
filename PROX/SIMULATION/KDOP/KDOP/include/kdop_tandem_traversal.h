@@ -753,6 +753,19 @@ namespace kdop
 
   namespace kdop
   {
+  template <typename T> struct BodyVelocities
+  {
+      //RigidBody<T>* bodyA;
+      const EigenVector3<T>* bodyALinVel;
+      const EigenVector3<T>* bodyAAngVel;
+      const EigenVector3<T>* bodyACenterTranslation;
+      const EigenQuaternion<T>* bodyACenterRotation;
+      const EigenVector3<T>* bodyBLinVel;
+      const EigenVector3<T>* bodyBAngVel;
+      const EigenVector3<T>* bodyBCenterTranslation;
+      const EigenQuaternion<T>* bodyBCenterRotation;
+  };
+
   template <size_t K, typename T>
   inline void traversal_sdf_CCD(
       size_t const& node_idx_A, SubTree<T, K> const& branch_A,
@@ -766,7 +779,7 @@ namespace kdop
       const EigenQuaternion<T>& transformRotation,
       geometry::DirectionTable<T, K / 2> const& directions,
       geometry::ContactsCallback<T>& callback, std::vector<T>& TOIs,
-      T startTime, T endTime)
+      T startTime, T endTime, kdop::BodyVelocities<T>& bodyContact)
   {
       using namespace mesh_array;
 
@@ -849,82 +862,70 @@ namespace kdop
               rigidBody.A_p1 = &tri0.p(1);
               rigidBody.A_p2 = &tri0.p(2);
               rigidBody.B_sdf = &sdf;
-              rigidBody.A_angularVel = ;
-              rigidBody.B_angularVel = ;
-              rigidBody.A_centerTranslation = ;
-              rigidBody.B_centerTranslation = ;
-              rigidBody.A_linearVel = ;
-              rigidBody.B_linearVel = ;
-              T getToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              rigidBody.A_angularVel = bodyContact.bodyAAngVel;
+              rigidBody.B_angularVel = bodyContact.bodyBAngVel;
+              rigidBody.A_centerTranslation
+                  = bodyContact.bodyACenterTranslation;
+              rigidBody.B_centerTranslation
+                  = bodyContact.bodyBCenterTranslation;
+              rigidBody.A_linearVel = bodyContact.bodyALinVel;
+              rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              TOIs.push_back(currToi);
           }
           if (surface_A[1])
           { // Face opposite vertex j (vertices i,k,m)
-
-              EigenVector3<T> contactPoint;
-              EigenVector3<T> normal;
-              T penetration;
-              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
-                  transformRotation.inverse()
-                      * (tri1.p(0) - transformTranslation),
-                  transformRotation.inverse()
-                      * (tri1.p(1) - transformTranslation),
-                  transformRotation.inverse()
-                      * (tri1.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);
-              if (isPenetrating)
-              {
-                  contactPoint
-                      = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();
-                  callback(contactPoint, -normal, penetration);
-                  callback(contactPoint, normal, penetration);
-              }
+              grid::RigidBodyInfo<T> rigidBody;
+              rigidBody.A_p0 = &tri1.p(0);
+              rigidBody.A_p1 = &tri1.p(1);
+              rigidBody.A_p2 = &tri1.p(2);
+              rigidBody.B_sdf = &sdf;
+              rigidBody.A_angularVel = bodyContact.bodyAAngVel;
+              rigidBody.B_angularVel = bodyContact.bodyBAngVel;
+              rigidBody.A_centerTranslation
+                  = bodyContact.bodyACenterTranslation;
+              rigidBody.B_centerTranslation
+                  = bodyContact.bodyBCenterTranslation;
+              rigidBody.A_linearVel = bodyContact.bodyALinVel;
+              rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              TOIs.push_back(currToi);
           }
           if (surface_A[2])
           { // Face opposite vertex k (vertices i,j,m)
-
-              EigenVector3<T> contactPoint;
-              EigenVector3<T> normal;
-              T penetration;
-
-              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
-                  transformRotation.inverse()
-                      * (tri2.p(0) - transformTranslation),
-                  transformRotation.inverse()
-                      * (tri2.p(1) - transformTranslation),
-                  transformRotation.inverse()
-                      * (tri2.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);
-              if (isPenetrating)
-              {
-                  contactPoint
-                      = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();
-                  callback(contactPoint, -normal, penetration);
-                  callback(contactPoint, normal, penetration);
-              }
+              grid::RigidBodyInfo<T> rigidBody;
+              rigidBody.A_p0 = &tri2.p(0);
+              rigidBody.A_p1 = &tri2.p(1);
+              rigidBody.A_p2 = &tri2.p(2);
+              rigidBody.B_sdf = &sdf;
+              rigidBody.A_angularVel = bodyContact.bodyAAngVel;
+              rigidBody.B_angularVel = bodyContact.bodyBAngVel;
+              rigidBody.A_centerTranslation
+                  = bodyContact.bodyACenterTranslation;
+              rigidBody.B_centerTranslation
+                  = bodyContact.bodyBCenterTranslation;
+              rigidBody.A_linearVel = bodyContact.bodyALinVel;
+              rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              TOIs.push_back(currToi);
           }
           if (surface_A[3])
           { // Face opposite vertex m (vertices i,j,k)
-              EigenVector3<T> contactPoint;
-              EigenVector3<T> normal;
-              T penetration;
-              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
-                  transformRotation.inverse()
-                      * (tri3.p(0) - transformTranslation),
-                  transformRotation.inverse()
-                      * (tri3.p(1) - transformTranslation),
-                  transformRotation.inverse()
-                      * (tri3.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);
-              if (isPenetrating)
-              {
-                  contactPoint
-                      = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();
-                  callback(contactPoint, -normal, penetration);
-                  callback(contactPoint, normal, penetration);
-              }
+              grid::RigidBodyInfo<T> rigidBody;
+              rigidBody.A_p0 = &tri3.p(0);
+              rigidBody.A_p1 = &tri3.p(1);
+              rigidBody.A_p2 = &tri3.p(2);
+              rigidBody.B_sdf = &sdf;
+              rigidBody.A_angularVel = bodyContact.bodyAAngVel;
+              rigidBody.B_angularVel = bodyContact.bodyBAngVel;
+              rigidBody.A_centerTranslation
+                  = bodyContact.bodyACenterTranslation;
+              rigidBody.B_centerTranslation
+                  = bodyContact.bodyBCenterTranslation;
+              rigidBody.A_linearVel = bodyContact.bodyALinVel;
+              rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              TOIs.push_back(currToi);
           }
 
           PAUSE_TIMER("exact_test");
@@ -945,7 +946,8 @@ namespace kdop
           {
               traversal_sdf_CCD<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A,
                                       surface_map_A, sdf, transformTranslation,
-                                      transformRotation, directions, callback);
+                                      transformRotation, directions, callback,
+                                      TOIs, startTime, endTime, bodyContact);
           }
       }
   }
@@ -954,7 +956,8 @@ namespace kdop
   template <size_t K, typename T>
   inline void tandem_traversal_sdf_CCD(kdop::TestPairSDFStruct<K, T>& work_item,
                                        std::vector<T>& TOIs, T startTime,
-                                       T endTime)
+                                       T endTime,
+                                       kdop::BodyVelocities<T>& bodyContact)
   {
       if (!work_item.m_tree_a || !work_item.m_grid_b) return;
 
@@ -989,14 +992,15 @@ namespace kdop
               *(work_item.m_surface_map_a), *(work_item.m_grid_b),
               *(work_item.m_transformTranslation_b),
               *(work_item.m_transformRotation_b), directions,
-              *(work_item.m_callback), TOIs, startTime, endTime);
+              *(work_item.m_callback), TOIs, startTime, endTime, bodyContact);
       }
   }
 
   template <size_t K, typename T>
   inline void tandem_traversal_sdf_CCD(
       std::vector<kdop::TestPairSDFStruct<K, T>>& work_pool,
-      sequential const& /*tag*/, std::vector<T>& TOIs, T startTime, T endTime)
+      sequential const& /*tag*/, std::vector<T>& TOIs, T startTime, T endTime,
+      std::vector<kdop::BodyVelocities<T>>& bodyContacts)
   {
       if (work_pool.empty()) return;
 
@@ -1004,11 +1008,19 @@ namespace kdop
       START_TIMER("exact_test");
       PAUSE_TIMER("exact_test");
 
-      for (auto& item : work_pool)
+      if (bodyContacts.size() != work_pool.size())
       {
-          tandem_traversal_sdf_CCD<K, T>(item, TOIs, startTime, endTime);
+          throw std::runtime_error(
+              "Dimensional mismatch between testpairs and bodies\n");
       }
 
+      for (size_t i = 0; i < work_pool.size(); ++i)
+      {
+          {
+              tandem_traversal_sdf_CCD<K, T>(work_pool[i], TOIs, startTime,
+                                             endTime, bodyContacts[i]);
+          }
+      }
       RESUME_TIMER("exact_test");
       STOP_TIMER("exact_test");
       STOP_TIMER("tandem_traversal");

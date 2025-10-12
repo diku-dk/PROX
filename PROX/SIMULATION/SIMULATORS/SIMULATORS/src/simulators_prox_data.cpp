@@ -79,8 +79,10 @@ void ProxData::step_simulation(float const& dt)
     assert(dt > 0.0f || !"step_simulation(): invalid step size");
     assert(dt <= m_time_step || !"step_simulation(): invalid step size");
 
-    prox::time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping,
-                       m_params, m_broad, m_narrow, m_contacts);
+/*    prox::time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping,
+                       m_params, m_broad, m_narrow, m_contacts);*/
+    prox::time_stepper_CCD(dt, m_bodies, m_properties, m_gravity, m_damping,
+                           m_params, m_broad, m_narrow, m_contacts);
 
     T E_kinetic;
     T E_potential;
