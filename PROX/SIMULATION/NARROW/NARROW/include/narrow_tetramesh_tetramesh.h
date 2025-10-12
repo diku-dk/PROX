@@ -125,7 +125,7 @@ namespace narrow
           sdf_pair_type.m_transformRotation_b = &current.Q_b();
           sdf_pair_type.m_callback = &current.callback();*/
 
-          kdop_test_sdf_pairs.push_back(sdf_pair_type);
+          //kdop_test_sdf_pairs.push_back(sdf_pair_type);
           sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;
           sdf_pair_type.m_tree_a = &objB.m_tree;
           sdf_pair_type.m_x_a = &objB.m_X;
@@ -180,8 +180,8 @@ namespace narrow
   template <typename T>
   inline T
   dispatch_tetramesh_sdf_CCD(System<T> const& system,
-                             std::vector<TestPair<T>>& test_pairs, T startTime,
-                             T endTime,
+                             std::vector<TestPairCCD<T>>& test_pairs,
+                             T startTime, T endTime,
                              std::vector<kdop::BodyVelocities<T>>& bodyContacts)
   {
       assert(!test_pairs.empty()
@@ -223,7 +223,7 @@ namespace narrow
           sdf_pair_type.m_transformRotation_b = &current.Q_b();
           sdf_pair_type.m_callback = &current.callback();*/
 
-          kdop_test_sdf_pairs.push_back(sdf_pair_type);
+          //kdop_test_sdf_pairs.push_back(sdf_pair_type);
           sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;
           sdf_pair_type.m_tree_a = &objB.m_tree;
           sdf_pair_type.m_x_a = &objB.m_X;
@@ -239,7 +239,7 @@ namespace narrow
           sdf_pair_type.m_transformRotation_a = &current.Q_b();
           sdf_pair_type.m_transformTranslation_b = &current.t_a();
           sdf_pair_type.m_transformRotation_b = &current.Q_a();
-          sdf_pair_type.m_callback = &current.callback();
+          sdf_pair_type.m_callback = nullptr;
           kdop_test_sdf_pairs.push_back(sdf_pair_type);
       }
 

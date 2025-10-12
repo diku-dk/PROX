@@ -151,8 +151,9 @@ T SignedDistanceAtPoint(const DistanceAtPointParams<T>& params,
 }
 
 template <typename T, typename F>
-T GSSMinimize(T lstart, T lend, F func, const DistanceAtTimeParams<T>& params,
-              const RigidBodyInfo<T>& info)
+T GSSMinimize_WHAT(T lstart, T lend, F func,
+                   const DistanceAtTimeParams<T>& params,
+                   const RigidBodyInfo<T>& info)
 {
     //We init variables
     T phiInv = T((sqrt(5) - 1) * 0.5);
@@ -206,6 +207,46 @@ T GSSMinimize(T lstart, T lend, F func, const DistanceAtTimeParams<T>& params,
     return lmin;
 }
 
+template <typename T, typename F>
+T GSSMinimize(T a, T b, F func, const DistanceAtTimeParams<T>& params,
+              const RigidBodyInfo<T>& info, T tolerance = T(1e-5))
+{
+    const T phi = (1 + std::sqrt(5)) / 2;
+    const T invphi = 1 / phi;
+
+    // initial interior points
+    T c = b - (b - a) / phi;
+    T d = a + (b - a) / phi;
+
+    T f_c = func(info, params, c);
+    T f_d = func(info, params, d);
+    int it = 0;
+
+    while ((b - a) > tolerance && it < 8)
+    {
+        if (f_c < f_d)
+        {
+            b = d;
+            d = c;
+            f_d = f_c;
+            c = b - (b - a) / phi;
+            f_c = func(info, params, c);
+        }
+        else
+        {
+            a = c;
+            c = d;
+            f_c = f_d;
+            d = a + (b - a) / phi;
+            f_d = func(info, params, d);
+        }
+        it++;
+    }
+
+    //Return midpoint!
+    return 0.5 * (a + b);
+}
+
 template <typename T>
 EigenVector3<T> lerp(EigenVector3<T>& x0, EigenVector3<T>& x1, T alpha)
 {
@@ -216,8 +257,51 @@ EigenVector3<T> lerp(EigenVector3<T>& x0, EigenVector3<T>& x1, T alpha)
 }
 
 template <typename T, typename F>
-EigenVector3<T> GSSMinimize(EigenVector3<T> lstart, EigenVector3<T> lend,
-                            F func, const DistanceAtPointParams<T>& params)
+EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
+                            const DistanceAtPointParams<T>& params)
+{
+    T tolerance = T(1e-5);
+    const T phi = (1 + std::sqrt(5)) / 2;
+    const T invphi = 1 / phi;
+
+    // initial interior points
+    EigenVector3<T> c = b - (b - a) / phi;
+    EigenVector3<T> d = a + (b - a) / phi;
+
+    T f_c = func(params, c);
+    T f_d = func(params, d);
+    int it = 0;
+
+    while (((b - a).x() > tolerance && (b - a).y() > tolerance
+            && (b - a).z() > tolerance)
+           && it < 8)
+    {
+        if (f_c < f_d)
+        {
+            b = d;
+            d = c;
+            f_d = f_c;
+            c = b - (b - a) / phi;
+            f_c = func(params, c);
+        }
+        else
+        {
+            a = c;
+            c = d;
+            f_c = f_d;
+            d = a + (b - a) / phi;
+            f_d = func(params, d);
+        }
+        it++;
+    }
+
+    //Return midpoint!
+    return 0.5 * (a + b);
+}
+
+template <typename T, typename F>
+EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
+                                 F func, const DistanceAtPointParams<T>& params)
 {
     //We init variables
     T phiInv = T((sqrt(5) - 1) * 0.5);
@@ -365,8 +449,8 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                                               .p2 = initialState.A_p2};
 
     float eps = 1e-6;
-    DistanceAtPointParams distanceAtPointParams{.grid = initialState.B_sdf};
     size_t maxIterations = 8u;
+    DistanceAtPointParams distanceAtPointParams{.grid = initialState.B_sdf};
     for (size_t i = 0; i < maxIterations; ++i)
     {
         EigenVector3<T> xti = BarycentricInterpolate(u, v, w, ti, initialState);
@@ -435,6 +519,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             break;
         }
     }
+    return std::min<T>(tip1, ti);
 }
 } // namespace grid
 #endif // GRID_CCD_GOLDEN_SECTION_SEARCH_HPP

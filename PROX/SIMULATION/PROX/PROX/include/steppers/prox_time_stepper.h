@@ -278,8 +278,9 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
         set_position_vector_eigen(bodies.begin(), bodies.end(), qMNew);
     }
 
-    T simulateTo
-        = collision_detection_CCD(bodies, narrow_system, T(0.0), T(0.01));
+    collision_detection(bodies, broad_system, narrow_system, contacts, params);
+    T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
+                                           T(0.0), T(0.01));
 
     collision_detection(bodies, broad_system, narrow_system, contacts, params);
 

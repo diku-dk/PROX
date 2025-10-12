@@ -444,8 +444,9 @@ namespace prox
 template <typename T>
 requires std::is_floating_point_v<T>
 inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
-                                 narrow::System<T>& narrow_system, T startTime,
-                                 T endTime)
+                                 narrow::System<T>& narrow_system,
+                                 std::vector<ContactPoint<T>>& contacts,
+                                 T startTime, T endTime)
 {
     typedef typename broad::System<T>::overlap_type overlap_type;
     typedef std::vector<overlap_type> overlap_container;
@@ -453,21 +454,23 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     START_TIMER("continuous_collision_detection");
 
     const std::size_t n = bodies.size();
-    std::vector<narrow::TestPair<T>> narrow_test_pairs;
+    std::vector<narrow::TestPairCCD<T>> narrow_test_pairs;
 
     //Note all this callback mess is not needed: I only use it for quick compatibility, this will be changed!
     typedef detail::ContactCallbackFunctor<T> callback_type;
 
     std::vector<callback_type> callbacks;
-    callbacks.resize(n);
+    callbacks.resize(n * n);
     auto callback = callbacks.begin();
-    std::vector<ContactPoint<T>> contacts;
+    ;
+    contacts.clear();
     std::vector<kdop::BodyVelocities<T>> bodyVels;
     T earliestTOI = std::numeric_limits<T>::max();
     for (std::size_t i = 0; i < n; ++i)
     {
-        for (std::size_t j = i + 1; j < n; ++j)
+        for (std::size_t j = 0; j < n; ++j)
         {
+            if (i == j) { continue; }
             RigidBody<T>* pair_body_A = &bodies[i];
             RigidBody<T>* pair_body_B = &bodies[j];
 
@@ -480,12 +483,12 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
             if (bodyA->is_scripted() && bodyB->is_fixed()) continue;
             if (bodyA->is_scripted() && bodyB->is_scripted()) continue;
 
-            *callback = callback_type(bodyA, bodyB, contacts);
+            //*callback = callback_type(bodyA, bodyB, contacts);
 
-            narrow::TestPair<T> narrow_pair(
+            narrow::TestPairCCD<T> narrow_pair(
                 *bodyA, *bodyB, (bodyA->get_position()),
                 (bodyA->get_orientation()), (bodyB->get_position()),
-                (bodyB->get_orientation()), (*callback));
+                (bodyB->get_orientation()));
 
             kdop::BodyVelocities<T> body{
                 .bodyALinVel = &pair_body_A->get_velocity(),
@@ -511,7 +514,7 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
             }
         }
     }
-    if (!narrow_system.params().use_batching())
+    if (narrow_system.params().use_batching())
     {
         T toi = narrow::dispatch_collision_handlers_CCD(
             narrow_system, narrow_test_pairs, startTime, endTime, bodyVels);

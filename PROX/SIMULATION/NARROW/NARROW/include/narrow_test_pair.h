@@ -125,9 +125,6 @@ public:
 
 template <typename T> class TestPairCCD
 {
-public:
-    typedef geometry::ContactsCallback<T> callback_type;
-
 protected:
     Object<T> const* m_obj_a;
     Object<T> const* m_obj_b;
@@ -138,14 +135,11 @@ protected:
     EigenQuaternion<T> m_Q_a;
     EigenQuaternion<T> m_Q_b;
 
-    callback_type* m_callback;
-
 protected:
     bool validate() const
     {
         if (this->m_obj_a == 0) return false;
         if (this->m_obj_b == 0) return false;
-        if (this->m_callback == 0) return false;
         return true;
     }
 
@@ -192,13 +186,6 @@ public:
         return this->m_Q_b;
     }
 
-    auto& callback()
-    {
-        assert(this->validate() || "TestPair::callback(): null pointer");
-
-        return *(this->m_callback);
-    }
-
 public:
     TestPairCCD()
         : m_obj_a(0)
@@ -207,21 +194,18 @@ public:
         , m_t_b()
         , m_Q_a()
         , m_Q_b()
-        , m_callback(0)
     {
     }
 
     TestPairCCD(Object<T> const& objA, Object<T> const& objB,
                 const EigenVector3<T>& tA, const EigenQuaternion<T>& qA,
-                const EigenVector3<T>& tB, const EigenQuaternion<T>& qB,
-                geometry::ContactsCallback<T>& callback)
+                const EigenVector3<T>& tB, const EigenQuaternion<T>& qB)
         : m_obj_a(&objA)
         , m_obj_b(&objB)
         , m_t_a(tA)
         , m_t_b(tB)
         , m_Q_a(qA)
         , m_Q_b(qB)
-        , m_callback(&callback)
     {
     }
 };
