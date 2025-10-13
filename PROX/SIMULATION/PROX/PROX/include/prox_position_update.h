@@ -54,7 +54,7 @@ void position_update_eigen(const Eigen::VectorX<T>& q,
         W(1) = u(u_idx + 4);
         W(2) = u(u_idx + 5);
 
-        bool const finite = true; // As in original code
+        bool const finite = true;
 
         if (finite)
         {

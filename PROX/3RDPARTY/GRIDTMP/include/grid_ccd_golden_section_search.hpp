@@ -15,6 +15,29 @@ namespace grid
 
 template <typename T> T someFunction(T val) { return val + val; }*/
 
+//Note in the below we assume the sample point is in world coordinates, but the sdf is in local coords!
+template <typename T>
+T valueAtProjection(const grid::Grid<T, T>& sdf,
+                    const EigenVector3<T>& samplePoint,
+                    const EigenVector3<T>& translationSDF,
+                    const EigenQuaternion<T>& rotationSDF)
+{
+    EigenVector3<T> localSamplePoint
+        = rotationSDF.inverse() * (samplePoint - translationSDF);
+    return grid::value_at_2(sdf, localSamplePoint);
+}
+
+template <typename T>
+EigenVector3<T> gradientAtProjection(const EigenVector3<T>& samplePoint,
+                                     const grid::Grid<T, T>& sdf,
+                                     const EigenVector3<T>& translationSDF,
+                                     const EigenQuaternion<T>& rotationSDF)
+{
+    EigenVector3<T> localSamplePoint
+        = rotationSDF.inverse() * (samplePoint - translationSDF);
+    return grid::computeGradient_Working(localSamplePoint, sdf);
+}
+
 template <typename T> T tol(T val)
 {
     T tol = 1e-5;
@@ -31,13 +54,13 @@ template <typename T> struct RigidBodyInfo
     const EigenVector3<T>* A_linearVel;
     const EigenVector3<T>* A_angularVel;
     const EigenVector3<T>* A_centerTranslation;
-    const EigenVector3<T>* A_centerRotation;
+    const EigenQuaternion<T>* A_centerRotation;
 
     const grid::Grid<T, T>* B_sdf;
     const EigenVector3<T>* B_linearVel;
     const EigenVector3<T>* B_angularVel;
     const EigenVector3<T>* B_centerTranslation;
-    const EigenVector3<T>* B_centerRotation;
+    const EigenQuaternion<T>* B_centerRotation;
 };
 
 template <typename T> struct TriangleAtTimeInfo
@@ -53,8 +76,9 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
 {
     //Current center position due to linear motion
     //Note we may have to set centertranslation to 0,0,0, because our p's may already be the rotated object pose!
-    EigenVector3<T> currentCenter
-        = *(initialState.A_centerTranslation) + *(initialState.A_linearVel) * t;
+    //EigenVector3<T> currentCenter = *(initialState.A_centerTranslation) + *(initialState.A_linearVel) * t;
+
+    /*    EigenVector3<T> currentCenter = *(initialState.A_linearVel) * t;
 
     T angle = (*(initialState.A_angularVel)).norm() * t;
 
@@ -64,17 +88,65 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
         EigenVector3<T> axis = (*(initialState.A_linearVel)).normalized();
         rotation = EigenQuaternion<T>(Eigen::AngleAxis<T>(angle, axis));
     }
-    else { rotation = EigenQuaternion<T>::Identity(); }
+    else { rotation = EigenQuaternion<T>::Identity(); }*/
+
+    /*    EigenVector3<T> currentCenter = *(initialState.A_centerTranslation);
+    EigenVector3<T> radiusp0 = *(initialState.A_p0) - currentCenter;
+    EigenVector3<T> velocityp0
+        = (*(initialState.A_linearVel))
+        + ((*(initialState.A_angularVel))).cross(radiusp0);
+    EigenVector3<T> radiusp1 = *(initialState.A_p1) - currentCenter;
+    EigenVector3<T> velocityp1
+        = (*(initialState.A_linearVel))
+        + ((*(initialState.A_angularVel))).cross(radiusp1);
+    EigenVector3<T> radiusp2 = *(initialState.A_p2) - currentCenter;
+    EigenVector3<T> velocityp2
+        = (*(initialState.A_linearVel))
+        + ((*(initialState.A_angularVel))).cross(radiusp2);
+    TriangleAtTimeInfo<T> tInfo{.A_p0 = *(initialState.A_p0) + velocityp0 * t,
+                                .A_p1 = *(initialState.A_p1) + velocityp1 * t,
+                                .A_p2 = *(initialState.A_p2) + velocityp2 * t};*/
+
+    EigenVector3<T> v_world = *(initialState.A_linearVel);
+    EigenVector3<T> omega_world = *(initialState.A_angularVel);
+    EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+    EigenVector3<T> p0 = *(initialState.A_p0);
+    EigenVector3<T> p1 = *(initialState.A_p1);
+    EigenVector3<T> p2 = *(initialState.A_p2);
+    EigenVector3<T> Cnew = C0 + v_world * t;
+
+    EigenMatrix3<T> R;
+
+    if (true)
+    {
+        T const radian = omega_world.norm() * t;
+        Eigen::Matrix<T, 3, 1> axis = omega_world.normalized();
+        R = Eigen::AngleAxis<T>(radian, axis).toRotationMatrix();
+    }
+
+    //Apply exact rigid transform to each vertex
+    EigenVector3<T> r0 = p0 - C0;
+    EigenVector3<T> r1 = p1 - C0;
+    EigenVector3<T> r2 = p2 - C0;
+
+    EigenVector3<T> tmp0 = (Cnew + R * r0);
+    EigenVector3<T> tmp1 = (Cnew + R * r1);
+    EigenVector3<T> tmp2 = (Cnew + R * r2);
+    TriangleAtTimeInfo<T> out{.A_p0 = tmp0, .A_p1 = tmp1, .A_p2 = tmp2};
+
+    return out;
 
     // Rotate and translate each vertex
     //I think we can do * instead of _transformVector!
-    TriangleAtTimeInfo<T> tInfo{
+    /*    TriangleAtTimeInfo<T> tInfo{
         .A_p0 = currentCenter + rotation._transformVector(*(initialState.A_p0)),
         .A_p1 = currentCenter + rotation._transformVector(*(initialState.A_p1)),
         .A_p2
-        = currentCenter + rotation._transformVector(*(initialState.A_p2))};
-
-    return tInfo;
+        = currentCenter + rotation._transformVector(*(initialState.A_p2))};*/
+    /*    TriangleAtTimeInfo<T> tInfo{.A_p0 = currentCenter + *(initialState.A_p0),
+                                .A_p1 = currentCenter + *(initialState.A_p1),
+                                .A_p2 = currentCenter + *(initialState.A_p2)};*/
+    //    return tInfo;
 }
 
 template <typename T>
@@ -82,7 +154,7 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
                                    const EigenVector3<T>& point, T t)
 {
     //Get the center g of rotation at time t
-    EigenVector3<T> currentCenter
+    /*    EigenVector3<T> currentCenter
         = *(initialState.A_centerTranslation) + *(initialState.A_linearVel) * t;
 
     //Paper's formula: v_t = v_g + ω_g × (x_t - g)
@@ -90,7 +162,39 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
     EigenVector3<T> velocity = *(initialState.A_linearVel)
                              + (*(initialState.A_angularVel)).cross(radius);
 
-    return velocity;
+    return velocity;*/
+    /*EigenVector3<T> currentCenter = *(initialState.A_centerTranslation);
+    //EigenVector3<T> currentCenter = (EigenVector3<T>(0, 0, 0)) + *(initialState.A_linearVel) * t;
+
+    //Paper's formula: v_t = v_g + ω_g × (x_t - g)
+    EigenVector3<T> radius = point - currentCenter;
+    EigenVector3<T> velocity = (*(initialState.A_linearVel))
+                             + ((*(initialState.A_angularVel))).cross(radius);
+    
+    
+
+    return velocity * t;*/
+    EigenVector3<T> v_world = *(initialState.A_linearVel);
+    EigenVector3<T> omega_world = *(initialState.A_angularVel);
+    EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+    EigenVector3<T> p0 = *(initialState.A_p0);
+    EigenVector3<T> p1 = *(initialState.A_p1);
+    EigenVector3<T> p2 = *(initialState.A_p2);
+    EigenVector3<T> Cnew = v_world * t;
+
+    EigenMatrix3<T> R;
+
+    if (true)
+    {
+        T const radian = omega_world.norm() * t;
+        Eigen::Matrix<T, 3, 1> axis = omega_world.normalized();
+        R = Eigen::AngleAxis<T>(radian, axis).toRotationMatrix();
+    }
+
+    EigenVector3<T> r0 = point - C0;
+
+    EigenVector3<T> tmp0 = (Cnew + R * r0);
+    return tmp0;
 }
 
 //I understand the ti componenet as the triangle at time ti with the u,v,w interpolation
@@ -126,7 +230,9 @@ T UnsignedDistanceAtTime(const RigidBodyInfo<T>& info,
 {
     EigenVector3<T> x
         = BarycentricInterpolate(params.u, params.v, params.w, t, info);
-    return std::abs<T>(grid::value_at_2(*(params.grid), x));
+    return std::abs<T>(valueAtProjection(*(params.grid), x,
+                                         *(info.B_centerTranslation),
+                                         *(info.B_centerRotation)));
 }
 
 template <typename T>
@@ -135,7 +241,8 @@ T SignedDistanceAtTime(const RigidBodyInfo<T>& info,
 {
     EigenVector3<T> x
         = BarycentricInterpolate(params.u, params.v, params.w, t, info);
-    return (grid::value_at_2(*(params.grid), x));
+    return (valueAtProjection(*(params.grid), x, *(info.B_centerTranslation),
+                              *(info.B_centerRotation)));
 }
 
 template <typename T> struct DistanceAtPointParams
@@ -144,10 +251,12 @@ template <typename T> struct DistanceAtPointParams
 };
 
 template <typename T>
-T SignedDistanceAtPoint(const DistanceAtPointParams<T>& params,
+T SignedDistanceAtPoint(const RigidBodyInfo<T>& info,
+                        const DistanceAtPointParams<T>& params,
                         EigenVector3<T> x)
 {
-    return (grid::value_at_2(*(params.grid), x));
+    return (valueAtProjection(*(params.grid), x, *(info.B_centerTranslation),
+                              *(info.B_centerRotation)));
 }
 
 template <typename T, typename F>
@@ -172,7 +281,8 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
     T f1 = func(info, params, l1);
     T f2 = func(info, params, l2);
     T f3 = func(info, params, l3);
-    while ((l3 - l0) <= tol(l1 + l2))
+    uint16_t it = 0;
+    while ((l3 - l0) <= tol(l1 + l2) && it < 8)
     {
         if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
         {
@@ -197,6 +307,7 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
             alpha2 = r * alpha1 + rInv * alpha3;
             f2 = func(info, params, l2);
         }
+        it++;
     }
     T lmid = std::lerp<T>(lstart, lend, 0.5 * (alpha0 + alpha3));
     T fmid = func(info, params, lmid);
@@ -258,9 +369,9 @@ EigenVector3<T> lerp(EigenVector3<T>& x0, EigenVector3<T>& x1, T alpha)
 
 template <typename T, typename F>
 EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
-                            const DistanceAtPointParams<T>& params)
+                            const DistanceAtPointParams<T>& params,
+                            const RigidBodyInfo<T>& info, T tolerance = T(1e-5))
 {
-    T tolerance = T(1e-5);
     const T phi = (1 + std::sqrt(5)) / 2;
     const T invphi = 1 / phi;
 
@@ -268,8 +379,8 @@ EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
     EigenVector3<T> c = b - (b - a) / phi;
     EigenVector3<T> d = a + (b - a) / phi;
 
-    T f_c = func(params, c);
-    T f_d = func(params, d);
+    T f_c = func(info, params, c);
+    T f_d = func(info, params, d);
     int it = 0;
 
     while (((b - a).x() > tolerance && (b - a).y() > tolerance
@@ -282,7 +393,7 @@ EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
             d = c;
             f_d = f_c;
             c = b - (b - a) / phi;
-            f_c = func(params, c);
+            f_c = func(info, params, c);
         }
         else
         {
@@ -290,7 +401,7 @@ EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
             c = d;
             f_c = f_d;
             d = a + (b - a) / phi;
-            f_d = func(params, d);
+            f_d = func(info, params, d);
         }
         it++;
     }
@@ -301,7 +412,8 @@ EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
 
 template <typename T, typename F>
 EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
-                                 F func, const DistanceAtPointParams<T>& params)
+                                 F func, const DistanceAtPointParams<T>& params,
+                                 const RigidBodyInfo<T>& info)
 {
     //We init variables
     T phiInv = T((sqrt(5) - 1) * 0.5);
@@ -316,14 +428,15 @@ EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
     EigenVector3<T> l1 = lerp(lstart, lend, alpha1);
     EigenVector3<T> l2 = lerp(lstart, lend, alpha2);
     EigenVector3<T> l3 = lend;
-    T f0 = func(params, l0);
-    T f1 = func(params, l1);
-    T f2 = func(params, l2);
-    T f3 = func(params, l3);
+    T f0 = func(info, params, l0);
+    T f1 = func(info, params, l1);
+    T f2 = func(info, params, l2);
+    T f3 = func(info, params, l3);
     T tol = 1e-5;
     //TODO NOT IMPLEMENTED CORRECTLY
     //while ((l3 - l0) <= tol((l1 + l2)))
-    while ((l3 - l0).norm() <= ((l1 + l2).norm() * tol))
+    uint16_t it = 0;
+    while ((l3 - l0).norm() <= ((l1 + l2).norm() * tol) && it < 8)
     {
         if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
         {
@@ -335,7 +448,7 @@ EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
             f2 = f1;
             alpha1 = r * alpha2 + rInv * alpha0;
             l1 = lerp(lstart, lend, alpha1);
-            f1 = func(params, l1);
+            f1 = func(info, params, l1);
         }
         else
         {
@@ -346,11 +459,12 @@ EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
             l1 = l2;
             f1 = f2;
             alpha2 = r * alpha1 + rInv * alpha3;
-            f2 = func(params, l2);
+            f2 = func(info, params, l2);
         }
+        ++it;
     }
     EigenVector3<T> lmid = lerp<T>(lstart, lend, T(0.5 * (alpha0 + alpha3)));
-    T fmid = func(params, lmid);
+    T fmid = func(info, params, lmid);
     EigenVector3<T> lmin;
     if (f0 < fmid && f0 < f3) { lmin = l0; }
     else if (fmid < f3) { lmin = lmid; }
@@ -398,7 +512,10 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
 {
     T t1 = tstart;
     T ti = t1;
-    T tip1 = ti;
+    T tip1 = std::numeric_limits<T>::max();
+    //For now if there is no velocity, it means our object is stationary. Thus it can never hit the other object. We can thus ignore it.
+    if ((*(initialState.A_linearVel)).norm() < 0.0000001f) { return tend; }
+
     //TODO  Compute the barycentric coordinates 𝑢, 𝑣, 𝑤 of the starting iterate.
     //Very importantly: For now we incorrectly assume velocity only for the triangles, not the SDF!
 
@@ -406,12 +523,15 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
     // from the paper, it is actually the linear velocity of our triangle rigid body!
     // Thus we must see that vti and vi is different and vti uses getvelocityatpoint!
     EigenVector3<T> vi = *(initialState.A_linearVel);
-    EigenVector3<T> gradP0 = grid::computeGradient_Working(
-        *(initialState.A_p0), *(initialState.B_sdf));
-    EigenVector3<T> gradP1 = grid::computeGradient_Working(
-        *(initialState.A_p1), *(initialState.B_sdf));
-    EigenVector3<T> gradP2 = grid::computeGradient_Working(
-        *(initialState.A_p2), *(initialState.B_sdf));
+    EigenVector3<T> gradP0 = gradientAtProjection(
+        *(initialState.A_p0), *(initialState.B_sdf),
+        *(initialState.B_centerTranslation), *(initialState.B_centerRotation));
+    EigenVector3<T> gradP1 = gradientAtProjection(
+        *(initialState.A_p1), *(initialState.B_sdf),
+        *(initialState.B_centerTranslation), *(initialState.B_centerRotation));
+    EigenVector3<T> gradP2 = gradientAtProjection(
+        *(initialState.A_p2), *(initialState.B_sdf),
+        *(initialState.B_centerTranslation), *(initialState.B_centerRotation));
     T p0Min = vi.dot(gradP0);
     T p1Min = vi.dot(gradP1);
     T p2Min = vi.dot(gradP2);
@@ -449,16 +569,19 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                                               .p2 = initialState.A_p2};
 
     float eps = 1e-6;
-    size_t maxIterations = 8u;
+    size_t maxIterations = 32u;
     DistanceAtPointParams distanceAtPointParams{.grid = initialState.B_sdf};
     for (size_t i = 0; i < maxIterations; ++i)
     {
         EigenVector3<T> xti = BarycentricInterpolate(u, v, w, ti, initialState);
         //I assume (but only assumption that we call with ti and xti!
         EigenVector3<T> vti = getVelocityAtPoint(initialState, xti, ti);
-        T phixti = grid::value_at_2(*(initialState.B_sdf), xti);
-        EigenVector3<T> gradPhixti
-            = grid::computeGradient_Working(xti, *(initialState.B_sdf));
+        T phixti = valueAtProjection(*(initialState.B_sdf), xti,
+                                     *(initialState.B_centerTranslation),
+                                     *(initialState.B_centerRotation));
+        EigenVector3<T> gradPhixti = gradientAtProjection(
+            xti, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+            *(initialState.B_centerRotation));
         if (phixti <= 0)
         {
             tend = std::min<T>(ti, tend);
@@ -493,9 +616,12 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             = BarycentricInterpolate(u, v, w, tip1, initialState);
         //EigenVector3<T> vtip1 = 0; //TODO compute v_{t_{i+1}}
         EigenVector3<T> vtip1 = getVelocityAtPoint(initialState, xtip1, tip1);
-        T phixtip1 = grid::value_at_2(*(initialState.B_sdf), xtip1);
-        EigenVector3<T> gradPhixtip1
-            = grid::computeGradient_Working(xtip1, *(initialState.B_sdf));
+        T phixtip1 = valueAtProjection(*(initialState.B_sdf), xtip1,
+                                       *(initialState.B_centerTranslation),
+                                       *(initialState.B_centerRotation));
+        EigenVector3<T> gradPhixtip1 = gradientAtProjection(
+            xtip1, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+            *(initialState.B_centerRotation));
         T p0Min = (*(initialState.A_p0)).dot(gradPhixtip1);
         T p1Min = (*(initialState.A_p1)).dot(gradPhixtip1);
         T p2Min = (*(initialState.A_p2)).dot(gradPhixtip1);
@@ -505,7 +631,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         else if (p1Min > p2Min && p1Min > p0Min) { si = *(initialState.A_p1); }
         else { si = *(initialState.A_p2); }
         xtip1 = GSSMinimize(xtip1, si, SignedDistanceAtPoint<T>,
-                            distanceAtPointParams);
+                            distanceAtPointParams, initialState);
         //TODO: Update barycentric coordinates 𝑢, 𝑣, 𝑤 using x®𝑡𝑖+1
         computeBarycentricCoordinates(*(initialState.A_p0),
                                       *(initialState.A_p1),
@@ -518,7 +644,9 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         {
             break;
         }
+        ti = tip1;
     }
+    std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
     return std::min<T>(tip1, ti);
 }
 } // namespace grid

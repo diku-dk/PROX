@@ -779,7 +779,8 @@ namespace kdop
       const EigenQuaternion<T>& transformRotation,
       geometry::DirectionTable<T, K / 2> const& directions,
       geometry::ContactsCallback<T>& callback, std::vector<T>& TOIs,
-      T startTime, T endTime, kdop::BodyVelocities<T>& bodyContact)
+      T startTime, T endTime, kdop::BodyVelocities<T>& bodyContact,
+      size_t rigidId)
   {
       using namespace mesh_array;
 
@@ -836,7 +837,13 @@ namespace kdop
           geometry::Triangle<T> tri2 = geometry::get_opposite_face(2, gtet_A);
           geometry::Triangle<T> tri3 = geometry::get_opposite_face(3, gtet_A);
 
-          std::cerr << "TRI: " << tri0.p(0) << "\n";
+          std::cerr << "FOR BODY " << rigidId << "\n";
+          std::cerr << "TRI: (" << tri0.p(0).x() << ", " << tri0.p(0).y()
+                    << ", " << tri0.p(0).z() << ")\n";
+          std::cerr << "TRI: (" << tri0.p(1).x() << ", " << tri0.p(1).y()
+                    << ", " << tri0.p(1).z() << ")\n";
+          std::cerr << "TRI: (" << tri0.p(2).x() << ", " << tri0.p(2).y()
+                    << ", " << tri0.p(2).z() << ")\n";
           if (surface_A[0])
           { // Face opposite vertex i (vertices j,k,m)
               /*EigenVector3<T> contactPoint;
@@ -871,6 +878,8 @@ namespace kdop
                   = bodyContact.bodyBCenterTranslation;
               rigidBody.A_linearVel = bodyContact.bodyALinVel;
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
+              rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
               T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
               TOIs.push_back(currToi);
           }
@@ -889,6 +898,8 @@ namespace kdop
                   = bodyContact.bodyBCenterTranslation;
               rigidBody.A_linearVel = bodyContact.bodyALinVel;
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
+              rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
               T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
               TOIs.push_back(currToi);
           }
@@ -907,6 +918,8 @@ namespace kdop
                   = bodyContact.bodyBCenterTranslation;
               rigidBody.A_linearVel = bodyContact.bodyALinVel;
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
+              rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
               T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
               TOIs.push_back(currToi);
           }
@@ -925,6 +938,8 @@ namespace kdop
                   = bodyContact.bodyBCenterTranslation;
               rigidBody.A_linearVel = bodyContact.bodyALinVel;
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
+              rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
+              rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
               T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
               TOIs.push_back(currToi);
           }
@@ -945,20 +960,20 @@ namespace kdop
           //if (!overlap_dop_aabb(node_A.m_volume, sdf_aabb, directions)) return;
           for (size_t a = node_A.m_start; a <= node_A.m_end; ++a)
           {
-              traversal_sdf_CCD<K, T>(a, branch_A, mesh_A, X_A, Y_A, Z_A,
-                                      surface_map_A, sdf, transformTranslation,
-                                      transformRotation, directions, callback,
-                                      TOIs, startTime, endTime, bodyContact);
+              traversal_sdf_CCD<K, T>(
+                  a, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A, sdf,
+                  transformTranslation, transformRotation, directions, callback,
+                  TOIs, startTime, endTime, bodyContact, rigidId);
           }
       }
   }
 
   // Top-level function for SDF vs TetraMesh collision
   template <size_t K, typename T>
-  inline void tandem_traversal_sdf_CCD(kdop::TestPairSDFStruct<K, T>& work_item,
-                                       std::vector<T>& TOIs, T startTime,
-                                       T endTime,
-                                       kdop::BodyVelocities<T>& bodyContact)
+  inline void
+  tandem_traversal_sdf_CCD(kdop::TestPairSDFStruct<K, T>& work_item,
+                           std::vector<T>& TOIs, T startTime, T endTime,
+                           kdop::BodyVelocities<T>& bodyContact, size_t rigidId)
   {
       if (!work_item.m_tree_a || !work_item.m_grid_b) return;
 
@@ -993,7 +1008,8 @@ namespace kdop
               *(work_item.m_surface_map_a), *(work_item.m_grid_b),
               *(work_item.m_transformTranslation_b),
               *(work_item.m_transformRotation_b), directions,
-              *(work_item.m_callback), TOIs, startTime, endTime, bodyContact);
+              *(work_item.m_callback), TOIs, startTime, endTime, bodyContact,
+              rigidId);
       }
   }
 
@@ -1019,7 +1035,7 @@ namespace kdop
       {
           {
               tandem_traversal_sdf_CCD<K, T>(work_pool[i], TOIs, startTime,
-                                             endTime, bodyContacts[i]);
+                                             endTime, bodyContacts[i], i);
           }
       }
       RESUME_TIMER("exact_test");

@@ -874,7 +874,7 @@ void make_ccd_tight_space_drop(content::API* engine,
 
     T const H = 6.0 * scene_size / 50.0;
     T B = 0.5 * 2.0 * scene_size / 50.0;
-    if (true)
+    if (false)
     {
         std::vector<EigenVector3<T>> vertices;
 

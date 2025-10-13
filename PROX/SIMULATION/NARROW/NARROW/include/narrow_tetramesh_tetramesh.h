@@ -224,7 +224,8 @@ namespace narrow
           sdf_pair_type.m_callback = &current.callback();*/
 
           //kdop_test_sdf_pairs.push_back(sdf_pair_type);
-          sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;
+          //Below is swapped -- WHy did I do that?!
+          /*          sdf_pair_type.m_mesh_a = &geoB.m_tetramesh.m_mesh;
           sdf_pair_type.m_tree_a = &objB.m_tree;
           sdf_pair_type.m_x_a = &objB.m_X;
           sdf_pair_type.m_y_a = &objB.m_Y;
@@ -239,6 +240,23 @@ namespace narrow
           sdf_pair_type.m_transformRotation_a = &current.Q_b();
           sdf_pair_type.m_transformTranslation_b = &current.t_a();
           sdf_pair_type.m_transformRotation_b = &current.Q_a();
+          sdf_pair_type.m_callback = nullptr;
+          kdop_test_sdf_pairs.push_back(sdf_pair_type);*/
+          sdf_pair_type.m_mesh_a = &geoA.m_tetramesh.m_mesh;
+          sdf_pair_type.m_tree_a = &objA.m_tree;
+          sdf_pair_type.m_x_a = &objA.m_X;
+          sdf_pair_type.m_y_a = &objA.m_Y;
+          sdf_pair_type.m_z_a = &objA.m_Z;
+          sdf_pair_type.m_grid_b
+              = &geoB.m_signedDistanceMap.getSignedDistanceGrid();
+          sdf_pair_type.m_surface_map_a = &geoA.m_tetramesh.m_surface_map;
+          sdf_pair_type.m_triangles_a
+              = &geoA.m_signedDistanceMap.getSignedDistanceGrid()
+                     .m_temporaryGridStructure;
+          sdf_pair_type.m_transformTranslation_a = &current.t_a();
+          sdf_pair_type.m_transformRotation_a = &current.Q_a();
+          sdf_pair_type.m_transformTranslation_b = &current.t_b();
+          sdf_pair_type.m_transformRotation_b = &current.Q_b();
           sdf_pair_type.m_callback = nullptr;
           kdop_test_sdf_pairs.push_back(sdf_pair_type);
       }
