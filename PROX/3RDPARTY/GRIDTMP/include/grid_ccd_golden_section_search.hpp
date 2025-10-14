@@ -71,6 +71,112 @@ template <typename T> struct TriangleAtTimeInfo
 };
 
 template <typename T>
+EigenVector3<T> getTriangleVertexPosAt(const EigenMatrix3<T>& R,
+                                       const EigenVector3<T>& centerTranslation,
+                                       const EigenVector3<T>& linVel,
+                                       const EigenVector3<T>& vert, T dt)
+{
+    //TODO USE EQUATION 14!, DISCARD THIS PELASE!
+    EigenVector3<T> diff = vert - centerTranslation;
+
+    return (centerTranslation + (linVel + R * diff) * dt);
+}
+
+template <typename T>
+TriangleAtTimeInfo<T>
+getTriangleAtTime_OLD(T t, const RigidBodyInfo<T>& initialState)
+{
+    //Current center position due to linear motion
+    //Note we may have to set centertranslation to 0,0,0, because our p's may already be the rotated object pose!
+    //EigenVector3<T> currentCenter = *(initialState.A_centerTranslation) + *(initialState.A_linearVel) * t;
+
+    /*    EigenVector3<T> currentCenter = *(initialState.A_linearVel) * t;
+
+    T angle = (*(initialState.A_angularVel)).norm() * t;
+
+    EigenQuaternion<T> rotation;
+    if (angle > 1e-10)
+    {
+        EigenVector3<T> axis = (*(initialState.A_linearVel)).normalized();
+        rotation = EigenQuaternion<T>(Eigen::AngleAxis<T>(angle, axis));
+    }
+    else { rotation = EigenQuaternion<T>::Identity(); }*/
+
+    /*    EigenVector3<T> currentCenter = *(initialState.A_centerTranslation);
+    EigenVector3<T> radiusp0 = *(initialState.A_p0) - currentCenter;
+    EigenVector3<T> velocityp0
+        = (*(initialState.A_linearVel))
+        + ((*(initialState.A_angularVel))).cross(radiusp0);
+    EigenVector3<T> radiusp1 = *(initialState.A_p1) - currentCenter;
+    EigenVector3<T> velocityp1
+        = (*(initialState.A_linearVel))
+        + ((*(initialState.A_angularVel))).cross(radiusp1);
+    EigenVector3<T> radiusp2 = *(initialState.A_p2) - currentCenter;
+    EigenVector3<T> velocityp2
+        = (*(initialState.A_linearVel))
+        + ((*(initialState.A_angularVel))).cross(radiusp2);
+    TriangleAtTimeInfo<T> tInfo{.A_p0 = *(initialState.A_p0) + velocityp0 * t,
+                                .A_p1 = *(initialState.A_p1) + velocityp1 * t,
+                                .A_p2 = *(initialState.A_p2) + velocityp2 * t};*/
+
+    EigenVector3<T> v_world = *(initialState.A_linearVel);
+    EigenVector3<T> omega_world = *(initialState.A_angularVel);
+    EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+    EigenVector3<T> p0 = *(initialState.A_p0);
+    EigenVector3<T> p1 = *(initialState.A_p1);
+    EigenVector3<T> p2 = *(initialState.A_p2);
+
+    EigenMatrix3<T> R;
+
+    if (true)
+    {
+        T const radian = omega_world.norm();
+        Eigen::Matrix<T, 3, 1> axis = omega_world.normalized();
+        R = Eigen::AngleAxis<T>(radian, axis).toRotationMatrix();
+    }
+    /*    EigenVector3<T> Cnew = C0 + v_world * t;
+    
+    //Apply exact rigid transform to each vertex
+    EigenVector3<T> r0 = p0 - C0;
+    EigenVector3<T> r1 = p1 - C0;
+    EigenVector3<T> r2 = p2 - C0;
+
+    EigenVector3<T> tmp0 = (Cnew + R * r0);
+    EigenVector3<T> tmp1 = (Cnew + R * r1);
+    EigenVector3<T> tmp2 = (Cnew + R * r2);*/
+    EigenVector3<T> p0_t = getTriangleVertexPosAt(R, C0, v_world, p0, t);
+    EigenVector3<T> p1_t = getTriangleVertexPosAt(R, C0, v_world, p0, t);
+    EigenVector3<T> p2_t = getTriangleVertexPosAt(R, C0, v_world, p0, t);
+    TriangleAtTimeInfo<T> out{.A_p0 = p0_t, .A_p1 = p1_t, .A_p2 = p2_t};
+
+    return out;
+
+    // Rotate and translate each vertex
+    //I think we can do * instead of _transformVector!
+    /*    TriangleAtTimeInfo<T> tInfo{
+        .A_p0 = currentCenter + rotation._transformVector(*(initialState.A_p0)),
+        .A_p1 = currentCenter + rotation._transformVector(*(initialState.A_p1)),
+        .A_p2
+        = currentCenter + rotation._transformVector(*(initialState.A_p2))};*/
+    /*    TriangleAtTimeInfo<T> tInfo{.A_p0 = currentCenter + *(initialState.A_p0),
+                                .A_p1 = currentCenter + *(initialState.A_p1),
+                                .A_p2 = currentCenter + *(initialState.A_p2)};*/
+    //    return tInfo;
+}
+
+template <typename T>
+EigenVector3<T> getTriangleVertexPosAt(const EigenVector3<T>& centerTranslation,
+                                       const EigenVector3<T>& linVel,
+                                       const EigenVector3<T>& angVel,
+                                       const EigenVector3<T>& vert, T dt)
+{
+    //TODO USE EQUATION 14!, DISCARD THIS PELASE!
+    EigenVector3<T> diff = vert - centerTranslation;
+
+    return vert + (linVel + angVel.cross(diff) * dt);
+}
+
+template <typename T>
 TriangleAtTimeInfo<T> getTriangleAtTime(T t,
                                         const RigidBodyInfo<T>& initialState)
 {
@@ -113,17 +219,9 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
     EigenVector3<T> p0 = *(initialState.A_p0);
     EigenVector3<T> p1 = *(initialState.A_p1);
     EigenVector3<T> p2 = *(initialState.A_p2);
-    EigenVector3<T> Cnew = C0 + v_world * t;
 
-    EigenMatrix3<T> R;
-
-    if (true)
-    {
-        T const radian = omega_world.norm() * t;
-        Eigen::Matrix<T, 3, 1> axis = omega_world.normalized();
-        R = Eigen::AngleAxis<T>(radian, axis).toRotationMatrix();
-    }
-
+    /*    EigenVector3<T> Cnew = C0 + v_world * t;
+    
     //Apply exact rigid transform to each vertex
     EigenVector3<T> r0 = p0 - C0;
     EigenVector3<T> r1 = p1 - C0;
@@ -131,8 +229,14 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
 
     EigenVector3<T> tmp0 = (Cnew + R * r0);
     EigenVector3<T> tmp1 = (Cnew + R * r1);
-    EigenVector3<T> tmp2 = (Cnew + R * r2);
-    TriangleAtTimeInfo<T> out{.A_p0 = tmp0, .A_p1 = tmp1, .A_p2 = tmp2};
+    EigenVector3<T> tmp2 = (Cnew + R * r2);*/
+    EigenVector3<T> p0_t
+        = getTriangleVertexPosAt(C0, v_world, omega_world, p0, t);
+    EigenVector3<T> p1_t
+        = getTriangleVertexPosAt(C0, v_world, omega_world, p1, t);
+    EigenVector3<T> p2_t
+        = getTriangleVertexPosAt(C0, v_world, omega_world, p2, t);
+    TriangleAtTimeInfo<T> out{.A_p0 = p0_t, .A_p1 = p1_t, .A_p2 = p2_t};
 
     return out;
 
@@ -182,7 +286,7 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
     EigenVector3<T> p2 = *(initialState.A_p2);
     EigenVector3<T> Cnew = v_world * t;
 
-    EigenMatrix3<T> R;
+    /*    EigenMatrix3<T> R;
 
     if (true)
     {
@@ -194,7 +298,8 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
     EigenVector3<T> r0 = point - C0;
 
     EigenVector3<T> tmp0 = (Cnew + R * r0);
-    return tmp0;
+    return tmp0;*/
+    return v_world + omega_world.cross(point - C0);
 }
 
 //I understand the ti componenet as the triangle at time ti with the u,v,w interpolation
@@ -505,6 +610,15 @@ void computeBarycentricCoordinates(const EigenVector3<T>& p0,
     w = 1 - u - v;
 }
 
+template <typename T> T sign(T val)
+{
+    T res;
+    if (val < 0) { res = T(-1); }
+    else if (val > 0) { res = T(1); }
+    else { res = val; }
+    return res;
+}
+
 template <typename T>
 T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const EigenVector3<T>& p0,
                 const EigenVector3<T>& p1, EigenVector3<T>& p2,
@@ -585,8 +699,8 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         if (phixti <= 0)
         {
             tend = std::min<T>(ti, tend);
-            tip1 = GSSMinimize(tstart, ti, UnsignedDistanceAtTime<T>,
-                               distanceAtTimeParams, initialState);
+            tip1 = GSSMinimize_WHAT(tstart, ti, UnsignedDistanceAtTime<T>,
+                                    distanceAtTimeParams, initialState);
         }
         else
         {
@@ -596,18 +710,19 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             //            if (phixti > 0) { di = -sign(gradPhixti.dot(vi)); }
             if (phixti > 0)
             {
-                di = -std::copysign(T(1.0), gradPhixti.dot(vti));
+                T val = gradPhixti.dot(vti);
+                di = -sign(val);
             }
             //Direction sign test
             if (di < 0)
             {
-                tip1 = GSSMinimize(tstart, ti, SignedDistanceAtTime<T>,
-                                   distanceAtTimeParams, initialState);
+                tip1 = GSSMinimize_WHAT(tstart, ti, SignedDistanceAtTime<T>,
+                                        distanceAtTimeParams, initialState);
             }
             else
             {
-                tip1 = GSSMinimize(ti, tend, SignedDistanceAtTime<T>,
-                                   distanceAtTimeParams, initialState);
+                tip1 = GSSMinimize_WHAT(ti, tend, SignedDistanceAtTime<T>,
+                                        distanceAtTimeParams, initialState);
             }
         }
         // Solve spatial sub-problem
@@ -622,16 +737,41 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         EigenVector3<T> gradPhixtip1 = gradientAtProjection(
             xtip1, *(initialState.B_sdf), *(initialState.B_centerTranslation),
             *(initialState.B_centerRotation));
-        T p0Min = (*(initialState.A_p0)).dot(gradPhixtip1);
+
+        EigenVector3<T> p0_at_ti = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.A_p0), tip1);
+        EigenVector3<T> p1_at_ti = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.A_p1), tip1);
+        EigenVector3<T> p2_at_ti = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.A_p2), tip1);
+        /*        T p0Min = (*(initialState.A_p0)).dot(gradPhixtip1);
         T p1Min = (*(initialState.A_p1)).dot(gradPhixtip1);
         T p2Min = (*(initialState.A_p2)).dot(gradPhixtip1);
+
+        if (phixtip1 <= 0) { tend = std::min<T>(tip1, tend); }
         EigenVector3<T> si;
         //Computing support vertex pi
-        if (p0Min > p1Min && p0Min > p2Min) { si = *(initialState.A_p0); }
-        else if (p1Min > p2Min && p1Min > p0Min) { si = *(initialState.A_p1); }
-        else { si = *(initialState.A_p2); }
-        xtip1 = GSSMinimize(xtip1, si, SignedDistanceAtPoint<T>,
-                            distanceAtPointParams, initialState);
+        if (p0Min <= p1Min && p0Min <= p2Min) { si = *(initialState.A_p0); }
+        else if (p1Min <= p2Min && p1Min <= p0Min)
+        {
+            si = *(initialState.A_p1);
+        }
+        else { si = *(initialState.A_p2); }*/
+        T p0Min = (p0_at_ti).dot(gradPhixtip1);
+        T p1Min = (p1_at_ti).dot(gradPhixtip1);
+        T p2Min = (p2_at_ti).dot(gradPhixtip1);
+
+        if (phixtip1 <= 0) { tend = std::min<T>(tip1, tend); }
+        EigenVector3<T> si;
+        //Computing support vertex pi
+        if (p0Min <= p1Min && p0Min <= p2Min) { si = p0_at_ti; }
+        else if (p1Min <= p2Min && p1Min <= p0Min) { si = p1_at_ti; }
+        else { si = p2_at_ti; }
+        xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
+                                 distanceAtPointParams, initialState);
         //TODO: Update barycentric coordinates 𝑢, 𝑣, 𝑤 using x®𝑡𝑖+1
         computeBarycentricCoordinates(*(initialState.A_p0),
                                       *(initialState.A_p1),
@@ -647,6 +787,13 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         ti = tip1;
     }
     std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
+    if (ti <= 0.00000001)
+    {
+        //THis code forces debug breakpoint, DELETE LATER when I figure out why TOI=0
+        T a = 0;
+        T b = a + ti;
+        std::cerr << b << ";";
+    }
     return std::min<T>(tip1, ti);
 }
 } // namespace grid

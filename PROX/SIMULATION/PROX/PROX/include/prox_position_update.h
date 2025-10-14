@@ -58,7 +58,25 @@ void position_update_eigen(const Eigen::VectorX<T>& q,
 
         if (finite)
         {
-            // Finite rotation update
+            // Do a finitedimensional update instead
+            //
+            // Create the quaternion, H, corresonding to a rotation of
+            //
+            //    \theta = \Delta t \norm{\vec \omega}
+            //
+            // Around the unit-axis
+            //
+            //     \vec n = \frac{\vec \omega}{  \norm{\vec \omega} }
+            //
+            // That is
+            //
+            //    H = [ \cos\left( \frac{\theta}{2} \right), \sin\left( \frac{\theta}{2} \right) \vec n ]
+            //
+            // Now perform the update of the orientation simply by
+            //
+            //   Q \leftarrow  H Q
+            //
+            // There should be no need to normalize Q after this operation.
             T const radian = W.norm() * dt;
             if (radian > std::numeric_limits<T>::epsilon())
             {
