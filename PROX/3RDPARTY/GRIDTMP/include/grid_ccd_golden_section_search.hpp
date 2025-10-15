@@ -35,7 +35,7 @@ EigenVector3<T> gradientAtProjection(const EigenVector3<T>& samplePoint,
 {
     EigenVector3<T> localSamplePoint
         = rotationSDF.inverse() * (samplePoint - translationSDF);
-    return grid::computeGradient_Working(localSamplePoint, sdf);
+    return (grid::computeGradient_Robust(localSamplePoint, sdf));
 }
 
 template <typename T> T tol(T val)
@@ -173,7 +173,7 @@ EigenVector3<T> getTriangleVertexPosAt(const EigenVector3<T>& centerTranslation,
     //TODO USE EQUATION 14!, DISCARD THIS PELASE!
     EigenVector3<T> diff = vert - centerTranslation;
 
-    return vert + (linVel + angVel.cross(diff) * dt);
+    return vert + ((linVel + angVel.cross(diff)) * dt);
 }
 
 template <typename T>
@@ -284,7 +284,7 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
     EigenVector3<T> p0 = *(initialState.A_p0);
     EigenVector3<T> p1 = *(initialState.A_p1);
     EigenVector3<T> p2 = *(initialState.A_p2);
-    EigenVector3<T> Cnew = v_world * t;
+    EigenVector3<T> Cnew = v_world;
 
     /*    EigenMatrix3<T> R;
 
@@ -365,6 +365,136 @@ T SignedDistanceAtPoint(const RigidBodyInfo<T>& info,
 }
 
 template <typename T, typename F>
+T GSSMinimize_WHAT_MODIFIED(T lstart, T lend, F func,
+                            const DistanceAtTimeParams<T>& params,
+                            const RigidBodyInfo<T>& info)
+{
+    //We init variables
+    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T r = phiInv;
+    T rInv = 1 - r;
+    T alpha0 = 0;
+    T alpha1 = rInv;
+    T alpha2 = r;
+    T alpha3 = 1;
+
+    T l0 = lstart;
+    T l1 = std::lerp<T>(lstart, lend, alpha1);
+    T l2 = std::lerp<T>(lstart, lend, alpha2);
+    T l3 = lend;
+    T f0 = func(info, params, l0);
+    T f1 = func(info, params, l1);
+    T f2 = func(info, params, l2);
+    T f3 = func(info, params, l3);
+    uint16_t it = 0;
+    while ((l3 - l0) > tol(l1 + l2) && it < 8)
+    {
+        if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
+        {
+            alpha3 = alpha2;
+            l3 = l2;
+            f3 = f2;
+            alpha2 = alpha1;
+            l2 = l1;
+            f2 = f1;
+            alpha1 = r * alpha2 + rInv * alpha0;
+            l1 = std::lerp<T>(lstart, lend, alpha1);
+            f1 = func(info, params, l1);
+        }
+        else
+        {
+            alpha0 = alpha1;
+            l0 = l1;
+            f0 = f1;
+            alpha1 = alpha2;
+            l1 = l2;
+            f1 = f2;
+            alpha2 = r * alpha1 + rInv * alpha3;
+            f2 = func(info, params, l2);
+        }
+        it++;
+    }
+    T lmid = std::lerp<T>(lstart, lend, 0.5 * (alpha0 + alpha3));
+    T fmid = func(info, params, lmid);
+    T lmin;
+    if (f0 < fmid && f0 < f3) { lmin = l0; }
+    else if (fmid < f3) { lmin = lmid; }
+    else { lmin = l3; }
+    return lmin;
+}
+
+template <typename T>
+T SignedDistanceAtPoint_MODIFIED(const RigidBodyInfo<T>& info,
+                                 const DistanceAtPointParams<T>& params,
+                                 T llambda, EigenVector3<T> pstart,
+                                 EigenVector3<T> pend)
+{
+    EigenVector3<T> point = pstart + (pend - pstart) * llambda;
+    return (valueAtProjection(*(params.grid), point,
+                              *(info.B_centerTranslation),
+                              *(info.B_centerRotation)));
+}
+
+template <typename T, typename F>
+EigenVector3<T> GSSMinimize_WHAT_MODIFIED(
+    T lstart, T lend, EigenVector3<T> pstart, EigenVector3<T> pend, F func,
+    const DistanceAtPointParams<T>& params, const RigidBodyInfo<T>& info)
+{
+    //We init variables
+    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T r = phiInv;
+    T rInv = 1 - r;
+    T alpha0 = 0;
+    T alpha1 = rInv;
+    T alpha2 = r;
+    T alpha3 = 1;
+
+    T l0 = lstart;
+    T l1 = std::lerp<T>(lstart, lend, alpha1);
+    T l2 = std::lerp<T>(lstart, lend, alpha2);
+    T l3 = lend;
+    T f0 = func(info, params, l0, pstart, pend);
+    T f1 = func(info, params, l1, pstart, pend);
+    T f2 = func(info, params, l2, pstart, pend);
+    T f3 = func(info, params, l3, pstart, pend);
+    uint16_t it = 0;
+    while ((l3 - l0) > tol(l1 + l2) && it < 8)
+    {
+        if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
+        {
+            alpha3 = alpha2;
+            l3 = l2;
+            f3 = f2;
+            alpha2 = alpha1;
+            l2 = l1;
+            f2 = f1;
+            alpha1 = r * alpha2 + rInv * alpha0;
+            l1 = std::lerp<T>(lstart, lend, alpha1);
+            f1 = func(info, params, l1, pstart, pend);
+        }
+        else
+        {
+            alpha0 = alpha1;
+            l0 = l1;
+            f0 = f1;
+            alpha1 = alpha2;
+            l1 = l2;
+            f1 = f2;
+            alpha2 = r * alpha1 + rInv * alpha3;
+            f2 = func(info, params, l2, pstart, pend);
+        }
+        it++;
+    }
+    T lmid = std::lerp<T>(lstart, lend, 0.5 * (alpha0 + alpha3));
+    T fmid = func(info, params, lmid, pstart, pend);
+    T lmin;
+    if (f0 < fmid && f0 < f3) { lmin = l0; }
+    else if (fmid < f3) { lmin = lmid; }
+    else { lmin = l3; }
+    return pstart + (pend - pstart) * lmin;
+}
+
+template <typename T, typename F>
 T GSSMinimize_WHAT(T lstart, T lend, F func,
                    const DistanceAtTimeParams<T>& params,
                    const RigidBodyInfo<T>& info)
@@ -417,6 +547,68 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
     T lmid = std::lerp<T>(lstart, lend, 0.5 * (alpha0 + alpha3));
     T fmid = func(info, params, lmid);
     T lmin;
+    if (f0 < fmid && f0 < f3) { lmin = l0; }
+    else if (fmid < f3) { lmin = lmid; }
+    else { lmin = l3; }
+    return lmin;
+}
+
+template <typename T, typename F>
+EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
+                                 F func, const DistanceAtPointParams<T>& params,
+                                 const RigidBodyInfo<T>& info)
+{
+    //We init variables
+    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T r = phiInv;
+    T rInv = 1 - r;
+    T alpha0 = 0;
+    T alpha1 = rInv;
+    T alpha2 = r;
+    T alpha3 = 1;
+
+    EigenVector3<T> l0 = lstart;
+    EigenVector3<T> l1 = lerp(lstart, lend, alpha1);
+    EigenVector3<T> l2 = lerp(lstart, lend, alpha2);
+    EigenVector3<T> l3 = lend;
+    T f0 = func(info, params, l0);
+    T f1 = func(info, params, l1);
+    T f2 = func(info, params, l2);
+    T f3 = func(info, params, l3);
+    T tol = 1e-5;
+    //TODO NOT IMPLEMENTED CORRECTLY
+    //while ((l3 - l0) <= tol((l1 + l2)))
+    uint16_t it = 0;
+    while ((l3 - l0).norm() <= ((l1 + l2).norm() * tol) && it < 8)
+    {
+        if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
+        {
+            alpha3 = alpha2;
+            l3 = l2;
+            f3 = f2;
+            alpha2 = alpha1;
+            l2 = l1;
+            f2 = f1;
+            alpha1 = r * alpha2 + rInv * alpha0;
+            l1 = lerp(lstart, lend, alpha1);
+            f1 = func(info, params, l1);
+        }
+        else
+        {
+            alpha0 = alpha1;
+            l0 = l1;
+            f0 = f1;
+            alpha1 = alpha2;
+            l1 = l2;
+            f1 = f2;
+            alpha2 = r * alpha1 + rInv * alpha3;
+            f2 = func(info, params, l2);
+        }
+        ++it;
+    }
+    EigenVector3<T> lmid = lerp<T>(lstart, lend, T(0.5 * (alpha0 + alpha3)));
+    T fmid = func(info, params, lmid);
+    EigenVector3<T> lmin;
     if (f0 < fmid && f0 < f3) { lmin = l0; }
     else if (fmid < f3) { lmin = lmid; }
     else { lmin = l3; }
@@ -515,68 +707,6 @@ EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
     return 0.5 * (a + b);
 }
 
-template <typename T, typename F>
-EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
-                                 F func, const DistanceAtPointParams<T>& params,
-                                 const RigidBodyInfo<T>& info)
-{
-    //We init variables
-    T phiInv = T((sqrt(5) - 1) * 0.5);
-    T r = phiInv;
-    T rInv = 1 - r;
-    T alpha0 = 0;
-    T alpha1 = rInv;
-    T alpha2 = r;
-    T alpha3 = 1;
-
-    EigenVector3<T> l0 = lstart;
-    EigenVector3<T> l1 = lerp(lstart, lend, alpha1);
-    EigenVector3<T> l2 = lerp(lstart, lend, alpha2);
-    EigenVector3<T> l3 = lend;
-    T f0 = func(info, params, l0);
-    T f1 = func(info, params, l1);
-    T f2 = func(info, params, l2);
-    T f3 = func(info, params, l3);
-    T tol = 1e-5;
-    //TODO NOT IMPLEMENTED CORRECTLY
-    //while ((l3 - l0) <= tol((l1 + l2)))
-    uint16_t it = 0;
-    while ((l3 - l0).norm() <= ((l1 + l2).norm() * tol) && it < 8)
-    {
-        if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
-        {
-            alpha3 = alpha2;
-            l3 = l2;
-            f3 = f2;
-            alpha2 = alpha1;
-            l2 = l1;
-            f2 = f1;
-            alpha1 = r * alpha2 + rInv * alpha0;
-            l1 = lerp(lstart, lend, alpha1);
-            f1 = func(info, params, l1);
-        }
-        else
-        {
-            alpha0 = alpha1;
-            l0 = l1;
-            f0 = f1;
-            alpha1 = alpha2;
-            l1 = l2;
-            f1 = f2;
-            alpha2 = r * alpha1 + rInv * alpha3;
-            f2 = func(info, params, l2);
-        }
-        ++it;
-    }
-    EigenVector3<T> lmid = lerp<T>(lstart, lend, T(0.5 * (alpha0 + alpha3)));
-    T fmid = func(info, params, lmid);
-    EigenVector3<T> lmin;
-    if (f0 < fmid && f0 < f3) { lmin = l0; }
-    else if (fmid < f3) { lmin = lmid; }
-    else { lmin = l3; }
-    return lmin;
-}
-
 template <typename T>
 void computeBarycentricCoordinates(const EigenVector3<T>& p0,
                                    const EigenVector3<T>& p1,
@@ -617,6 +747,24 @@ template <typename T> T sign(T val)
     else if (val > 0) { res = T(1); }
     else { res = val; }
     return res;
+}
+
+template <typename T> void projectToTriangle(T& u, T& v, T& w)
+{
+    //Ensure barycentric coordinates are valid
+    u = std::max<T>(0.0, std::min<T>(1.0, u));
+    v = std::max<T>(0.0, std::min<T>(1.0, v));
+    w = std::max<T>(0.0, std::min<T>(1.0, w));
+
+    //Normalize to sum to 1
+    T sum = u + v + w;
+    if (sum > 0)
+    {
+        u /= sum;
+        v /= sum;
+        w /= sum;
+    }
+    else { u = v = w = 1.0 / 3.0; }
 }
 
 template <typename T>
@@ -699,8 +847,9 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         if (phixti <= 0)
         {
             tend = std::min<T>(ti, tend);
-            tip1 = GSSMinimize_WHAT(tstart, ti, UnsignedDistanceAtTime<T>,
-                                    distanceAtTimeParams, initialState);
+            tip1 = GSSMinimize_WHAT_MODIFIED(
+                tstart, ti, UnsignedDistanceAtTime<T>, distanceAtTimeParams,
+                initialState);
         }
         else
         {
@@ -716,13 +865,15 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             //Direction sign test
             if (di < 0)
             {
-                tip1 = GSSMinimize_WHAT(tstart, ti, SignedDistanceAtTime<T>,
-                                        distanceAtTimeParams, initialState);
+                tip1 = GSSMinimize_WHAT_MODIFIED(
+                    tstart, ti, SignedDistanceAtTime<T>, distanceAtTimeParams,
+                    initialState);
             }
             else
             {
-                tip1 = GSSMinimize_WHAT(ti, tend, SignedDistanceAtTime<T>,
-                                        distanceAtTimeParams, initialState);
+                tip1 = GSSMinimize_WHAT_MODIFIED(
+                    ti, tend, SignedDistanceAtTime<T>, distanceAtTimeParams,
+                    initialState);
             }
         }
         // Solve spatial sub-problem
@@ -770,21 +921,25 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         if (p0Min <= p1Min && p0Min <= p2Min) { si = p0_at_ti; }
         else if (p1Min <= p2Min && p1Min <= p0Min) { si = p1_at_ti; }
         else { si = p2_at_ti; }
-        xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
-                                 distanceAtPointParams, initialState);
+        xtip1 = GSSMinimize_WHAT_MODIFIED(T(0), T(1), xtip1, si,
+                                          SignedDistanceAtPoint_MODIFIED<T>,
+                                          distanceAtPointParams, initialState);
         //TODO: Update barycentric coordinates 𝑢, 𝑣, 𝑤 using x®𝑡𝑖+1
         computeBarycentricCoordinates(*(initialState.A_p0),
                                       *(initialState.A_p1),
                                       *(initialState.A_p2), xtip1, u, v, w);
+        projectToTriangle(u, v, w);
 
         if (std::abs(tip1 - ti) <= eps
             && (std::abs(xtip1.x() - xti.x()) <= eps
                 && std::abs(xtip1.y() - xti.y()) <= eps
-                && std::abs(xtip1.z() - xti.z()) <= eps))
+                && std::abs(xtip1.z() - xti.z()) <= eps)
+            && (phixtip1 <= eps))
         {
             break;
         }
         ti = tip1;
+        xti = xtip1;
     }
     std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
     if (ti <= 0.00000001)

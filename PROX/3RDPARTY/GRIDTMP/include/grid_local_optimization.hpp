@@ -112,6 +112,102 @@ Eigen::Matrix<T, 3, 1> computeGradient_Working(const Eigen::Matrix<T, 3, 1>& p,
     return Eigen::Matrix<T, 3, 1>(dx, dy, dz);
 }
 
+template <typename D, typename T>
+Eigen::Matrix<T, 3, 1> computeGradient_Robust(const Eigen::Matrix<T, 3, 1>& p,
+                                              const grid::Grid<D, T>& grid)
+{
+    Eigen::Matrix<T, 3, 1> diff = (grid.m_max - grid.m_min);
+    Eigen::Matrix<T, 3, 1> cell_size = Eigen::Matrix<T, 3, 1>(
+        diff.x() / (grid.m_nodes.x() - 1), diff.y() / (grid.m_nodes.y() - 1),
+        diff.z() / (grid.m_nodes.z() - 1));
+
+    T hx = cell_size.x();
+    T hy = cell_size.y();
+    T hz = cell_size.z();
+
+    T dx, dy, dz;
+
+    if (p.x() - hx < grid.m_min.x())
+    {
+        //use forward difference
+        dx = (grid::value_at_2(grid,
+                               (p + Eigen::Matrix<T, 3, 1>(hx, 0, 0)).eval())
+              - grid::value_at_2(grid, p))
+           / hx;
+    }
+    else if (p.x() + hx > grid.m_max.x())
+    {
+        //use backward difference
+        dx = (grid::value_at_2(grid, p)
+              - grid::value_at_2(grid,
+                                 (p - Eigen::Matrix<T, 3, 1>(hx, 0, 0)).eval()))
+           / hx;
+    }
+    else
+    {
+        //Use central difference
+        dx = (grid::value_at_2(grid,
+                               (p + Eigen::Matrix<T, 3, 1>(hx, 0, 0)).eval())
+              - grid::value_at_2(grid,
+                                 (p - Eigen::Matrix<T, 3, 1>(hx, 0, 0)).eval()))
+           / (2 * hx);
+    }
+
+    if (p.y() - hy < grid.m_min.y())
+    {
+        //use forward difference
+        dy = (grid::value_at_2(grid,
+                               (p + Eigen::Matrix<T, 3, 1>(hy, 0, 0)).eval())
+              - grid::value_at_2(grid, p))
+           / hy;
+    }
+    else if (p.y() + hy > grid.m_max.y())
+    {
+        //use backward difference
+        dy = (grid::value_at_2(grid, p)
+              - grid::value_at_2(grid,
+                                 (p - Eigen::Matrix<T, 3, 1>(hy, 0, 0)).eval()))
+           / hy;
+    }
+    else
+    {
+        //Use central difference
+        dy = (grid::value_at_2(grid,
+                               ((p + Eigen::Matrix<T, 3, 1>(hy, 0, 0))).eval())
+              - grid::value_at_2(grid,
+                                 (p - Eigen::Matrix<T, 3, 1>(hy, 0, 0)).eval()))
+           / (2 * hy);
+    }
+    // Z component
+    if (p.z() - hz < grid.m_min.z())
+    {
+        //use forward difference
+        dz = (grid::value_at_2(grid,
+                               (p + Eigen::Matrix<T, 3, 1>(hz, 0, 0)).eval())
+              - grid::value_at_2(grid, p))
+           / hz;
+    }
+    else if (p.z() + hz > grid.m_max.z())
+    {
+        //use backward difference
+        dz = (grid::value_at_2(grid, p)
+              - grid::value_at_2(grid,
+                                 (p - Eigen::Matrix<T, 3, 1>(hz, 0, 0)).eval()))
+           / hz;
+    }
+    else
+    {
+        //Use central difference
+        dz = (grid::value_at_2(grid,
+                               (p + Eigen::Matrix<T, 3, 1>(hz, 0, 0)).eval())
+              - grid::value_at_2(grid,
+                                 (p - Eigen::Matrix<T, 3, 1>(hz, 0, 0)).eval()))
+           / (2 * hz);
+    }
+
+    return Eigen::Matrix<T, 3, 1>(dx, dy, dz);
+}
+
 template <typename T>
 T computeTriangleNormalCone(const Eigen::Matrix<T, 3, 1>& p,
                             const Eigen::Matrix<T, 3, 1>& q,
