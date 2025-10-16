@@ -866,9 +866,9 @@ namespace kdop
                   callback(contactPoint, normal, penetration);
               }*/
               grid::RigidBodyInfo<T> rigidBody;
-              rigidBody.A_p0 = &tri0.p(0);
-              rigidBody.A_p1 = &tri0.p(1);
-              rigidBody.A_p2 = &tri0.p(2);
+              rigidBody.A_p0 = tri0.p(0);
+              rigidBody.A_p1 = tri0.p(1);
+              rigidBody.A_p2 = tri0.p(2);
               rigidBody.B_sdf = &sdf;
               rigidBody.A_angularVel = bodyContact.bodyAAngVel;
               rigidBody.B_angularVel = bodyContact.bodyBAngVel;
@@ -886,9 +886,9 @@ namespace kdop
           if (surface_A[1])
           { // Face opposite vertex j (vertices i,k,m)
               grid::RigidBodyInfo<T> rigidBody;
-              rigidBody.A_p0 = &tri1.p(0);
-              rigidBody.A_p1 = &tri1.p(1);
-              rigidBody.A_p2 = &tri1.p(2);
+              rigidBody.A_p0 = tri1.p(0);
+              rigidBody.A_p1 = tri1.p(1);
+              rigidBody.A_p2 = tri1.p(2);
               rigidBody.B_sdf = &sdf;
               rigidBody.A_angularVel = bodyContact.bodyAAngVel;
               rigidBody.B_angularVel = bodyContact.bodyBAngVel;
@@ -906,9 +906,9 @@ namespace kdop
           if (surface_A[2])
           { // Face opposite vertex k (vertices i,j,m)
               grid::RigidBodyInfo<T> rigidBody;
-              rigidBody.A_p0 = &tri2.p(0);
-              rigidBody.A_p1 = &tri2.p(1);
-              rigidBody.A_p2 = &tri2.p(2);
+              rigidBody.A_p0 = tri2.p(0);
+              rigidBody.A_p1 = tri2.p(1);
+              rigidBody.A_p2 = tri2.p(2);
               rigidBody.B_sdf = &sdf;
               rigidBody.A_angularVel = bodyContact.bodyAAngVel;
               rigidBody.B_angularVel = bodyContact.bodyBAngVel;
@@ -926,9 +926,9 @@ namespace kdop
           if (surface_A[3])
           { // Face opposite vertex m (vertices i,j,k)
               grid::RigidBodyInfo<T> rigidBody;
-              rigidBody.A_p0 = &tri3.p(0);
-              rigidBody.A_p1 = &tri3.p(1);
-              rigidBody.A_p2 = &tri3.p(2);
+              rigidBody.A_p0 = tri3.p(0);
+              rigidBody.A_p1 = tri3.p(1);
+              rigidBody.A_p2 = tri3.p(2);
               rigidBody.B_sdf = &sdf;
               rigidBody.A_angularVel = bodyContact.bodyAAngVel;
               rigidBody.B_angularVel = bodyContact.bodyBAngVel;

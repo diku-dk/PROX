@@ -1,2 +1,5 @@
 ADD_SUBDIRECTORY(grid_test_grid)
 ADD_SUBDIRECTORY(grid_local_strategy)
+ADD_SUBDIRECTORY(grid_local_optimization_gradient)
+ADD_SUBDIRECTORY(grid_local_optimization_test_GSS_minimize)
+ADD_SUBDIRECTORY(grid_local_optimization_FWGSS)
