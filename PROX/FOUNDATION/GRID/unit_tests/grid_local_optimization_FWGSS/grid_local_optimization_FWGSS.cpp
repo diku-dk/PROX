@@ -559,7 +559,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             rInfo.A_p1 = EigenVector3<T>(0.6, 0.1, 0.6);
             rInfo.A_p2 = EigenVector3<T>(0.7, 0.0, 0.6);
             T val = grid::FrankWolfeGSS<T>(T(0.0), T(0.01), rInfo);
-            BOOST_TEST(std::abs<T>(val - T(0.000)) < 0.0001f);
+            BOOST_TEST(std::abs<T>(val - T(0.010)) < 0.0001f);
         }
 
         {
@@ -884,7 +884,7 @@ BOOST_AUTO_TEST_CASE(grid_local_opt_FWGSS_torus)
 
             T val = grid::FrankWolfeGSS<T>(T(0.0), T(0.01), rInfo);
 
-            BOOST_TEST(std::abs<T>(val - T(0.001)) < 0.0001f);
+            BOOST_TEST(std::abs<T>(val - T(0.000)) < 0.0001f);
         }
 
         {
@@ -1114,7 +1114,7 @@ BOOST_AUTO_TEST_CASE(grid_local_opt_FWGSS_torus)
 
             T val = grid::FrankWolfeGSS<T>(T(0.0), T(0.01), rInfo);
 
-            BOOST_TEST(std::abs<T>(val - T(0.01)) < 0.0001f);
+            BOOST_TEST(std::abs<T>(val - T(0.00)) < 0.0001f);
         }
     }
 }

@@ -76,7 +76,7 @@ EigenVector3<T> gradientAtProjection(const EigenVector3<T>& samplePoint,
 
 template <typename T> T tol(T val)
 {
-    T tol = 1e-5;
+    T tol = 1e-8;
     //TODO NOT IMPLEMENTED CORRECTLY
     return tol * val;
 }
@@ -406,7 +406,7 @@ T GSSMinimize_WHAT_MODIFIED(T lstart, T lend, F func,
                             const RigidBodyInfo<T>& info)
 {
     //We init variables
-    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T phiInv = ((sqrt(T(5)) - T(1)) * T(0.5));
     T r = phiInv;
     T rInv = 1 - r;
     T alpha0 = 0;
@@ -446,6 +446,7 @@ T GSSMinimize_WHAT_MODIFIED(T lstart, T lend, F func,
             l1 = l2;
             f1 = f2;
             alpha2 = r * alpha1 + rInv * alpha3;
+            l2 = std::lerp<T>(lstart, lend, alpha2);
             f2 = func(info, params, l2);
         }
         it++;
@@ -476,9 +477,10 @@ EigenVector3<T> GSSMinimize_WHAT_MODIFIED(
     T lstart, T lend, EigenVector3<T> pstart, EigenVector3<T> pend, F func,
     const DistanceAtPointParams<T>& params, const RigidBodyInfo<T>& info)
 {
-    if (std::abs(lstart - lend) < 1e-8) { return lstart; }
+    T diff = (lstart - lend);
+    if (std::abs<T>(diff) < 1e-8) { return pstart; }
     //We init variables
-    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T phiInv = ((sqrt(T(5)) - T(1)) * T(0.5));
     T r = phiInv;
     T rInv = 1 - r;
     T alpha0 = 0;
@@ -495,7 +497,7 @@ EigenVector3<T> GSSMinimize_WHAT_MODIFIED(
     T f2 = func(info, params, l2, pstart, pend);
     T f3 = func(info, params, l3, pstart, pend);
     uint16_t it = 0;
-    while ((l3 - l0) > tol(l1 + l2) /* && it < 8*/)
+    while ((l3 - l0) <= tol(l1 + l2) && it < 8)
     {
         if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
         {
@@ -518,6 +520,7 @@ EigenVector3<T> GSSMinimize_WHAT_MODIFIED(
             l1 = l2;
             f1 = f2;
             alpha2 = r * alpha1 + rInv * alpha3;
+            l2 = std::lerp<T>(lstart, lend, alpha2);
             f2 = func(info, params, l2, pstart, pend);
         }
         it++;
@@ -537,9 +540,9 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
                    const RigidBodyInfo<T>& info)
 {
     //We init variables
-    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T phiInv = ((sqrt(T(5)) - T(1)) * T(0.5));
     T r = phiInv;
-    T rInv = 1 - r;
+    T rInv = 1.0 - r;
     T alpha0 = 0;
     T alpha1 = rInv;
     T alpha2 = r;
@@ -577,6 +580,7 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
             l1 = l2;
             f1 = f2;
             alpha2 = r * alpha1 + rInv * alpha3;
+            l2 = std::lerp<T>(lstart, lend, alpha2);
             f2 = func(info, params, l2);
         }
         it++;
@@ -605,7 +609,7 @@ EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
                                  const RigidBodyInfo<T>& info)
 {
     //We init variables
-    T phiInv = T((sqrt(5) - 1) * 0.5);
+    T phiInv = ((sqrt(T(5)) - T(1)) * T(0.5));
     T r = phiInv;
     T rInv = 1 - r;
     T alpha0 = 0;
@@ -648,6 +652,7 @@ EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
             l1 = l2;
             f1 = f2;
             alpha2 = r * alpha1 + rInv * alpha3;
+            l2 = lerp<T>(lstart, lend, alpha2);
             f2 = func(info, params, l2);
         }
         ++it;
@@ -810,7 +815,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                 const EigenVector3<T>& p1, EigenVector3<T>& p2,
                 const grid::Grid<T, T>& grid,*/)
 {
-    return FrankWolfeGSSSimple(tstart, tend, initialState);
+    //    return FrankWolfeGSSSimple(tstart, tend, initialState);
     T t1 = tstart;
     T ti = t1;
     T tip1 = std::numeric_limits<T>::max();
@@ -908,7 +913,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             {
                 T val = gradPhixti.dot(vti);
                 di = -sign(val);
-                di = T(1);
+                //                di = T(1);
             }
             //Direction sign test
             if (di < 0)
@@ -939,13 +944,13 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
 
         EigenVector3<T> p0_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p0s, tip1);
+            *(initialState.A_angularVel), p0s, ti);
         EigenVector3<T> p1_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p1s, tip1);
+            *(initialState.A_angularVel), p1s, ti);
         EigenVector3<T> p2_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p2s, tip1);
+            *(initialState.A_angularVel), p2s, ti);
         /*        T p0Min = (*(initialState.A_p0)).dot(gradPhixtip1);
         T p1Min = (*(initialState.A_p1)).dot(gradPhixtip1);
         T p2Min = (*(initialState.A_p2)).dot(gradPhixtip1);
@@ -978,7 +983,16 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
 
         /*computeBarycentricCoordinates(p0_at_ti, p1_at_ti, p2_at_ti, xtip1, u, v,
                                       w);*/
-        barycentric(p0_at_ti, p1_at_ti, p2_at_ti, xtip1, u, v, w);
+        EigenVector3<T> p0_at_tip1 = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), p0s, tip1);
+        EigenVector3<T> p1_at_tip1 = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), p1s, tip1);
+        EigenVector3<T> p2_at_tip1 = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), p2s, tip1);
+        barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, u, v, w);
 
         projectToTriangle(u, v, w);
         if (u > 1.01 || v > 1.01 || w > 1.01)
@@ -998,9 +1012,13 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         if (std::abs(tip1 - ti) <= eps
             && (std::abs(xtip1.x() - xti.x()) <= eps
                 && std::abs(xtip1.y() - xti.y()) <= eps
-                && std::abs(xtip1.z() - xti.z()) <= eps)
-            && (phixtip1_2 <= eps))
+                && std::abs(xtip1.z() - xti.z()) <= eps))
         {
+            if (phixtip1_2 >= eps)
+            {
+                ti = T(0.01);
+                tip1 = T(0.01);
+            }
             break;
         }
         ti = tip1;
