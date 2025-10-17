@@ -14,6 +14,39 @@ namespace grid
 };
 
 template <typename T> T someFunction(T val) { return val + val; }*/
+template <typename T>
+inline void barycentric(const EigenVector3<T>& x1, const EigenVector3<T>& x2,
+                        const EigenVector3<T>& x3, const EigenVector3<T>& p,
+                        T& w1, T& w2, T& w3)
+{
+    using std::sqrt;
+
+    // Before computing the barycentric coordinates, we 'normalize' the triangle to ensure it is not a sliver
+    auto b1 = x2 - x1;
+    auto b2 = x3 - x1;
+    auto b3 = ((b1).normalized()).cross((b2).normalized());
+
+    const EigenMatrix3<T> basis{
+        {b1(0), b2(0), b3(0)},
+        {b1(1), b2(1), b3(1)},
+        {b1(2), b2(2), b3(2)}
+    };
+
+    /*      M const basis = M::make(  b1(0), b2(0), b3(0)
+                              , b1(1), b2(1), b3(1)
+                              , b1(2), b2(2), b3(2));*/
+
+    // q is the point p transformed to the isoparametric system
+    const EigenVector3<T> q = basis.inverse() * (p - x1);
+
+    w1 = 1 - q[0] - q[1];
+    w2 = q[0];
+    w3 = q[1];
+
+    assert(is_number(w1) || !"barycentric(): NaN encountered");
+    assert(is_number(w2) || !"barycentric(): NaN encountered");
+    assert(is_number(w3) || !"barycentric(): NaN encountered");
+}
 
 //Note in the below we assume the sample point is in world coordinates, but the sdf is in local coords!
 template <typename T>
@@ -35,7 +68,10 @@ EigenVector3<T> gradientAtProjection(const EigenVector3<T>& samplePoint,
 {
     EigenVector3<T> localSamplePoint
         = rotationSDF.inverse() * (samplePoint - translationSDF);
-    return (grid::computeGradient_Working(localSamplePoint, sdf)).normalized();
+    /*    contactPoint
+        = transformRotation * contactPoint + transformTranslation;*/
+    return (rotationSDF * grid::computeGradient_Working(localSamplePoint, sdf))
+        .normalized();
 }
 
 template <typename T> T tol(T val)
@@ -774,6 +810,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                 const EigenVector3<T>& p1, EigenVector3<T>& p2,
                 const grid::Grid<T, T>& grid,*/)
 {
+    return FrankWolfeGSSSimple(tstart, tend, initialState);
     T t1 = tstart;
     T ti = t1;
     T tip1 = std::numeric_limits<T>::max();
@@ -871,6 +908,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             {
                 T val = gradPhixti.dot(vti);
                 di = -sign(val);
+                di = T(1);
             }
             //Direction sign test
             if (di < 0)
@@ -938,8 +976,10 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                                  distanceAtPointParams, initialState);
         //TODO: Update barycentric coordinates 𝑢, 𝑣, 𝑤 using x®𝑡𝑖+1
 
-        computeBarycentricCoordinates(p0_at_ti, p1_at_ti, p2_at_ti, xtip1, u, v,
-                                      w);
+        /*computeBarycentricCoordinates(p0_at_ti, p1_at_ti, p2_at_ti, xtip1, u, v,
+                                      w);*/
+        barycentric(p0_at_ti, p1_at_ti, p2_at_ti, xtip1, u, v, w);
+
         projectToTriangle(u, v, w);
         if (u > 1.01 || v > 1.01 || w > 1.01)
         {
@@ -951,18 +991,38 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             std::cerr << u << ", " << v << ", " << w << "\n";
             throw std::runtime_error("TOO LOW");
         }
+
+        T phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
+                                         *(initialState.B_centerTranslation),
+                                         *(initialState.B_centerRotation));
         if (std::abs(tip1 - ti) <= eps
             && (std::abs(xtip1.x() - xti.x()) <= eps
                 && std::abs(xtip1.y() - xti.y()) <= eps
                 && std::abs(xtip1.z() - xti.z()) <= eps)
-            && (phixtip1 <= eps))
+            && (phixtip1_2 <= eps))
         {
             break;
         }
         ti = tip1;
         xti = xtip1;
+        std::cerr << "ti , tip1 = (" << ti << ", " << tip1 << ")\n";
+
+        std::cerr << "ENDED UP WITH xtip1 = (" << xtip1.x() << ", " << xtip1.y()
+                  << ", " << xtip1.z() << ") and xti=" << "(" << xti.x() << ", "
+                  << xti.y() << ", " << xti.z() << ")\n";
     }
     std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
+    std::cerr << "Ended up with a distance of (from xtip1) "
+              << valueAtProjection(*(initialState.B_sdf), xtip1,
+                                   *(initialState.B_centerTranslation),
+                                   *(initialState.B_centerRotation))
+              << " from the solution.\n";
+    std::cerr << "Ended up with a distance of (from xti) "
+              << valueAtProjection(*(initialState.B_sdf), xti,
+                                   *(initialState.B_centerTranslation),
+                                   *(initialState.B_centerRotation))
+              << " from the solution.\n";
+
     if (ti <= 0.0050000001)
     {
         //THis code forces debug breakpoint, DELETE LATER when I figure out why TOI=0
@@ -1058,7 +1118,7 @@ T FrankWolfeGSSSimple(T start, T end, const RigidBodyInfo<T>& initialState)
         if (phixti <= 0) { di = T(-1); }
         else
         {
-            di = sign<T>(
+            di = -sign<T>(
                 gradPhixti.dot(getVelocityAtPoint(initialState, xti, ti)));
         }
         T alpha = T(2) / (T(i + 2));
