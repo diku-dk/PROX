@@ -47,6 +47,7 @@ void time_stepper(T dt, std::vector<RigidBody<T>>& bodies,
                   std::vector<ContactPoint<T>>& contacts)
 {
     auto stepperType = params.stepper_params().stepper();
+
     util::Log logging;
 
     START_TIMER("stepper");
@@ -228,7 +229,8 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
                       narrow::System<T>& narrow_system,
                       std::vector<ContactPoint<T>>& contacts)
 {
-    auto stepperType = params.stepper_params().stepper();
+    //auto stepperType = params.stepper_params().stepper();
+    stepper_type stepperType = stepper_type::semi_implicit;
     util::Log logging;
 
     START_TIMER("stepper");
@@ -244,6 +246,12 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
         STOP_TIMER("stepper");
         return;
     }
+
+    collision_detection(bodies, broad_system, narrow_system, contacts, params);
+    T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
+                                           T(0.0), T(0.01));
+
+    collision_detection(bodies, broad_system, narrow_system, contacts, params);
 
     //=============EIGEN================0
     Eigen::VectorX<T> qNew; // position vector:               vector7
@@ -270,19 +278,6 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
     get_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
 
     get_velocity_vector_eigen(bodies.begin(), bodies.end(), uNew);
-
-    if (stepperType == moreau)
-    {
-        position_update_eigen(qNew, uNew, 0.5f * dt, qMNew);
-        //set_position_vector(bodies.begin(), bodies.end(), qM);
-        set_position_vector_eigen(bodies.begin(), bodies.end(), qMNew);
-    }
-
-    collision_detection(bodies, broad_system, narrow_system, contacts, params);
-    T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
-                                           T(0.0), T(0.01));
-
-    collision_detection(bodies, broad_system, narrow_system, contacts, params);
 
     unsigned int const number_of_contacts = contacts.size();
 
@@ -358,15 +353,12 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
         velocity_update_eigen(uNew, WdthNew, uNew);
     }
 
-    if (stepperType == moreau)
-    {
-        position_update_eigen(qMNew, uNew, dt * 0.5f, qNew);
-    }
-    else if (stepperType == semi_implicit)
+    if (stepperType == semi_implicit)
     {
         //q^{t+1} = q^t + dt* u^{t+1}
         position_update_eigen(qNew, uNew, dt, qNew);
     }
+    else { throw std::runtime_error("EMpty stepper not supported for CCD!"); }
     //Else empty?
 
     //set_position_vector(bodies.begin(), bodies.end(), q);

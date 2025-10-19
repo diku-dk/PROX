@@ -145,7 +145,28 @@ Grid<D, T> projectGridToSDF(Eigen::MatrixXd verts, Eigen::MatrixXi indices,
     std::cout << "Created grid: " << G.I() << " x " << G.J() << " x " << G.K()
               << "  (total nodes = " << total << ")\n";
 
-    //Build the query points matrix P (total x 3) in the same linear order used by grid
+    Eigen::RowVector3d vertexCentroid = verts.colwise().mean();
+    Eigen::Matrix<T, 3, 1> centroidT = vertexCentroid.cast<T>();
+    T longestRow = T(0.0);
+    for (Eigen::Index v = 0; v < verts.rows(); ++v)
+    {
+        T x = T(verts(v, 0));
+        T y = T(verts(v, 1));
+        T z = T(verts(v, 2));
+
+        EigenVector3<T> vec = EigenVector3<T>(x, y, z);
+        T distance = (vec - centroidT).norm();
+        longestRow = std::max<T>(longestRow, distance);
+    }
+    G.m_r_val = longestRow;
+    Eigen::RowVector3d val = minv + maxv;
+    EigenVector3<T> center
+        = EigenVector3<T>(T(val.x()), T(val.y()), T(val.z())) * T(0.5);
+    G.m_min_enclosing_sdf
+        = center - EigenVector3<T>(longestRow, longestRow, longestRow);
+    G.m_max_enclosing_sdf
+        = center + EigenVector3<T>(longestRow, longestRow, longestRow);
+
     Eigen::MatrixXd P((Eigen::Index)total, 3);
     size_t idx_lin = 0;
     for (size_t k = 0; k < G.K(); ++k)
@@ -185,10 +206,8 @@ template <typename D, typename T>
 void extractIsosurfaceFromGrid(Grid<D, T>& G, double isovalue = 0.0)
 {
     //GridIsosurface<T> isosurface;
-    // total number of grid vertices (same as in projectGridToSDF)
+    // total number of grid vertices
     const size_t total = G.I() * G.J() * G.K();
-
-    // Prepare marching_cubes inputs (same ordering: for k, for j, for i -> idx_lin++)
     Eigen::VectorXd values((Eigen::Index)total);
     Eigen::MatrixXd points((Eigen::Index)total, 3);
 
@@ -201,8 +220,7 @@ void extractIsosurfaceFromGrid(Grid<D, T>& G, double isovalue = 0.0)
             {
                 Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
                 Eigen::Matrix<T, 3, 1> p;
-                grid::node_position(
-                    G, idx, p); // same call you used in projectGridToSDF
+                grid::node_position(G, idx, p);
 
                 points((Eigen::Index)idx_lin, 0) = p.x();
                 points((Eigen::Index)idx_lin, 1) = p.y();
@@ -272,18 +290,14 @@ void build_VF_from_T3Mesh(
         F((int)t, 1) = b;
         F((int)t, 2) = c;
 
-        // ----- If the above doesn't compile, try one of these (pick and replace) -----
-        // Variant: triangle provides integer indices directly: tri[0], tri[1], tri[2]
         // int a = static_cast<int>( tri[0] );
         // int b = static_cast<int>( tri[1] );
         // int c = static_cast<int>( tri[2] );
 
-        // Variant: triangle exposes members e.g. v0, v1, v2 which are Vertex
         // int a = static_cast<int>( tri.v0.idx() );
         // int b = static_cast<int>( tri.v1.idx() );
         // int c = static_cast<int>( tri.v2.idx() );
 
-        // Variant: triangle.operator[](j) returns Vertex
         // int a = static_cast<int>( tri[0].idx() );
         // int b = static_cast<int>( tri[1].idx() );
         // int c = static_cast<int>( tri[2].idx() );

@@ -107,10 +107,9 @@ template <typename T> struct TriangleAtTimeInfo
 };
 
 template <typename T>
-EigenVector3<T> getTriangleVertexPosAt(const EigenMatrix3<T>& R,
-                                       const EigenVector3<T>& centerTranslation,
-                                       const EigenVector3<T>& linVel,
-                                       const EigenVector3<T>& vert, T dt)
+EigenVector3<T> getTriangleVertexPosAt_2(
+    const EigenMatrix3<T>& R, const EigenVector3<T>& centerTranslation,
+    const EigenVector3<T>& linVel, const EigenVector3<T>& vert, T dt)
 {
     //TODO USE EQUATION 14!, DISCARD THIS PELASE!
     EigenVector3<T> diff = vert - centerTranslation;
@@ -207,7 +206,7 @@ EigenVector3<T> getTriangleVertexPosAt(const EigenVector3<T>& centerTranslation,
                                        const EigenVector3<T>& vert, T dt)
 {
     //TODO USE EQUATION 14!, DISCARD THIS PELASE!
-    EigenVector3<T> diff = vert - centerTranslation;
+    EigenVector3<T> diff = vert - (centerTranslation + linVel * dt);
 
     return vert + ((linVel + angVel.cross(diff)) * dt);
 }
@@ -335,7 +334,7 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
 
     EigenVector3<T> tmp0 = (Cnew + R * r0);
     return tmp0;*/
-    return v_world + omega_world.cross(point - C0);
+    return (v_world + omega_world.cross(point - C0));
 }
 
 //I understand the ti componenet as the triangle at time ti with the u,v,w interpolation
@@ -356,9 +355,9 @@ EigenVector3<T> BarycentricInterpolate(T u, T v, T w, T ti,
 
 template <typename T> struct DistanceAtTimeParams
 {
-    const T u;
-    const T v;
-    const T w;
+    T u;
+    T v;
+    T w;
     const grid::Grid<T, T>* grid;
     const EigenVector3<T> p0;
     const EigenVector3<T> p1;
@@ -423,7 +422,7 @@ T GSSMinimize_WHAT_MODIFIED(T lstart, T lend, F func,
     T f2 = func(info, params, l2);
     T f3 = func(info, params, l3);
     uint16_t it = 0;
-    while ((l3 - l0) > tol(l1 + l2) && it < 8)
+    while ((l3 - l0) > 1e-8 /*tol(l1 + l2) && it < 64*/)
     {
         if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
         {
@@ -472,7 +471,7 @@ T SignedDistanceAtPoint_MODIFIED(const RigidBodyInfo<T>& info,
                               *(info.B_centerRotation)));
 }
 
-template <typename T, typename F>
+/*template <typename T, typename F>
 EigenVector3<T> GSSMinimize_WHAT_MODIFIED(
     T lstart, T lend, EigenVector3<T> pstart, EigenVector3<T> pend, F func,
     const DistanceAtPointParams<T>& params, const RigidBodyInfo<T>& info)
@@ -532,9 +531,9 @@ EigenVector3<T> GSSMinimize_WHAT_MODIFIED(
     else if (fmid < f3) { lmin = lmid; }
     else { lmin = l3; }
     return pstart + (pend - pstart) * lmin;
-}
+}*/
 
-template <typename T, typename F>
+/*template <typename T, typename F>
 T GSSMinimize_WHAT(T lstart, T lend, F func,
                    const DistanceAtTimeParams<T>& params,
                    const RigidBodyInfo<T>& info)
@@ -557,7 +556,7 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
     T f2 = func(info, params, l2);
     T f3 = func(info, params, l3);
     uint16_t it = 0;
-    while ((l3 - l0) <= tol(l1 + l2) && it < 8)
+    while ((l3 - l0) <= tol(l1 + l2) && it < 32)
     {
         if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
         {
@@ -592,7 +591,7 @@ T GSSMinimize_WHAT(T lstart, T lend, F func,
     else if (fmid < f3) { lmin = lmid; }
     else { lmin = l3; }
     return lmin;
-}
+}*/
 
 template <typename T>
 EigenVector3<T> lerp(EigenVector3<T>& x0, EigenVector3<T>& x1, T alpha)
@@ -629,7 +628,7 @@ EigenVector3<T> GSSMinimize_WHAT(EigenVector3<T> lstart, EigenVector3<T> lend,
     //TODO NOT IMPLEMENTED CORRECTLY
     //while ((l3 - l0) <= tol((l1 + l2)))
     uint16_t it = 0;
-    while ((l3 - l0).norm() <= ((l1 + l2).norm() * tol) && it < 8)
+    while ((l3 - l0).norm() > tol /*((l1 + l2).norm() * tol)*/ /* && it < 8*/)
     {
         if (std::min<T>(f0, f1) < std::min<T>(f2, f3))
         {
@@ -707,7 +706,7 @@ T GSSMinimize(T a, T b, F func, const DistanceAtTimeParams<T>& params,
     return 0.5 * (a + b);
 }
 
-template <typename T, typename F>
+/*template <typename T, typename F>
 EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
                             const DistanceAtPointParams<T>& params,
                             const RigidBodyInfo<T>& info, T tolerance = T(1e-5))
@@ -748,7 +747,7 @@ EigenVector3<T> GSSMinimize(EigenVector3<T> a, EigenVector3<T> b, F func,
 
     //Return midpoint!
     return 0.5 * (a + b);
-}
+}*/
 
 template <typename T>
 void computeBarycentricCoordinates(const EigenVector3<T>& p0,
@@ -818,6 +817,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
     //    return FrankWolfeGSSSimple(tstart, tend, initialState);
     T t1 = tstart;
     T ti = t1;
+    T end = tend;
     T tip1 = std::numeric_limits<T>::max();
     //For now if there is no velocity, it means our object is stationary. Thus it can never hit the other object. We can thus ignore it.
     if ((*(initialState.A_linearVel)).norm() < 0.0000001f) { return tend; }
@@ -879,7 +879,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                                               .p1 = (initialState.A_p1),
                                               .p2 = (initialState.A_p2)};
 
-    float eps = 1e-6;
+    float eps = 1e-7;
     size_t maxIterations = 32u;
     DistanceAtPointParams distanceAtPointParams{.grid = initialState.B_sdf};
     EigenVector3<T> xtip1 = EigenVector3<T>(0, 0, 0);
@@ -898,7 +898,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             *(initialState.B_centerRotation));
         if (phixti <= 0)
         {
-            tend = std::min<T>(ti, tend);
+            end = std::min<T>(ti, end);
             tip1 = GSSMinimize_WHAT_MODIFIED(
                 tstart, ti, UnsignedDistanceAtTime<T>, distanceAtTimeParams,
                 initialState);
@@ -925,7 +925,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             else
             {
                 tip1 = GSSMinimize_WHAT_MODIFIED(
-                    ti, tend, SignedDistanceAtTime<T>, distanceAtTimeParams,
+                    ti, end, SignedDistanceAtTime<T>, distanceAtTimeParams,
                     initialState);
             }
         }
@@ -944,18 +944,18 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
 
         EigenVector3<T> p0_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p0s, ti);
+            *(initialState.A_angularVel), p0s, tip1);
         EigenVector3<T> p1_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p1s, ti);
+            *(initialState.A_angularVel), p1s, tip1);
         EigenVector3<T> p2_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p2s, ti);
+            *(initialState.A_angularVel), p2s, tip1);
         /*        T p0Min = (*(initialState.A_p0)).dot(gradPhixtip1);
         T p1Min = (*(initialState.A_p1)).dot(gradPhixtip1);
         T p2Min = (*(initialState.A_p2)).dot(gradPhixtip1);
 
-        if (phixtip1 <= 0) { tend = std::min<T>(tip1, tend); }
+        if (phixtip1 <= 0) { end = std::min<T>(tip1, end); }
         EigenVector3<T> si;
         //Computing support vertex pi
         if (p0Min <= p1Min && p0Min <= p2Min) { si = *(initialState.A_p0); }
@@ -968,7 +968,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         T p1Mins = (p1_at_ti).dot(gradPhixtip1);
         T p2Mins = (p2_at_ti).dot(gradPhixtip1);
 
-        if (phixtip1 <= 0) { tend = std::min<T>(tip1, tend); }
+        if (phixtip1 <= 0) { end = std::min<T>(tip1, end); }
         EigenVector3<T> si;
         //Computing support vertex pi
         if (p0Mins <= p1Mins && p0Mins <= p2Mins) { si = p0_at_ti; }
@@ -994,8 +994,11 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
             *(initialState.A_angularVel), p2s, tip1);
         barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, u, v, w);
 
-        projectToTriangle(u, v, w);
-        if (u > 1.01 || v > 1.01 || w > 1.01)
+        //projectToTriangle(u, v, w);
+        distanceAtTimeParams.u = u;
+        distanceAtTimeParams.v = v;
+        distanceAtTimeParams.w = w;
+        /*if (u > 1.01 || v > 1.01 || w > 1.01)
         {
             std::cerr << u << ", " << v << ", " << w << "\n";
             throw std::runtime_error("TOO HIGH");
@@ -1004,7 +1007,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         {
             std::cerr << u << ", " << v << ", " << w << "\n";
             throw std::runtime_error("TOO LOW");
-        }
+        }*/
 
         T phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
                                          *(initialState.B_centerTranslation),
@@ -1012,7 +1015,8 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         if (std::abs(tip1 - ti) <= eps
             && (std::abs(xtip1.x() - xti.x()) <= eps
                 && std::abs(xtip1.y() - xti.y()) <= eps
-                && std::abs(xtip1.z() - xti.z()) <= eps))
+                && std::abs(xtip1.z() - xti.z()) <= eps)
+            && phixtip1_2 >= T(0))
         {
             if (phixtip1_2 >= eps)
             {
@@ -1023,11 +1027,11 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
         }
         ti = tip1;
         xti = xtip1;
-        std::cerr << "ti , tip1 = (" << ti << ", " << tip1 << ")\n";
+        /*std::cerr << "ti , tip1 = (" << ti << ", " << tip1 << ")\n";
 
         std::cerr << "ENDED UP WITH xtip1 = (" << xtip1.x() << ", " << xtip1.y()
                   << ", " << xtip1.z() << ") and xti=" << "(" << xti.x() << ", "
-                  << xti.y() << ", " << xti.z() << ")\n";
+                  << xti.y() << ", " << xti.z() << ")\n";*/
     }
     std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
     std::cerr << "Ended up with a distance of (from xtip1) "
@@ -1052,12 +1056,12 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
 }
 
 template <typename T>
-T FrankWolfeGSSSimple(T start, T end, const RigidBodyInfo<T>& initialState)
+T FrankWolfeGSSSimple(T tstart, T tend, const RigidBodyInfo<T>& initialState)
 {
 
-    T t0 = start;
+    T t0 = tstart;
     T ti = t0;
-
+    T end = tend;
     EigenVector3<T> p0s = ((initialState.A_p0)).eval();
     EigenVector3<T> p1s = ((initialState.A_p1)).eval();
     EigenVector3<T> p2s = ((initialState.A_p2)).eval();
@@ -1129,8 +1133,8 @@ T FrankWolfeGSSSimple(T start, T end, const RigidBodyInfo<T>& initialState)
         T p1Mins = (p1_at_ti).dot(gradPhixti);
         T p2Mins = (p2_at_ti).dot(gradPhixti);
 
-        if (p0Mins <= p1Mins && p0Mins <= p2Mins) { si = p0_at_ti; }
-        else if (p1Mins <= p2Mins && p1Mins <= p0Mins) { si = p1_at_ti; }
+        if (p0Mins < p1Mins && p0Mins < p2Mins) { si = p0_at_ti; }
+        else if (p1Mins < p2Mins && p1Mins < p0Mins) { si = p1_at_ti; }
         else { si = p2_at_ti; }
         T di;
         if (phixti <= 0) { di = T(-1); }
@@ -1140,8 +1144,8 @@ T FrankWolfeGSSSimple(T start, T end, const RigidBodyInfo<T>& initialState)
                 gradPhixti.dot(getVelocityAtPoint(initialState, xti, ti)));
         }
         T alpha = T(2) / (T(i + 2));
-        T dt = alpha * (end - start) * di;
-        tip1 = std::max<T>(start, std::min<T>(end, ti + dt));
+        T dt = alpha * (end - t0) * di;
+        tip1 = std::max<T>(t0, std::min<T>(end, ti + dt));
         //        T xtip1 = proj()
         EigenVector3<T> p0_at_tip1 = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),

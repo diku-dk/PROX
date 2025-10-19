@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                            .p1 = rInfo.A_p1,
                                            .p2 = rInfo.A_p2};
             std::cerr << "TEST1.1: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params, rInfo)
                       << "\n";
 
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST1.1: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params2, rInfo)
                       << "\n";
 
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST1.2: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params3, rInfo)
                       << "\n";
 
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST1.3: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params4, rInfo)
                       << "\n";
 
@@ -242,14 +242,14 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                       << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params5, rInfo)
                       << "\n";
-            std::cerr << "TEST1.4: "
+            /*            std::cerr << "TEST1.4: "
                       << grid::GSSMinimize_WHAT(
                              0.0, 1.0, SignedDistanceAtTime<T>, params5, rInfo)
                       << "\n";
             std::cerr << "TEST1.4: "
                       << grid::GSSMinimize(0.0, 1.0, SignedDistanceAtTime<T>,
                                            params5, rInfo)
-                      << "\n";
+                      << "\n";*/
         }
 
         {
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                            .p1 = rInfo.A_p1,
                                            .p2 = rInfo.A_p2};
             std::cerr << "TEST2.1: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, UnsignedDistanceAtTime<T>, params, rInfo)
                       << "\n";
 
@@ -302,9 +302,9 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST2.2: "
-                      << grid::GSSMinimize_WHAT(0.0, 1.0,
-                                                UnsignedDistanceAtTime<T>,
-                                                params2, rInfo)
+                      << grid::GSSMinimize_WHAT_MODIFIED(
+                             0.0, 1.0, UnsignedDistanceAtTime<T>, params2,
+                             rInfo)
                       << "\n";
 
             rInfo.A_p0 = EigenVector3<T>(0.0, 0.0, 0.0);
@@ -320,9 +320,9 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST2.3: "
-                      << grid::GSSMinimize_WHAT(0.0, 1.0,
-                                                UnsignedDistanceAtTime<T>,
-                                                params3, rInfo)
+                      << grid::GSSMinimize_WHAT_MODIFIED(
+                             0.0, 1.0, UnsignedDistanceAtTime<T>, params3,
+                             rInfo)
                       << "\n";
 
             rInfo.A_p0 = EigenVector3<T>(0.0, 0.5, 0.0);
@@ -338,9 +338,9 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST2.4: "
-                      << grid::GSSMinimize_WHAT(0.0, 1.0,
-                                                UnsignedDistanceAtTime<T>,
-                                                params4, rInfo)
+                      << grid::GSSMinimize_WHAT_MODIFIED(
+                             0.0, 1.0, UnsignedDistanceAtTime<T>, params4,
+                             rInfo)
                       << "\n";
 
             rInfo.A_p0 = EigenVector3<T>(0.0, 0.0, 0.0);
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                              0.0, 2.0, UnsignedDistanceAtTime<T>, params5,
                              rInfo)
                       << "\n";
-            std::cerr << "TEST2.5: "
+            /*            std::cerr << "TEST2.5: "
                       << grid::GSSMinimize_WHAT(0.0, 2.0,
                                                 UnsignedDistanceAtTime<T>,
                                                 params5, rInfo)
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             std::cerr << "TEST2.5: "
                       << grid::GSSMinimize(0.0, 2.0, UnsignedDistanceAtTime<T>,
                                            params5, rInfo)
-                      << "\n";
+                      << "\n";*/
         }
 
         {
@@ -404,7 +404,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                            .p1 = rInfo.A_p1,
                                            .p2 = rInfo.A_p2};
             std::cerr << "TEST1.1: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params, rInfo)
                       << "\n";
 
@@ -421,7 +421,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST1.1: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params2, rInfo)
                       << "\n";
 
@@ -438,7 +438,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST1.2: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params3, rInfo)
                       << "\n";
 
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                             .p1 = rInfo.A_p1,
                                             .p2 = rInfo.A_p2};
             std::cerr << "TEST1.3: "
-                      << grid::GSSMinimize_WHAT(
+                      << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params4, rInfo)
                       << "\n";
 
@@ -475,14 +475,14 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                       << grid::GSSMinimize_WHAT_MODIFIED(
                              0.0, 1.0, SignedDistanceAtTime<T>, params5, rInfo)
                       << "\n";
-            std::cerr << "TEST1.4: "
+            /*            std::cerr << "TEST1.4: "
                       << grid::GSSMinimize_WHAT(
                              0.0, 1.0, SignedDistanceAtTime<T>, params5, rInfo)
                       << "\n";
             std::cerr << "TEST1.4: "
                       << grid::GSSMinimize(0.0, 1.0, SignedDistanceAtTime<T>,
                                            params5, rInfo)
-                      << "\n";
+                      << "\n";*/
         }
     }
 }

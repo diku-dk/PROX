@@ -213,6 +213,8 @@ create_geometry_handle_obj(content::API* engine, std::string const& rel_file_nam
       Eigen::MatrixXd V;
       Eigen::MatrixXi F;
 
+      EigenVector3<T> centerTranslation
+          = EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z);
       grid::build_VF_from_T3Mesh(data.m_mesh, data.m_X, data.m_Y, data.m_Z, V,
                                  F);
       //grid::build_VF_from_tris_dedup_exact(tris, V, F);
@@ -225,9 +227,10 @@ create_geometry_handle_obj(content::API* engine, std::string const& rel_file_nam
       //geometry.m_signedDistanceMap.setSignedDistanceGrid(grid);
       engine->set_geometry_type(gid, grid);
 
-      return GeometryHandleEigen<T>(props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz,
-                                    EigenVector3<T>(props_mf.m_x, props_mf.m_y, props_mf.m_z),
-                                    EigenQuaternion<T>(props.m_Qs, props.m_Qx, props.m_Qy, props.m_Qz), gid);
+      return GeometryHandleEigen<T>(
+          props.m_m, props.m_Ixx, props.m_Iyy, props.m_Izz, centerTranslation,
+          EigenQuaternion<T>(props.m_Qs, props.m_Qx, props.m_Qy, props.m_Qz),
+          gid);
   }
   } // namespace procedural
 

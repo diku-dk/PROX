@@ -230,6 +230,8 @@ void ProxData::make_tetramesh_geoemtry(geometry_type& geometry, mesh_array::T3Me
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;
 
+    //geometry.m_tetramesh.typename detail::MeshData<T> data;
+
     grid::build_VF_from_T3Mesh(surface, surface_X, surface_Y, surface_Z, V, F);
     //grid::build_VF_from_tris_dedup_exact(tris, V, F);
     grid = grid::projectGridToSDF<T, T>(

@@ -1013,7 +1013,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
         procedural::make_ccd_tight_space_drop<T>(
             engine, EigenVector3<T>(0.0, 0.0, 0.0),
             EigenQuaternion<T>::Identity(), scene_size, mat_info);
-        if (false)
+        if (true)
         {
             GeometryHandleEigen<T> const bunny = create_geometry_handle_obj<T>(
                 engine, obj_path + "torus.obj", 1.0, 1.0, 1.0,

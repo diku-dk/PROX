@@ -1,6 +1,7 @@
 #ifndef PROX_COLLISION_DETECTION_H
 #define PROX_COLLISION_DETECTION_H
 
+#include "broad_ccd_build.hpp"
 #include <broad.h>
 #include <broad_statistics.h>
 
@@ -452,6 +453,29 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     typedef std::vector<overlap_type> overlap_container;
 
     START_TIMER("continuous_collision_detection");
+
+    std::vector<broad_ccd::RigidBody<T>> ccdBodies;
+    for (size_t i = 0; i < bodies.size(); ++i)
+    {
+        RigidBody<T>* body = &bodies[i];
+        broad_ccd::RigidBody<T> newBody;
+        newBody.position = body->get_position();
+        newBody.linearVelocity = body->get_velocity();
+        newBody.angularVelocity = body->get_spin();
+        narrow::Geometry<T> geom
+            = narrow_system.get_geometry(body->get_geometry_idx());
+        auto* grid = &geom.m_signedDistanceMap.getSignedDistanceGrid();
+        broad_ccd::AABB<T> bodyAABB(grid->m_min_enclosing_sdf,
+                                    grid->m_max_enclosing_sdf);
+        newBody.localAABB = bodyAABB;
+        newBody.maxDistanceFromCenter = grid->m_r_val;
+        ccdBodies.push_back(newBody);
+    }
+    broad_ccd::BVH<T> bvh(ccdBodies, startTime, endTime);
+
+    bvh.build();
+    std::vector<std::pair<int, int>> pairs = bvh.getAllPairs();
+    std::cerr << pairs[0].first << "\n";
 
     const std::size_t n = bodies.size();
     std::vector<narrow::TestPairCCD<T>> narrow_test_pairs;

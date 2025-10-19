@@ -16,6 +16,8 @@ ADD_LIBRARY(
   broad
   ${BROAD_SOURCES}
   ${BROAD_HEADERS}
+  include/broad_cdd.h
+  include/broad_ccd_build.hpp
   )
 
 SET_TARGET_PROPERTIES(broad PROPERTIES DEBUG_POSTFIX "D" )

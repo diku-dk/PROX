@@ -26,11 +26,13 @@ template < typename D, typename T>
 class Grid
 {
 public:
-    // Make core members accessible to existing iterator code that expects them.
     Eigen::Matrix<T, 3, 1> m_min;
     Eigen::Matrix<T, 3, 1> m_max;
     Eigen::Matrix<T, 3, 1> m_dir;
     Eigen::Matrix<size_t, 3, 1> m_nodes;
+    T m_r_val = T(0.0);
+    Eigen::Matrix<T, 3, 1> m_min_enclosing_sdf;
+    Eigen::Matrix<T, 3, 1> m_max_enclosing_sdf;
     std::vector<GridTriangle<T>> m_temporaryGridStructure;
     GridIsosurface<T> m_gridIsosurface;
 

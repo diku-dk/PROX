@@ -223,7 +223,6 @@ T computeTriangleNormalCone(const Eigen::Matrix<T, 3, 1>& p,
     }
 
     // Larger triangles have wider normal cones
-    // You can make this more sophisticated based on your mesh curvature
     T base_cone_angle = T(5) * M_PI / T(180); // 5 degrees base
     T size_factor = std::min(
         T(1), max_edge_length / T(10)); // Scale with size up to 10 units
