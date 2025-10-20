@@ -267,10 +267,13 @@ namespace narrow
                                            endTime, bodyContacts);
       if (TOIs.size() > 0)
       {
-          T earliestTOI = TOIs[0];
+          T earliestTOI = endTime;
           for (size_t i = 0; i < TOIs.size(); ++i)
           {
-              earliestTOI = std::min<T>(earliestTOI, TOIs[i]);
+              T currTOI = earliestTOI;
+              if (std::abs<T>(TOIs[i]) > 0.000001) { currTOI = TOIs[i]; }
+
+              earliestTOI = std::min<T>(earliestTOI, currTOI);
           }
           return earliestTOI;
       }
