@@ -575,12 +575,9 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
     T d1 = (q - centroid).squaredNorm();
     T d2 = (r - centroid).squaredNorm();
 
-    //pairwise max without initializer-list temporaries
     T max_sq = d0 > d1 ? d0 : d1;
     max_sq = d2 > max_sq ? d2 : max_sq;
 
-    // Avoid sqrt: radius = sqrt(max_sq).
-    // Condition phi_centroid >= radius  <=>  phi_centroid >= 0 && phi_centroid*phi_centroid >= max_sq
     T phi_centroid = grid::value_at_2<D, T>(sdf, centroid);
     if (phi_centroid >= T(0) && (phi_centroid * phi_centroid) >= max_sq)
     {
@@ -600,7 +597,8 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
     T threshold = 1e-12;
     for (size_t i = 0; i < maxIterations; ++i)
     {
-        Eigen::Matrix<T, 3, 1> gradient = computeGradient_Working(x, sdf);
+        Eigen::Matrix<T, 3, 1> gradient
+            = computeGradient_Working(x, sdf).normalized();
         Eigen::Matrix<T, 3, 1> gradientTransposed = gradient.transpose();
         T Lp = gradientTransposed.dot(p);
         T Lq = gradientTransposed.dot(q);
@@ -626,7 +624,7 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
     contactPoint = x;
     penetration = grid::value_at_2<D, T>(sdf, contactPoint);
     normal = computeGradient_Working(contactPoint, sdf);
-    return penetration <= T(0);
+    return penetration <= T(0.001);
 }
 
 template <typename D, typename T>
