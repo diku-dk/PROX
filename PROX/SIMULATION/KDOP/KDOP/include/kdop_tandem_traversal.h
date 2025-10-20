@@ -837,13 +837,13 @@ namespace kdop
           geometry::Triangle<T> tri2 = geometry::get_opposite_face(2, gtet_A);
           geometry::Triangle<T> tri3 = geometry::get_opposite_face(3, gtet_A);
 
-          std::cerr << "FOR BODY " << rigidId << "\n";
+          /*          std::cerr << "FOR BODY " << rigidId << "\n";
           std::cerr << "TRI: (" << tri0.p(0).x() << ", " << tri0.p(0).y()
                     << ", " << tri0.p(0).z() << ")\n";
           std::cerr << "TRI: (" << tri0.p(1).x() << ", " << tri0.p(1).y()
                     << ", " << tri0.p(1).z() << ")\n";
           std::cerr << "TRI: (" << tri0.p(2).x() << ", " << tri0.p(2).y()
-                    << ", " << tri0.p(2).z() << ")\n";
+                    << ", " << tri0.p(2).z() << ")\n";*/
           if (surface_A[0])
           { // Face opposite vertex i (vertices j,k,m)
               /*EigenVector3<T> contactPoint;

@@ -991,7 +991,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
             engine->set_rigid_body_velocity(rid, -100.0, 00.0, 0.0);
-            engine->set_rigid_body_spin(rid, -100.0, 0.0, 0.0);
+            engine->set_rigid_body_spin(rid, 0.0, 0.0, 0.0);
         }
     }
     if (scene.compare("ccd_tight_space_drop") == 0)

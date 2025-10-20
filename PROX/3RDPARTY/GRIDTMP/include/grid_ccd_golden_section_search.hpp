@@ -206,7 +206,10 @@ EigenVector3<T> getTriangleVertexPosAt(const EigenVector3<T>& centerTranslation,
                                        const EigenVector3<T>& vert, T dt)
 {
     //TODO USE EQUATION 14!, DISCARD THIS PELASE!
-    EigenVector3<T> diff = vert - (centerTranslation + linVel * dt);
+    /*EigenVector3<T> diff = vert - (centerTranslation + linVel * dt);
+
+    return vert + ((linVel + angVel.cross(diff)) * dt);*/
+    EigenVector3<T> diff = vert - (centerTranslation);
 
     return vert + ((linVel + angVel.cross(diff)) * dt);
 }
@@ -820,7 +823,12 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
     T end = tend;
     T tip1 = std::numeric_limits<T>::max();
     //For now if there is no velocity, it means our object is stationary. Thus it can never hit the other object. We can thus ignore it.
-    if ((*(initialState.A_linearVel)).norm() < 0.0000001f) { return tend; }
+    T minVel = 0.0000001;
+    if ((*(initialState.A_linearVel)).norm() < minVel
+        && (*(initialState.A_angularVel)).norm() < minVel)
+    {
+        return tend;
+    }
 
     //TODO  Compute the barycentric coordinates 𝑢, 𝑣, 𝑤 of the starting iterate.
     //Very importantly: For now we incorrectly assume velocity only for the triangles, not the SDF!
@@ -1033,7 +1041,7 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
                   << ", " << xtip1.z() << ") and xti=" << "(" << xti.x() << ", "
                   << xti.y() << ", " << xti.z() << ")\n";*/
     }
-    std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
+    /*std::cerr << "ENDED UP WITH tip1 = " << tip1 << " and ti = " << ti << "\n";
     std::cerr << "Ended up with a distance of (from xtip1) "
               << valueAtProjection(*(initialState.B_sdf), xtip1,
                                    *(initialState.B_centerTranslation),
@@ -1043,9 +1051,9 @@ T FrankWolfeGSS(T tstart, T tend, const RigidBodyInfo<T>& initialState/*const Ei
               << valueAtProjection(*(initialState.B_sdf), xti,
                                    *(initialState.B_centerTranslation),
                                    *(initialState.B_centerRotation))
-              << " from the solution.\n";
+              << " from the solution.\n";*/
 
-    if (ti <= 0.0050000001)
+    if (ti <= 0.00500000001)
     {
         //THis code forces debug breakpoint, DELETE LATER when I figure out why TOI=0
         T a = 0;
