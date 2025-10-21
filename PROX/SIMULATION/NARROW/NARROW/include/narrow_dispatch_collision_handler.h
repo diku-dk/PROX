@@ -157,7 +157,7 @@ namespace narrow
   inline T dispatch_collision_handlers_CCD(
       const System<T>& system, const std::vector<TestPairCCD<T>>& test_pairs,
       T startTime, T endTime,
-      std::vector<kdop::BodyVelocities<T>>& bodyContacts)
+      std::vector<kdop::BodyVelocities<T>>& bodyContacts, bool& onlyZEROTOI)
   {
       assert(!test_pairs.empty()
              || !"dispatch_collision_handlers : test_pairs are empty");
@@ -206,7 +206,8 @@ namespace narrow
           else
           {
               T earliestTOI = details::dispatch_tetramesh_sdf_CCD<T>(
-                  system, tetramesh_pairs, startTime, endTime, bodyContacts);
+                  system, tetramesh_pairs, startTime, endTime, bodyContacts,
+                  onlyZEROTOI);
               return earliestTOI;
           }
       }

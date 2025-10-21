@@ -178,11 +178,10 @@ namespace narrow
   }
 
   template <typename T>
-  inline T
-  dispatch_tetramesh_sdf_CCD(System<T> const& system,
-                             std::vector<TestPairCCD<T>>& test_pairs,
-                             T startTime, T endTime,
-                             std::vector<kdop::BodyVelocities<T>>& bodyContacts)
+  inline T dispatch_tetramesh_sdf_CCD(
+      System<T> const& system, std::vector<TestPairCCD<T>>& test_pairs,
+      T startTime, T endTime,
+      std::vector<kdop::BodyVelocities<T>>& bodyContacts, bool& onlyZEROTOI)
   {
       assert(!test_pairs.empty()
              || !"dispatch_tetramesh_tetramesh : test_pairs are empty");
@@ -265,6 +264,7 @@ namespace narrow
       kdop::tandem_traversal_sdf_CCD<8, T>(kdop_test_sdf_pairs,
                                            kdop::sequential(), TOIs, startTime,
                                            endTime, bodyContacts);
+      onlyZEROTOI = false;
       if (TOIs.size() > 0)
       {
           T earliestTOI = endTime;
@@ -272,6 +272,7 @@ namespace narrow
           {
               T currTOI = earliestTOI;
               if (std::abs<T>(TOIs[i]) > 0.000001) { currTOI = TOIs[i]; }
+              else { onlyZEROTOI = true; }
 
               earliestTOI = std::min<T>(earliestTOI, currTOI);
           }

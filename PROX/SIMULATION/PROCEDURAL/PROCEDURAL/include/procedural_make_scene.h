@@ -955,7 +955,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             const EigenVector3<T> T_m2l = EigenVector3<T>(0, 0.0, 0.0);
             const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
-            const EigenVector3<T> T_l2w = EigenVector3<T>(-4.0, 3.0, 0.0);
+            const EigenVector3<T> T_l2w = EigenVector3<T>(-3.7, 3.0, 0.0);
             const EigenQuaternion<T> Q_l2w = EigenQuaternion<T>::Identity();
 
             EigenVector3<T> T_b2w;
@@ -991,7 +991,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
             engine->set_rigid_body_velocity(rid, -100.0, 00.0, 0.0);
-            engine->set_rigid_body_spin(rid, 0.0, 0.0, 0.0);
+            engine->set_rigid_body_spin(rid, 100.0, 0.0, 0.0);
         }
     }
     if (scene.compare("ccd_tight_space_drop") == 0)
@@ -1041,12 +1041,12 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
         if (true)
         {
             GeometryHandleEigen<T> const bunny = create_geometry_handle_obj<T>(
-                engine, obj_path + "sphere.obj", 0.49, 0.49, 0.49,
+                engine, obj_path + "sphere.obj", 0.55, 0.55, 0.55,
                 mesh_array::tetgen_cdt_settings());
             const EigenVector3<T> T_b2m = bunny.Tb2m();
             const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
 
-            const EigenVector3<T> T_m2l = EigenVector3<T>(0.0, 0.605, 0.0);
+            const EigenVector3<T> T_m2l = EigenVector3<T>(0.0, 2.605, 0.0);
             const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
             const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 0.0, 0.0);
@@ -1060,7 +1060,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, 0.0, -1.0, 0.0);
+            engine->set_rigid_body_velocity(rid, 0.0, -20.0, 0.0);
             //engine->set_rigid_body_fixed(rid, true);
         }
     }

@@ -447,7 +447,7 @@ requires std::is_floating_point_v<T>
 inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
                                  narrow::System<T>& narrow_system,
                                  std::vector<ContactPoint<T>>& contacts,
-                                 T startTime, T endTime)
+                                 T startTime, T endTime, bool& onlyZeroTOI)
 {
     typedef typename broad::System<T>::overlap_type overlap_type;
     typedef std::vector<overlap_type> overlap_container;
@@ -475,7 +475,6 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
 
     bvh.build();
     std::vector<std::pair<int, int>> pairs = bvh.getAllPairs();
-    std::cerr << pairs[0].first << "\n";
 
     const std::size_t n = bodies.size();
     std::vector<narrow::TestPairCCD<T>> narrow_test_pairs;
@@ -529,9 +528,11 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
             bodyVels.push_back(body);
             if (!narrow_system.params().use_batching())
             {
+                bool onlyZEROTOITmp;
                 T toi = narrow::dispatch_collision_handlers_CCD(
                     narrow_system, narrow_test_pairs, startTime, endTime,
-                    bodyVels);
+                    bodyVels, onlyZEROTOITmp);
+                onlyZeroTOI = (onlyZeroTOI || onlyZEROTOITmp);
                 earliestTOI = std::min<T>(toi, earliestTOI);
                 narrow_test_pairs.clear();
                 bodyVels.clear();
@@ -541,7 +542,8 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     if (narrow_system.params().use_batching())
     {
         T toi = narrow::dispatch_collision_handlers_CCD(
-            narrow_system, narrow_test_pairs, startTime, endTime, bodyVels);
+            narrow_system, narrow_test_pairs, startTime, endTime, bodyVels,
+            onlyZeroTOI);
         earliestTOI = std::min<T>(toi, earliestTOI);
         narrow_test_pairs.clear();
         bodyVels.clear();

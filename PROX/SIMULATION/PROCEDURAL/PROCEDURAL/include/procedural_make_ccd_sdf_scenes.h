@@ -1182,7 +1182,7 @@ void make_ccd_very_large_triangle_pyramid(
             const EigenVector3<T> T_b2m = stone_handle.Tb2m();
             const EigenQuaternion<T> Q_b2m = stone_handle.Qb2m();
 
-            const EigenVector3<T> T_m2l(0.0f, y, 0.0f);
+            const EigenVector3<T> T_m2l(0.0f, y + 0.1, 0.0f);
             const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
             const EigenVector3<T> T_l2w = position;
@@ -1217,7 +1217,7 @@ void make_ccd_very_large_triangle_pyramid(
                 const EigenVector3<T> T_b2m = (spike.Tb2m());
                 const EigenQuaternion<T> Q_b2m = (spike.Qb2m());
 
-                const EigenVector3<T> T_m2l = EigenVector3<T>(0.0, 0.0, 0.0);
+                const EigenVector3<T> T_m2l = EigenVector3<T>(0.0, 0.1, 0.0);
                 const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
                 const EigenVector3<T> T_l2w = (position);
