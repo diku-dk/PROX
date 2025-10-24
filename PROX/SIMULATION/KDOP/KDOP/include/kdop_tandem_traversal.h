@@ -880,7 +880,13 @@ namespace kdop
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
               rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
               rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
-              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              EigenVector3<T> dummy;
+              std::vector<T> times;
+              START_TIMER("FRANK_WOLFEGSS");
+              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+                  startTime, endTime, rigidBody, dummy, times);
+              STOP_TIMER("FRANK_WOLFEGSS");
+              RECORD_VECTOR("Minimizes", times);
               TOIs.push_back(currToi);
           }
           if (surface_A[1])
@@ -900,7 +906,13 @@ namespace kdop
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
               rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
               rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
-              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              EigenVector3<T> dummy;
+              std::vector<T> times;
+              START_TIMER("FRANK_WOLFEGSS");
+              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+                  startTime, endTime, rigidBody, dummy, times);
+              STOP_TIMER("FRANK_WOLFEGSS");
+              RECORD_VECTOR("Minimizes", times);
               TOIs.push_back(currToi);
           }
           if (surface_A[2])
@@ -920,7 +932,13 @@ namespace kdop
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
               rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
               rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
-              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              EigenVector3<T> dummy;
+              std::vector<T> times;
+              START_TIMER("FRANK_WOLFEGSS");
+              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+                  startTime, endTime, rigidBody, dummy, times);
+              STOP_TIMER("FRANK_WOLFEGSS");
+              RECORD_VECTOR("Minimizes", times);
               TOIs.push_back(currToi);
           }
           if (surface_A[3])
@@ -940,7 +958,13 @@ namespace kdop
               rigidBody.B_linearVel = bodyContact.bodyBLinVel;
               rigidBody.A_centerRotation = bodyContact.bodyACenterRotation;
               rigidBody.B_centerRotation = bodyContact.bodyBCenterRotation;
-              T currToi = grid::FrankWolfeGSS(startTime, endTime, rigidBody);
+              EigenVector3<T> dummy;
+              std::vector<T> times;
+              START_TIMER("FRANK_WOLFEGSS");
+              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+                  startTime, endTime, rigidBody, dummy, times);
+              STOP_TIMER("FRANK_WOLFEGSS");
+              RECORD_VECTOR("Minimizes", times);
               TOIs.push_back(currToi);
           }
 

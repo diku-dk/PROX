@@ -85,7 +85,9 @@ namespace util
 
       assert( m_end >= m_start || !"duration(): end time was smaller than start time");
 
-      return std::chrono::duration_cast<std::chrono::milliseconds>(m_end - m_start).count();
+      return std::chrono::duration_cast<std::chrono::nanoseconds>(m_end
+                                                                  - m_start)
+          .count();
     }
 
     /**
@@ -97,7 +99,9 @@ namespace util
     {
       assert( m_end >= m_start || !"operator(): Must call stop before operator()");
 
-      return std::chrono::duration_cast<std::chrono::milliseconds>(m_end - m_start).count();
+      return std::chrono::duration_cast<std::chrono::nanoseconds>(m_end
+                                                                  - m_start)
+          .count();
     }
   };
 

@@ -1060,7 +1060,10 @@ namespace rigid_body
                 //save_xml_file();
                 prepareRigidBodyScripts();
                 break;
-            case 'H': m_profiling = true; logging << "Profiling ON.";
+            case 'H':
+                m_profiling = true;
+                logging << "Profiling ON.";
+                break;
             case '+': run(); break;
 
             case 'O':
@@ -1223,7 +1226,18 @@ namespace rigid_body
                 //save_xml_file();
                 prepareRigidBodyScripts();
                 break;
-            case 'H': m_profiling = true; logging << "Profiling ON.";
+            case 'H':
+                m_profiling = true;
+                logging << "Profiling ON.";
+                break;
+            case 'N':
+                if (m_profiling)
+                {
+                    m_engine.write_profiling(m_output_path + m_matlab_file);
+                    m_engine.write_profiling_python(
+                        m_output_path + m_framegrab_file + "profiling.py");
+                }
+                break;
             case '+': run(); break;
 
             case 'O':
