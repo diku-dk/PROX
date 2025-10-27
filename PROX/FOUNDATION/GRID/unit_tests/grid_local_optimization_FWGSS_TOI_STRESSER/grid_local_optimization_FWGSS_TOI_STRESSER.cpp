@@ -269,14 +269,6 @@ public:
         rInfo.A_p2 = EigenVector3<T>(1.0, 0.0, 0.2);
 
         std::vector<ComputedTimers<T>> allComputedTimers;
-        T minDiff = std::numeric_limits<T>::max();
-        T maxDiff = std::numeric_limits<T>::min();
-        std::vector<long double> allDifs(numTriangles);
-
-        T minDiffDist = std::numeric_limits<T>::max();
-        T maxDiffDist = std::numeric_limits<T>::min();
-        std::vector<long double> allDifsDist(numTriangles);
-
         for (int i = 0; i < numTriangles; i++)
         {
             //Generate random triangle vertices around a sphere
@@ -297,30 +289,6 @@ public:
             rInfo.A_p1 = std::get<1>(triangle);
             rInfo.A_p2 = std::get<2>(triangle);
 
-            T dt = 0.0;
-
-            EigenVector3<T> lastContactPoint;
-            while (dt <= 0.01)
-            {
-                TriangleAtTimeInfo<T> tri = getTriangleAtTime(dt, rInfo);
-                EigenVector3<T> p0AtTimeTi = tri.A_p0;
-                EigenVector3<T> p1AtTimeTi = tri.A_p1;
-                EigenVector3<T> p2AtTimeTi = tri.A_p2;
-
-                EigenVector3<T> contactPoint;
-                EigenVector3<T> normalDummy;
-                T penetration;
-                optimizeTriangleFW_Working(p0AtTimeTi, p1AtTimeTi, p2AtTimeTi,
-                                           *(rInfo.B_sdf), contactPoint,
-                                           normalDummy, penetration, 1000);
-                T penetrations = valueAtProjection(*(rInfo.B_sdf), contactPoint,
-                                                   *(rInfo.B_centerTranslation),
-                                                   *(rInfo.B_centerRotation));
-                lastContactPoint = contactPoint;
-                if (penetrations <= 0.0) { break; }
-                dt += 1e-6;
-            }
-            std::cerr << ".";
             // Run CCD
             EigenVector3<T> firstIntersectPoint;
             std::vector<T> minimizerTimes;
@@ -383,11 +351,9 @@ public:
             computedTimers.minimizevals = minimizerTimes;
             computedTimers.wholeFuncVal = totalAlgorithmTime;
             allComputedTimers.push_back(computedTimers);
-
             T dist = grid::valueAtProjection(G, firstIntersectPoint,
                                              *(rInfo.B_centerTranslation),
                                              *(rInfo.B_centerRotation));
-
             if (dist < 0.0 && dist < -T(1e-3))
             {
                 std::cerr << "XTI: " << firstIntersectPoint << "\n";
@@ -395,107 +361,11 @@ public:
                 std::cerr << "DIST: " << dist << "\n";
             }
             bool hasIntersection = (toi >= 0.01);
-            T diff = toi - dt;
-
-            if (toi > dt + 1e-5)
-            {
-                std::cerr
-                    << "WE GOT A TOI that is larger thann DT! (1e5 prec)\n";
-            }
-            else if (toi > dt + 1e-8)
-            {
-                std::cerr
-                    << "WE GOT A TOI that is larger thann DT! (1e8 prec)\n";
-            }
-            else if (toi > dt + 1e-11)
-            {
-                std::cerr
-                    << "WE GOT A TOI that is larger thann DT! (no prec)\n";
-            }
-
-            minDiff = std::min<T>(minDiff, diff);
-            maxDiff = std::max<T>(maxDiff, diff);
-            allDifs.push_back(static_cast<long double>(diff));
-
-            T distGT = grid::valueAtProjection(G, lastContactPoint,
-                                               *(rInfo.B_centerTranslation),
-                                               *(rInfo.B_centerRotation));
-
-            T diffDistance = dist - distGT;
-            minDiffDist = std::min<T>(minDiffDist, diffDistance);
-            maxDiffDist = std::max<T>(maxDiffDist, diffDistance);
-            allDifsDist.push_back(static_cast<long double>(diffDistance));
             classifyResult(stats, dist, toi, hasIntersection);
         }
 
         stats.printStatistics();
         stats.printAverages(allComputedTimers);
-
-        {
-            // --- Mean ---
-            long double mean
-                = std::accumulate(allDifs.begin(), allDifs.end(), 0.0L)
-                / allDifs.size();
-
-            // --- Median ---
-            std::vector<long double> sorted = allDifs;
-            std::sort(sorted.begin(), sorted.end());
-            long double median;
-            long double two = 2.0;
-            long double one = 1.0;
-            if (sorted.size() % 2 == 0)
-                median = (sorted[sorted.size() / two - one]
-                          + sorted[sorted.size() / two])
-                       / 2.0L;
-            else
-                median = sorted[sorted.size() / two];
-
-            // --- Standard Deviation ---
-            long double sumSqDiff = 0.0L;
-            for (auto x : allDifs) sumSqDiff += (x - mean) * (x - mean);
-            long double stddev = std::sqrtl(sumSqDiff / (allDifs.size() - 1));
-
-            // --- Output ---
-            std::cout << "Mean diff of toi:   " << mean << "\n";
-            std::cout << "Median diff of toi: " << std::setprecision(20)
-                      << median << "\n";
-            std::cout << "StdDev diff of toi: " << stddev << "\n";
-            std::cout << "min diff of toi: " << minDiff << "\n";
-            std::cout << "max diff of toi: " << maxDiff << "\n";
-        }
-        {
-            // --- Mean ---
-            long double mean
-                = std::accumulate(allDifsDist.begin(), allDifsDist.end(), 0.0L)
-                / allDifsDist.size();
-
-            // --- Median ---
-            std::vector<long double> sorted = allDifsDist;
-            std::sort(sorted.begin(), sorted.end());
-            long double median;
-            long double two = 2.0;
-            long double one = 1.0;
-            if (sorted.size() % 2 == 0)
-                median = (sorted[sorted.size() / two - one]
-                          + sorted[sorted.size() / two])
-                       / two;
-            else
-                median = sorted[sorted.size() / two];
-
-            // --- Standard Deviation ---
-            long double sumSqDiff = 0.0L;
-            for (auto x : allDifsDist) sumSqDiff += (x - mean) * (x - mean);
-            long double stddev
-                = std::sqrtl(sumSqDiff / (allDifsDist.size() - 1));
-
-            // --- Output ---
-            std::cout << "Mean diff (phi (x)) of toi:   " << mean << "\n";
-            std::cout << "Median diff (phi (x)) of toi: "
-                      << std::setprecision(20) << median << "\n";
-            std::cout << "StdDev diff (phi (x)) of toi: " << stddev << "\n";
-            std::cout << "min diff (phi (x)) of toi: " << minDiffDist << "\n";
-            std::cout << "max diff (phi (x)) of toi: " << maxDiffDist << "\n";
-        }
     }
 
 private:
@@ -585,9 +455,9 @@ private:
 BOOST_AUTO_TEST_CASE(grid_local_strategy)
 {
     {
-        using T = double;
+        using T = float;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTests(2000, 1);
+        triangleTester.runTests(2000000, 1);
     }
 }
 

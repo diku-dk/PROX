@@ -515,20 +515,25 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
     T tEnd = dt;
     T stepDt = dt;
 
+    START_TIMER("Time_Stepper_CCD");
     while (tStart < tEnd)
     {
-        collision_detection(bodies, broad_system, narrow_system, contacts,
-                            params);
+        START_TIMER("ONE_CCD_ADVANCE");
+        collision_detection_only_update_structures(
+            bodies, broad_system, narrow_system, contacts, params);
 
         bool onlyZeroTOI = false;
+        START_TIMER("TOI_CCD_FOR_ALL_RIGID_BODIES");
         T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
                                                tStart, tEnd, onlyZeroTOI);
+        STOP_TIMER("TOI_CCD_FOR_ALL_RIGID_BODIES");
         std::cerr << "CURRENT simulateTO: " << simulateTo
                   << ", CURRENT tStart, tEnd = (" << tStart << "," << tEnd
                   << ")\n";
         stepDt = simulateTo - tStart;
         if ((std::abs<T>(simulateTo - tEnd) > 0.000001))
         {
+            START_TIMER("CCD_DISCRETE_COLLISION_DETECTION_PHASE");
             stepDt = simulateTo - tStart;
 
             {
@@ -698,11 +703,13 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
                 STOP_TIMER("stabilization");
             }
             tStart += simulateTo;
+            STOP_TIMER("CCD_DISCRETE_COLLISION_DETECTION_PHASE");
         }
         else
         {
             if (onlyZeroTOI)
             {
+                START_TIMER("CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO");
                 //=============EIGEN================0
                 Eigen::VectorX<T>
                     qNew; // position vector:               vector7
@@ -874,9 +881,11 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
 
                     STOP_TIMER("stabilization");
                 }
+                STOP_TIMER("CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO");
             }
             else
             {
+                START_TIMER("CCD_NO_COLLISION_TOI_IS_END");
                 std::cerr << "OTHER CASE!!!!!\n";
                 //=============EIGEN================0
                 Eigen::VectorX<T>
@@ -956,9 +965,12 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
 
                 //Set start time to end time -- we are finished time stepping!
                 tStart = tEnd;
+                STOP_TIMER("CCD_NO_COLLISION_TOI_IS_END");
             }
         }
+        STOP_TIMER("ONE_CCD_ADVANCE");
     }
+    STOP_TIMER("Time_Stepper_CCD");
 }
 
 } //namespace prox

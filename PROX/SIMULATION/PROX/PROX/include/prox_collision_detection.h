@@ -346,6 +346,124 @@ inline void collision_detection(std::vector< RigidBody<T>>& bodies, broad::Syste
 }
 } // namespace prox
 
+namespace prox
+{
+template <typename T>
+requires std::is_floating_point_v<T>
+inline void collision_detection_only_update_structures(
+    std::vector<RigidBody<T>>& bodies, broad::System<T>& broad_system,
+    narrow::System<T>& narrow_system, std::vector<ContactPoint<T>>& contacts,
+    Params<T> const& params)
+{
+    typedef typename broad::System<T>::overlap_type overlap_type;
+    typedef std::vector<overlap_type> overlap_container;
+
+    //--- First we preprocess data structures for doing collision detection ----
+    {
+        START_TIMER("collision_detection_preprocessing");
+
+        //--- Update kDOP BVHs to reflect changes in tetramesh geometry ----------
+        START_TIMER("collision_detection_creating_kdop_work_pool");
+
+        std::vector<narrow::KDopBvhUpdateWorkItem<T>> kdop_bvh_update_work_pool;
+
+        kdop_bvh_update_work_pool.reserve(
+            bodies.size()); // Make sure all space we may need is pre-allocated.
+
+        for (auto body = bodies.begin(); body != bodies.end(); ++body)
+        {
+            const auto& geometry
+                = narrow_system.get_geometry(body->get_geometry_idx());
+
+            if (geometry.m_tetramesh.has_data())
+            {
+                auto work_item = narrow::KDopBvhUpdateWorkItem<T>(
+                    *body, geometry, body->get_position(),
+                    body->get_orientation());
+                kdop_bvh_update_work_pool.push_back(work_item);
+            }
+            /*if (geometry.m_signedDistanceMap.hasData())
+            {
+                CoordSysEigen<T> data(body->get_position(),
+                                      body->get_orientation());
+                geometry.m_signedDistanceMap.setSignedDistanceTransform(data);
+            }*/
+        }
+        STOP_TIMER("collision_detection_creating_kdop_work_pool");
+
+        START_TIMER("collision_detection_updating_kdop");
+        if (!kdop_bvh_update_work_pool.empty())
+        {
+#ifdef HAS_DIKUCL
+            if (narrow_system.params().use_open_cl())
+            {
+                narrow::update_kdop_bvh(
+                    kdop_bvh_update_work_pool, narrow::dikucl(),
+                    narrow_system.params().open_cl_platform(),
+                    narrow_system.params().open_cl_device());
+            }
+            else
+            {
+#endif // HAS_DIKUCL
+
+                // use regular updating of KDOP BVHs if DIKUCL is not available or should not be used
+                narrow::update_kdop_bvh(kdop_bvh_update_work_pool,
+                                        narrow::sequential());
+
+#ifdef HAS_DIKUCL
+            }
+#endif // HAS_DIKUCL
+        }
+        STOP_TIMER("collision_detection_updating_kdop");
+
+        //--- Update bounding spheres (radius) of all geometries in the system -----
+        for (auto geometry = narrow_system.begin();
+             geometry != narrow_system.end(); ++geometry)
+        {
+            // 2013-06-07 Kenny code review: Ideally only geometry
+            //            that has changed should have the radius updated.
+            //            Note that tetrameshes are special as only their
+            //            material space mesh are shared between the
+            //            associated bodies.
+
+            geometry->update_radius();
+        }
+
+        // 2013-07-06 Kenny code review: This will clear all data in
+        //            the broad phase collision detection system. This
+        //            may not be the most efficient approach, as all
+        //            configuration data needs to be build up from stracth
+        //            again. Ideally only newly added bodies or geometry
+        //            changed bodies should be cleared/added to the broad
+        //            phase system.
+        broad_system.clear();
+
+        //--- Update body radius and connect their AABBs to the broad phase system -
+        for (auto body = bodies.begin(); body != bodies.end(); ++body)
+        {
+            auto const& geometry
+                = narrow_system.get_geometry(body->get_geometry_idx());
+
+            body->set_radius(geometry.get_radius());
+
+            // 2013-07-06 Kenny code review: Here we re-connect all bodies
+            //            to the broad phase collision detection system.
+            //            See my review comment above about efficiency.
+            broad_system.connect(&(*body));
+        }
+
+        // 2015-03-03 Kenny code review: This optimal spacing requires
+        // sorting of all objects, so it runs O(n lg n). However, grid
+        // algorithm is trying to run in O(n). Hence, one could argue that
+        // a sweep-line algorithm would be better as its performance do
+        // not depend on the obejct sizes.
+        broad_system.compute_optimal_cell_spacing();
+
+        STOP_TIMER("collision_detection_preprocessing");
+    }
+}
+} // namespace prox
+
 namespace detail
 {
 
@@ -452,8 +570,6 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     typedef typename broad::System<T>::overlap_type overlap_type;
     typedef std::vector<overlap_type> overlap_container;
 
-    START_TIMER("continuous_collision_detection");
-
     std::vector<broad_ccd::RigidBody<T>> ccdBodies;
     for (size_t i = 0; i < bodies.size(); ++i)
     {
@@ -549,7 +665,6 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
         bodyVels.clear();
     }
     std::cerr << "WE HAVE A TOI OF " << earliestTOI << "\n";
-    STOP_TIMER("continuous_collision_detection");
     return earliestTOI;
 }
 
