@@ -7,7 +7,7 @@
 #include <kdop_tree.h>
 #include <kdop_select_contact_point_algorithm.h>
 #include <types/geometry_dop.h>
-#include <grid_ccd_golden_section_search.hpp>
+#include <grid_ccd_frank_wolfe_include_all.hpp>
 
 #include <mesh_array.h>
 

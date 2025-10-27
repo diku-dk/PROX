@@ -17,7 +17,7 @@
 #include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/test/test_tools.hpp>
 
-#include <grid_ccd_golden_section_search.hpp>
+#include <grid_ccd_frank_wolfe_include_all.hpp>
 #include <grid_local_optimization.hpp>
 #include "igl/signed_distance.h"
 #include "igl/marching_cubes.h"
