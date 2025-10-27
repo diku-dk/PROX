@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
     {
         using T = float;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTests(2000000, 1);
+        triangleTester.runTests(200000, 5);
     }
 }
 

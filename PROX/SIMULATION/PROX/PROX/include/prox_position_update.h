@@ -77,12 +77,25 @@ void position_update_eigen(const Eigen::VectorX<T>& q,
             //   Q \leftarrow  H Q
             //
             // There should be no need to normalize Q after this operation.
-            T const radian = W.norm() * dt;
+            /*T const radian = W.norm() * dt;
             if (radian > std::numeric_limits<T>::epsilon())
             {
                 Eigen::Matrix<T, 3, 1> axis = W.normalized();
                 Eigen::AngleAxis<T> R(radian, axis);
                 Q = R * Q;
+            }*/
+            if (W.norm() * dt > std::numeric_limits<T>::epsilon())
+            {
+                // Create rotation vector = angular_velocity * dt
+                EigenVector3<T> rotationVector = W * dt;
+
+                // Convert to angle-axis (this is what Eigen::AngleAxis does internally)
+                T angle = rotationVector.norm();
+                EigenVector3<T> axis = rotationVector.normalized();
+
+                // Apply the rotation to the quaternion
+                Eigen::AngleAxis<T> deltaR(angle, axis);
+                Q = deltaR * Q;
             }
         }
         else

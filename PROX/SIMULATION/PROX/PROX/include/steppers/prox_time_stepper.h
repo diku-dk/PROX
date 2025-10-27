@@ -618,7 +618,7 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
                     gNew.setZero();
                 }
 
-                if (params.stepper_params().bounce_on() || true)
+                if (params.stepper_params().bounce_on())
                 {
                     get_restitution_vector_eigen(contacts.begin(),
                                                  contacts.end(), properties,

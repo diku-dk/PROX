@@ -215,6 +215,127 @@ EigenVector3<T> getTriangleVertexPosAt(const EigenVector3<T>& centerTranslation,
 }
 
 template <typename T>
+EigenVector3<T> getTriangleVertexInSDFLocalAtTime(
+    const EigenVector3<T>& triangleCenter,
+    const EigenVector3<T>& triangleLinVel,
+    const EigenVector3<T>& triangleAngVel, const EigenVector3<T>& sdfCenter,
+    const EigenVector3<T>& sdfLinVel, const EigenVector3<T>& sdfAngVel,
+    const EigenVector3<T>& vert, T t)
+{
+    // 1. Compute triangle vertex position in world space at time t
+
+    // Vector from triangle center to vertex in initial configuration
+    EigenVector3<T> diffFromTriangleCenter = vert - triangleCenter;
+
+    // Apply rotation to this vector
+    T triangleAngle = triangleAngVel.norm() * t;
+    EigenMatrix3<T> R_triangle;
+    if (triangleAngle > 1e-8)
+    {
+        EigenVector3<T> axis = triangleAngVel.normalized();
+        R_triangle
+            = Eigen::AngleAxis<T>(triangleAngle, axis).toRotationMatrix();
+    }
+    else { R_triangle = EigenMatrix3<T>::Identity(); }
+
+    // Final triangle vertex position in world space
+    EigenVector3<T> trianglePosAtT = triangleCenter + triangleLinVel * t
+                                   + R_triangle * diffFromTriangleCenter;
+
+    // 2. Compute SDF transformation at time t
+
+    // SDF center position at time t
+    EigenVector3<T> sdfCenterAtT = sdfCenter + sdfLinVel * t;
+
+    // SDF rotation at time t
+    T sdfAngle = sdfAngVel.norm() * t;
+    EigenMatrix3<T> R_sdf;
+    if (sdfAngle > 1e-8)
+    {
+        EigenVector3<T> axis = sdfAngVel.normalized();
+        R_sdf = Eigen::AngleAxis<T>(sdfAngle, axis).toRotationMatrix();
+    }
+    else { R_sdf = EigenMatrix3<T>::Identity(); }
+
+    // 3. Transform triangle position to SDF local space
+    // This is: R_sdf^T * (world_point - sdf_center)
+    return R_sdf.transpose() * (trianglePosAtT - sdfCenterAtT);
+}
+
+template <typename T>
+EigenVector3<T> getTriangleVertexPosAt_HMMM(
+    const EigenVector3<T>& centerTranslationA, const EigenVector3<T>& linVel,
+    const EigenVector3<T>& angVel, const EigenVector3<T>& centerTranslationB,
+    const EigenVector3<T>& SDFlinVel, const EigenVector3<T>& SDFangVel,
+    const EigenVector3<T>& vert, T dt)
+{
+    return getTriangleVertexInSDFLocalAtTime(centerTranslationA, linVel, angVel,
+                                             centerTranslationB, SDFlinVel,
+                                             SDFangVel, vert, dt);
+    //TODO USE EQUATION 14!, DISCARD THIS PELASE!
+    /*EigenVector3<T> diff = vert - (centerTranslation + linVel * dt);
+
+    return vert + ((linVel + angVel.cross(diff)) * dt);*/
+    EigenVector3<T> diffA = vert - (centerTranslationA);
+
+    //EigenVector3<T> vi = ((linVel + angVel.cross(diffA)) * dt);
+    EigenVector3<T> tmpAngVelA = angVel;
+    T angleA = tmpAngVelA.norm();
+    EigenMatrix3<T> RA;
+    if (angleA > 1e-8)
+    {
+        EigenVector3<T> axisA = tmpAngVelA.normalized();
+        RA = Eigen::AngleAxis<T>(angleA, axisA).toRotationMatrix();
+    }
+    else { RA = EigenMatrix3<T>::Identity(); }
+    EigenVector3<T> vi = ((linVel + (RA) * (diffA)) * dt);
+
+    EigenVector3<T> diffB = vert - (centerTranslationB);
+
+    //EigenVector3<T> SDFVi = ((SDFlinVel + SDFangVel.cross(diffB)) * dt);
+    EigenVector3<T> tmpAngVelB = SDFangVel;
+    T angleB = tmpAngVelB.norm();
+    EigenMatrix3<T> RB;
+    if (angleB > 1e-8)
+    {
+        EigenVector3<T> axisB = tmpAngVelB.normalized();
+        RB = Eigen::AngleAxis<T>(angleB, axisB).toRotationMatrix();
+    }
+    else { RB = EigenMatrix3<T>::Identity(); }
+    EigenVector3<T> SDFVi = ((SDFlinVel + (RB) * (diffB)) * dt);
+
+    EigenVector3<T> v_relative = vi - SDFVi;
+    return vert + (v_relative);
+}
+
+template <typename T>
+EigenVector3<T> getTriangleVertexPosAt(
+    const EigenVector3<T>& centerTranslationA, const EigenVector3<T>& linVel,
+    const EigenVector3<T>& angVel, const EigenVector3<T>& centerTranslationB,
+    const EigenVector3<T>& SDFlinVel, const EigenVector3<T>& SDFangVel,
+    const EigenVector3<T>& vert, T dt)
+{
+    //TODO USE EQUATION 14!, DISCARD THIS PELASE!
+    /*EigenVector3<T> diff = vert - (centerTranslation + linVel * dt);
+
+    return vert + ((linVel + angVel.cross(diff)) * dt);*/
+    EigenVector3<T> diffA = vert - (centerTranslationA);
+
+    //EigenVector3<T> vi = ((linVel + angVel.cross(diffA)) * dt);
+
+    EigenVector3<T> vi = ((linVel + (angVel).cross(diffA)) * dt);
+
+    EigenVector3<T> diffB = vert - (centerTranslationB);
+
+    //EigenVector3<T> SDFVi = ((SDFlinVel + SDFangVel.cross(diffB)) * dt);
+
+    EigenVector3<T> SDFVi = ((SDFlinVel + (SDFangVel.cross((diffB)))) * dt);
+
+    EigenVector3<T> v_relative = vi - SDFVi;
+    return vert + (v_relative);
+}
+
+template <typename T>
 TriangleAtTimeInfo<T> getTriangleAtTime(T t,
                                         const RigidBodyInfo<T>& initialState)
 {
@@ -254,6 +375,9 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
     EigenVector3<T> v_world = *(initialState.A_linearVel);
     EigenVector3<T> omega_world = *(initialState.A_angularVel);
     EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+    EigenVector3<T> CSDF = *(initialState.B_centerTranslation);
+    EigenVector3<T> vSDF = *(initialState.B_linearVel);
+    EigenVector3<T> omegaSDF = *(initialState.B_angularVel);
     EigenVector3<T> p0 = (initialState.A_p0);
     EigenVector3<T> p1 = (initialState.A_p1);
     EigenVector3<T> p2 = (initialState.A_p2);
@@ -268,12 +392,12 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
     EigenVector3<T> tmp0 = (Cnew + R * r0);
     EigenVector3<T> tmp1 = (Cnew + R * r1);
     EigenVector3<T> tmp2 = (Cnew + R * r2);*/
-    EigenVector3<T> p0_t
-        = getTriangleVertexPosAt(C0, v_world, omega_world, p0, t);
-    EigenVector3<T> p1_t
-        = getTriangleVertexPosAt(C0, v_world, omega_world, p1, t);
-    EigenVector3<T> p2_t
-        = getTriangleVertexPosAt(C0, v_world, omega_world, p2, t);
+    EigenVector3<T> p0_t = getTriangleVertexPosAt(C0, v_world, omega_world,
+                                                  CSDF, vSDF, omegaSDF, p0, t);
+    EigenVector3<T> p1_t = getTriangleVertexPosAt(C0, v_world, omega_world,
+                                                  CSDF, vSDF, omegaSDF, p1, t);
+    EigenVector3<T> p2_t = getTriangleVertexPosAt(C0, v_world, omega_world,
+                                                  CSDF, vSDF, omegaSDF, p2, t);
     TriangleAtTimeInfo<T> out{.A_p0 = p0_t, .A_p1 = p1_t, .A_p2 = p2_t};
 
     return out;
@@ -289,6 +413,107 @@ TriangleAtTimeInfo<T> getTriangleAtTime(T t,
                                 .A_p1 = currentCenter + *(initialState.A_p1),
                                 .A_p2 = currentCenter + *(initialState.A_p2)};*/
     //    return tInfo;
+}
+
+template <typename T>
+EigenVector3<T> getVelocityAtPoint2(const RigidBodyInfo<T>& initialState,
+                                    const EigenVector3<T>& point, T t)
+{
+    EigenVector3<T> v_world = *(initialState.A_linearVel);
+    EigenVector3<T> omega_world = *(initialState.A_angularVel);
+    EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+
+    EigenVector3<T> vSDF = *(initialState.B_linearVel);
+    EigenVector3<T> omegaSDF = *(initialState.B_angularVel);
+    EigenVector3<T> CSDF = *(initialState.B_centerTranslation);
+
+    // For triangle: use Equation 14 directly
+    EigenVector3<T> diffA = point - C0;
+    EigenVector3<T> v_triangle = v_world + omega_world.cross(diffA);
+
+    // For SDF: also use Equation 14
+    EigenVector3<T> diffB = point - CSDF;
+    EigenVector3<T> v_sdf = vSDF + omegaSDF.cross(diffB);
+
+    // Relative velocity
+    return v_triangle - v_sdf;
+}
+
+template <typename T>
+EigenVector3<T> getVelocityAtPoint_HMMM(const RigidBodyInfo<T>& initialState,
+                                        const EigenVector3<T>& point, T t)
+{
+    //getVelocityAtPoint_GREAT(initialState, point, t);
+    //Get the center g of rotation at time t
+    /*    EigenVector3<T> currentCenter
+        = *(initialState.A_centerTranslation) + *(initialState.A_linearVel) * t;
+
+    //Paper's formula: v_t = v_g + ω_g × (x_t - g)
+    EigenVector3<T> radius = point - currentCenter;
+    EigenVector3<T> velocity = *(initialState.A_linearVel)
+                             + (*(initialState.A_angularVel)).cross(radius);
+
+    return velocity;*/
+    /*EigenVector3<T> currentCenter = *(initialState.A_centerTranslation);
+    //EigenVector3<T> currentCenter = (EigenVector3<T>(0, 0, 0)) + *(initialState.A_linearVel) * t;
+
+    //Paper's formula: v_t = v_g + ω_g × (x_t - g)
+    EigenVector3<T> radius = point - currentCenter;
+    EigenVector3<T> velocity = (*(initialState.A_linearVel))
+                             + ((*(initialState.A_angularVel))).cross(radius);
+    
+    
+
+    return velocity * t;*/
+    EigenVector3<T> v_world = *(initialState.A_linearVel);
+    EigenVector3<T> omega_world = *(initialState.A_angularVel);
+    EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+    EigenVector3<T> CSDF = *(initialState.B_centerTranslation);
+    EigenVector3<T> vSDF = *(initialState.B_linearVel);
+    EigenVector3<T> omegaSDF = *(initialState.B_angularVel);
+    EigenVector3<T> p0 = (initialState.A_p0);
+    EigenVector3<T> p1 = (initialState.A_p1);
+    EigenVector3<T> p2 = (initialState.A_p2);
+    EigenVector3<T> Cnew = v_world;
+
+    /*    EigenMatrix3<T> R;
+
+    if (true)
+    {
+        T const radian = omega_world.norm() * t;
+        Eigen::Matrix<T, 3, 1> axis = omega_world.normalized();
+        R = Eigen::AngleAxis<T>(radian, axis).toRotationMatrix();
+    }
+
+    EigenVector3<T> r0 = point - C0;
+
+    EigenVector3<T> tmp0 = (Cnew + R * r0);
+    return tmp0;*/
+    /*    EigenVector3<T> vti = (v_world + omega_world.cross(point - C0));
+    EigenVector3<T> vtiSDF = (vSDF + omegaSDF.cross(point - CSDF));*/
+    T angleA = omega_world.norm();
+    EigenMatrix3<T> RA;
+    if (angleA > 1e-8)
+    {
+        EigenVector3<T> axisA = omega_world.normalized();
+        RA = Eigen::AngleAxis<T>(angleA, axisA).toRotationMatrix();
+    }
+    else { RA = EigenMatrix3<T>::Identity(); }
+
+    T angleB = omegaSDF.norm();
+    EigenMatrix3<T> RB;
+    if (angleB > 1e-8)
+    {
+        EigenVector3<T> axisB = omegaSDF.normalized();
+        RB = Eigen::AngleAxis<T>(angleB, axisB).toRotationMatrix();
+    }
+    else { RB = EigenMatrix3<T>::Identity(); }
+    EigenVector3<T> vti = (v_world + (RA) * (point - C0));
+    EigenVector3<T> vtiSDF = (vSDF + (RB) * (point - CSDF));
+
+    return vti - vtiSDF;
+
+    //return (v_world + omega_world.cross(point - C0));
 }
 
 template <typename T>
@@ -319,6 +544,9 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
     EigenVector3<T> v_world = *(initialState.A_linearVel);
     EigenVector3<T> omega_world = *(initialState.A_angularVel);
     EigenVector3<T> C0 = *(initialState.A_centerTranslation);
+    EigenVector3<T> CSDF = *(initialState.B_centerTranslation);
+    EigenVector3<T> vSDF = *(initialState.B_linearVel);
+    EigenVector3<T> omegaSDF = *(initialState.B_angularVel);
     EigenVector3<T> p0 = (initialState.A_p0);
     EigenVector3<T> p1 = (initialState.A_p1);
     EigenVector3<T> p2 = (initialState.A_p2);
@@ -337,7 +565,15 @@ EigenVector3<T> getVelocityAtPoint(const RigidBodyInfo<T>& initialState,
 
     EigenVector3<T> tmp0 = (Cnew + R * r0);
     return tmp0;*/
-    return (v_world + omega_world.cross(point - C0));
+    /*    EigenVector3<T> vti = (v_world + omega_world.cross(point - C0));
+    EigenVector3<T> vtiSDF = (vSDF + omegaSDF.cross(point - CSDF));*/
+
+    EigenVector3<T> vti = (v_world + (omega_world).cross(point - C0));
+    EigenVector3<T> vtiSDF = (vSDF + (omegaSDF).cross(point - CSDF));
+
+    return vti - vtiSDF;
+
+    //return (v_world + omega_world.cross(point - C0));
 }
 
 //I understand the ti componenet as the triangle at time ti with the u,v,w interpolation
@@ -2508,7 +2744,9 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
     EigenVector3<T> p1s = ((initialState.A_p1)).eval();
     EigenVector3<T> p2s = ((initialState.A_p2)).eval();
 
-    EigenVector3<T> vi = *(initialState.A_linearVel);
+    //    EigenVector3<T> vi = *(initialState.A_linearVel);
+    EigenVector3<T> vi
+        = *(initialState.A_linearVel) - (*(initialState.B_linearVel));
     EigenVector3<T> gradP0 = gradientAtProjection(
         p0s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
         *(initialState.B_centerRotation));
@@ -2638,13 +2876,19 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
 
         EigenVector3<T> p0_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p0s, tip1);
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p0s,
+            tip1);
         EigenVector3<T> p1_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p1s, tip1);
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p1s,
+            tip1);
         EigenVector3<T> p2_at_ti = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p2s, tip1);
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p2s,
+            tip1);
 
         T p0Mins = (p0_at_ti).dot(gradPhixtip1);
         T p1Mins = (p1_at_ti).dot(gradPhixtip1);
@@ -2675,13 +2919,19 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
                                       w);*/
         EigenVector3<T> p0_at_tip1 = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p0s, tip1);
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p0s,
+            tip1);
         EigenVector3<T> p1_at_tip1 = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p1s, tip1);
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p1s,
+            tip1);
         EigenVector3<T> p2_at_tip1 = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
-            *(initialState.A_angularVel), p2s, tip1);
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p2s,
+            tip1);
         barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, u, v, w);
 
         projectToTriangle(u, v, w);
