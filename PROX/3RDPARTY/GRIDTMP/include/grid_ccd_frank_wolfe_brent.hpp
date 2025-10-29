@@ -607,9 +607,9 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
         return tend;
     }
 
-    EigenVector3<T> p0s = ((initialState.A_p0)).eval();
-    EigenVector3<T> p1s = ((initialState.A_p1)).eval();
-    EigenVector3<T> p2s = ((initialState.A_p2)).eval();
+    EigenVector3<T> p0s = ((initialState.A_p0));
+    EigenVector3<T> p1s = ((initialState.A_p1));
+    EigenVector3<T> p2s = ((initialState.A_p2));
 
     //    EigenVector3<T> vi = *(initialState.A_linearVel);
     EigenVector3<T> vi

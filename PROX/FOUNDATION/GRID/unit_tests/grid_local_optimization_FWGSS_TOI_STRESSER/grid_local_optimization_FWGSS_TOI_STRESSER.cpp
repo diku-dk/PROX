@@ -425,29 +425,29 @@ private:
         const T epsilon = T(1e-5);
         //std::cerr << "DIST: " << distance << "\n";
 
-        // 1. Almost at solution (small interpenetration)
+        //Almost at solution (small interpenetration)
         if (std::abs<T>(distance) < epsilon) { stats.almostAtSolution++; }
-        // 2. Outside solution, but TOI != tEnd
+        //Outside solution, but TOI != tEnd
         else if (distance > epsilon && toi != tEnd)
         {
             stats.outsideButTOINotEnd++;
         }
-        // 3. TOI == tEnd and outside solution
+        //TOI == tEnd and outside solution
         else if (distance > epsilon && toi == tEnd)
         {
             stats.outsideAndTOIEqualsEnd++;
         }
-        // 4. Inside solution, but TOI != tStart
+        //Inside solution, but TOI != tStart
         else if (distance < -epsilon && toi > tStart + 0.000001)
         {
             stats.insideButTOINotStart++;
         }
-        // 5. TOI == tStart and inside solution
+        //TOI == tStart and inside solution
         else if (distance < -epsilon && toi == tStart)
         {
             stats.insideAndTOIEqualsStart++;
         }
-        // 6. Other cases
+        //Other cases
         else { stats.otherCases++; }
     }
 };
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
     {
         using T = float;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTests(200000, 5);
+        triangleTester.runTests(200000000, 5);
     }
 }
 

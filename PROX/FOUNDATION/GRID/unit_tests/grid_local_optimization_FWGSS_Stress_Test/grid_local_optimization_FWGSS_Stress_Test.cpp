@@ -366,6 +366,19 @@ public:
                           .count();
                 totalAlgorithmTime = T(gss_us);
             }
+            else if (type == 3)
+            {
+                auto gss_start = std::chrono::high_resolution_clock::now();
+
+                toi = performProjectedGradientDescent<T>(
+                    0.0, 0.01, rInfo, firstIntersectPoint, minimizerTimes);
+                auto gss_end = std::chrono::high_resolution_clock::now();
+                auto gss_us
+                    = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                          gss_end - gss_start)
+                          .count();
+                totalAlgorithmTime = T(gss_us);
+            }
             else
             {
                 auto gss_start = std::chrono::high_resolution_clock::now();
@@ -555,29 +568,29 @@ private:
         const T epsilon = T(1e-5);
         //std::cerr << "DIST: " << distance << "\n";
 
-        // 1. Almost at solution (small interpenetration)
+        //Almost at solution (small interpenetration)
         if (std::abs<T>(distance) < epsilon) { stats.almostAtSolution++; }
-        // 2. Outside solution, but TOI != tEnd
+        //Outside solution, but TOI != tEnd
         else if (distance > epsilon && toi != tEnd)
         {
             stats.outsideButTOINotEnd++;
         }
-        // 3. TOI == tEnd and outside solution
+        //TOI == tEnd and outside solution
         else if (distance > epsilon && toi == tEnd)
         {
             stats.outsideAndTOIEqualsEnd++;
         }
-        // 4. Inside solution, but TOI != tStart
+        //Inside solution, but TOI != tStart
         else if (distance < -epsilon && toi > tStart + 0.000001)
         {
             stats.insideButTOINotStart++;
         }
-        // 5. TOI == tStart and inside solution
+        //TOI == tStart and inside solution
         else if (distance < -epsilon && toi == tStart)
         {
             stats.insideAndTOIEqualsStart++;
         }
-        // 6. Other cases
+        //Other cases
         else { stats.otherCases++; }
     }
 };
@@ -587,7 +600,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
     {
         using T = double;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTests(2000, 1);
+        triangleTester.runTests(100, 3);
     }
 }
 
