@@ -162,7 +162,7 @@ void gauss_seidel_solver_Eigen(const Eigen::SparseMatrix<T>& J,
 
             // solve local (these are scalar calls that update xk_map in place)
             // note: normalSolver and frictionSolver expect scalars; adapt to how they modify x_k
-            // Copy z_k components into temporaries if your solvers require references
+            // Copy z_k components into temporaries
             //--- Solve lambda_n = prox_{R^+}( lambda_n - r (A lambda_n + b))
             normalSolver(params.normal_sub_solver(), z_k(0), xk_map(0));
             //--- Solve lambda_f = prox_C( lambda_f - r (A lambda_f + b))

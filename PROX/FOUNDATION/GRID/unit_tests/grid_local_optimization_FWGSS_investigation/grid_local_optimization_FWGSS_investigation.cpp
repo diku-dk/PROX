@@ -130,6 +130,44 @@ public:
     }
 };
 
+template <typename T> struct PointPenetration
+{
+    EigenVector3<T> point;
+    T distToSDF;
+};
+
+template <typename T>
+std::vector<PointPenetration<T>>
+getPenetrationForTris(const EigenVector3<T>& A, const EigenVector3<T>& B,
+                      const EigenVector3<T>& C, const RigidBodyInfo<T>& info,
+                      int N = 446)
+{
+    if (N <= 0) throw std::invalid_argument("N must be positive");
+
+    size_t M = static_cast<size_t>(N + 1) * static_cast<size_t>(N + 2) / 2;
+    std::vector<PointPenetration<T>> pts;
+    pts.reserve(M);
+
+    for (int i = 0; i <= N; ++i)
+    {
+        int jmax = N - i;
+        for (int j = 0; j <= jmax; ++j)
+        {
+            int k = N - i - j;
+            T u = static_cast<T>(i) / static_cast<T>(N);
+            T v = static_cast<T>(j) / static_cast<T>(N);
+            T w = static_cast<T>(k) / static_cast<T>(N);
+            PointPenetration<T> pointPenetration;
+            pointPenetration.point = u * A + v * B + w * C;
+            pointPenetration.distToSDF = valueAtProjection<T>(
+                *(info.B_sdf), pointPenetration.point,
+                *(info.B_centerTranslation), *(info.B_centerRotation));
+            pts.push_back(pointPenetration);
+        }
+    }
+    return pts;
+}
+
 template <typename T> class TriangleCCDTester
 {
 private:
@@ -310,14 +348,27 @@ public:
                 EigenVector3<T> contactPoint;
                 EigenVector3<T> normalDummy;
                 T penetration;
-                optimizeTriangleFW_Working(p0AtTimeTi, p1AtTimeTi, p2AtTimeTi,
+                /*optimizeTriangleFW_Working(p0AtTimeTi, p1AtTimeTi, p2AtTimeTi,
                                            *(rInfo.B_sdf), contactPoint,
                                            normalDummy, penetration, 1000);
                 T penetrations = valueAtProjection(*(rInfo.B_sdf), contactPoint,
                                                    *(rInfo.B_centerTranslation),
-                                                   *(rInfo.B_centerRotation));
-                lastContactPoint = contactPoint;
-                if (penetrations <= 0.0) { break; }
+                                                   *(rInfo.B_centerRotation));*/
+                std::vector<PointPenetration<T>> pens = getPenetrationForTris(
+                    p0AtTimeTi, p1AtTimeTi, p2AtTimeTi, rInfo, 100);
+                T minPenetration = std::numeric_limits<T>::max();
+                EigenVector3<T> minPoint;
+                for (size_t i = 0; i < pens.size(); ++i)
+                {
+                    PointPenetration<T> currPen = pens[i];
+                    if (currPen.distToSDF < minPenetration)
+                    {
+                        minPoint = currPen.point;
+                        minPenetration = currPen.distToSDF;
+                    }
+                }
+                lastContactPoint = minPoint;
+                if (minPenetration <= 0.0) { break; }
                 dt += 1e-6;
             }
             std::cerr << ".";
@@ -418,6 +469,7 @@ public:
 
             if (diffDistance <= -1e-5)
             {
+                std::cerr << "=============================================\n";
                 std::cerr
                     << "Triangle configuration of diffDistance <= -1e-5: p0=("
                     << rInfo.A_p0.x() << ", " << rInfo.A_p0.y() << ", "
@@ -434,9 +486,11 @@ public:
                 std::cerr << "Note diffDistance is" << diffDistance
                           << ", diffGT is " << distGT << " and diff is " << dist
                           << "\n";
+                std::cerr << "=============================================\n";
             }
             if (diffDistance >= 1e-4)
             {
+                std::cerr << "=============================================\n";
                 std::cerr
                     << "Triangle configuration of diffDistance <= 1e-4: p0=("
                     << rInfo.A_p0.x() << ", " << rInfo.A_p0.y() << ", "
@@ -453,10 +507,12 @@ public:
                 std::cerr << "Note diffDistance is" << diffDistance
                           << ", diffGT is " << distGT << " and diff is " << dist
                           << "\n";
+                std::cerr << "=============================================\n";
             }
 
             if (toi > dt + 1e-5)
             {
+                std::cerr << "=============================================\n";
                 std::cerr
                     << "WE GOT A TOI that is larger thann DT! (1e5 prec)\n";
                 std::cerr << "Triangle configuration of TOI=1e-5: p0=("
@@ -469,7 +525,9 @@ public:
                           << ", " << (*(rInfo.A_linearVel)).y() << ", "
                           << (*(rInfo.A_linearVel)).z()
                           << "), exact TOI = " << toi << "\n";
+                std::cerr << "=============================================\n";
             }
+
             else if (toi > dt + 1e-8)
             {
                 std::cerr
@@ -644,13 +702,178 @@ private:
         else { stats.otherCases++; }
     }
 };
-
 BOOST_AUTO_TEST_CASE(grid_local_strategy)
 {
     {
         using T = double;
         TriangleCCDTester<T> triangleTester;
         triangleTester.runTests(2000, 5);
+        return;
+        //        using T = double;
+        using D = T;
+
+        namespace fs = std::filesystem;
+        fs::path source_dir = fs::path(__FILE__).parent_path();
+        fs::path bunnyRelative = "../../../../../bin/resources/objs/torus.obj";
+        fs::path bunnyFull = source_dir / bunnyRelative;
+        fs::path bunnyNormalized = bunnyFull.lexically_normal();
+
+        // Output
+        std::cout << "Bunny path: " << bunnyNormalized << std::endl;
+        std::string meshFile = bunnyNormalized.string();
+
+        int res = 32;
+
+        //Read mesh
+        Eigen::MatrixXd V;
+        Eigen::MatrixXi F;
+        if (!igl::read_triangle_mesh(meshFile, V, F))
+        {
+            std::cerr << "ERROR: Failed to read mesh: " << meshFile << "\n";
+        }
+        std::cout << "Read mesh: #V = " << V.rows() << "  #F = " << F.rows()
+                  << "\n";
+
+        Eigen::RowVector3d minv = V.colwise().minCoeff();
+        Eigen::RowVector3d maxv = V.colwise().maxCoeff();
+        Eigen::RowVector3d diag = maxv - minv;
+        T longest = diag.maxCoeff();
+        //10% padding to our bounding box!
+        T pad = 0.10 * longest;
+        Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
+                                    (T)(minv.z() - pad));
+        Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
+                                    (T)(maxv.z() + pad));
+
+        //create grid (res^3 nodes)
+        Eigen::Matrix<size_t, 3, 1> nodes((size_t)res, (size_t)res,
+                                          (size_t)res);
+        grid::Grid<D, T> G;
+        G.create(gmin, gmax, nodes);
+        const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
+        std::cout << "Created grid: " << G.I() << " x " << G.J() << " x "
+                  << G.K() << "  (total nodes = " << total << ")\n";
+
+        //Build the query points matrix P (total x 3) in the same linear order used by grid
+        Eigen::MatrixXd P((Eigen::Index)total, 3);
+        size_t idx_lin = 0;
+        for (size_t k = 0; k < G.K(); ++k)
+        {
+            for (size_t j = 0; j < G.J(); ++j)
+            {
+                for (size_t i = 0; i < G.I(); ++i)
+                {
+                    Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
+                    Eigen::Matrix<T, 3, 1> p;
+                    grid::node_position(G, idx, p);
+                    P((Eigen::Index)idx_lin, 0) = p.x();
+                    P((Eigen::Index)idx_lin, 1) = p.y();
+                    P((Eigen::Index)idx_lin, 2) = p.z();
+                    ++idx_lin;
+                }
+            }
+        }
+
+        std::cout
+            << "Computing signed distances (libigl::signed_distance)...\n";
+        Eigen::VectorXd S; // signed distances
+        Eigen::VectorXi I; // indices to closest triangles (unused here)
+        Eigen::MatrixXd C; // closest points on triangles
+        Eigen::MatrixXd N; // normals used for signing (pseudonormal)
+
+        igl::SignedDistanceType signType
+            = igl::SIGNED_DISTANCE_TYPE_WINDING_NUMBER;
+        igl::signed_distance(P, V, F, signType, S, I, C, N);
+        if ((size_t)S.size() != total)
+        {
+            std::cerr << "ERROR: libigl returned unexpected S size: "
+                      << S.size() << " expected " << total << "\n";
+        }
+
+        //Copy into grid storage
+        for (size_t s = 0; s < total; ++s)
+        {
+            G.data()[s] = static_cast<D>(S((Eigen::Index)s));
+        }
+
+        //Write CSV (x,y,z,sdf)
+        fs::path bunnySDFRelative = "../../../../../bin/output/sdftest/sdf.csv";
+        fs::path bunnySDFFull = source_dir / bunnySDFRelative;
+        fs::path bunnySDFNormalized = bunnySDFFull.lexically_normal();
+        const std::string outCsv = bunnySDFNormalized.string();
+
+        T dt = 0.00959223;
+        EigenVector3<T> angularVelA(0, 0, 0);
+        EigenVector3<T> angularVelB(0, 0, 0);
+        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+        EigenVector3<T> transA(2.0, 0.0667, 0.0667);
+        EigenVector3<T> transB(0, 0, 0);
+        EigenVector3<T> linearA(-258.903, 778.153, 572.231);
+        EigenVector3<T> linearB(0, 0, 0);
+
+        RigidBodyInfo<T> rInfo;
+        rInfo.A_angularVel = &angularVelA;
+        rInfo.B_angularVel = &angularVelB;
+        rInfo.A_centerRotation = &rotA;
+        rInfo.B_centerRotation = &rotB;
+        rInfo.A_centerTranslation = &transA;
+        rInfo.B_centerTranslation = &transB;
+        rInfo.A_linearVel = &linearA;
+        rInfo.B_linearVel = &linearB;
+
+        rInfo.B_sdf = &G;
+
+        rInfo.A_p0 = EigenVector3<T>(2.45869, -7.70062, -5.83192);
+        rInfo.A_p1 = EigenVector3<T>(-2.43316, -7.95712, -5.63659);
+        rInfo.A_p2 = EigenVector3<T>(-2.64867, -7.87543, -5.6651);
+
+        TriangleAtTimeInfo<T> tri = getTriangleAtTime(dt, rInfo);
+        EigenVector3<T> p0AtTimeTi = tri.A_p0;
+        EigenVector3<T> p1AtTimeTi = tri.A_p1;
+        EigenVector3<T> p2AtTimeTi = tri.A_p2;
+
+        EigenVector3<T> contactPoint;
+        EigenVector3<T> lastContactPoint;
+        EigenVector3<T> normalDummy;
+        T penetration;
+        optimizeTriangleFW_Working(p0AtTimeTi, p1AtTimeTi, p2AtTimeTi,
+                                   *(rInfo.B_sdf), contactPoint, normalDummy,
+                                   penetration, 1000);
+        T penetrations = valueAtProjection(*(rInfo.B_sdf), contactPoint,
+                                           *(rInfo.B_centerTranslation),
+                                           *(rInfo.B_centerRotation));
+        std::vector<PointPenetration<T>> pens = getPenetrationForTris(
+            p0AtTimeTi, p1AtTimeTi, p2AtTimeTi, rInfo, 146);
+        T minPenetration = std::numeric_limits<T>::max();
+        EigenVector3<T> minPoint;
+        for (size_t i = 0; i < pens.size(); ++i)
+        {
+            PointPenetration<T> currPen = pens[i];
+            if (currPen.distToSDF < minPenetration)
+            {
+                minPoint = currPen.point;
+                minPenetration = currPen.distToSDF;
+            }
+        }
+        lastContactPoint = minPoint;
+        std::cerr << "Lengt of peentrations: " << pens.size() << "\n";
+        std::cerr << "Penetration for FWGD vs 100k point penetration: "
+                  << penetrations << " vs " << minPenetration << "\n";
+        lastContactPoint = contactPoint;
+
+        EigenVector3<T> firstIntersectPoint;
+        std::vector<T> minimizerTimes;
+        T toi = FrankWolfeBRENT_BENCHMARK_TIME<T>(
+            0.0, 0.01, rInfo, firstIntersectPoint, minimizerTimes);
+        T penetrationsBRENT = valueAtProjection(
+            *(rInfo.B_sdf), firstIntersectPoint, *(rInfo.B_centerTranslation),
+            *(rInfo.B_centerRotation));
+        std::cerr << "Ended up with Brent dist vs GT dist: "
+                  << penetrationsBRENT << " vs " << minPenetration << "\n";
+        std::cerr << "NOTE TOI=" << toi << "\n";
+
+        //if (penetrations <= 0.0) { break; }
     }
 }
 

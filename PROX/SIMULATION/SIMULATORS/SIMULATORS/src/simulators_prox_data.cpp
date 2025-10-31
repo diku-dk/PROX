@@ -29,6 +29,7 @@ ProxData::ProxData()
     , m_time(0.0f)
     , m_params()
     , m_use_only_tetrameshes(false)
+    , m_warm_start_TOI(false)
     , m_tetgen_settings(mesh_array::tetgen_quality_settings())
     , m_all_scripted_bodies()
 {
@@ -50,6 +51,8 @@ void ProxData::clear()
     m_time_step = 0.01f;
     m_params = params_type();
     m_use_only_tetrameshes = false;
+    //Only used if we used CCD.
+    m_warm_start_TOI = false;
 
     m_properties.resize(m_number_of_materials);
 

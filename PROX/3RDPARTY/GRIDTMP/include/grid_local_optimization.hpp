@@ -614,6 +614,8 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
             //Converged
             break;
         }*/
+        penetration = grid::value_at_2<D, T>(sdf, x);
+        if (penetration <= 0.0 + 1e-8) { break; }
 
         //Eigen::Matrix<T, 3, 1> sitmp = (si.transpose().eval()).dot(gradient);
         T alpha = T(2) / (T(i) + T(2));

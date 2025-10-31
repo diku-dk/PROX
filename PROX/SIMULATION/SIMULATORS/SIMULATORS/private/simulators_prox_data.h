@@ -40,7 +40,12 @@ namespace simulators
       std::vector< std::string > m_geometry_names;
       std::vector< std::string > m_materials;
       std::vector< rigid_body_type > m_bodies;
-      std::vector< contact_type > m_contacts;
+      std::vector<contact_type> m_contacts;
+
+      template <typename T> struct computedTriangleTOIs
+      {
+          std::vector<T> tois;
+      };
 
       broad_phase_type m_broad;
       narrow_phase_type m_narrow;
@@ -55,6 +60,7 @@ namespace simulators
 
       params_type m_params;
       bool m_use_only_tetrameshes;
+      bool m_warm_start_TOI;
 
       prox::Gravity<T> m_gravity;
       prox::Damping<T> m_damping;

@@ -435,7 +435,7 @@ void run_2_body_prox_solver_test_eigen(
     lambda.setZero(); // Equivalent to lambda.clear()
     set_body_velocity(u, 0, {0.25, 0, 0, 0, 0, 0}); // Set u(0)[0] = 0.25
 
-    BOOST_CHECK(false); // Remove this once you implement the solver call
+    BOOST_CHECK(false);
     // prox_solver( ... fix me .... );
 
     BOOST_CHECK_CLOSE(lambda(0), 1.962f, tolerance);
@@ -449,7 +449,7 @@ void run_2_body_prox_solver_test_eigen(
     lambda.setZero();
     set_body_velocity(u, 0, {0.25, 0, 0.01, 0, 0, 0}); // Set u(0)[2] = 0.01
 
-    BOOST_CHECK(false); // Remove this once you implement the solver call
+    BOOST_CHECK(false);
     // prox_solver( ... fix me .... );
 
     BOOST_CHECK_CLOSE(lambda(0), 1.962f, tolerance);
@@ -463,7 +463,7 @@ void run_2_body_prox_solver_test_eigen(
     lambda.setZero();
     set_body_velocity(u, 0, {0, 0, 0, 0, 0.25, 0}); // Set u(0)[4] = 0.25
 
-    BOOST_CHECK(false); // Remove this once you implement the solver call
+    BOOST_CHECK(false);
     // prox_solver( ... fix me .... );
 
     BOOST_CHECK_CLOSE(lambda(0), 1.962f, tolerance);
@@ -2188,7 +2188,7 @@ void run_4_body_prox_solver_test_eigen(T i_am_a_dummy = T(0))
     WJT.setFromTriplets(WJT_triplets.begin(), WJT_triplets.end());
 
     BOOST_CHECK(false);
-    // prox_solver(J, WJT, u, e, g, mu, lambda, params); // Call your Eigen version of the solver
+    // prox_solver(J, WJT, u, e, g, mu, lambda, params);
 
     T tolerance = 1e-1; // that is 0.1 percent, an error on the fourth decimal
     BOOST_CHECK_CLOSE(lambda(0), 5.327f, tolerance); // lambda(0)[0]

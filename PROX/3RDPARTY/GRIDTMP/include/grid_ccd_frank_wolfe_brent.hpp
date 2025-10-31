@@ -666,6 +666,8 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
     EigenVector3<T> xtip1 = EigenVector3<T>(0, 0, 0);
     EigenVector3<T> xti = EigenVector3<T>(0, 0, 0);
 
+    //For debug purposes to get it out of scope we define it here!
+    T phixtip1_2;
     for (size_t i = 0; i < hardStopMaxIterations; ++i)
     {
         its += 1;
@@ -806,9 +808,9 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
         distanceAtTimeParams.v = v;
         distanceAtTimeParams.w = w;
 
-        T phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
-                                         *(initialState.B_centerTranslation),
-                                         *(initialState.B_centerRotation));
+        phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
+                                       *(initialState.B_centerTranslation),
+                                       *(initialState.B_centerRotation));
         if (std::abs(tip1 - ti) <= eps
             && (std::abs(xtip1.x() - xti.x()) <= eps
                 && std::abs(xtip1.y() - xti.y()) <= eps
