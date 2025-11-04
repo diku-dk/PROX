@@ -22,6 +22,7 @@ ProxData::ProxData()
     , m_materials()
     , m_bodies()
     , m_contacts()
+    , m_warmStartBodies()
     , m_broad()
     , m_narrow()
     , m_property_counter(0u)
@@ -85,7 +86,8 @@ void ProxData::step_simulation(float const& dt)
 /*    prox::time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping,
                        m_params, m_broad, m_narrow, m_contacts);*/
     prox::time_stepper_CCD(dt, m_bodies, m_properties, m_gravity, m_damping,
-                           m_params, m_broad, m_narrow, m_contacts);
+                           m_params, m_broad, m_narrow, m_contacts,
+                           m_warmStartBodies);
 
     T E_kinetic;
     T E_potential;

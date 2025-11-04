@@ -214,6 +214,68 @@ namespace narrow
       return std::numeric_limits<T>::max();
   }
 
+  template <typename T>
+  inline T dispatch_collision_handlers_CCD_WARM_START(
+      const System<T>& system, const std::vector<TestPairCCD<T>>& test_pairs,
+      T startTime, T endTime,
+      std::vector<kdop::BodyVelocities<T>>& bodyContacts, bool& onlyZEROTOI,
+      std::vector<std::vector<T>>& warmBodiesStart)
+  {
+      assert(!test_pairs.empty()
+             || !"dispatch_collision_handlers : test_pairs are empty");
+
+      std::vector<TestPairCCD<T>> tetramesh_pairs;
+
+      for (const auto& elem : test_pairs)
+      {
+          bool const A_is_tetramesh
+              = system.get_geometry(elem.obj_a().get_geometry_idx())
+                    .m_tetramesh.has_data();
+          bool const B_is_tetramesh
+              = system.get_geometry(elem.obj_b().get_geometry_idx())
+                    .m_tetramesh.has_data();
+
+          if (A_is_tetramesh && B_is_tetramesh)
+          {
+              tetramesh_pairs.push_back(elem);
+          }
+          else if (A_is_tetramesh && !B_is_tetramesh)
+          {
+              throw std::runtime_error("Error: No non tetrameshes supported "
+                                       "for CCD (got mixed pairs)");
+          }
+          else if (!A_is_tetramesh && B_is_tetramesh)
+          {
+              throw std::runtime_error("Error: No non tetrameshes supported "
+                                       "for CCD (got mixed pairs)");
+          }
+          else
+          {
+              throw std::runtime_error("Error: No non tetrameshes supported "
+                                       "for CCD (got primitive pairs)");
+          }
+      }
+
+      if (!tetramesh_pairs.empty())
+      {
+          if (!system.params().useSdf() && false)
+          {
+              throw std::runtime_error(
+                  "Error: Dispatching tetramesh-tetramesh pair without SDF is "
+                  "not supported for SDF. Sorry!");
+              //details::dispatch_tetramesh_tetramesh(system, tetramesh_pairs);
+          }
+          else
+          {
+              T earliestTOI = details::dispatch_tetramesh_sdf_CCD_WARM_START<T>(
+                  system, tetramesh_pairs, startTime, endTime, bodyContacts,
+                  onlyZEROTOI, warmBodiesStart);
+              return earliestTOI;
+          }
+      }
+      return std::numeric_limits<T>::max();
+  }
+
 } //namespace narrow
 
 // NARROW_DISPATCH_COLLISION_HANDLER_H

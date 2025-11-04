@@ -372,7 +372,7 @@ T BrentMinimize_WORKING(T lstart, T lend, F func,
 
 template <typename T, typename F>
 T BrentMinimize(T lstart, T lend, F func, const DistanceAtTimeParams<T>& params,
-                const RigidBodyInfo<T>& info, T tol = 1e-8, int max_iter = 128)
+                const RigidBodyInfo<T>& info, T tol = 1e-8, int max_iter = 256)
 {
     const T golden_ratio = (3 - std::sqrt(T(5))) / T(2);
 
@@ -586,12 +586,11 @@ EigenVector3<T> BrentMinimize(EigenVector3<T> lstart, EigenVector3<T> lend,
 }
 
 template <typename T>
-T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
-                                 const RigidBodyInfo<T>& initialState,
-                                 EigenVector3<T>& xtiPoint,
-                                 std::vector<T>& minimizerSteps)
+T FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+    T tstart, T tend, const RigidBodyInfo<T>& initialState,
+    DistanceAtTimeParams<T>& distanceAtTimeParams, EigenVector3<T>& xtiPoint,
+    std::vector<T>& minimizerSteps)
 {
-
     minimizerSteps.clear();
 
     //    return FrankWolfeGSSSimple(tstart, tend, initialState);
@@ -600,62 +599,6 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
     T end = tend;
     T tip1 = std::numeric_limits<T>::max();
     //For now if there is no velocity, it means our object is stationary. Thus it can never hit the other object. We can thus ignore it.
-    T minVel = 0.0000001;
-    if ((*(initialState.A_linearVel)).norm() < minVel
-        && (*(initialState.A_angularVel)).norm() < minVel)
-    {
-        return tend;
-    }
-
-    EigenVector3<T> p0s = ((initialState.A_p0));
-    EigenVector3<T> p1s = ((initialState.A_p1));
-    EigenVector3<T> p2s = ((initialState.A_p2));
-
-    //    EigenVector3<T> vi = *(initialState.A_linearVel);
-    EigenVector3<T> vi
-        = *(initialState.A_linearVel) - (*(initialState.B_linearVel));
-    EigenVector3<T> gradP0 = gradientAtProjection(
-        p0s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
-        *(initialState.B_centerRotation));
-    EigenVector3<T> gradP1 = gradientAtProjection(
-        p1s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
-        *(initialState.B_centerRotation));
-    EigenVector3<T> gradP2 = gradientAtProjection(
-        p2s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
-        *(initialState.B_centerRotation));
-    T p0Min = vi.dot(gradP0);
-    T p1Min = vi.dot(gradP1);
-    T p2Min = vi.dot(gradP2);
-    T u;
-    T v;
-    T w;
-    //I add slight bias such that we will more often select p0 than other vertices
-    if (p0Min <= p1Min && p0Min <= p2Min)
-    {
-        u = 1;
-        v = 0;
-        w = 0;
-    }
-    else if (p1Min <= p0Min && p1Min <= p2Min)
-    {
-        u = 0;
-        v = 1;
-        w = 0;
-    }
-    else
-    {
-        u = 0;
-        v = 0;
-        w = 1;
-    }
-
-    DistanceAtTimeParams distanceAtTimeParams{.u = u,
-                                              .v = v,
-                                              .w = w,
-                                              .grid = (initialState.B_sdf),
-                                              .p0 = (initialState.A_p0),
-                                              .p1 = (initialState.A_p1),
-                                              .p2 = (initialState.A_p2)};
 
     float eps = 1e-7;
     size_t maxIterations = 32u;
@@ -666,12 +609,27 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
     EigenVector3<T> xtip1 = EigenVector3<T>(0, 0, 0);
     EigenVector3<T> xti = EigenVector3<T>(0, 0, 0);
 
+    T minVel = 0.0000001;
+    if ((*(initialState.A_linearVel)).norm() < minVel
+        && (*(initialState.A_angularVel)).norm() < minVel)
+    {
+        return tend;
+    }
+    if (tstart >= tend) { return tend; }
+
+    EigenVector3<T> p0s = ((initialState.A_p0));
+    EigenVector3<T> p1s = ((initialState.A_p1));
+    EigenVector3<T> p2s = ((initialState.A_p2));
+
     //For debug purposes to get it out of scope we define it here!
     T phixtip1_2;
     for (size_t i = 0; i < hardStopMaxIterations; ++i)
     {
         its += 1;
-        xti = BarycentricInterpolate(u, v, w, ti, initialState).eval();
+        xti = BarycentricInterpolate(distanceAtTimeParams.u,
+                                     distanceAtTimeParams.v,
+                                     distanceAtTimeParams.w, ti, initialState)
+                  .eval();
         //I assume (but only assumption that we call with ti and xti!
         EigenVector3<T> vti = getVelocityAtPoint(initialState, xti, ti);
         T phixti = valueAtProjection(*(initialState.B_sdf), xti,
@@ -733,7 +691,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
         // Solve spatial sub-problem
         //Note, xtip1 = x_{t_{i+1}}
 
-        xtip1 = BarycentricInterpolate(u, v, w, tip1, initialState).eval();
+        xtip1 = BarycentricInterpolate(
+                    distanceAtTimeParams.u, distanceAtTimeParams.v,
+                    distanceAtTimeParams.w, tip1, initialState)
+                    .eval();
         //EigenVector3<T> vtip1 = 0; //TODO compute v_{t_{i+1}}
         EigenVector3<T> vtip1 = getVelocityAtPoint(initialState, xtip1, tip1);
         T phixtip1 = valueAtProjection(*(initialState.B_sdf), xtip1,
@@ -759,9 +720,9 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
             *(initialState.B_linearVel), *(initialState.B_angularVel), p2s,
             tip1);
 
-        T p0Mins = (p0_at_ti).dot(gradPhixtip1);
-        T p1Mins = (p1_at_ti).dot(gradPhixtip1);
-        T p2Mins = (p2_at_ti).dot(gradPhixtip1);
+        T p0Mins = (p0_at_ti.transpose()).dot(gradPhixtip1);
+        T p1Mins = (p1_at_ti.transpose()).dot(gradPhixtip1);
+        T p2Mins = (p2_at_ti.transpose()).dot(gradPhixtip1);
 
         if (phixtip1 <= 0) { end = std::min<T>(tip1, end); }
         EigenVector3<T> si;
@@ -773,10 +734,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
                                           SignedDistanceAtPoint_MODIFIED<T>,
                                           distanceAtPointParams, initialState);*/
         auto gss_start = std::chrono::high_resolution_clock::now();
-        xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
-                                 distanceAtPointParams, initialState);
-        /*xtip1 = BrentMinimize(xtip1, si, SignedDistanceAtPoint<T>,
-                              distanceAtPointParams, initialState);*/
+        /*xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
+                                 distanceAtPointParams, initialState);*/
+        xtip1 = BrentMinimize(xtip1, si, SignedDistanceAtPoint<T>,
+                              distanceAtPointParams, initialState);
         auto gss_end = std::chrono::high_resolution_clock::now();
         auto gss_us = std::chrono::duration_cast<std::chrono::nanoseconds>(
                           gss_end - gss_start)
@@ -801,12 +762,368 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
             *(initialState.A_angularVel), *(initialState.B_centerTranslation),
             *(initialState.B_linearVel), *(initialState.B_angularVel), p2s,
             tip1);
-        barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, u, v, w);
+        /*barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1,
+                    distanceAtTimeParams.u, distanceAtTimeParams.v,
+                    distanceAtTimeParams.w);*/
+        computeBarycentricCoordinates(
+            p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, distanceAtTimeParams.u,
+            distanceAtTimeParams.v, distanceAtTimeParams.w);
 
-        projectToTriangle(u, v, w);
-        distanceAtTimeParams.u = u;
+        projectToTriangle(distanceAtTimeParams.u, distanceAtTimeParams.v,
+                          distanceAtTimeParams.w);
+        /*distanceAtTimeParams.u = u;
         distanceAtTimeParams.v = v;
-        distanceAtTimeParams.w = w;
+        distanceAtTimeParams.w = w;*/
+
+        phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
+                                       *(initialState.B_centerTranslation),
+                                       *(initialState.B_centerRotation));
+        if (std::abs(tip1 - ti) <= eps
+            && (std::abs(xtip1.x() - xti.x()) <= eps
+                && std::abs(xtip1.y() - xti.y()) <= eps
+                && std::abs(xtip1.z() - xti.z()) <= eps)
+            && phixtip1_2 >= -1e-10 /*&& phixtip1_2 <= eps*/)
+        {
+            /*if (phixtip1_2 >= eps)
+            {
+                ti = T(0.01);
+                tip1 = T(0.01);
+            }*/
+            break;
+        }
+        if (its > maxIterations && phixtip1_2 >= -1e-10) { break; }
+        /*if (its > maxIterations)
+        {
+            std::cerr << "CUrrent it: " << i << " and xtip-value: ("
+                      << xtip1.x() << ", " << xtip1.y() << ", " << xtip1.z()
+                      << ") and phixtip1_2 =" << phixtip1_2 << "\n";
+        }*/
+        ti = tip1;
+        xti = xtip1;
+    }
+
+    xtiPoint = xtip1;
+    return std::min<T>(tip1, ti);
+}
+
+template <typename T>
+T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
+                                 const RigidBodyInfo<T>& initialState,
+                                 EigenVector3<T>& xtiPoint,
+                                 std::vector<T>& minimizerSteps)
+{
+
+    DistanceAtTimeParams distanceAtTimeParams{.u = T(1),
+                                              .v = T(0),
+                                              .w = T(0),
+                                              .grid = (initialState.B_sdf),
+                                              .p0 = (initialState.A_p0),
+                                              .p1 = (initialState.A_p1),
+                                              .p2 = (initialState.A_p2)};
+    std::vector<T> tmpMinimizerSteps;
+
+    EigenVector3<T> xtiPointOne;
+
+    T toiOne = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointOne,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    distanceAtTimeParams.u = T(0);
+    distanceAtTimeParams.v = T(1);
+    distanceAtTimeParams.w = T(0);
+    EigenVector3<T> xtiPointTwo;
+    T toiTwo = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointTwo,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    distanceAtTimeParams.u = T(0);
+    distanceAtTimeParams.v = T(0);
+    distanceAtTimeParams.w = T(1);
+    EigenVector3<T> xtiPointThree;
+    T toiThree = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointThree,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    distanceAtTimeParams.u = T(1.0 / 3.0);
+    distanceAtTimeParams.v = T(1.0 / 3.0);
+    distanceAtTimeParams.w = T(1.0 / 3.0);
+    EigenVector3<T> xtiPointFour;
+    T toiFour = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointFour,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+    if (toiOne <= toiTwo && toiOne <= toiThree && toiOne <= toiFour)
+    {
+        xtiPoint = xtiPointOne;
+        return toiOne;
+    }
+    else if (toiTwo <= toiThree && toiTwo <= toiFour)
+    {
+        xtiPoint = xtiPointTwo;
+        return toiTwo;
+    }
+    else if (toiThree <= toiFour)
+    {
+        xtiPoint = xtiPointThree;
+        return toiThree;
+    }
+    else
+    {
+        xtiPoint = xtiPointFour;
+        return toiFour;
+    }
+}
+
+template <typename T>
+T FrankWolfeBRENT_BENCHMARK_TIME_OLD(T tstart, T tend,
+                                     const RigidBodyInfo<T>& initialState,
+                                     EigenVector3<T>& xtiPoint,
+                                     std::vector<T>& minimizerSteps)
+{
+
+    minimizerSteps.clear();
+
+    //    return FrankWolfeGSSSimple(tstart, tend, initialState);
+    T t1 = tstart;
+    T ti = t1;
+    T end = tend;
+    T tip1 = std::numeric_limits<T>::max();
+    //For now if there is no velocity, it means our object is stationary. Thus it can never hit the other object. We can thus ignore it.
+    T minVel = 0.0000001;
+    if ((*(initialState.A_linearVel)).norm() < minVel
+        && (*(initialState.A_angularVel)).norm() < minVel)
+    {
+        return tend;
+    }
+    if (tstart >= tend) { return tend; }
+
+    EigenVector3<T> p0s = ((initialState.A_p0));
+    EigenVector3<T> p1s = ((initialState.A_p1));
+    EigenVector3<T> p2s = ((initialState.A_p2));
+
+    //    EigenVector3<T> vi = *(initialState.A_linearVel);
+    EigenVector3<T> vi
+        = *(initialState.A_linearVel) - (*(initialState.B_linearVel));
+    EigenVector3<T> gradP0 = gradientAtProjection(
+        p0s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP1 = gradientAtProjection(
+        p1s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP2 = gradientAtProjection(
+        p2s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    T p0Min = vi.dot(gradP0);
+    T p1Min = vi.dot(gradP1);
+    T p2Min = vi.dot(gradP2);
+    T u;
+    T v;
+    T w;
+    //I add slight bias such that we will more often select p0 than other vertices
+    if (p0Min <= p1Min && p0Min <= p2Min)
+    {
+        u = 1;
+        v = 0;
+        w = 0;
+    }
+    else if (p1Min <= p0Min && p1Min <= p2Min)
+    {
+        u = 0;
+        v = 1;
+        w = 0;
+    }
+    else
+    {
+        u = 0;
+        v = 0;
+        w = 1;
+    }
+    /*u = T(1.0 / 3.0);
+    v = T(1.0 / 3.0);
+    w = T(1.0 / 3.0);*/
+
+    DistanceAtTimeParams distanceAtTimeParams{.u = u,
+                                              .v = v,
+                                              .w = w,
+                                              .grid = (initialState.B_sdf),
+                                              .p0 = (initialState.A_p0),
+                                              .p1 = (initialState.A_p1),
+                                              .p2 = (initialState.A_p2)};
+
+    float eps = 1e-7;
+    size_t maxIterations = 32u;
+    //The higher the below iterations, the higher likelihood we will get no false negatives
+    size_t hardStopMaxIterations = 1000u;
+    size_t its = 0;
+    DistanceAtPointParams distanceAtPointParams{.grid = initialState.B_sdf};
+    EigenVector3<T> xtip1 = EigenVector3<T>(0, 0, 0);
+    EigenVector3<T> xti = EigenVector3<T>(0, 0, 0);
+
+    //For debug purposes to get it out of scope we define it here!
+    T phixtip1_2;
+    for (size_t i = 0; i < hardStopMaxIterations; ++i)
+    {
+        its += 1;
+        xti = BarycentricInterpolate(distanceAtTimeParams.u,
+                                     distanceAtTimeParams.v,
+                                     distanceAtTimeParams.w, ti, initialState)
+                  .eval();
+        //I assume (but only assumption that we call with ti and xti!
+        EigenVector3<T> vti = getVelocityAtPoint(initialState, xti, ti) * ti;
+        T phixti = valueAtProjection(*(initialState.B_sdf), xti,
+                                     *(initialState.B_centerTranslation),
+                                     *(initialState.B_centerRotation));
+        EigenVector3<T> gradPhixti = gradientAtProjection(
+            xti, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+            *(initialState.B_centerRotation));
+        if (phixti <= 0)
+        {
+            end = std::min<T>(ti, end);
+            auto gss_start = std::chrono::high_resolution_clock::now();
+            tip1 = BrentMinimize(tstart, ti, UnsignedDistanceAtTime<T>,
+                                 distanceAtTimeParams, initialState);
+            auto gss_end = std::chrono::high_resolution_clock::now();
+            auto gss_us = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                              gss_end - gss_start)
+                              .count();
+            minimizerSteps.push_back(T(gss_us));
+        }
+        else
+        {
+            //Compute Direction
+            T di = T(-1);
+            //Below can be std::copysign not sure. It just says sign in the paper?
+            //            if (phixti > 0) { di = -sign(gradPhixti.dot(vi)); }
+            if (phixti > 0)
+            {
+                T val = gradPhixti.dot(vti);
+                di = -sign(val);
+                //                di = T(1);
+            }
+            //Direction sign test
+            if (di < 0)
+            {
+                auto gss_start = std::chrono::high_resolution_clock::now();
+                tip1 = BrentMinimize(tstart, ti, SignedDistanceAtTime<T>,
+                                     distanceAtTimeParams, initialState);
+                auto gss_end = std::chrono::high_resolution_clock::now();
+                auto gss_us
+                    = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                          gss_end - gss_start)
+                          .count();
+                minimizerSteps.push_back(T(gss_us));
+            }
+            else
+            {
+                auto gss_start = std::chrono::high_resolution_clock::now();
+                tip1 = BrentMinimize(ti, end, SignedDistanceAtTime<T>,
+                                     distanceAtTimeParams, initialState);
+                auto gss_end = std::chrono::high_resolution_clock::now();
+                auto gss_us
+                    = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                          gss_end - gss_start)
+                          .count();
+                minimizerSteps.push_back(T(gss_us));
+            }
+        }
+        // Solve spatial sub-problem
+        //Note, xtip1 = x_{t_{i+1}}
+
+        xtip1 = BarycentricInterpolate(
+                    distanceAtTimeParams.u, distanceAtTimeParams.v,
+                    distanceAtTimeParams.w, tip1, initialState)
+                    .eval();
+        //EigenVector3<T> vtip1 = 0; //TODO compute v_{t_{i+1}}
+        EigenVector3<T> vtip1
+            = getVelocityAtPoint(initialState, xtip1, tip1) * tip1;
+        T phixtip1 = valueAtProjection(*(initialState.B_sdf), xtip1,
+                                       *(initialState.B_centerTranslation),
+                                       *(initialState.B_centerRotation));
+        EigenVector3<T> gradPhixtip1 = gradientAtProjection(
+            xtip1, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+            *(initialState.B_centerRotation));
+
+        EigenVector3<T> p0_at_ti = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p0s,
+            tip1);
+        EigenVector3<T> p1_at_ti = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p1s,
+            tip1);
+        EigenVector3<T> p2_at_ti = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p2s,
+            tip1);
+
+        T p0Mins = (p0_at_ti.transpose()).dot(gradPhixtip1);
+        T p1Mins = (p1_at_ti.transpose()).dot(gradPhixtip1);
+        T p2Mins = (p2_at_ti.transpose()).dot(gradPhixtip1);
+
+        if (phixtip1 <= 0) { end = std::min<T>(tip1, end); }
+        EigenVector3<T> si;
+        //Computing support vertex pi
+        if (p0Mins <= p1Mins && p0Mins <= p2Mins) { si = p0_at_ti; }
+        else if (p1Mins <= p2Mins && p1Mins <= p0Mins) { si = p1_at_ti; }
+        else { si = p2_at_ti; }
+        /*xtip1 = GSSMinimize_WHAT_MODIFIED(T(0), T(1), xtip1, si,
+                                          SignedDistanceAtPoint_MODIFIED<T>,
+                                          distanceAtPointParams, initialState);*/
+        auto gss_start = std::chrono::high_resolution_clock::now();
+        /*xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
+                                 distanceAtPointParams, initialState);*/
+        xtip1 = BrentMinimize(xtip1, si, SignedDistanceAtPoint<T>,
+                              distanceAtPointParams, initialState);
+        auto gss_end = std::chrono::high_resolution_clock::now();
+        auto gss_us = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                          gss_end - gss_start)
+                          .count();
+        minimizerSteps.push_back(T(gss_us));
+        //TODO: Update barycentric coordinates 𝑢, 𝑣, 𝑤 using x®𝑡𝑖+1
+
+        /*computeBarycentricCoordinates(p0_at_ti, p1_at_ti, p2_at_ti, xtip1, u, v,
+                                      w);*/
+        EigenVector3<T> p0_at_tip1 = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p0s,
+            tip1);
+        EigenVector3<T> p1_at_tip1 = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p1s,
+            tip1);
+        EigenVector3<T> p2_at_tip1 = getTriangleVertexPosAt(
+            *(initialState.A_centerTranslation), *(initialState.A_linearVel),
+            *(initialState.A_angularVel), *(initialState.B_centerTranslation),
+            *(initialState.B_linearVel), *(initialState.B_angularVel), p2s,
+            tip1);
+        /*barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1,
+                    distanceAtTimeParams.u, distanceAtTimeParams.v,
+                    distanceAtTimeParams.w);*/
+        computeBarycentricCoordinates(
+            p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, distanceAtTimeParams.u,
+            distanceAtTimeParams.v, distanceAtTimeParams.w);
+
+        projectToTriangle(distanceAtTimeParams.u, distanceAtTimeParams.v,
+                          distanceAtTimeParams.w);
+        /*distanceAtTimeParams.u = u;
+        distanceAtTimeParams.v = v;
+        distanceAtTimeParams.w = w;*/
 
         phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
                                        *(initialState.B_centerTranslation),

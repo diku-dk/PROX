@@ -668,6 +668,114 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     return earliestTOI;
 }
 
+template <typename T>
+requires std::is_floating_point_v<T>
+inline T collision_detection_CCD_WARM_START(
+    std::vector<RigidBody<T>>& bodies, narrow::System<T>& narrow_system,
+    std::vector<ContactPoint<T>>& contacts, T startTime, T endTime,
+    bool& onlyZeroTOI, std::vector<std::vector<T>>& warmStartBodies)
+{
+    typedef typename broad::System<T>::overlap_type overlap_type;
+    typedef std::vector<overlap_type> overlap_container;
+
+    std::vector<broad_ccd::RigidBody<T>> ccdBodies;
+    for (size_t i = 0; i < bodies.size(); ++i)
+    {
+        RigidBody<T>* body = &bodies[i];
+        broad_ccd::RigidBody<T> newBody;
+        newBody.position = body->get_position();
+        newBody.linearVelocity = body->get_velocity();
+        newBody.angularVelocity = body->get_spin();
+        narrow::Geometry<T> geom
+            = narrow_system.get_geometry(body->get_geometry_idx());
+        auto* grid = &geom.m_signedDistanceMap.getSignedDistanceGrid();
+        broad_ccd::AABB<T> bodyAABB(grid->m_min_enclosing_sdf,
+                                    grid->m_max_enclosing_sdf);
+        newBody.localAABB = bodyAABB;
+        newBody.maxDistanceFromCenter = grid->m_r_val;
+        ccdBodies.push_back(newBody);
+    }
+    broad_ccd::BVH<T> bvh(ccdBodies, startTime, endTime);
+
+    bvh.build();
+    std::vector<std::pair<int, int>> pairs = bvh.getAllPairs();
+
+    const std::size_t n = bodies.size();
+    std::vector<narrow::TestPairCCD<T>> narrow_test_pairs;
+
+    //Note all this callback mess is not needed: I only use it for quick compatibility, this will be changed!
+    typedef detail::ContactCallbackFunctor<T> callback_type;
+
+    std::vector<callback_type> callbacks;
+    callbacks.resize(n * n);
+    auto callback = callbacks.begin();
+    ;
+    contacts.clear();
+    std::vector<kdop::BodyVelocities<T>> bodyVels;
+    T earliestTOI = std::numeric_limits<T>::max();
+    for (std::size_t i = 0; i < n; ++i)
+    {
+        for (std::size_t j = 0; j < n; ++j)
+        {
+            if (i == j) { continue; }
+            RigidBody<T>* pair_body_A = &bodies[i];
+            RigidBody<T>* pair_body_B = &bodies[j];
+
+            auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
+            auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
+
+            //--- Verify if we need to test the two bodies or if we can skip them --
+            if (bodyA->is_fixed() && bodyB->is_fixed()) continue;
+            if (bodyA->is_fixed() && bodyB->is_scripted()) continue;
+            if (bodyA->is_scripted() && bodyB->is_fixed()) continue;
+            if (bodyA->is_scripted() && bodyB->is_scripted()) continue;
+
+            //*callback = callback_type(bodyA, bodyB, contacts);
+
+            narrow::TestPairCCD<T> narrow_pair(
+                *bodyA, *bodyB, (bodyA->get_position()),
+                (bodyA->get_orientation()), (bodyB->get_position()),
+                (bodyB->get_orientation()));
+
+            kdop::BodyVelocities<T> body{
+                .bodyALinVel = &pair_body_A->get_velocity(),
+                .bodyAAngVel = &pair_body_A->get_spin(),
+                .bodyACenterTranslation = &pair_body_A->get_position(),
+                .bodyACenterRotation = &pair_body_A->get_orientation(),
+                .bodyBLinVel = &pair_body_B->get_velocity(),
+                .bodyBAngVel = &pair_body_B->get_spin(),
+                .bodyBCenterTranslation = &pair_body_B->get_position(),
+                .bodyBCenterRotation = &pair_body_B->get_orientation(),
+            };
+
+            narrow_test_pairs.push_back(narrow_pair);
+            bodyVels.push_back(body);
+            if (!narrow_system.params().use_batching())
+            {
+                bool onlyZEROTOITmp;
+                T toi = narrow::dispatch_collision_handlers_CCD_WARM_START(
+                    narrow_system, narrow_test_pairs, startTime, endTime,
+                    bodyVels, onlyZEROTOITmp, warmStartBodies);
+                onlyZeroTOI = (onlyZeroTOI || onlyZEROTOITmp);
+                earliestTOI = std::min<T>(toi, earliestTOI);
+                narrow_test_pairs.clear();
+                bodyVels.clear();
+            }
+        }
+    }
+    if (narrow_system.params().use_batching())
+    {
+        T toi = narrow::dispatch_collision_handlers_CCD_WARM_START(
+            narrow_system, narrow_test_pairs, startTime, endTime, bodyVels,
+            onlyZeroTOI, warmStartBodies);
+        earliestTOI = std::min<T>(toi, earliestTOI);
+        narrow_test_pairs.clear();
+        bodyVels.clear();
+    }
+    std::cerr << "WE HAVE A TOI OF " << earliestTOI << "\n";
+    return earliestTOI;
+}
+
 /*
     //--- First we preprocess data structures for doing collision detection ----
     {

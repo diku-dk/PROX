@@ -227,7 +227,8 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
                       Gravity<T> const& gravity, Damping<T> const& damping,
                       Params<T> const& params, broad::System<T>& broad_system,
                       narrow::System<T>& narrow_system,
-                      std::vector<ContactPoint<T>>& contacts)
+                      std::vector<ContactPoint<T>>& contacts,
+                      std::vector<std::vector<T>>& warmStartBodies)
 {
     //auto stepperType = params.stepper_params().stepper();
     stepper_type stepperType = stepper_type::semi_implicit;
@@ -256,8 +257,12 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
 
         bool onlyZeroTOI = false;
         START_TIMER("TOI_CCD_FOR_ALL_RIGID_BODIES");
-        T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
-                                               tStart, tEnd, onlyZeroTOI);
+        /*T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
+                                               tStart, tEnd, onlyZeroTOI);*/
+        T simulateTo = collision_detection_CCD_WARM_START(
+            bodies, narrow_system, contacts, tStart, tEnd * T(4.0), onlyZeroTOI,
+            warmStartBodies);
+        simulateTo = std::min<T>(tEnd, simulateTo);
         STOP_TIMER("TOI_CCD_FOR_ALL_RIGID_BODIES");
         std::cerr << "CURRENT simulateTO: " << simulateTo
                   << ", CURRENT tStart, tEnd = (" << tStart << "," << tEnd

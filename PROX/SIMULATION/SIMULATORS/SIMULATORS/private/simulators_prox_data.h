@@ -41,6 +41,7 @@ namespace simulators
       std::vector< std::string > m_materials;
       std::vector< rigid_body_type > m_bodies;
       std::vector<contact_type> m_contacts;
+      std::vector<std::vector<T>> m_warmStartBodies;
 
       template <typename T> struct computedTriangleTOIs
       {
