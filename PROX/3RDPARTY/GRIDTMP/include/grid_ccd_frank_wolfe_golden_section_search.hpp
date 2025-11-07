@@ -683,11 +683,15 @@ T FrankWolfeGSS_BENCHMARK_TIME(T tstart, T tend,
     DistanceAtPointParams distanceAtPointParams{.grid = initialState.B_sdf};
     EigenVector3<T> xtip1 = EigenVector3<T>(0, 0, 0);
     EigenVector3<T> xti = EigenVector3<T>(0, 0, 0);
+    bool standStill = false;
 
     for (size_t i = 0; i < hardStopMaxIterations; ++i)
     {
         its += 1;
-        xti = BarycentricInterpolate(u, v, w, ti, initialState).eval();
+        xti = BarycentricInterpolate(distanceAtTimeParams.u,
+                                     distanceAtTimeParams.v,
+                                     distanceAtTimeParams.w, ti, initialState)
+                  .eval();
         //I assume (but only assumption that we call with ti and xti!
         EigenVector3<T> vti = getVelocityAtPoint(initialState, xti, ti);
         T phixti = valueAtProjection(*(initialState.B_sdf), xti,
@@ -754,7 +758,10 @@ T FrankWolfeGSS_BENCHMARK_TIME(T tstart, T tend,
         // Solve spatial sub-problem
         //Note, xtip1 = x_{t_{i+1}}
 
-        xtip1 = BarycentricInterpolate(u, v, w, tip1, initialState).eval();
+        xtip1 = BarycentricInterpolate(
+                    distanceAtTimeParams.u, distanceAtTimeParams.v,
+                    distanceAtTimeParams.w, tip1, initialState)
+                    .eval();
         //EigenVector3<T> vtip1 = 0; //TODO compute v_{t_{i+1}}
         EigenVector3<T> vtip1 = getVelocityAtPoint(initialState, xtip1, tip1);
         T phixtip1 = valueAtProjection(*(initialState.B_sdf), xtip1,
@@ -810,12 +817,15 @@ T FrankWolfeGSS_BENCHMARK_TIME(T tstart, T tend,
         EigenVector3<T> p2_at_tip1 = getTriangleVertexPosAt(
             *(initialState.A_centerTranslation), *(initialState.A_linearVel),
             *(initialState.A_angularVel), p2s, tip1);
-        barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1, u, v, w);
+        barycentric(p0_at_tip1, p1_at_tip1, p2_at_tip1, xtip1,
+                    distanceAtTimeParams.u, distanceAtTimeParams.v,
+                    distanceAtTimeParams.w);
 
-        projectToTriangle(u, v, w);
-        distanceAtTimeParams.u = u;
+        projectToTriangle(distanceAtTimeParams.u, distanceAtTimeParams.v,
+                          distanceAtTimeParams.w);
+        /*distanceAtTimeParams.u = u;
         distanceAtTimeParams.v = v;
-        distanceAtTimeParams.w = w;
+        distanceAtTimeParams.w = w;*/
 
         T phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
                                          *(initialState.B_centerTranslation),
@@ -823,15 +833,14 @@ T FrankWolfeGSS_BENCHMARK_TIME(T tstart, T tend,
         if (std::abs(tip1 - ti) <= eps
             && (std::abs(xtip1.x() - xti.x()) <= eps
                 && std::abs(xtip1.y() - xti.y()) <= eps
-                && std::abs(xtip1.z() - xti.z()) <= eps)
-            && phixtip1_2 >= -eps)
+                && std::abs(xtip1.z() - xti.z()) <= eps))
         {
-            /*if (phixtip1_2 >= eps)
+            if (phixtip1_2 >= -eps) { break; }
+            else
             {
-                ti = T(0.01);
-                tip1 = T(0.01);
-            }*/
-            break;
+                if (standStill) { break; }
+                standStill = true;
+            }
         }
         if (its > maxIterations && phixtip1_2 >= -eps) { break; }
         ti = tip1;

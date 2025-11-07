@@ -59,6 +59,7 @@ bin/rigid_body_gui_chalk/rigid_body_gui_chalk
 bin/rigid_body_gui/callgrind.out.f101
 bin/rigid_body_gui/callgrind.out.f102
 bin/rigid_body_gui/screen_scene/
+bin/convergence/
 
 build/*
 

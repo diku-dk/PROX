@@ -372,7 +372,7 @@ T BrentMinimize_WORKING(T lstart, T lend, F func,
 
 template <typename T, typename F>
 T BrentMinimize(T lstart, T lend, F func, const DistanceAtTimeParams<T>& params,
-                const RigidBodyInfo<T>& info, T tol = 1e-8, int max_iter = 256)
+                const RigidBodyInfo<T>& info, T tol = 1e-8, int max_iter = 64)
 {
     const T golden_ratio = (3 - std::sqrt(T(5))) / T(2);
 
@@ -734,10 +734,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
                                           SignedDistanceAtPoint_MODIFIED<T>,
                                           distanceAtPointParams, initialState);*/
         auto gss_start = std::chrono::high_resolution_clock::now();
-        /*xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
-                                 distanceAtPointParams, initialState);*/
-        xtip1 = BrentMinimize(xtip1, si, SignedDistanceAtPoint<T>,
-                              distanceAtPointParams, initialState);
+        xtip1 = GSSMinimize_WHAT(xtip1, si, SignedDistanceAtPoint<T>,
+                                 distanceAtPointParams, initialState);
+        /*xtip1 = BrentMinimize(xtip1, si, SignedDistanceAtPoint<T>,
+                              distanceAtPointParams, initialState);*/
         auto gss_end = std::chrono::high_resolution_clock::now();
         auto gss_us = std::chrono::duration_cast<std::chrono::nanoseconds>(
                           gss_end - gss_start)
@@ -807,10 +807,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
 }
 
 template <typename T>
-T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
-                                 const RigidBodyInfo<T>& initialState,
-                                 EigenVector3<T>& xtiPoint,
-                                 std::vector<T>& minimizerSteps)
+T FrankWolfeBRENT_BENCHMARK_TIME_FOUR(T tstart, T tend,
+                                      const RigidBodyInfo<T>& initialState,
+                                      EigenVector3<T>& xtiPoint,
+                                      std::vector<T>& minimizerSteps)
 {
 
     DistanceAtTimeParams distanceAtTimeParams{.u = T(1),
@@ -863,17 +863,29 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
     minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
                           tmpMinimizerSteps.end());
     tmpMinimizerSteps.clear();
-    if (toiOne <= toiTwo && toiOne <= toiThree && toiOne <= toiFour)
+    if (toiOne <= toiTwo && toiOne <= toiThree && toiOne <= toiFour
+        && valueAtProjection(*(initialState.B_sdf), xtiPointOne,
+                             *(initialState.B_centerTranslation),
+                             *(initialState.B_centerRotation))
+               >= -1e-7)
     {
         xtiPoint = xtiPointOne;
         return toiOne;
     }
-    else if (toiTwo <= toiThree && toiTwo <= toiFour)
+    else if (toiTwo <= toiThree && toiTwo <= toiFour
+             && valueAtProjection(*(initialState.B_sdf), xtiPointTwo,
+                                  *(initialState.B_centerTranslation),
+                                  *(initialState.B_centerRotation))
+                    >= -1e-7)
     {
         xtiPoint = xtiPointTwo;
         return toiTwo;
     }
-    else if (toiThree <= toiFour)
+    else if (toiThree <= toiFour
+             && valueAtProjection(*(initialState.B_sdf), xtiPointThree,
+                                  *(initialState.B_centerTranslation),
+                                  *(initialState.B_centerRotation))
+                    >= -1e-7)
     {
         xtiPoint = xtiPointThree;
         return toiThree;
@@ -883,6 +895,324 @@ T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
         xtiPoint = xtiPointFour;
         return toiFour;
     }
+}
+
+template <typename T>
+T FrankWolfeBRENT_BENCHMARK_TIME_TWO(T tstart, T tend,
+                                     const RigidBodyInfo<T>& initialState,
+                                     EigenVector3<T>& xtiPoint,
+                                     std::vector<T>& minimizerSteps)
+{
+
+    EigenVector3<T> p0s = ((initialState.A_p0));
+    EigenVector3<T> p1s = ((initialState.A_p1));
+    EigenVector3<T> p2s = ((initialState.A_p2));
+
+    //    EigenVector3<T> vi = *(initialState.A_linearVel);
+    EigenVector3<T> vi
+        = *(initialState.A_linearVel) - (*(initialState.B_linearVel));
+    EigenVector3<T> gradP0 = gradientAtProjection(
+        p0s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP1 = gradientAtProjection(
+        p1s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP2 = gradientAtProjection(
+        p2s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    T p0Min = vi.dot(gradP0);
+    T p1Min = vi.dot(gradP1);
+    T p2Min = vi.dot(gradP2);
+    T u;
+    T v;
+    T w;
+    //I add slight bias such that we will more often select p0 than other vertices
+    if (p0Min <= p1Min && p0Min <= p2Min)
+    {
+        u = 1;
+        v = 0;
+        w = 0;
+    }
+    else if (p1Min <= p0Min && p1Min <= p2Min)
+    {
+        u = 0;
+        v = 1;
+        w = 0;
+    }
+    else
+    {
+        u = 0;
+        v = 0;
+        w = 1;
+    }
+
+    DistanceAtTimeParams distanceAtTimeParams{.u = u,
+                                              .v = v,
+                                              .w = w,
+                                              .grid = (initialState.B_sdf),
+                                              .p0 = (initialState.A_p0),
+                                              .p1 = (initialState.A_p1),
+                                              .p2 = (initialState.A_p2)};
+    std::vector<T> tmpMinimizerSteps;
+
+    EigenVector3<T> xtiPointOne;
+
+    T toiOne = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointOne,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    distanceAtTimeParams.u = T(1.0 / 3.0);
+    distanceAtTimeParams.v = T(1.0 / 3.0);
+    distanceAtTimeParams.w = T(1.0 / 3.0);
+    EigenVector3<T> xtiPointFour;
+    T toiFour = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointFour,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+    if (toiOne <= toiFour
+        && valueAtProjection(*(initialState.B_sdf), xtiPointOne,
+                             *(initialState.B_centerTranslation),
+                             *(initialState.B_centerRotation))
+               >= -1e-7)
+    {
+        xtiPoint = xtiPointOne;
+        return toiOne;
+    }
+    else
+    {
+        xtiPoint = xtiPointFour;
+        return toiFour;
+    }
+}
+
+template <typename T>
+T FrankWolfeBRENT_BENCHMARK_TIME_THREE(T tstart, T tend,
+                                       const RigidBodyInfo<T>& initialState,
+                                       EigenVector3<T>& xtiPoint,
+                                       std::vector<T>& minimizerSteps)
+{
+
+    EigenVector3<T> p0s = ((initialState.A_p0));
+    EigenVector3<T> p1s = ((initialState.A_p1));
+    EigenVector3<T> p2s = ((initialState.A_p2));
+
+    //    EigenVector3<T> vi = *(initialState.A_linearVel);
+    EigenVector3<T> vi
+        = *(initialState.A_linearVel) - (*(initialState.B_linearVel));
+    EigenVector3<T> gradP0 = gradientAtProjection(
+        p0s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP1 = gradientAtProjection(
+        p1s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP2 = gradientAtProjection(
+        p2s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    T p0Min = vi.dot(gradP0);
+    T p1Min = vi.dot(gradP1);
+    T p2Min = vi.dot(gradP2);
+    T u;
+    T v;
+    T w;
+    T u2;
+    T v2;
+    T w2;
+    int c = 0;
+    //I add slight bias such that we will more often select p0 than other vertices
+    if (p0Min <= p1Min && p0Min <= p2Min)
+    {
+        u = 1;
+        v = 0;
+        w = 0;
+        if (p1Min <= p2Min)
+        {
+            u2 = 0;
+            v2 = 1;
+            w2 = 0;
+        }
+        else
+        {
+            u2 = 0;
+            v2 = 0;
+            w2 = 1;
+        }
+    }
+    else if (p1Min <= p0Min && p1Min <= p2Min)
+    {
+        u = 0;
+        v = 1;
+        w = 0;
+        if (p0Min <= p2Min)
+        {
+            u2 = 1;
+            v2 = 0;
+            w2 = 0;
+        }
+        else
+        {
+            u2 = 0;
+            v2 = 0;
+            w2 = 1;
+        }
+    }
+    else
+    {
+        if (p0Min <= p1Min)
+        {
+            u2 = 1;
+            v2 = 0;
+            w2 = 0;
+        }
+        else
+        {
+            u2 = 0;
+            v2 = 1;
+            w2 = 0;
+        }
+        u = 0;
+        v = 0;
+        w = 1;
+    }
+
+    DistanceAtTimeParams distanceAtTimeParams{.u = u,
+                                              .v = v,
+                                              .w = w,
+                                              .grid = (initialState.B_sdf),
+                                              .p0 = (initialState.A_p0),
+                                              .p1 = (initialState.A_p1),
+                                              .p2 = (initialState.A_p2)};
+    std::vector<T> tmpMinimizerSteps;
+
+    EigenVector3<T> xtiPointOne;
+
+    T toiOne = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointOne,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    EigenVector3<T> xtiPointTwo;
+    distanceAtTimeParams.u = u2;
+    distanceAtTimeParams.v = v2;
+    distanceAtTimeParams.w = w2;
+    T toiTwo = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointTwo,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    distanceAtTimeParams.u = T(1.0 / 3.0);
+    distanceAtTimeParams.v = T(1.0 / 3.0);
+    distanceAtTimeParams.w = T(1.0 / 3.0);
+    EigenVector3<T> xtiPointFour;
+    T toiFour = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointFour,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+    if (toiOne <= toiFour && toiOne <= toiTwo
+        && valueAtProjection(*(initialState.B_sdf), xtiPointOne,
+                             *(initialState.B_centerTranslation),
+                             *(initialState.B_centerRotation))
+               >= -1e-7)
+    {
+        xtiPoint = xtiPointOne;
+        return toiOne;
+    }
+    else if (toiTwo <= toiFour
+             && valueAtProjection(*(initialState.B_sdf), xtiPointTwo,
+                                  *(initialState.B_centerTranslation),
+                                  *(initialState.B_centerRotation))
+                    >= -1e-7)
+    {
+        xtiPoint = xtiPointTwo;
+        return toiOne;
+    }
+    else
+    {
+        xtiPoint = xtiPointFour;
+        return toiFour;
+    }
+}
+
+template <typename T>
+T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
+                                 const RigidBodyInfo<T>& initialState,
+                                 EigenVector3<T>& xtiPoint,
+                                 std::vector<T>& minimizerSteps)
+{
+
+    EigenVector3<T> p0s = ((initialState.A_p0));
+    EigenVector3<T> p1s = ((initialState.A_p1));
+    EigenVector3<T> p2s = ((initialState.A_p2));
+
+    //    EigenVector3<T> vi = *(initialState.A_linearVel);
+    EigenVector3<T> vi
+        = *(initialState.A_linearVel) - (*(initialState.B_linearVel));
+    EigenVector3<T> gradP0 = gradientAtProjection(
+        p0s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP1 = gradientAtProjection(
+        p1s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    EigenVector3<T> gradP2 = gradientAtProjection(
+        p2s, *(initialState.B_sdf), *(initialState.B_centerTranslation),
+        *(initialState.B_centerRotation));
+    T p0Min = vi.dot(gradP0);
+    T p1Min = vi.dot(gradP1);
+    T p2Min = vi.dot(gradP2);
+    T u;
+    T v;
+    T w;
+
+    //I add slight bias such that we will more often select p0 than other vertices
+    if (p0Min <= p1Min && p0Min <= p2Min)
+    {
+        u = 1;
+        v = 0;
+        w = 0;
+    }
+    else if (p1Min <= p0Min && p1Min <= p2Min)
+    {
+        u = 0;
+        v = 1;
+        w = 0;
+    }
+    else
+    {
+        u = 0;
+        v = 0;
+        w = 1;
+    }
+
+    DistanceAtTimeParams distanceAtTimeParams{.u = u,
+                                              .v = v,
+                                              .w = w,
+                                              .grid = (initialState.B_sdf),
+                                              .p0 = (initialState.A_p0),
+                                              .p1 = (initialState.A_p1),
+                                              .p2 = (initialState.A_p2)};
+    std::vector<T> tmpMinimizerSteps;
+
+    EigenVector3<T> xtiPointOne;
+
+    T toiOne = FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
+        tstart, tend, initialState, distanceAtTimeParams, xtiPointOne,
+        tmpMinimizerSteps);
+    minimizerSteps.insert(minimizerSteps.end(), tmpMinimizerSteps.begin(),
+                          tmpMinimizerSteps.end());
+    tmpMinimizerSteps.clear();
+
+    xtiPoint = xtiPointOne;
+    return toiOne;
 }
 
 template <typename T>

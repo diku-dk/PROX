@@ -461,7 +461,7 @@ T performProjectedGradientDescent(T tstart, T tend,
     }
 
     T t = tstart; // Start searching from beginning of interval
-    uint32_t maxIts = 100000;
+    uint32_t maxIts = 1000;
     T tol = 1e-6;
 
     // Store the best candidate found so far
@@ -544,6 +544,7 @@ T performProjectedGradientDescent(T tstart, T tend,
         }
         else*/
         {
+            auto gss_start = std::chrono::high_resolution_clock::now();
             // First make sure alpha_min actually changes the projected point:
             for (int iter = 0; iter < max_iters && alpha <= alpha_max; ++iter)
             {
@@ -603,6 +604,11 @@ T performProjectedGradientDescent(T tstart, T tend,
                 }
                 alpha = left; // accept refined alpha
             }
+            auto gss_end = std::chrono::high_resolution_clock::now();
+            auto gss_us = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                              gss_end - gss_start)
+                              .count();
+            minimizerSteps.push_back(T(gss_us));
         }
         //alpha = (T(1.0) / (std::abs<T>(dt) / tend)) * 0.0001;
         //alpha = 1e-6;

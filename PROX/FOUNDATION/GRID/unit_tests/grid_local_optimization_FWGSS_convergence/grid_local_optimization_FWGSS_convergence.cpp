@@ -22,6 +22,7 @@
 #include <mutex>
 
 #include <grid_ccd_frank_wolfe_include_all.hpp>
+#include <grid_ccd_frank_wolfe_convergence_plots.hpp>
 #include <grid_local_optimization.hpp>
 #include "igl/signed_distance.h"
 #include "igl/marching_cubes.h"
@@ -139,6 +140,82 @@ template <typename T> struct PointPenetration
     EigenVector3<T> point;
     T distToSDF;
 };
+
+template <typename T>
+void write_convergence_csv(
+    const std::string& raw_filename, const std::vector<size_t>& allRunsIts,
+    const std::vector<std::vector<T>>& objectiveTip1Err,
+    const std::vector<std::vector<T>>& objectiveXtip1Err,
+    double eps_x = 0.0,   // set >0 to also write combined-normalized file
+    double eps_t = 0.0,   // set >0 to also write combined-normalized file
+    const std::string& combined_filename = "convergence_combined.csv")
+{
+    if (allRunsIts.size() != objectiveTip1Err.size()
+        || allRunsIts.size() != objectiveXtip1Err.size())
+    {
+        std::cerr << "ERROR: input sizes mismatch\n";
+        return;
+    }
+
+    std::ofstream raw(raw_filename);
+    if (!raw)
+    {
+        std::cerr << "ERROR opening " << raw_filename << "\n";
+        return;
+    }
+    raw << "run,iter,tip_err,x_err\n";
+    raw << std::setprecision(12);
+
+    size_t n_runs = allRunsIts.size();
+    for (size_t run = 0; run < n_runs; ++run)
+    {
+        size_t its = allRunsIts[run];
+        // safety: ensure inner vectors have expected lengths
+        size_t lenTip = objectiveTip1Err[run].size();
+        size_t lenX = objectiveXtip1Err[run].size();
+        size_t useLen = std::min({its, lenTip, lenX});
+        for (size_t it = 0; it < useLen; ++it)
+        {
+            raw << run << ',' << it << ',' << objectiveTip1Err[run][it] << ','
+                << objectiveXtip1Err[run][it] << '\n';
+        }
+    }
+    raw.close();
+
+    // Optionally write combined normalized error (requires both eps > 0)
+    if (eps_x > 0.0 && eps_t > 0.0)
+    {
+        std::ofstream comb(combined_filename);
+        if (!comb)
+        {
+            std::cerr << "ERROR opening " << combined_filename << "\n";
+            return;
+        }
+        comb << "run,iter,combined_norm_error\n";
+        comb << std::setprecision(12);
+        for (size_t run = 0; run < n_runs; ++run)
+        {
+            size_t its = allRunsIts[run];
+            size_t lenTip = objectiveTip1Err[run].size();
+            size_t lenX = objectiveXtip1Err[run].size();
+            size_t useLen = std::min({its, lenTip, lenX});
+            for (size_t it = 0; it < useLen; ++it)
+            {
+                double norm_vec
+                    = static_cast<double>(objectiveXtip1Err[run][it]) / eps_x;
+                double norm_tip
+                    = static_cast<double>(objectiveTip1Err[run][it]) / eps_t;
+                double combined = std::max(norm_vec, norm_tip);
+                comb << run << ',' << it << ',' << combined << '\n';
+            }
+        }
+        comb.close();
+        std::cout << "Wrote combined-normalized file: " << combined_filename
+                  << "\n";
+    }
+
+    std::cout << "Wrote raw CSV: " << raw_filename << "\n";
+}
 
 template <typename T>
 std::vector<PointPenetration<T>>
@@ -758,9 +835,13 @@ public:
         T maxDiffDist = std::numeric_limits<T>::min();
         std::vector<long double> allDifsDist(numTriangles);
 
+        std::vector<size_t> allRunsIts;
+        std::vector<std::vector<T>> objectiveTip1Err;
+        std::vector<std::vector<T>> objectiveXtip1Err;
+
         {
             std::vector<std::thread> threads;
-            const int numThreads = 14;
+            const int numThreads = 1;
             std::mutex mutex;
 
             // Variables that need to be protected by mutex
@@ -863,9 +944,15 @@ public:
                     {
                         auto gss_start
                             = std::chrono::high_resolution_clock::now();
-                        toi = FrankWolfeGSS_BENCHMARK_TIME<T>(
+                        std::vector<T> xtiErr;
+                        std::vector<T> tipErr;
+                        size_t its;
+                        toi = FrankWolfeGSS_BENCHMARK_TIME_CONVERGENCE<T>(
                             0.0, 0.01, local_rInfo, firstIntersectPoint,
-                            minimizerTimes);
+                            minimizerTimes, its, xtiErr, tipErr);
+                        objectiveTip1Err.push_back(tipErr);
+                        objectiveXtip1Err.push_back(xtiErr);
+                        allRunsIts.push_back(its);
                         auto gss_end
                             = std::chrono::high_resolution_clock::now();
                         auto gss_us
@@ -878,9 +965,15 @@ public:
                     {
                         auto gss_start
                             = std::chrono::high_resolution_clock::now();
-                        toi = FrankWolfeBacktracking_BENCHMARK_TIME<T>(
-                            0.0, 0.01, local_rInfo, firstIntersectPoint,
-                            minimizerTimes);
+                        std::vector<T> xtiErr;
+                        std::vector<T> tipErr;
+                        size_t its;
+                        toi = FrankWolfeBacktracking_BENCHMARK_TIME_CONVERGENCE<
+                            T>(0.0, 0.01, local_rInfo, firstIntersectPoint,
+                               minimizerTimes, its, xtiErr, tipErr);
+                        objectiveTip1Err.push_back(tipErr);
+                        objectiveXtip1Err.push_back(xtiErr);
+                        allRunsIts.push_back(its);
                         auto gss_end
                             = std::chrono::high_resolution_clock::now();
                         auto gss_us
@@ -893,6 +986,7 @@ public:
                     {
                         auto gss_start
                             = std::chrono::high_resolution_clock::now();
+
                         toi = FrankWolfeGSSBisection_BENCHMARK_TIME<T>(
                             0.0, 0.01, local_rInfo, firstIntersectPoint,
                             minimizerTimes);
@@ -908,9 +1002,15 @@ public:
                     {
                         auto gss_start
                             = std::chrono::high_resolution_clock::now();
-                        toi = performProjectedGradientDescent<T>(
+                        std::vector<T> xtiErr;
+                        std::vector<T> tipErr;
+                        size_t its;
+                        toi = performProjectedGradientDescent_CONVERGENCE<T>(
                             0.0, 0.01, local_rInfo, firstIntersectPoint,
-                            minimizerTimes);
+                            minimizerTimes, its, xtiErr, tipErr);
+                        objectiveTip1Err.push_back(tipErr);
+                        objectiveXtip1Err.push_back(xtiErr);
+                        allRunsIts.push_back(its);
                         auto gss_end
                             = std::chrono::high_resolution_clock::now();
                         auto gss_us
@@ -923,10 +1023,27 @@ public:
                     {
                         auto gss_start
                             = std::chrono::high_resolution_clock::now();
-                        toi = FrankWolfeBRENT_BENCHMARK_TIME<T>(
+                        std::vector<T> xtiErr;
+                        std::vector<T> tipErr;
+                        size_t its;
+                        toi = FrankWolfeBRENT_BENCHMARK_TIME_CONVERGENCE<T>(
                             0.0, 0.01, local_rInfo, firstIntersectPoint,
-                            minimizerTimes);
+                            minimizerTimes, its, xtiErr, tipErr);
                         toi = std::min<T>(toi, 0.01);
+                        if (tipErr.size() == 0 || xtiErr.size() == 0)
+                        {
+                            std::cerr << "PI";
+                            throw std::runtime_error("ERROR!");
+                        }
+                        objectiveTip1Err.push_back(tipErr);
+                        objectiveXtip1Err.push_back(xtiErr);
+                        if (objectiveTip1Err.size() != objectiveXtip1Err.size())
+                        {
+                            std::cerr << "PI";
+                            throw std::runtime_error("ERROR!");
+                        }
+
+                        allRunsIts.push_back(its);
                         auto gss_end
                             = std::chrono::high_resolution_clock::now();
                         auto gss_us
@@ -951,108 +1068,8 @@ public:
 
                     T diffDistance = dist - distGT;
 
-                    if (dist < 0.0 && dist < -T(1e-3))
-                    {
-                        std::lock_guard<std::mutex> lock(mutex);
-                        std::cerr << "XTI: " << firstIntersectPoint << "\n";
-                        std::cerr << "TOI: " << toi << "\n";
-                        std::cerr << "DIST: " << dist << "\n";
-                    }
                     bool hasIntersection = (toi >= 0.01);
                     T diff = toi - dt;
-
-                    if (diffDistance <= -1e-5)
-                    {
-                        std::lock_guard<std::mutex> lock(mutex);
-                        std::cerr << "========================================="
-                                     "====\n";
-                        std::cerr << "Triangle configuration of diffDistance "
-                                     "<= -1e-5: p0=("
-                                  << local_rInfo.A_p0.x() << ", "
-                                  << local_rInfo.A_p0.y() << ", "
-                                  << local_rInfo.A_p0.z() << "), p1=("
-                                  << local_rInfo.A_p1.x() << ", "
-                                  << local_rInfo.A_p1.y() << ", "
-                                  << local_rInfo.A_p1.z() << "), p2=("
-                                  << local_rInfo.A_p2.x() << ", "
-                                  << local_rInfo.A_p2.y() << ", "
-                                  << local_rInfo.A_p2.z() << "), velocity=("
-                                  << (*(local_rInfo.A_linearVel)).x() << ", "
-                                  << (*(local_rInfo.A_linearVel)).y() << ", "
-                                  << (*(local_rInfo.A_linearVel)).z()
-                                  << "), exact TOI vs dt = " << toi << " vs "
-                                  << dt << "\n";
-                        std::cerr << "Note diffDistance is" << diffDistance
-                                  << ", diffGT is " << distGT << " and diff is "
-                                  << dist << "\n";
-                        std::cerr << "========================================="
-                                     "====\n";
-                    }
-                    if (diffDistance >= 1e-2)
-                    {
-                        std::lock_guard<std::mutex> lock(mutex);
-                        std::cerr << "========================================="
-                                     "====\n";
-                        std::cerr << "Triangle configuration of diffDistance "
-                                     ">= 1e-2: p0=("
-                                  << local_rInfo.A_p0.x() << ", "
-                                  << local_rInfo.A_p0.y() << ", "
-                                  << local_rInfo.A_p0.z() << "), p1=("
-                                  << local_rInfo.A_p1.x() << ", "
-                                  << local_rInfo.A_p1.y() << ", "
-                                  << local_rInfo.A_p1.z() << "), p2=("
-                                  << local_rInfo.A_p2.x() << ", "
-                                  << local_rInfo.A_p2.y() << ", "
-                                  << local_rInfo.A_p2.z() << "), velocity=("
-                                  << (*(local_rInfo.A_linearVel)).x() << ", "
-                                  << (*(local_rInfo.A_linearVel)).y() << ", "
-                                  << (*(local_rInfo.A_linearVel)).z()
-                                  << "), exact TOI vs dt = " << toi << " vs "
-                                  << dt << "\n";
-                        std::cerr << "Note diffDistance is" << diffDistance
-                                  << ", diffGT is " << distGT << " and diff is "
-                                  << dist << "\n";
-                        std::cerr << "========================================="
-                                     "====\n";
-                    }
-
-                    if (toi > dt + 1e-5)
-                    {
-                        std::lock_guard<std::mutex> lock(mutex);
-                        std::cerr << "========================================="
-                                     "====\n";
-                        std::cerr << "WE GOT A TOI that is larger thann DT! "
-                                     "(1e5 prec)\n";
-                        std::cerr << "Triangle configuration of TOI=1e-5: p0=("
-                                  << local_rInfo.A_p0.x() << ", "
-                                  << local_rInfo.A_p0.y() << ", "
-                                  << local_rInfo.A_p0.z() << "), p1=("
-                                  << local_rInfo.A_p1.x() << ", "
-                                  << local_rInfo.A_p1.y() << ", "
-                                  << local_rInfo.A_p1.z() << "), p2=("
-                                  << local_rInfo.A_p2.x() << ", "
-                                  << local_rInfo.A_p2.y() << ", "
-                                  << local_rInfo.A_p2.z() << "), velocity=("
-                                  << (*(local_rInfo.A_linearVel)).x() << ", "
-                                  << (*(local_rInfo.A_linearVel)).y() << ", "
-                                  << (*(local_rInfo.A_linearVel)).z()
-                                  << "), exact TOI vs dt = " << toi << " vs "
-                                  << dt << "\n";
-                        std::cerr << "========================================="
-                                     "====\n";
-                    }
-                    else if (toi > dt + 1e-8)
-                    {
-                        std::lock_guard<std::mutex> lock(mutex);
-                        std::cerr << "WE GOT A TOI that is larger thann DT! "
-                                     "(1e8 prec)\n";
-                    }
-                    else if (toi > dt + 1e-11)
-                    {
-                        std::lock_guard<std::mutex> lock(mutex);
-                        std::cerr << "WE GOT A TOI that is larger thann DT! "
-                                     "(no prec)\n";
-                    }
 
                     local_minDiff = std::min<T>(local_minDiff, diff);
                     local_maxDiff = std::max<T>(local_maxDiff, diff);
@@ -1192,6 +1209,18 @@ public:
             std::cout << "min diff (phi (x)) of toi: " << minDiffDist << "\n";
             std::cout << "max diff (phi (x)) of toi: " << maxDiffDist << "\n";
         }
+        namespace fs = std::filesystem;
+        fs::path source_dir2 = fs::path(__FILE__).parent_path();
+        fs::path bunnyRelative2
+            = "../../../../../bin/convergence/convergence_raw.csv";
+        fs::path bunnyFull2 = source_dir2 / bunnyRelative2;
+        fs::path bunnyNormalized2 = bunnyFull2.lexically_normal();
+
+        // Output
+        std::cout << "Bunny path: " << bunnyNormalized2 << std::endl;
+        std::string meshFile2 = bunnyNormalized2.string();
+        write_convergence_csv(meshFile2, allRunsIts, objectiveTip1Err,
+                              objectiveXtip1Err);
     }
 
 private:
@@ -1282,173 +1311,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
     {
         using T = double;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTestsParallel(2000, 3);
-        return;
-        //        using T = double;
-        using D = T;
-
-        namespace fs = std::filesystem;
-        fs::path source_dir = fs::path(__FILE__).parent_path();
-        fs::path bunnyRelative = "../../../../../bin/resources/objs/box.obj";
-        fs::path bunnyFull = source_dir / bunnyRelative;
-        fs::path bunnyNormalized = bunnyFull.lexically_normal();
-
-        // Output
-        std::cout << "Bunny path: " << bunnyNormalized << std::endl;
-        std::string meshFile = bunnyNormalized.string();
-
-        int res = 32;
-
-        //Read mesh
-        Eigen::MatrixXd V;
-        Eigen::MatrixXi F;
-        if (!igl::read_triangle_mesh(meshFile, V, F))
-        {
-            std::cerr << "ERROR: Failed to read mesh: " << meshFile << "\n";
-        }
-        std::cout << "Read mesh: #V = " << V.rows() << "  #F = " << F.rows()
-                  << "\n";
-
-        Eigen::RowVector3d minv = V.colwise().minCoeff();
-        Eigen::RowVector3d maxv = V.colwise().maxCoeff();
-        Eigen::RowVector3d diag = maxv - minv;
-        T longest = diag.maxCoeff();
-        //10% padding to our bounding box!
-        T pad = 0.10 * longest;
-        Eigen::Matrix<T, 3, 1> gmin((T)(minv.x() - pad), (T)(minv.y() - pad),
-                                    (T)(minv.z() - pad));
-        Eigen::Matrix<T, 3, 1> gmax((T)(maxv.x() + pad), (T)(maxv.y() + pad),
-                                    (T)(maxv.z() + pad));
-
-        //create grid (res^3 nodes)
-        Eigen::Matrix<size_t, 3, 1> nodes((size_t)res, (size_t)res,
-                                          (size_t)res);
-        grid::Grid<D, T> G;
-        G.create(gmin, gmax, nodes);
-        const size_t total = G.m_nodes.x() * G.m_nodes.y() * G.m_nodes.z();
-        std::cout << "Created grid: " << G.I() << " x " << G.J() << " x "
-                  << G.K() << "  (total nodes = " << total << ")\n";
-
-        //Build the query points matrix P (total x 3) in the same linear order used by grid
-        Eigen::MatrixXd P((Eigen::Index)total, 3);
-        size_t idx_lin = 0;
-        for (size_t k = 0; k < G.K(); ++k)
-        {
-            for (size_t j = 0; j < G.J(); ++j)
-            {
-                for (size_t i = 0; i < G.I(); ++i)
-                {
-                    Eigen::Matrix<size_t, 3, 1> idx(i, j, k);
-                    Eigen::Matrix<T, 3, 1> p;
-                    grid::node_position(G, idx, p);
-                    P((Eigen::Index)idx_lin, 0) = p.x();
-                    P((Eigen::Index)idx_lin, 1) = p.y();
-                    P((Eigen::Index)idx_lin, 2) = p.z();
-                    ++idx_lin;
-                }
-            }
-        }
-
-        std::cout
-            << "Computing signed distances (libigl::signed_distance)...\n";
-        Eigen::VectorXd S; // signed distances
-        Eigen::VectorXi I; // indices to closest triangles (unused here)
-        Eigen::MatrixXd C; // closest points on triangles
-        Eigen::MatrixXd N; // normals used for signing (pseudonormal)
-
-        igl::SignedDistanceType signType
-            = igl::SIGNED_DISTANCE_TYPE_WINDING_NUMBER;
-        igl::signed_distance(P, V, F, signType, S, I, C, N);
-        if ((size_t)S.size() != total)
-        {
-            std::cerr << "ERROR: libigl returned unexpected S size: "
-                      << S.size() << " expected " << total << "\n";
-        }
-
-        //Copy into grid storage
-        for (size_t s = 0; s < total; ++s)
-        {
-            G.data()[s] = static_cast<D>(S((Eigen::Index)s));
-        }
-
-        //Write CSV (x,y,z,sdf)
-        fs::path bunnySDFRelative = "../../../../../bin/output/sdftest/sdf.csv";
-        fs::path bunnySDFFull = source_dir / bunnySDFRelative;
-        fs::path bunnySDFNormalized = bunnySDFFull.lexically_normal();
-        const std::string outCsv = bunnySDFNormalized.string();
-
-        T dt = 0.00916198;
-        EigenVector3<T> angularVelA(0, 0, 0);
-        EigenVector3<T> angularVelB(0, 0, 0);
-        EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
-        EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
-        EigenVector3<T> transA(2.0, 0.0667, 0.0667);
-        EigenVector3<T> transB(0, 0, 0);
-        EigenVector3<T> linearA(-705.707, -214.857, -675.14);
-        EigenVector3<T> linearB(0, 0, 0);
-
-        RigidBodyInfo<T> rInfo;
-        rInfo.A_angularVel = &angularVelA;
-        rInfo.B_angularVel = &angularVelB;
-        rInfo.A_centerRotation = &rotA;
-        rInfo.B_centerRotation = &rotB;
-        rInfo.A_centerTranslation = &transA;
-        rInfo.B_centerTranslation = &transB;
-        rInfo.A_linearVel = &linearA;
-        rInfo.B_linearVel = &linearB;
-
-        rInfo.B_sdf = &G;
-
-        rInfo.A_p0 = EigenVector3<T>(6.41484, 1.53599, 7.5606);
-        rInfo.A_p1 = EigenVector3<T>(6.41894, 3.14409, 7.0504);
-        rInfo.A_p2 = EigenVector3<T>(7.61829, 2.69284, 5.86892);
-
-        TriangleAtTimeInfo<T> tri = getTriangleAtTime(dt, rInfo);
-        EigenVector3<T> p0AtTimeTi = tri.A_p0;
-        EigenVector3<T> p1AtTimeTi = tri.A_p1;
-        EigenVector3<T> p2AtTimeTi = tri.A_p2;
-
-        EigenVector3<T> contactPoint;
-        EigenVector3<T> lastContactPoint;
-        EigenVector3<T> normalDummy;
-        T penetration;
-        optimizeTriangleFW_Working(p0AtTimeTi, p1AtTimeTi, p2AtTimeTi,
-                                   *(rInfo.B_sdf), contactPoint, normalDummy,
-                                   penetration, 1000);
-        T penetrations = valueAtProjection(*(rInfo.B_sdf), contactPoint,
-                                           *(rInfo.B_centerTranslation),
-                                           *(rInfo.B_centerRotation));
-        std::vector<PointPenetration<T>> pens = getPenetrationForTris(
-            p0AtTimeTi, p1AtTimeTi, p2AtTimeTi, rInfo, 846);
-        T minPenetration = std::numeric_limits<T>::max();
-        EigenVector3<T> minPoint;
-        for (size_t i = 0; i < pens.size(); ++i)
-        {
-            PointPenetration<T> currPen = pens[i];
-            if (currPen.distToSDF < minPenetration)
-            {
-                minPoint = currPen.point;
-                minPenetration = currPen.distToSDF;
-            }
-        }
-        lastContactPoint = minPoint;
-        std::cerr << "Lengt of peentrations: " << pens.size() << "\n";
-        std::cerr << "Penetration for FWGD vs 100k point penetration: "
-                  << penetrations << " vs " << minPenetration << "\n";
-        lastContactPoint = contactPoint;
-
-        EigenVector3<T> firstIntersectPoint;
-        std::vector<T> minimizerTimes;
-        T toi = FrankWolfeBRENT_BENCHMARK_TIME<T>(
-            0.0, 0.01, rInfo, firstIntersectPoint, minimizerTimes);
-        T penetrationsBRENT = valueAtProjection(
-            *(rInfo.B_sdf), firstIntersectPoint, *(rInfo.B_centerTranslation),
-            *(rInfo.B_centerRotation));
-        std::cerr << "Ended up with Brent dist vs GT dist: "
-                  << penetrationsBRENT << " vs " << minPenetration << "\n";
-        std::cerr << "NOTE TOI=" << toi << "\n";
-
-        //if (penetrations <= 0.0) { break; }
+        triangleTester.runTestsParallel(2000, 0);
     }
 }
 
