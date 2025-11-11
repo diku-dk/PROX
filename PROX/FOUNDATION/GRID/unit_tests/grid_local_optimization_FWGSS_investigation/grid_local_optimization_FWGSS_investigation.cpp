@@ -193,7 +193,7 @@ public:
 
         namespace fs = std::filesystem;
         fs::path source_dir = fs::path(__FILE__).parent_path();
-        fs::path bunnyRelative = "../../../../../bin/resources/objs/box.obj";
+        fs::path bunnyRelative = "../../../../../bin/resources/objs/torus.obj";
         fs::path bunnyFull = source_dir / bunnyRelative;
         fs::path bunnyNormalized = bunnyFull.lexically_normal();
 
@@ -632,7 +632,7 @@ public:
 
         namespace fs = std::filesystem;
         fs::path source_dir = fs::path(__FILE__).parent_path();
-        fs::path bunnyRelative = "../../../../../bin/resources/objs/box.obj";
+        fs::path bunnyRelative = "../../../../../bin/resources/objs/torus.obj";
         fs::path bunnyFull = source_dir / bunnyRelative;
         fs::path bunnyNormalized = bunnyFull.lexically_normal();
 
@@ -845,7 +845,7 @@ public:
                         }
                         lastContactPoint = minPoint;
                         if (minPenetration <= 0.0) { break; }
-                        dt += 1e-2;
+                        dt += 1e-6 * 0.5;
                     }
 
                     // Protect std::cerr output with mutex
@@ -1282,14 +1282,14 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
     {
         using T = double;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTestsParallel(2000, 3);
+        triangleTester.runTestsParallel(2000, 5);
         return;
         //        using T = double;
         using D = T;
 
         namespace fs = std::filesystem;
         fs::path source_dir = fs::path(__FILE__).parent_path();
-        fs::path bunnyRelative = "../../../../../bin/resources/objs/box.obj";
+        fs::path bunnyRelative = "../../../../../bin/resources/objs/torus.obj";
         fs::path bunnyFull = source_dir / bunnyRelative;
         fs::path bunnyNormalized = bunnyFull.lexically_normal();
 
@@ -1330,7 +1330,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                   << G.K() << "  (total nodes = " << total << ")\n";
 
         //Build the query points matrix P (total x 3) in the same linear order used by grid
-        Eigen::MatrixXd P((Eigen::Index)total, 3);
+        Eigen::MatrixXd P((Eigen::Index)total, 0);
         size_t idx_lin = 0;
         for (size_t k = 0; k < G.K(); ++k)
         {

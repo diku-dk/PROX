@@ -990,7 +990,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, -20.0, 1.0, 0.0);
+            engine->set_rigid_body_velocity(rid, -25.0, 6.0, 0.0);
             engine->set_rigid_body_spin(rid, 100.0, 0.0, 0.0);
         }
     }
@@ -1160,9 +1160,9 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
         float const ground_height = scene_size / 10.0;
         float const ground_depth = scene_size;
 
-        /*        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, -1, 0),
                                    EigenQuaternion<T>::Identity(), mat_info,
-                                   ground_width, ground_height, ground_depth);*/
+                                   ground_width, ground_height, ground_depth);
 
         T const stone_density
             = get_material_density_eigen<T>(mat_info, "Stone");
@@ -1203,7 +1203,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             const EigenVector3<T> T_b2m = bunny.Tb2m();
             const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
 
-            const EigenVector3<T> T_m2l = EigenVector3<T>(0.75, 0.25, 0.0);
+            const EigenVector3<T> T_m2l = EigenVector3<T>(0.75, 0.255, 0.0);
             const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
             const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 0.0, 0.0);
@@ -1217,7 +1217,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, -10, 0.0, 0.0);
+            engine->set_rigid_body_velocity(rid, -15, 0.0, 0.0);
             //engine->set_rigid_body_fixed(rid, true);
         }
     }
@@ -1230,9 +1230,9 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
         float const ground_height = scene_size / 10.0;
         float const ground_depth = scene_size;
 
-        /*        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, -1, 0),
                                    EigenQuaternion<T>::Identity(), mat_info,
-                                   ground_width, ground_height, ground_depth);*/
+                                   ground_width, ground_height, ground_depth);
 
         T const stone_density
             = get_material_density_eigen<T>(mat_info, "Stone");
@@ -1273,7 +1273,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             const EigenVector3<T> T_b2m = bunny.Tb2m();
             const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
 
-            const EigenVector3<T> T_m2l = EigenVector3<T>(0.24, 0.285, 0.0);
+            const EigenVector3<T> T_m2l = EigenVector3<T>(0.24, 0.255, 0.0);
             const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
             const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 0.0, 0.0);
@@ -1287,7 +1287,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, -15.0, 0.0, 0.0);
+            engine->set_rigid_body_velocity(rid, -100.0, 0.0, 0.0);
             //engine->set_rigid_body_fixed(rid, true);
         }
     }

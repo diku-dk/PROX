@@ -807,10 +807,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
 }
 
 template <typename T>
-T FrankWolfeBRENT_BENCHMARK_TIME_FOUR(T tstart, T tend,
-                                      const RigidBodyInfo<T>& initialState,
-                                      EigenVector3<T>& xtiPoint,
-                                      std::vector<T>& minimizerSteps)
+T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
+                                 const RigidBodyInfo<T>& initialState,
+                                 EigenVector3<T>& xtiPoint,
+                                 std::vector<T>& minimizerSteps)
 {
 
     DistanceAtTimeParams distanceAtTimeParams{.u = T(1),
@@ -1144,10 +1144,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME_THREE(T tstart, T tend,
 }
 
 template <typename T>
-T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
-                                 const RigidBodyInfo<T>& initialState,
-                                 EigenVector3<T>& xtiPoint,
-                                 std::vector<T>& minimizerSteps)
+T FrankWolfeBRENT_BENCHMARK_TIME_ONE(T tstart, T tend,
+                                     const RigidBodyInfo<T>& initialState,
+                                     EigenVector3<T>& xtiPoint,
+                                     std::vector<T>& minimizerSteps)
 {
 
     EigenVector3<T> p0s = ((initialState.A_p0));

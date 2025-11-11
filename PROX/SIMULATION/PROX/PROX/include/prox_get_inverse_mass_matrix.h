@@ -32,7 +32,7 @@ inline void get_inverse_mass_matrix_eigen(Iterator begin, Iterator end,
             assert(std::abs(body->get_mass()) > 0
                    && "get_inverse_mass_matrix(): Divide by zero!");
 
-            inv_mass = 1 / body->get_mass();
+            inv_mass = 1 / (body->get_mass() /** 1.5*/);
 
             assert(is_number(inv_mass) && "get_inverse_mass_matrix(): Nan");
             assert(is_finite(inv_mass) && "get_inverse_mass_matrix(): Inf");

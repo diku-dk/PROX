@@ -830,10 +830,10 @@ T FrankWolfeGSS_BENCHMARK_TIME(T tstart, T tend,
         T phixtip1_2 = valueAtProjection(*(initialState.B_sdf), xtip1,
                                          *(initialState.B_centerTranslation),
                                          *(initialState.B_centerRotation));
-        if (std::abs(tip1 - ti) <= eps
-            && (std::abs(xtip1.x() - xti.x()) <= eps
-                && std::abs(xtip1.y() - xti.y()) <= eps
-                && std::abs(xtip1.z() - xti.z()) <= eps))
+        if (std::abs<T>(tip1 - ti) <= eps
+            && (std::abs<T>(xtip1.x() - xti.x()) <= eps
+                && std::abs<T>(xtip1.y() - xti.y()) <= eps
+                && std::abs<T>(xtip1.z() - xti.z()) <= eps))
         {
             if (phixtip1_2 >= -eps) { break; }
             else

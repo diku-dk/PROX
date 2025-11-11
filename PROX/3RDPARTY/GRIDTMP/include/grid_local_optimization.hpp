@@ -559,6 +559,72 @@ bool optimizeTriangleFW_Working_old(const Eigen::Matrix<T, 3, 1>& p,
     return penetration <= T(0);
 }
 
+template <typename T> struct PointPenetrations
+{
+    EigenVector3<T> point;
+    T distToSDF;
+};
+
+template <typename T>
+std::vector<PointPenetrations<T>>
+getPenetrationForTris(const EigenVector3<T>& A, const EigenVector3<T>& B,
+                      const EigenVector3<T>& C, const Grid<T, T>& sdf,
+                      const EigenVector3<T>& sdfTrans,
+                      const EigenQuaternion<T>& sdfRot, int N = 100)
+{
+
+    if (N <= 0) throw std::invalid_argument("N must be positive");
+
+    size_t M = static_cast<size_t>(N + 1) * static_cast<size_t>(N + 2) / 2;
+    std::vector<PointPenetrations<T>> pts;
+    pts.reserve(M);
+
+    for (int i = 0; i <= N; ++i)
+    {
+        int jmax = N - i;
+        for (int j = 0; j <= jmax; ++j)
+        {
+            int k = N - i - j;
+            T u = static_cast<T>(i) / static_cast<T>(N);
+            T v = static_cast<T>(j) / static_cast<T>(N);
+            T w = static_cast<T>(k) / static_cast<T>(N);
+            PointPenetrations<T> pointPenetration;
+            pointPenetration.point = u * A + v * B + w * C;
+            pointPenetration.distToSDF = valueAtProjection<T>(
+                sdf, pointPenetration.point, sdfTrans, sdfRot);
+            pts.push_back(pointPenetration);
+        }
+    }
+    return pts;
+}
+
+template <typename D, typename T>
+bool optimizeTriangleFW_NOFWA(
+    const Eigen::Matrix<T, 3, 1>& p, const Eigen::Matrix<T, 3, 1>& q,
+    const Eigen::Matrix<T, 3, 1>& r, const Grid<T, T>& sdf,
+    const EigenVector3<T>& sdfTrans, const EigenQuaternion<T>& sdfRot,
+    Eigen::Matrix<T, 3, 1>& contactPoint, Eigen::Matrix<T, 3, 1>& normal,
+    T& penetration, size_t maxIterations = 32)
+{
+    std::vector<PointPenetrations<T>> pens
+        = getPenetrationForTris(p, q, r, sdf, sdfTrans, sdfRot, 100);
+    T minPenetration = std::numeric_limits<T>::max();
+    EigenVector3<T> minPoint;
+    for (size_t i = 0; i < pens.size(); ++i)
+    {
+        PointPenetrations<T> currPen = pens[i];
+        if (currPen.distToSDF < minPenetration)
+        {
+            minPoint = currPen.point;
+            minPenetration = currPen.distToSDF;
+        }
+    }
+    contactPoint = minPoint;
+    penetration = minPenetration;
+    normal = gradientAtProjection(contactPoint, sdf, sdfTrans, sdfRot);
+    return penetration <= T(0.0001);
+}
+
 template <typename D, typename T>
 bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
                                 const Eigen::Matrix<T, 3, 1>& q,
@@ -626,7 +692,7 @@ bool optimizeTriangleFW_Working(const Eigen::Matrix<T, 3, 1>& p,
     contactPoint = x;
     penetration = grid::value_at_2<D, T>(sdf, contactPoint);
     normal = computeGradient_Working(contactPoint, sdf);
-    return penetration <= T(0.001);
+    return penetration <= T(0.0001);
 }
 
 template <typename D, typename T>
