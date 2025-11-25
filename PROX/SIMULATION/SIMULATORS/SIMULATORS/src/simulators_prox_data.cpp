@@ -85,6 +85,8 @@ void ProxData::step_simulation(float const& dt)
 
 /*    prox::time_stepper(dt, m_bodies, m_properties, m_gravity, m_damping,
                        m_params, m_broad, m_narrow, m_contacts);*/
+    std::cerr << "INITIAL INERTIA!\n";
+
     prox::time_stepper_CCD(dt, m_bodies, m_properties, m_gravity, m_damping,
                            m_params, m_broad, m_narrow, m_contacts,
                            m_warmStartBodies);

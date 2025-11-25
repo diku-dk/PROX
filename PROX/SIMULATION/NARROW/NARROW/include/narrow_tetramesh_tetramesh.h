@@ -271,7 +271,16 @@ namespace narrow
           for (size_t i = 0; i < TOIs.size(); ++i)
           {
               T currTOI = earliestTOI;
-              if (std::abs<T>(TOIs[i]) > 0.000001) { currTOI = TOIs[i]; }
+
+              /*if (std::abs<T>(TOIs[i] - startTime) < 0.00001)
+              {
+                  onlyZEROTOI = true;
+              }
+              else */
+              if (std::abs<T>(TOIs[i]) > 0.000001)
+              {
+                  currTOI = TOIs[i];
+              }
               else { onlyZEROTOI = true; }
 
               earliestTOI = std::min<T>(earliestTOI, currTOI);

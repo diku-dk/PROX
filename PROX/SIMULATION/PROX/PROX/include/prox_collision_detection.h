@@ -587,11 +587,12 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
         newBody.maxDistanceFromCenter = grid->m_r_val;
         ccdBodies.push_back(newBody);
     }
+    std::cerr << "3.1!";
     broad_ccd::BVH<T> bvh(ccdBodies, startTime, endTime);
-
+    std::cerr << "3.2!";
     bvh.build();
+    std::cerr << "3.3!";
     std::vector<std::pair<int, int>> pairs = bvh.getAllPairs();
-
     const std::size_t n = bodies.size();
     std::vector<narrow::TestPairCCD<T>> narrow_test_pairs;
 
@@ -605,13 +606,15 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
     contacts.clear();
     std::vector<kdop::BodyVelocities<T>> bodyVels;
     T earliestTOI = std::numeric_limits<T>::max();
-    for (std::size_t i = 0; i < n; ++i)
+    std::cerr << "3.4!";
+    for (size_t i = 0; i < pairs.size(); ++i)
     {
-        for (std::size_t j = 0; j < n; ++j)
+        /*std::cerr << "PAIRS: " << pairs[i].first << ", " << pairs[i].second
+                  << "\n";*/
+        if (pairs[i].first == pairs[i].second) { continue; }
         {
-            if (i == j) { continue; }
-            RigidBody<T>* pair_body_A = &bodies[i];
-            RigidBody<T>* pair_body_B = &bodies[j];
+            RigidBody<T>* pair_body_A = &bodies[pairs[i].first];
+            RigidBody<T>* pair_body_B = &bodies[pairs[i].second];
 
             auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
             auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
@@ -653,19 +656,74 @@ inline T collision_detection_CCD(std::vector<RigidBody<T>>& bodies,
                 narrow_test_pairs.clear();
                 bodyVels.clear();
             }
+            /*std::cerr << "A: " << narrow_pair.t_a() << "\n";
+            std::cerr << "B: " << narrow_pair.t_b() << "\n";*/
         }
+        {
+            RigidBody<T>* pair_body_A = &bodies[pairs[i].second];
+            RigidBody<T>* pair_body_B = &bodies[pairs[i].first];
+
+            auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
+            auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
+
+            //--- Verify if we need to test the two bodies or if we can skip them --
+            if (bodyA->is_fixed() && bodyB->is_fixed()) continue;
+            if (bodyA->is_fixed() && bodyB->is_scripted()) continue;
+            if (bodyA->is_scripted() && bodyB->is_fixed()) continue;
+            if (bodyA->is_scripted() && bodyB->is_scripted()) continue;
+
+            //*callback = callback_type(bodyA, bodyB, contacts);
+
+            narrow::TestPairCCD<T> narrow_pair(
+                *bodyA, *bodyB, (bodyA->get_position()),
+                (bodyA->get_orientation()), (bodyB->get_position()),
+                (bodyB->get_orientation()));
+
+            kdop::BodyVelocities<T> body{
+                .bodyALinVel = &pair_body_A->get_velocity(),
+                .bodyAAngVel = &pair_body_A->get_spin(),
+                .bodyACenterTranslation = &pair_body_A->get_position(),
+                .bodyACenterRotation = &pair_body_A->get_orientation(),
+                .bodyBLinVel = &pair_body_B->get_velocity(),
+                .bodyBAngVel = &pair_body_B->get_spin(),
+                .bodyBCenterTranslation = &pair_body_B->get_position(),
+                .bodyBCenterRotation = &pair_body_B->get_orientation(),
+            };
+
+            narrow_test_pairs.push_back(narrow_pair);
+            bodyVels.push_back(body);
+            if (!narrow_system.params().use_batching()
+                && narrow_test_pairs.size() != 0)
+            {
+                bool onlyZEROTOITmp;
+                T toi = narrow::dispatch_collision_handlers_CCD(
+                    narrow_system, narrow_test_pairs, startTime, endTime,
+                    bodyVels, onlyZEROTOITmp);
+                onlyZeroTOI = (onlyZeroTOI || onlyZEROTOITmp);
+                earliestTOI = std::min<T>(toi, earliestTOI);
+                narrow_test_pairs.clear();
+                bodyVels.clear();
+            }
+            /*std::cerr << "A: " << narrow_pair.t_a() << "\n";
+            std::cerr << "B: " << narrow_pair.t_b() << "\n";*/
+        }
+        std::cerr << "3.5!";
+        std::cerr << narrow_test_pairs.size();
+        if (narrow_system.params().use_batching()
+            && narrow_test_pairs.size() != 0)
+        {
+            T toi = narrow::dispatch_collision_handlers_CCD(
+                narrow_system, narrow_test_pairs, startTime, endTime, bodyVels,
+                onlyZeroTOI);
+            earliestTOI = std::min<T>(toi, earliestTOI);
+            narrow_test_pairs.clear();
+            bodyVels.clear();
+        }
+        std::cerr << "3.6!";
+        if (earliestTOI == std::numeric_limits<T>::max()) { return endTime; }
+        std::cerr << "WE HAVE A TOI OF " << earliestTOI << "\n";
+        return earliestTOI;
     }
-    if (narrow_system.params().use_batching())
-    {
-        T toi = narrow::dispatch_collision_handlers_CCD(
-            narrow_system, narrow_test_pairs, startTime, endTime, bodyVels,
-            onlyZeroTOI);
-        earliestTOI = std::min<T>(toi, earliestTOI);
-        narrow_test_pairs.clear();
-        bodyVels.clear();
-    }
-    std::cerr << "WE HAVE A TOI OF " << earliestTOI << "\n";
-    return earliestTOI;
 }
 
 template <typename T>
@@ -699,7 +757,6 @@ inline T collision_detection_CCD_WARM_START(
 
     bvh.build();
     std::vector<std::pair<int, int>> pairs = bvh.getAllPairs();
-
     const std::size_t n = bodies.size();
     std::vector<narrow::TestPairCCD<T>> narrow_test_pairs;
 
@@ -713,13 +770,61 @@ inline T collision_detection_CCD_WARM_START(
     contacts.clear();
     std::vector<kdop::BodyVelocities<T>> bodyVels;
     T earliestTOI = std::numeric_limits<T>::max();
-    for (std::size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < pairs.size(); ++i)
     {
-        for (std::size_t j = 0; j < n; ++j)
+        /*std::cerr << "PAIRS: " << pairs[i].first << ", " << pairs[i].second
+                  << "\n";*/
+        if (pairs[i].first == pairs[i].second) { continue; }
         {
-            if (i == j) { continue; }
-            RigidBody<T>* pair_body_A = &bodies[i];
-            RigidBody<T>* pair_body_B = &bodies[j];
+            RigidBody<T>* pair_body_A = &bodies[pairs[i].first];
+            RigidBody<T>* pair_body_B = &bodies[pairs[i].second];
+
+            auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
+            auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
+
+            //--- Verify if we need to test the two bodies or if we can skip them --
+            if (bodyA->is_fixed() && bodyB->is_fixed()) continue;
+            if (bodyA->is_fixed() && bodyB->is_scripted()) continue;
+            if (bodyA->is_scripted() && bodyB->is_fixed()) continue;
+            if (bodyA->is_scripted() && bodyB->is_scripted()) continue;
+
+            //*callback = callback_type(bodyA, bodyB, contacts);
+
+            narrow::TestPairCCD<T> narrow_pair(
+                *bodyA, *bodyB, (bodyA->get_position()),
+                (bodyA->get_orientation()), (bodyB->get_position()),
+                (bodyB->get_orientation()));
+
+            kdop::BodyVelocities<T> body{
+                .bodyALinVel = &pair_body_A->get_velocity(),
+                .bodyAAngVel = &pair_body_A->get_spin(),
+                .bodyACenterTranslation = &pair_body_A->get_position(),
+                .bodyACenterRotation = &pair_body_A->get_orientation(),
+                .bodyBLinVel = &pair_body_B->get_velocity(),
+                .bodyBAngVel = &pair_body_B->get_spin(),
+                .bodyBCenterTranslation = &pair_body_B->get_position(),
+                .bodyBCenterRotation = &pair_body_B->get_orientation(),
+            };
+
+            narrow_test_pairs.push_back(narrow_pair);
+            bodyVels.push_back(body);
+            if (!narrow_system.params().use_batching())
+            {
+                bool onlyZEROTOITmp;
+                T toi = narrow::dispatch_collision_handlers_CCD(
+                    narrow_system, narrow_test_pairs, startTime, endTime,
+                    bodyVels, onlyZEROTOITmp);
+                onlyZeroTOI = (onlyZeroTOI || onlyZEROTOITmp);
+                earliestTOI = std::min<T>(toi, earliestTOI);
+                narrow_test_pairs.clear();
+                bodyVels.clear();
+            }
+            /*std::cerr << "A: " << narrow_pair.t_a() << "\n";
+            std::cerr << "B: " << narrow_pair.t_b() << "\n";*/
+        }
+        {
+            RigidBody<T>* pair_body_A = &bodies[pairs[i].second];
+            RigidBody<T>* pair_body_B = &bodies[pairs[i].first];
 
             auto* bodyA = dynamic_cast<RigidBody<T>*>(pair_body_A);
             auto* bodyB = dynamic_cast<RigidBody<T>*>(pair_body_B);
@@ -755,12 +860,14 @@ inline T collision_detection_CCD_WARM_START(
                 bool onlyZEROTOITmp;
                 T toi = narrow::dispatch_collision_handlers_CCD_WARM_START(
                     narrow_system, narrow_test_pairs, startTime, endTime,
-                    bodyVels, onlyZEROTOITmp, warmStartBodies);
+                    bodyVels, onlyZeroTOI, warmStartBodies);
                 onlyZeroTOI = (onlyZeroTOI || onlyZEROTOITmp);
                 earliestTOI = std::min<T>(toi, earliestTOI);
                 narrow_test_pairs.clear();
                 bodyVels.clear();
             }
+            /*std::cerr << "A: " << narrow_pair.t_a() << "\n";
+            std::cerr << "B: " << narrow_pair.t_b() << "\n";*/
         }
     }
     if (narrow_system.params().use_batching())

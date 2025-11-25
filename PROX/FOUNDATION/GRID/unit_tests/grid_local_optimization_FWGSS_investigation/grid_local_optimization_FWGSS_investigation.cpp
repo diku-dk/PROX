@@ -375,6 +375,7 @@ public:
                 if (minPenetration <= 0.0) { break; }
                 dt += 1e-1;
             }
+
             std::cerr << ".";
             // Run CCD
             EigenVector3<T> firstIntersectPoint;
@@ -620,6 +621,35 @@ public:
         }
     }
 
+    bool getGroundTruthSubPart(const RigidBodyInfo<T>& local_rInfo, T dt,
+                               EigenVector3<T>& lastContactPoint)
+    {
+        TriangleAtTimeInfo<T> tri = getTriangleAtTime(dt, local_rInfo);
+        EigenVector3<T> p0AtTimeTi = tri.A_p0;
+        EigenVector3<T> p1AtTimeTi = tri.A_p1;
+        EigenVector3<T> p2AtTimeTi = tri.A_p2;
+
+        EigenVector3<T> contactPoint;
+        EigenVector3<T> normalDummy;
+        T penetration;
+        std::vector<PointPenetration<T>> pens = getPenetrationForTris(
+            p0AtTimeTi, p1AtTimeTi, p2AtTimeTi, local_rInfo, 150);
+        T minPenetration = std::numeric_limits<T>::max();
+        EigenVector3<T> minPoint;
+        for (size_t j = 0; j < pens.size(); ++j)
+        {
+            PointPenetration<T> currPen = pens[j];
+            if (currPen.distToSDF < minPenetration)
+            {
+                minPoint = currPen.point;
+                minPenetration = currPen.distToSDF;
+            }
+        }
+        lastContactPoint = minPoint;
+        if (minPenetration <= 0.0) { return true; }
+        return false;
+    }
+
     void runTestsParallel(int numTriangles, int type = 0)
     {
         CCDStatistics<T> stats;
@@ -632,7 +662,7 @@ public:
 
         namespace fs = std::filesystem;
         fs::path source_dir = fs::path(__FILE__).parent_path();
-        fs::path bunnyRelative = "../../../../../bin/resources/objs/torus.obj";
+        fs::path bunnyRelative = "../../../../../bin/resources/objs/box.obj";
         fs::path bunnyFull = source_dir / bunnyRelative;
         fs::path bunnyNormalized = bunnyFull.lexically_normal();
 
@@ -640,7 +670,7 @@ public:
         std::cout << "Bunny path: " << bunnyNormalized << std::endl;
         std::string meshFile = bunnyNormalized.string();
 
-        int res = 32;
+        int res = 64;
 
         //Read mesh
         Eigen::MatrixXd V;
@@ -817,36 +847,35 @@ public:
                     T dt = 0.0;
 
                     EigenVector3<T> lastContactPoint;
-                    while (dt <= 0.01000)
+                    T maxDT = 0.01;
+                    T smallStep = 1e-5;
+                    T evenSmallerStep = 1e-8;
+                    while (dt <= maxDT)
                     {
-                        TriangleAtTimeInfo<T> tri
-                            = getTriangleAtTime(dt, local_rInfo);
-                        EigenVector3<T> p0AtTimeTi = tri.A_p0;
-                        EigenVector3<T> p1AtTimeTi = tri.A_p1;
-                        EigenVector3<T> p2AtTimeTi = tri.A_p2;
-
-                        EigenVector3<T> contactPoint;
-                        EigenVector3<T> normalDummy;
-                        T penetration;
-                        std::vector<PointPenetration<T>> pens
-                            = getPenetrationForTris(p0AtTimeTi, p1AtTimeTi,
-                                                    p2AtTimeTi, local_rInfo,
-                                                    150);
-                        T minPenetration = std::numeric_limits<T>::max();
-                        EigenVector3<T> minPoint;
-                        for (size_t j = 0; j < pens.size(); ++j)
+                        bool hasPenetrated = getGroundTruthSubPart(
+                            local_rInfo, dt, lastContactPoint);
+                        if (hasPenetrated)
                         {
-                            PointPenetration<T> currPen = pens[j];
-                            if (currPen.distToSDF < minPenetration)
+                            T stepBackDT = dt - smallStep;
+                            while (stepBackDT <= dt)
                             {
-                                minPoint = currPen.point;
-                                minPenetration = currPen.distToSDF;
+                                bool hasPenetrated2 = getGroundTruthSubPart(
+                                    local_rInfo, stepBackDT, lastContactPoint);
+                                if (hasPenetrated2)
+                                {
+                                    dt = stepBackDT;
+                                    break;
+                                }
+                                stepBackDT += evenSmallerStep;
                             }
+
+                            break;
                         }
-                        lastContactPoint = minPoint;
-                        if (minPenetration <= 0.0) { break; }
-                        dt += 1e-6 * 0.5;
+
+                        dt += smallStep;
                     }
+
+                    dt = std::min<T>(maxDT, dt);
 
                     // Protect std::cerr output with mutex
                     {
@@ -935,6 +964,7 @@ public:
                                   .count();
                         totalAlgorithmTime = T(gss_us);
                     }
+                    std::cerr << "(dt,toi)=(" << dt << ", " << toi << ").";
 
                     ComputedTimers<T> computedTimers;
                     computedTimers.minimizevals = minimizerTimes;
@@ -1282,7 +1312,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
     {
         using T = double;
         TriangleCCDTester<T> triangleTester;
-        triangleTester.runTestsParallel(2000, 5);
+        triangleTester.runTestsParallel(500, 5);
         return;
         //        using T = double;
         using D = T;

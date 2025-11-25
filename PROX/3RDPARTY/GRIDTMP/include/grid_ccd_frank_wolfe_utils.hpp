@@ -314,15 +314,15 @@ EigenVector3<T> getTriangleVertexPosAt(
     return vert + ((linVel + angVel.cross(diff)) * dt);*/
     EigenVector3<T> diffA = vert - (centerTranslationA);
 
-    //EigenVector3<T> vi = ((linVel + angVel.cross(diffA)) * dt);
+    EigenVector3<T> vi = ((linVel + angVel.cross(diffA)) * dt);
 
-    EigenVector3<T> vi = ((linVel + (angVel).cross(diffA)) * dt);
+    //EigenVector3<T> vi = ((linVel + (angVel).cross(diffA)));
 
     EigenVector3<T> diffB = vert - (centerTranslationB);
 
-    //EigenVector3<T> SDFVi = ((SDFlinVel + SDFangVel.cross(diffB)) * dt);
+    EigenVector3<T> SDFVi = ((SDFlinVel + SDFangVel.cross(diffB)) * dt);
 
-    EigenVector3<T> SDFVi = ((SDFlinVel + (SDFangVel.cross((diffB)))) * dt);
+    //EigenVector3<T> SDFVi = ((SDFlinVel + (SDFangVel.cross((diffB)))));
 
     EigenVector3<T> v_relative = vi - SDFVi;
     return vert + (v_relative);
@@ -577,12 +577,26 @@ BarycentricInterpolate(T u, T v, T w, T ti, const EigenVector3<T>& p0,
 {
     return u * p0 + v * p1 + v * p2;
 }*/
+
 template <typename T>
 EigenVector3<T> BarycentricInterpolate(T u, T v, T w, T ti,
                                        const RigidBodyInfo<T>& info)
 {
     TriangleAtTimeInfo<T> triangle = getTriangleAtTime(ti, info);
     return triangle.A_p0 * u + triangle.A_p1 * v + triangle.A_p2 * w;
+}
+
+template <typename T>
+EigenVector3<T> BarycentricInterpolate(T u, T v, T w, T ti,
+                                       const RigidBodyInfo<T>& info,
+                                       TriangleAtTimeInfo<T>& infos)
+{
+    /*   TriangleAtTimeInfo<T> triangle = getTriangleAtTime(ti, info);
+    return triangle.A_p0 * u + triangle.A_p1 * v + triangle.A_p2 * w;*/
+    EigenVector3<T> tri0 = (T(1) - ti) * info.A_p0 + ti * infos.A_p0;
+    EigenVector3<T> tri1 = (T(1) - ti) * info.A_p1 + ti * infos.A_p1;
+    EigenVector3<T> tri2 = (T(1) - ti) * info.A_p2 + ti * infos.A_p2;
+    return tri0 * u + tri1 * v + tri2 * w;
 }
 
 template <typename T> struct DistanceAtTimeParams

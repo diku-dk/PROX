@@ -1147,6 +1147,16 @@ namespace rigid_body
                                  + "ccd_sdf_portfolio/"
                                    "ccd_two_objects_shot_fast_eachother.cfg");
                 break;
+            case 'd':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/"
+                                   "ccd_another_benchmark_test.cfg");
+                break;
+            case 'e':
+                load_config_file(m_working_directory
+                                 + "ccd_sdf_portfolio/"
+                                   "ccd_another_benchmark_test_two.cfg");
+                break;
             case 'q':
                 load_config_file(m_working_directory + "ccd_sdf_tests/"
                                  + "ccd_large_large_fast.cfg");

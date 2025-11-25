@@ -848,7 +848,7 @@ T FrankWolfeGSS_BENCHMARK_TIME(T tstart, T tend,
     }
 
     xtiPoint = xtip1;
-    return std::min<T>(tip1, ti);
+    return tip1;
 }
 }
 

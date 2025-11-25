@@ -709,7 +709,7 @@ public:
 
         namespace fs = std::filesystem;
         fs::path source_dir = fs::path(__FILE__).parent_path();
-        fs::path bunnyRelative = "../../../../../bin/resources/objs/box.obj";
+        fs::path bunnyRelative = "../../../../../bin/resources/objs/torus.obj";
         fs::path bunnyFull = source_dir / bunnyRelative;
         fs::path bunnyNormalized = bunnyFull.lexically_normal();
 

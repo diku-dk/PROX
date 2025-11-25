@@ -192,6 +192,81 @@ bool ProxEngine::write_profiling_python(std::string const& filename)
     python << std::endl;
     python << std::endl;
 
+    python << "import numpy as np\n";
+    python << "import matplotlib.pyplot as plt\n";
+    python << "import matplotlib as mpl\n";
+
+    python << "if \"Time_Stepper_CCD\" in globals():\n";
+    python
+        << "    averageValue = sum(Time_Stepper_CCD) / len(Time_Stepper_CCD)\n";
+    python << "    print(\"Average value of Time_Stepper_CCD: \" + "
+              "str(averageValue) + \" and is called following amount of times: "
+              "\" + str(len(Time_Stepper_CCD)))\n";
+
+    python << "if \"ONE_CCD_ADVANCE\" in globals():\n";
+    python
+        << "    averageValue = sum(ONE_CCD_ADVANCE) / len(ONE_CCD_ADVANCE)\n";
+    python << "    print(\"Average value of ONE_CCD_ADVANCE: \" + "
+              "str(averageValue) + \" and is called following amount of times: "
+              "\" + str(len(ONE_CCD_ADVANCE)))\n";
+
+    python << "if \"TOI_CCD_FOR_ALL_RIGID_BODIES\" in globals():\n";
+    python << "    averageValue = sum(TOI_CCD_FOR_ALL_RIGID_BODIES) / "
+              "len(TOI_CCD_FOR_ALL_RIGID_BODIES)\n";
+    python << "    print(\"Average value of TOI_CCD_FOR_ALL_RIGID_BODIES: \" + "
+              "str(averageValue) + \" and is called following amount of times: "
+              "\" + str(len(TOI_CCD_FOR_ALL_RIGID_BODIES)))\n";
+
+    python << "if \"CCD_DISCRETE_COLLISION_DETECTION_PHASE\" in globals():\n";
+    python
+        << "    averageValue = sum(CCD_DISCRETE_COLLISION_DETECTION_PHASE) / "
+           "len(CCD_DISCRETE_COLLISION_DETECTION_PHASE)\n";
+    python << "    print(\"Average value of "
+              "CCD_DISCRETE_COLLISION_DETECTION_PHASE: "
+              "\" + str(averageValue) + \" and is called following amount of "
+              "times: \" + str(len(CCD_DISCRETE_COLLISION_DETECTION_PHASE)))\n";
+
+    python << "if \"CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO\" in "
+              "globals():\n";
+    python << "    averageValue = "
+              "sum(CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO) / "
+              "len(CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO)\n";
+    python
+        << "    print(\"Average value of "
+           "CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO: \" + "
+           "str(averageValue) + \" and is called following amount of times: "
+           "\" + str(len(CCD_DISCRETE_COLLISION_DETECTION_PHASE_TOI_ZERO)))\n";
+
+    python << "if \"CCD_NO_COLLISION_TOI_IS_END\" in globals():\n";
+    python << "    averageValue = sum(CCD_NO_COLLISION_TOI_IS_END) / "
+              "len(CCD_NO_COLLISION_TOI_IS_END)\n";
+    python << "    print(\"Average value of CCD_NO_COLLISION_TOI_IS_END: \" + "
+              "str(averageValue) + \" and is called following amount of times: "
+              "\" + str(len(CCD_NO_COLLISION_TOI_IS_END)))\n";
+
+    python << "if \"CCD_TOTAL_TOI_TIME_ONE_BODY\" in globals():\n";
+    python << "    averageValue = sum(CCD_TOTAL_TOI_TIME_ONE_BODY) / "
+              "len(CCD_TOTAL_TOI_TIME_ONE_BODY)\n";
+    python << "    print(\"Average value of CCD_TOTAL_TOI_TIME_ONE_BODY: \" + "
+              "str(averageValue) + \" and is called following amount of times: "
+              "\" + str(len(CCD_TOTAL_TOI_TIME_ONE_BODY)))\n";
+
+    python << "if \"CCD_TOTAL_TOI_TIME_ONE_TRIANGLE\" in globals():\n";
+    python << "    averageValue = sum(CCD_TOTAL_TOI_TIME_ONE_TRIANGLE) / "
+              "len(CCD_TOTAL_TOI_TIME_ONE_TRIANGLE)\n";
+    python
+        << "    print(\"Average value of CCD_TOTAL_TOI_TIME_ONE_TRIANGLE: \" + "
+           "str(averageValue) + \" and is called following amount of times: "
+           "\" + str(len(CCD_TOTAL_TOI_TIME_ONE_TRIANGLE)))\n";
+
+    python << "if \"dt\" in globals():\n";
+    python << "    print(\"Total amount of frames: \" + str(len(dt)))\n";
+
+    python << "if \"dt\" in globals():\n";
+    python << "    print(\"Total amount of frames: \" + str(len(dt)))\n";
+    python << "import sys\n";
+    python << "sys.exit()\n";
+
     python << "import numpy as np" << "\n";
     python << "import matplotlib.pyplot as plt" << "\n";
     python << "import matplotlib as mpl" << "\n";

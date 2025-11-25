@@ -86,9 +86,9 @@ Eigen::Matrix<T, 3, 1> computeGradient_Working(const Eigen::Matrix<T, 3, 1>& p,
         diff.z() / (grid.m_nodes.z() - 1));
 
     // Use cell size for finite differences
-    T hx = cell_size.x() * 5.0;
-    T hy = cell_size.y() * 5.0;
-    T hz = cell_size.z() * 5.0;
+    T hx = cell_size.x() * 1.0;
+    T hy = cell_size.y() * 1.0;
+    T hz = cell_size.z() * 1.0;
 
     // Central difference for gradient approximation
     T dx = (grid::value_at_2(grid,
@@ -607,7 +607,7 @@ bool optimizeTriangleFW_NOFWA(
     T& penetration, size_t maxIterations = 32)
 {
     std::vector<PointPenetrations<T>> pens
-        = getPenetrationForTris(p, q, r, sdf, sdfTrans, sdfRot, 100);
+        = getPenetrationForTris(p, q, r, sdf, sdfTrans, sdfRot, 15);
     T minPenetration = std::numeric_limits<T>::max();
     EigenVector3<T> minPoint;
     for (size_t i = 0; i < pens.size(); ++i)

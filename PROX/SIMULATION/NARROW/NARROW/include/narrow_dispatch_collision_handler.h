@@ -208,6 +208,7 @@ namespace narrow
               T earliestTOI = details::dispatch_tetramesh_sdf_CCD<T>(
                   system, tetramesh_pairs, startTime, endTime, bodyContacts,
                   onlyZEROTOI);
+              std::cerr << "EARLIEST TOI: " << earliestTOI << "\n";
               return earliestTOI;
           }
       }

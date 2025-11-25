@@ -67,6 +67,10 @@ bool ProxEngine::simulate(float const& dt)
             ProxData::ScriptedMotion* motion = m_data->m_motion_callbacks.at(body_idx);
 
             motion->update(script_time, body);
+            float xx, yy, zz;
+            get_rigid_body_inertia(body_idx, xx, yy, zz);
+            std::cerr << "INITIAL INERTIA of " << body_idx << ": xx: " << xx
+                      << " yy: " << yy << " zz: " << "\n";
         }
 
         m_data->step_simulation(ddt);

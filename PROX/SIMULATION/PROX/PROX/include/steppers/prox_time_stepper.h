@@ -747,13 +747,22 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
     {
         //if (tStart != 0.0) { tStart += tEnd / (10.0); }
         START_TIMER("ONE_CCD_ADVANCE");
+        std::cerr << "1!";
         collision_detection_only_update_structures(
             bodies, broad_system, narrow_system, contacts, params);
+        std::cerr << "2!";
 
         bool onlyZeroTOI = false;
+
         START_TIMER("TOI_CCD_FOR_ALL_RIGID_BODIES");
-        T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
-                                               tStart, tEnd, onlyZeroTOI);
+        std::cerr << "3!";
+        /*T simulateTo = collision_detection_CCD(bodies, narrow_system, contacts,
+                                               tStart, T(1.0), onlyZeroTOI);*/
+        std::cerr << "4!";
+        T simulateTo = collision_detection_CCD_WARM_START(
+            bodies, narrow_system, contacts, tStart, tEnd * T(2.000),
+            onlyZeroTOI, warmStartBodies);
+        simulateTo = std::min<T>(tEnd, simulateTo);
         /*T simulateTo = collision_detection_CCD_WARM_START(
             bodies, narrow_system, contacts, tStart, tEnd, onlyZeroTOI,
             warmStartBodies);*/
@@ -845,6 +854,7 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
 
             if (number_of_contacts > 0u)
             {
+                warmStartBodies.clear();
                 get_jacobian_matrix_eigen(contacts.begin(), contacts.end(),
                                           bodies, properties, JNew,
                                           number_of_contacts);
@@ -1025,6 +1035,7 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
 
                 if (number_of_contacts > 0u)
                 {
+                    warmStartBodies.clear();
 
                     get_jacobian_matrix_eigen(contacts.begin(), contacts.end(),
                                               bodies, properties, JNew,

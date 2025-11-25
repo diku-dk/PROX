@@ -883,7 +883,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, 0.0, 20.0, 0.0);
+            engine->set_rigid_body_velocity(rid, 0.0, 40.0, 5.0);
         }
         {
             GeometryHandleEigen<T> const bunny = create_geometry_handle_obj<T>(
@@ -893,7 +893,7 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
             const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
 
             const EigenVector3<T> T_m2l = EigenVector3<T>(0, 0.0, 0.0);
-            const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
+            const EigenQuaternion<T> Q_m2l = Rotatey<T>(3.141593);
 
             const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 12.0, 0.0);
             const EigenQuaternion<T> Q_l2w = EigenQuaternion<T>::Identity();
@@ -906,7 +906,104 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, 0.0, -20.0, 0.0);
+            engine->set_rigid_body_velocity(rid, 5.0, -40.0, 0.0);
+        }
+    }
+    if (scene.compare("ccd_another_benchmark_test") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+        T const stone_density
+            = get_material_density_eigen<T>(mat_info, "Stone");
+        size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
+        size_t gridSize = 3;
+        for (size_t i = 0; i < gridSize; ++i)
+        {
+            for (size_t j = 0; j < gridSize; ++j)
+            {
+
+                GeometryHandleEigen<T> const bunny
+                    = create_geometry_handle_obj<T>(
+                        engine, obj_path + "sphere.obj", 0.5, 0.5, 0.5,
+                        mesh_array::tetgen_cdt_settings());
+                const EigenVector3<T> T_b2m = bunny.Tb2m();
+                const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
+
+                const EigenVector3<T> T_m2l = EigenVector3<T>(i, 6.0, j);
+                const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
+
+                const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 0.0, 0.0);
+                const EigenQuaternion<T> Q_l2w = EigenQuaternion<T>::Identity();
+
+                EigenVector3<T> T_b2w;
+                EigenQuaternion<T> Q_b2w;
+
+                compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l,
+                                                   T_l2w, Q_l2w, T_b2w, Q_b2w);
+
+                size_t const rid = create_rigid_body<T>(
+                    engine, T_b2w, Q_b2w, bunny, mid, stone_density);
+                engine->set_rigid_body_velocity(rid, 0.0, float(j + 1) * 4.0f,
+                                                0.0);
+                engine->set_rigid_body_spin(rid, 0.0, 0.0, 0.0);
+                //engine->set_rigid_body_fixed(rid, true);
+            }
+        }
+    }
+    if (scene.compare("ccd_another_benchmark_test_two") == 0)
+    {
+        auto const scene_size = util::to_value<float>(
+            params.get_value("procedural_param_1", "10.0"));
+
+        float const ground_width = scene_size * 20.0;
+        float const ground_height = scene_size / 10.0;
+        float const ground_depth = scene_size * 20.0;
+
+        procedural::make_ground<T>(engine, EigenVector3<T>(0, 0, 0),
+                                   EigenQuaternion<T>::Identity(), mat_info,
+                                   ground_width, ground_height, ground_depth);
+        T const stone_density
+            = get_material_density_eigen<T>(mat_info, "Stone");
+        size_t const mid = get_material_id_eigen<T>(mat_info, "Stone");
+        size_t gridSize = 10;
+        for (size_t i = 0; i < gridSize; ++i)
+        {
+            for (size_t j = 0; j < gridSize; ++j)
+            {
+
+                GeometryHandleEigen<T> const bunny
+                    = create_geometry_handle_obj<T>(
+                        engine, obj_path + "sphere.obj", 0.5, 0.5, 0.5,
+                        mesh_array::tetgen_cdt_settings());
+                const EigenVector3<T> T_b2m = bunny.Tb2m();
+                const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
+
+                const EigenVector3<T> T_m2l = EigenVector3<T>(i, 6.0, j);
+                const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
+
+                const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 0.0, 0.0);
+                const EigenQuaternion<T> Q_l2w = EigenQuaternion<T>::Identity();
+
+                EigenVector3<T> T_b2w;
+                EigenQuaternion<T> Q_b2w;
+
+                compute_body_to_world_transform<T>(T_b2m, Q_b2m, T_m2l, Q_m2l,
+                                                   T_l2w, Q_l2w, T_b2w, Q_b2w);
+
+                size_t const rid = create_rigid_body<T>(
+                    engine, T_b2w, Q_b2w, bunny, mid, stone_density);
+                engine->set_rigid_body_velocity(rid, 0.0, -1.0, 0.0);
+                engine->set_rigid_body_spin(rid, 0.0, 0.0, 0.0);
+                //engine->set_rigid_body_fixed(rid, true);
+            }
         }
     }
     if (scene.compare("ccd_plane_dropped_on_spikes") == 0)
@@ -1111,12 +1208,12 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
         if (true)
         {
             GeometryHandleEigen<T> const bunny = create_geometry_handle_obj<T>(
-                engine, obj_path + "sphere.obj", 0.55, 0.55, 0.55,
+                engine, obj_path + "sphere.obj", 0.501, 0.501, 0.501,
                 mesh_array::tetgen_cdt_settings());
             const EigenVector3<T> T_b2m = bunny.Tb2m();
             const EigenQuaternion<T> Q_b2m = bunny.Qb2m();
 
-            const EigenVector3<T> T_m2l = EigenVector3<T>(0.0, 2.602, 0.0);
+            const EigenVector3<T> T_m2l = EigenVector3<T>(0.0, 2.5, 0.0);
             const EigenQuaternion<T> Q_m2l = EigenQuaternion<T>::Identity();
 
             const EigenVector3<T> T_l2w = EigenVector3<T>(0.0, 0.0, 0.0);
@@ -1406,8 +1503,8 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, 10.0, 0.0, 0.0);
-            engine->set_rigid_body_spin(rid, 300.0, 0.0, 0.0);
+            engine->set_rigid_body_velocity(rid, 10.0, 6.0, 0.0);
+            engine->set_rigid_body_spin(rid, 100.0, 0.0, 0.0);
             //engine->set_rigid_body_fixed(rid, true);
         }
         {
@@ -1431,8 +1528,8 @@ inline void make_scene(std::string const& scene, std::string const& obj_path, co
 
             size_t const rid = create_rigid_body<T>(engine, T_b2w, Q_b2w, bunny,
                                                     mid, stone_density);
-            engine->set_rigid_body_velocity(rid, -10.0, 00.0, 0.0);
-            engine->set_rigid_body_spin(rid, -300.0, 0.0, 0.0);
+            engine->set_rigid_body_velocity(rid, -10.0, 6.0, 0.0);
+            engine->set_rigid_body_spin(rid, -100.0, 0.0, 0.0);
         }
     }
     if (scene.compare("ccd_sphere_through_torus") == 0)

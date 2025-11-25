@@ -470,6 +470,7 @@ T BrentMinimize(T lstart, T lend, F func, const DistanceAtTimeParams<T>& params,
         }
     }
 
+    if (func(info, params, x) > 1e-7) return lend;
     return x;
 }
 
@@ -807,10 +808,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME_STARTING_ITERATE(
 }
 
 template <typename T>
-T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
-                                 const RigidBodyInfo<T>& initialState,
-                                 EigenVector3<T>& xtiPoint,
-                                 std::vector<T>& minimizerSteps)
+T FrankWolfeBRENT_BENCHMARK_TIME_FOUR(T tstart, T tend,
+                                      const RigidBodyInfo<T>& initialState,
+                                      EigenVector3<T>& xtiPoint,
+                                      std::vector<T>& minimizerSteps)
 {
 
     DistanceAtTimeParams distanceAtTimeParams{.u = T(1),
@@ -1144,10 +1145,10 @@ T FrankWolfeBRENT_BENCHMARK_TIME_THREE(T tstart, T tend,
 }
 
 template <typename T>
-T FrankWolfeBRENT_BENCHMARK_TIME_ONE(T tstart, T tend,
-                                     const RigidBodyInfo<T>& initialState,
-                                     EigenVector3<T>& xtiPoint,
-                                     std::vector<T>& minimizerSteps)
+T FrankWolfeBRENT_BENCHMARK_TIME(T tstart, T tend,
+                                 const RigidBodyInfo<T>& initialState,
+                                 EigenVector3<T>& xtiPoint,
+                                 std::vector<T>& minimizerSteps)
 {
 
     EigenVector3<T> p0s = ((initialState.A_p0));
@@ -1483,7 +1484,7 @@ T FrankWolfeBRENT_BENCHMARK_TIME_OLD(T tstart, T tend,
     }
 
     xtiPoint = xtip1;
-    return std::min<T>(tip1, ti);
+    return tip1;
 }
 } // namespace grid
 

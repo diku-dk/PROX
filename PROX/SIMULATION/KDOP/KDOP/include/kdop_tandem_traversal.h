@@ -362,7 +362,7 @@ namespace kdop
           { // Face opposite vertex i (vertices j,k,m)
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
-              T penetration; /*
+              T penetration;
               bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
                   transformRotation.inverse()
                       * (tri0.p(0) - transformTranslation),
@@ -370,15 +370,15 @@ namespace kdop
                       * (tri0.p(1) - transformTranslation),
                   transformRotation.inverse()
                       * (tri0.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);*/
-              bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
+                  sdf, contactPoint, normal, penetration);
+              /*              bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
                   tri0.p(0), tri0.p(1), tri0.p(2), sdf, transformTranslation,
-                  transformRotation, contactPoint, normal, penetration);
+                  transformRotation, contactPoint, normal, penetration);*/
               if (isPenetrating)
               {
-                  /*contactPoint
+                  contactPoint
                       = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();*/
+                  normal = (transformRotation * normal).normalized();
                   callback(contactPoint, -normal, penetration);
                   callback(contactPoint, normal, penetration);
               }
@@ -389,22 +389,22 @@ namespace kdop
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
               T penetration;
-              /*bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
+              bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
                   transformRotation.inverse()
                       * (tri1.p(0) - transformTranslation),
                   transformRotation.inverse()
                       * (tri1.p(1) - transformTranslation),
                   transformRotation.inverse()
                       * (tri1.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);*/
-              bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
+                  sdf, contactPoint, normal, penetration);
+              /*bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
                   tri1.p(0), tri1.p(1), tri1.p(2), sdf, transformTranslation,
-                  transformRotation, contactPoint, normal, penetration);
+                  transformRotation, contactPoint, normal, penetration);*/
               if (isPenetrating)
               {
-                  /*contactPoint
+                  contactPoint
                       = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();*/
+                  normal = (transformRotation * normal).normalized();
                   callback(contactPoint, -normal, penetration);
                   callback(contactPoint, normal, penetration);
               }
@@ -414,7 +414,7 @@ namespace kdop
 
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
-              T penetration; /*
+              T penetration;
 
               bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
                   transformRotation.inverse()
@@ -423,15 +423,15 @@ namespace kdop
                       * (tri2.p(1) - transformTranslation),
                   transformRotation.inverse()
                       * (tri2.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);*/
-              bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
+                  sdf, contactPoint, normal, penetration);
+              /*bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
                   tri2.p(0), tri2.p(1), tri2.p(2), sdf, transformTranslation,
-                  transformRotation, contactPoint, normal, penetration);
+                  transformRotation, contactPoint, normal, penetration);*/
               if (isPenetrating)
               {
-                  /*contactPoint
+                  contactPoint
                       = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();*/
+                  normal = (transformRotation * normal).normalized();
                   callback(contactPoint, -normal, penetration);
                   callback(contactPoint, normal, penetration);
               }
@@ -440,7 +440,7 @@ namespace kdop
           { // Face opposite vertex m (vertices i,j,k)
               EigenVector3<T> contactPoint;
               EigenVector3<T> normal;
-              T penetration; /*
+              T penetration;
               bool isPenetrating = grid::optimizeTriangleFW_Working<T, T>(
                   transformRotation.inverse()
                       * (tri3.p(0) - transformTranslation),
@@ -448,15 +448,15 @@ namespace kdop
                       * (tri3.p(1) - transformTranslation),
                   transformRotation.inverse()
                       * (tri3.p(2) - transformTranslation),
-                  sdf, contactPoint, normal, penetration);*/
-              bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
+                  sdf, contactPoint, normal, penetration);
+              /*bool isPenetrating = grid::optimizeTriangleFW_NOFWA<T, T>(
                   tri3.p(0), tri3.p(1), tri3.p(2), sdf, transformTranslation,
-                  transformRotation, contactPoint, normal, penetration);
+                  transformRotation, contactPoint, normal, penetration);*/
               if (isPenetrating)
               {
-                  /*contactPoint
+                  contactPoint
                       = transformRotation * contactPoint + transformTranslation;
-                  normal = (transformRotation * normal).normalized();*/
+                  normal = (transformRotation * normal).normalized();
                   callback(contactPoint, -normal, penetration);
                   callback(contactPoint, normal, penetration);
               }
@@ -1169,8 +1169,9 @@ namespace kdop
           std::cerr << "TRI: (" << tri0.p(2).x() << ", " << tri0.p(2).y()
                     << ", " << tri0.p(2).z() << ")\n";*/
 
+          //std::cerr << ".";
           bool surfaceFound = false;
-          //if (!hasRestartWarmBodies) { startTime = warmBodyStart[triIdx]; }
+          if (!hasRestartWarmBodies) { startTime = warmBodyStart[triIdx]; }
           if (surface_A[0])
           { // Face opposite vertex i (vertices j,k,m)
               /*EigenVector3<T> contactPoint;
@@ -1210,7 +1211,7 @@ namespace kdop
               EigenVector3<T> dummy;
               std::vector<T> times;
               //START_TIMER("FRANK_WOLFEGSS");
-              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+              T currToi = grid::FrankWolfeBRENT_BENCHMARK_TIME(
                   startTime, endTime, rigidBody, dummy, times);
               /*STOP_TIMER("FRANK_WOLFEGSS");
               RECORD_VECTOR("Minimizes", times);*/
@@ -1237,7 +1238,7 @@ namespace kdop
               EigenVector3<T> dummy;
               std::vector<T> times;
               //START_TIMER("FRANK_WOLFEGSS");
-              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+              T currToi = grid::FrankWolfeBRENT_BENCHMARK_TIME(
                   startTime, endTime, rigidBody, dummy, times);
               /*STOP_TIMER("FRANK_WOLFEGSS");
               RECORD_VECTOR("Minimizes", times);*/
@@ -1264,7 +1265,7 @@ namespace kdop
               EigenVector3<T> dummy;
               std::vector<T> times;
               //START_TIMER("FRANK_WOLFEGSS");
-              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+              T currToi = grid::FrankWolfeBRENT_BENCHMARK_TIME(
                   startTime, endTime, rigidBody, dummy, times);
               /*STOP_TIMER("FRANK_WOLFEGSS");
               RECORD_VECTOR("Minimizes", times);*/
@@ -1291,7 +1292,7 @@ namespace kdop
               EigenVector3<T> dummy;
               std::vector<T> times;
               //START_TIMER("FRANK_WOLFEGSS");
-              T currToi = grid::FrankWolfeGSS_BENCHMARK_TIME(
+              T currToi = grid::FrankWolfeBRENT_BENCHMARK_TIME(
                   startTime, endTime, rigidBody, dummy, times);
               /*STOP_TIMER("FRANK_WOLFEGSS");
               RECORD_VECTOR("Minimizes", times);*/
@@ -1326,10 +1327,11 @@ namespace kdop
           //if (!overlap_dop_aabb(node_A.m_volume, sdf_aabb, directions)) return;
           for (size_t a = node_A.m_start; a <= node_A.m_end; ++a)
           {
-              traversal_sdf_CCD<K, T>(
+              traversal_sdf_CCD_WARM_START<K, T>(
                   a, branch_A, mesh_A, X_A, Y_A, Z_A, surface_map_A, sdf,
                   transformTranslation, transformRotation, directions, callback,
-                  TOIs, startTime, endTime, bodyContact, rigidId);
+                  TOIs, startTime, endTime, bodyContact, rigidId, warmBodyStart,
+                  triIdx, hasRestartWarmBodies);
           }
       }
   }
@@ -1370,6 +1372,7 @@ namespace kdop
       // Process all branches
       for (auto const& branch : work_item.m_tree_a->branches())
       {
+
           size_t triIdx = 0;
           traversal_sdf_CCD_WARM_START<K, T>(
               0, branch, *(work_item.m_mesh_a), *(work_item.m_x_a),
