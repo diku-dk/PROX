@@ -25,7 +25,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0 FATAL_ERROR)
 ##########################################################
 ##########################################################
 
-SET(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+#SET(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffloat-store")
 
 ##########################################################
