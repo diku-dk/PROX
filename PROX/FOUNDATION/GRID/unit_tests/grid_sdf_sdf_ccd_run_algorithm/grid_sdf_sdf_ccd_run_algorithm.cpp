@@ -165,6 +165,7 @@ void makeSDF(grid::Grid<T, T>& grid, std::string fileName,
     }
 }
 
+/*
 BOOST_AUTO_TEST_CASE(grid_test_bunny_many_points_main)
 {
     using T = double;
@@ -202,42 +203,27 @@ BOOST_AUTO_TEST_CASE(grid_test_bunny_many_points_main)
     rInfoB.A_linearVel = &linearB;
     rInfoB.sdf = &SDFB;
 
-    /*for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
-    {
-        for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
-        {
-            finishedVoxelsA[i].selected.clear();
-        }
-    }
-    for (size_t i = 0; i < finishedVoxelsB.size(); ++i)
-    {
-        for (size_t j = 0; j < finishedVoxelsB[i].selected.size(); ++j)
-        {
-            finishedVoxelsB[i].selected.clear();
-        }
-    }
-    SDFSDFContact::SelectedPoint<T> sp;
-    sp.pos = EigenVector3<T>(0.0f, 0.5f, 0.0);
-    finishedVoxelsA[0].selected.push_back(sp);*/
 
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0));
     std::cerr << "GOT TOI = " << toi << "\n";
-}
+}*/
 
-BOOST_AUTO_TEST_CASE(grid_test_star)
+BOOST_AUTO_TEST_CASE(grid_test_sphere_correct_placement)
 {
+    //EXPECTED CONTACT POINT (0, 5, 0)!
+    //With starting point (0, 1, 0) at 10 m/s, we expect contact to be at 0.4s
     using T = double;
     //todo
     grid::Grid<T, T> SDFA;
     std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
     std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
-    makeSDF(SDFA, "bunny.obj", finishedVoxelsA, voxelsA, 64, 8);
+    makeSDF(SDFA, "blender_sphere.obj", finishedVoxelsA, voxelsA, 64, 8);
     std::cerr << "Finished filtering SDF 1/2!" << "\n";
     grid::Grid<T, T> SDFB;
     std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
     std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
-    makeSDF(SDFB, "bunny.obj", finishedVoxelsB, voxelsB, 64, 8);
+    makeSDF(SDFB, "blender_sphere.obj", finishedVoxelsB, voxelsB, 64, 8);
     std::cerr << "Finished filtering SDF 2/2!" << "\n";
 
     EigenVector3<T> angularVelA(0, 0, 0);
@@ -245,8 +231,8 @@ BOOST_AUTO_TEST_CASE(grid_test_star)
     EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
     EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
     EigenVector3<T> transA(0.0, 0.0, 0.0);
-    EigenVector3<T> transB(0.0, 0.5, 0.0);
-    EigenVector3<T> linearA(0.0, 1.0, 0.0);
+    EigenVector3<T> transB(0.0, 6.0, 0.0);
+    EigenVector3<T> linearA(0.0, 10.0, 0.0);
     EigenVector3<T> linearB(0, 0, 0);
     SDFSDFContact::SingleRigidBodyInfo<T> rInfoA;
     rInfoA.A_angularVel = &angularVelA;
@@ -262,7 +248,132 @@ BOOST_AUTO_TEST_CASE(grid_test_star)
     rInfoB.A_linearVel = &linearB;
     rInfoB.sdf = &SDFB;
 
-    /*for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
+    for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
+        {
+            finishedVoxelsA[i].selected.clear();
+        }
+    }
+    for (size_t i = 0; i < finishedVoxelsB.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsB[i].selected.size(); ++j)
+        {
+            finishedVoxelsB[i].selected.clear();
+        }
+    }
+    SDFSDFContact::SelectedPoint<T> sp;
+    sp.pos = EigenVector3<T>(0.0f, 1.0f, 0.0f);
+    finishedVoxelsA[0].selected.push_back(sp);
+
+    std::vector<EigenVector3<T>> dummy;
+    T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
+                                        rInfoA, rInfoB, T(0.0), T(1.0), dummy);
+    std::cerr << "GOT TOI = " << toi << "\n";
+}
+
+BOOST_AUTO_TEST_CASE(grid_test_sphere_side_placement)
+{
+    using T = double;
+    //todo
+    //EXPECTED CONTACT POINT ???!
+    //With starting point (0, 1, 0) at 10 m/s, we expect contact to be at 0.427s
+    grid::Grid<T, T> SDFA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
+    makeSDF(SDFA, "blender_sphere.obj", finishedVoxelsA, voxelsA, 64, 8);
+    std::cerr << "Finished filtering SDF 1/2!" << "\n";
+    grid::Grid<T, T> SDFB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
+    makeSDF(SDFB, "blender_sphere.obj", finishedVoxelsB, voxelsB, 64, 8);
+    std::cerr << "Finished filtering SDF 2/2!" << "\n";
+
+    EigenVector3<T> angularVelA(0, 0, 0);
+    EigenVector3<T> angularVelB(0, 0, 0);
+    EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+    EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+    EigenVector3<T> transA(0.0, 0.0, 0.0);
+    EigenVector3<T> transB(0.0, 6.0, 1.0);
+    EigenVector3<T> linearA(0.0, 10.0, 0.0);
+    EigenVector3<T> linearB(0, 0, 0);
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoA;
+    rInfoA.A_angularVel = &angularVelA;
+    rInfoA.A_centerRotation = &rotA;
+    rInfoA.A_centerTranslation = &transA;
+    rInfoA.A_linearVel = &linearA;
+    rInfoA.sdf = &SDFA;
+
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB;
+    rInfoB.A_angularVel = &angularVelB;
+    rInfoB.A_centerRotation = &rotB;
+    rInfoB.A_centerTranslation = &transB;
+    rInfoB.A_linearVel = &linearB;
+    rInfoB.sdf = &SDFB;
+
+    for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
+        {
+            finishedVoxelsA[i].selected.clear();
+        }
+    }
+    for (size_t i = 0; i < finishedVoxelsB.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsB[i].selected.size(); ++j)
+        {
+            finishedVoxelsB[i].selected.clear();
+        }
+    }
+    SDFSDFContact::SelectedPoint<T> sp;
+    sp.pos = EigenVector3<T>(0.0f, 1.0f, 0.0);
+    finishedVoxelsA[0].selected.push_back(sp);
+
+    std::vector<EigenVector3<T>> dummy;
+    T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
+                                        rInfoA, rInfoB, T(0.0), T(1.0), dummy);
+    std::cerr << "GOT TOI = " << toi << "\n";
+}
+
+BOOST_AUTO_TEST_CASE(grid_test_box_top_placement)
+{
+    //Configuration: Box colliding with box
+    //With starting point (0, 0.5, 0) at 10 m/s, we expect contact to be at 0.6s.
+    using T = double;
+    grid::Grid<T, T> SDFA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
+    makeSDF(SDFA, "box.obj", finishedVoxelsA, voxelsA, 64, 8);
+    std::cerr << "Finished filtering SDF 1/2!" << "\n";
+    grid::Grid<T, T> SDFB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
+    makeSDF(SDFB, "box.obj", finishedVoxelsB, voxelsB, 64, 8);
+    std::cerr << "Finished filtering SDF 2/2!" << "\n";
+
+    EigenVector3<T> angularVelA(0, 0, 0);
+    EigenVector3<T> angularVelB(0, 0, 0);
+    EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+    EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+    EigenVector3<T> transA(0.0, 0.0, 0.0);
+    EigenVector3<T> transB(0.0, 7.0, 0.0);
+    EigenVector3<T> linearA(0.0, 10.0, 0.0);
+    EigenVector3<T> linearB(0, 0, 0);
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoA;
+    rInfoA.A_angularVel = &angularVelA;
+    rInfoA.A_centerRotation = &rotA;
+    rInfoA.A_centerTranslation = &transA;
+    rInfoA.A_linearVel = &linearA;
+    rInfoA.sdf = &SDFA;
+
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB;
+    rInfoB.A_angularVel = &angularVelB;
+    rInfoB.A_centerRotation = &rotB;
+    rInfoB.A_centerTranslation = &transB;
+    rInfoB.A_linearVel = &linearB;
+    rInfoB.sdf = &SDFB;
+
+    for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
     {
         for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
         {
@@ -278,10 +389,200 @@ BOOST_AUTO_TEST_CASE(grid_test_star)
     }
     SDFSDFContact::SelectedPoint<T> sp;
     sp.pos = EigenVector3<T>(0.0f, 0.5f, 0.0);
-    finishedVoxelsA[0].selected.push_back(sp);*/
+    finishedVoxelsA[0].selected.push_back(sp);
 
+    std::vector<EigenVector3<T>> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
-                                        rInfoA, rInfoB, T(0.0), T(1.0));
+                                        rInfoA, rInfoB, T(0.0), T(1.0), dummy);
+    BOOST_TEST(std::abs<T>(toi - 0.6) <= 0.0001);
+    std::cerr << "GOT TOI = " << toi << "\n";
+}
+
+BOOST_AUTO_TEST_CASE(grid_test_box_corner_placement)
+{
+    //Configuration: Box colliding with box
+    //With starting point (0.5, 0.5, 0.5) at 10 m/s, we expect contact to be at 1.81 (some corner is cut off).
+    using T = double;
+    grid::Grid<T, T> SDFA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
+    makeSDF(SDFA, "box.obj", finishedVoxelsA, voxelsA, 64, 8);
+    std::cerr << "Finished filtering SDF 1/2!" << "\n";
+    grid::Grid<T, T> SDFB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
+    makeSDF(SDFB, "blender_sphere.obj", finishedVoxelsB, voxelsB, 64, 8);
+    std::cerr << "Finished filtering SDF 2/2!" << "\n";
+
+    EigenVector3<T> angularVelA(0, 0, 0);
+    EigenVector3<T> angularVelB(0, 0, 0);
+    EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+    EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+    EigenVector3<T> transA(0.0, 0.0, 0.0);
+    EigenVector3<T> transB(1.0, 3.0, 1.0);
+    EigenVector3<T> linearA(0.0, 10.0, 0.0);
+    EigenVector3<T> linearB(0, 0, 0);
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoA;
+    rInfoA.A_angularVel = &angularVelA;
+    rInfoA.A_centerRotation = &rotA;
+    rInfoA.A_centerTranslation = &transA;
+    rInfoA.A_linearVel = &linearA;
+    rInfoA.sdf = &SDFA;
+
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB;
+    rInfoB.A_angularVel = &angularVelB;
+    rInfoB.A_centerRotation = &rotB;
+    rInfoB.A_centerTranslation = &transB;
+    rInfoB.A_linearVel = &linearB;
+    rInfoB.sdf = &SDFB;
+
+    for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
+        {
+            finishedVoxelsA[i].selected.clear();
+        }
+    }
+    for (size_t i = 0; i < finishedVoxelsB.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsB[i].selected.size(); ++j)
+        {
+            finishedVoxelsB[i].selected.clear();
+        }
+    }
+    SDFSDFContact::SelectedPoint<T> sp;
+    sp.pos = EigenVector3<T>(0.5f, 0.5f, 0.5);
+    finishedVoxelsA[0].selected.push_back(sp);
+
+    std::vector<EigenVector3<T>> dummy;
+    T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
+                                        rInfoA, rInfoB, T(0.0), T(1.0), dummy);
+    BOOST_TEST(std::abs<T>(toi - 0.181541) <= 0.0001);
+    std::cerr << "GOT TOI = " << toi << "\n";
+}
+
+BOOST_AUTO_TEST_CASE(grid_test_box_non_corner_placement)
+{
+    //Configuration: Box colliding with box
+    //With starting point (0.5, 0.5, 0.5) at 10 m/s, we expect contact to be at 1.81 (some corner is cut off).
+    using T = double;
+    grid::Grid<T, T> SDFA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
+    makeSDF(SDFA, "box.obj", finishedVoxelsA, voxelsA, 64, 8);
+    std::cerr << "Finished filtering SDF 1/2!" << "\n";
+    grid::Grid<T, T> SDFB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
+    makeSDF(SDFB, "blender_sphere.obj", finishedVoxelsB, voxelsB, 64, 8);
+    std::cerr << "Finished filtering SDF 2/2!" << "\n";
+
+    EigenVector3<T> angularVelA(0, 0, 0);
+    EigenVector3<T> angularVelB(0, 0, 0);
+    EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+    EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+    EigenVector3<T> transA(0.0, 0.0, 0.0);
+    EigenVector3<T> transB(1.0, 3.0, 1.0);
+    EigenVector3<T> linearA(0.0, 10.0, 0.0);
+    EigenVector3<T> linearB(0, 0, 0);
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoA;
+    rInfoA.A_angularVel = &angularVelA;
+    rInfoA.A_centerRotation = &rotA;
+    rInfoA.A_centerTranslation = &transA;
+    rInfoA.A_linearVel = &linearA;
+    rInfoA.sdf = &SDFA;
+
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB;
+    rInfoB.A_angularVel = &angularVelB;
+    rInfoB.A_centerRotation = &rotB;
+    rInfoB.A_centerTranslation = &transB;
+    rInfoB.A_linearVel = &linearB;
+    rInfoB.sdf = &SDFB;
+
+    for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
+        {
+            finishedVoxelsA[i].selected.clear();
+        }
+    }
+    for (size_t i = 0; i < finishedVoxelsB.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsB[i].selected.size(); ++j)
+        {
+            finishedVoxelsB[i].selected.clear();
+        }
+    }
+    SDFSDFContact::SelectedPoint<T> sp;
+    sp.pos = EigenVector3<T>(0.0f, 0.5f, 0.0);
+    finishedVoxelsA[0].selected.push_back(sp);
+    std::vector<EigenVector3<T>> dummy;
+    T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
+                                        rInfoA, rInfoB, T(0.0), T(1.0), dummy);
+    BOOST_TEST(std::abs<T>(toi - 0.181541) <= 0.0001);
+    std::cerr << "GOT TOI = " << toi << "\n";
+}
+
+BOOST_AUTO_TEST_CASE(grid_test_star_star)
+{
+    //Configuration: Box colliding with box
+    //With starting point (0.5, 0.5, 0.5) at 10 m/s, we expect contact to be at.
+    using T = double;
+    grid::Grid<T, T> SDFA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
+    makeSDF(SDFA, "blender_star.obj", finishedVoxelsA, voxelsA, 64, 8);
+    std::cerr << "Finished filtering SDF 1/2!" << "\n";
+    grid::Grid<T, T> SDFB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
+    std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
+    makeSDF(SDFB, "blender_star.obj", finishedVoxelsB, voxelsB, 64, 8);
+    std::cerr << "Finished filtering SDF 2/2!" << "\n";
+
+    EigenVector3<T> angularVelA(0, 0, 0);
+    EigenVector3<T> angularVelB(0, 0, 0);
+    EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
+    EigenQuaternion<T> rotB = EigenQuaternion<T>::Identity();
+    EigenVector3<T> transA(0.0, 0.0, 0.0);
+    EigenVector3<T> transB(0.0, 4.0, 0.0);
+    EigenVector3<T> linearA(0.0, 10.0, 0.0);
+    EigenVector3<T> linearB(0, 0, 0);
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoA;
+    rInfoA.A_angularVel = &angularVelA;
+    rInfoA.A_centerRotation = &rotA;
+    rInfoA.A_centerTranslation = &transA;
+    rInfoA.A_linearVel = &linearA;
+    rInfoA.sdf = &SDFA;
+
+    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB;
+    rInfoB.A_angularVel = &angularVelB;
+    rInfoB.A_centerRotation = &rotB;
+    rInfoB.A_centerTranslation = &transB;
+    rInfoB.A_linearVel = &linearB;
+    rInfoB.sdf = &SDFB;
+
+    for (size_t i = 0; i < finishedVoxelsA.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsA[i].selected.size(); ++j)
+        {
+            finishedVoxelsA[i].selected.clear();
+        }
+    }
+    for (size_t i = 0; i < finishedVoxelsB.size(); ++i)
+    {
+        for (size_t j = 0; j < finishedVoxelsB[i].selected.size(); ++j)
+        {
+            finishedVoxelsB[i].selected.clear();
+        }
+    }
+    SDFSDFContact::SelectedPoint<T> sp;
+    sp.pos = EigenVector3<T>(0.001112, 0.797714, -0.57828);
+    finishedVoxelsA[0].selected.push_back(sp);
+
+    std::vector<EigenVector3<T>> dummy;
+    T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
+                                        rInfoA, rInfoB, T(0.0), T(1.0), dummy);
+    BOOST_TEST(std::abs<T>(toi - 0.289893) <= 0.0001);
     std::cerr << "GOT TOI = " << toi << "\n";
 }
 

@@ -797,6 +797,7 @@ T BrentMinimize_SLOW_BUT_ACCURATE(T lstart, T lend, F func,
         if (!improved) { break; }
     }
 
+    //    if (func(poseA, poseB, SDFA, SDFB, final_x, startingPoint) > 1e-6) return lend;
     return final_x;
 }
 
@@ -991,17 +992,20 @@ template <typename T>
 T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
                              const SingleRigidBodyInfo<T>& SDFA,
                              const SingleRigidBodyInfo<T>& SDFB, T tstart,
-                             T tend)
+                             T tend, EigenVector3<T>& outContactPoint)
 {
+    //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
+
     //First our pos is in local coordinates in the sdf with absolutely no transformations
     // not even those applied to the SDF. Thus we get the pos in world coordinates at time t=0:
     EigenVector3<T> pos
         = *(SDFA.A_centerRotation) * position + *(SDFA.A_centerTranslation);
     T ti = tstart;
     T tip1 = -1.0;
+    EigenVector3<T> xip1;
     EigenVector3<T> x_ti;
-    uint32_t maxIterations = 100;
-    T stepSizeAlpha = 0.001;
+    uint32_t maxIterations = 10000;
+    T stepSizeAlpha = 0.0001;
     T eps = 1e-8;
     for (uint32_t i = 0; i < maxIterations; ++i)
     {
@@ -1045,19 +1049,24 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         }
         else
         {
-            auto start = std::chrono::high_resolution_clock::now();
-            tip1 = BrentMinimize_BEST<T>(ti, tend * 0.5, SignedDistance<T>,
-                                         poseA, poseB, SDFA, SDFB, pos);
-            T tip2 = BrentMinimize_BEST<T>(tend * 0.5, tend, SignedDistance<T>,
-                                           poseA, poseB, SDFA, SDFB, pos);
-            tip1 = std::min<T>(tip1, tip2);
-            auto end = std::chrono::high_resolution_clock::now();
+            //            auto start = std::chrono::high_resolution_clock::now();
+            tip1 = BrentMinimize_SLOW_BUT_ACCURATE<T>(ti, tend * 0.5,
+                                                      SignedDistance<T>, poseA,
+                                                      poseB, SDFA, SDFB, pos);
+            T tip2 = BrentMinimize_SLOW_BUT_ACCURATE<T>(
+                tend * 0.5, tend, SignedDistance<T>, poseA, poseB, SDFA, SDFB,
+                pos);
+            if (std::abs<T>(tip1 - tend * 0.5) < eps) { tip1 = tip2; }
+            else { tip1 = std::min<T>(tip1, tip2); }
+            return tip1;
+
+            /*            auto end = std::chrono::high_resolution_clock::now();
             auto duration
                 = std::chrono::duration_cast<std::chrono::nanoseconds>(end
                                                                        - start);
             uint64_t ns_duration = duration.count();
             std::cerr << ns_duration << ", ";
-            return tip1;
+            return tip1;*/
         }
 
         //The normal is quite simple to compute. We know pos is in world coordinates, but at time t=0.
@@ -1078,13 +1087,11 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         //That means real world coordinates, so now we should apply the transformations in
         //reverse that made pos move to time t_i. So we computed the rotation and translation
         // of SDFB in time t_i and move the x_ti -> local SDF
-        EigenVector3<T> gradB
-            = gradientAtProjectionForB(x_ti, *(SDFB.sdf),
-                                       *(SDFB.A_centerTranslation),
-                                       *(SDFB.A_centerRotation), poseB)
-                  .normalized();
+        EigenVector3<T> gradB = gradientAtProjectionForB(
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
         EigenVector3<T> gradientDir = (gradB - (gradB.dot(normA)) * normA);
-        EigenVector3<T> xip1 = x_ti - stepSizeAlpha * gradientDir;
+        xip1 = x_ti - stepSizeAlpha * gradientDir;
         //Check for convergence...
         //Maybe check tip?
         if (std::abs<T>(xip1.norm() - x_ti.norm()) < eps
@@ -1103,21 +1110,33 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         //Now set our new search start point to pos!
         pos = xip1;
     }
+    outContactPoint = xip1;
     return tip1;
 }
 
 template <typename T>
 T getSDFSDFTOISingleVoxel(const SDFVoxel<T>& SDFBVoxel,
                           const SingleRigidBodyInfo<T>& SDFA,
-                          const SingleRigidBodyInfo<T>& SDFB, T tstart, T tend)
+                          const SingleRigidBodyInfo<T>& SDFB, T tstart, T tend,
+                          std::vector<EigenVector3<T>>& outContactPoints)
 {
     T minTOI = std::numeric_limits<T>::max();
     for (size_t i = 0; i < SDFBVoxel.selected.size(); ++i)
     {
         EigenVector3<T> selectedPoint = SDFBVoxel.selected[i].pos;
+        EigenVector3<T> outContactPoint;
         T toi = getSDFSDFTOISingleVoxelCCD(selectedPoint, SDFA, SDFB, tstart,
-                                           tend);
-        minTOI = std::min<T>(minTOI, toi);
+                                           tend, outContactPoint);
+        if (std::abs<T>(toi - minTOI) <= 1e-9)
+        {
+            outContactPoints.push_back(outContactPoint);
+        }
+        else if (toi <= minTOI)
+        {
+            outContactPoints.clear();
+            outContactPoints.push_back(outContactPoint);
+            minTOI = toi;
+        }
     }
     return minTOI;
 }
@@ -1126,24 +1145,37 @@ template <typename T>
 T getSDFSDFTOI(const std::vector<SDFVoxel<T>>& SDFAVoxel,
                const std::vector<SDFVoxel<T>>& SDFBVoxel,
                const SingleRigidBodyInfo<T>& SDFA,
-               const SingleRigidBodyInfo<T>& SDFB, T tstart, T tend)
+               const SingleRigidBodyInfo<T>& SDFB, T tstart, T tend,
+               std::vector<EigenVector3<T>>& outContactPoints)
 {
 
     T minTOI = std::numeric_limits<T>::max();
     //Compute all voxels of SDF A
     for (size_t i = 0; i < SDFAVoxel.size(); ++i)
     {
+        std::vector<EigenVector3<T>> newOutContactPoints;
         //Importantly to get correct projection first loop is SDFA, SDFB, second should swap!
-        T toi = getSDFSDFTOISingleVoxel(SDFAVoxel[i], SDFA, SDFB, tstart, tend);
-        minTOI = std::min<T>(minTOI, toi);
+        T toi = getSDFSDFTOISingleVoxel(SDFAVoxel[i], SDFA, SDFB, tstart, tend,
+                                        newOutContactPoints);
+        if (minTOI >= toi)
+        {
+            minTOI = toi;
+            outContactPoints = std::move(newOutContactPoints);
+        };
     }
 
     //Compute all voxels of SDF B
     for (size_t i = 0; i < SDFBVoxel.size(); ++i)
     {
+        std::vector<EigenVector3<T>> newOutContactPoints;
         //Importantly to get correct projection first loop is SDFA, SDFB, second should swap!
-        T toi = getSDFSDFTOISingleVoxel(SDFBVoxel[i], SDFB, SDFA, tstart, tend);
-        minTOI = std::min<T>(minTOI, toi);
+        T toi = getSDFSDFTOISingleVoxel(SDFBVoxel[i], SDFB, SDFA, tstart, tend,
+                                        newOutContactPoints);
+        if (minTOI >= toi)
+        {
+            minTOI = toi;
+            outContactPoints = std::move(newOutContactPoints);
+        }
     }
     return minTOI;
 }
