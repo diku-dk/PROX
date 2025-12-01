@@ -1053,6 +1053,42 @@ EigenVector3<T> getVelocityAtPoint(const EigenVector3<T>& translationA,
     //return (v_world + omega_world.cross(point - C0));
 }
 
+/*template <typename T>
+T backtracking_line_search(T tstart, T tend, T u, T v, T w, T t,
+                           EigenVector4<T> gradient, EigenVector4<T> direction,
+                           const RigidBodyInfo<T>& info, T alpha = 1.0,
+                           T rho = 0.5, T c = 1e-4)
+{
+    EigenVector3<T> xt = BarycentricInterpolate(u, v, w, t, info);
+    T current_val
+        = valueAtProjection(*(info.B_sdf), xt, *(info.B_centerTranslation),
+                            *(info.B_centerRotation));
+    //Armijo condition: f(x + αd) ≤ f(x) + cα∇f·d
+    T grad_dot_dir = (gradient.dot(direction));
+    
+    while (alpha > 1e-10)
+    {
+        //step
+        
+        //Project to triangle
+
+        EigenVector3<T> trialPos
+            = BarycentricInterpolate(u_new, v_new, w_new, t_new, info);
+        T step_val = valueAtProjection(*(info.B_sdf), trialPos,
+                                       *(info.B_centerTranslation),
+                                       *(info.B_centerRotation));
+        
+        if (step_val <= current_val + c * alpha * grad_dot_dir)
+        {
+            return alpha;
+        }
+        
+        alpha *= rho;
+    }
+    //Return smallest step if no better found
+    return alpha;
+}*/
+
 template <typename T>
 T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
                              const SingleRigidBodyInfo<T>& SDFA,
@@ -1069,8 +1105,9 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
     T tip1 = -1.0;
     EigenVector3<T> xip1;
     EigenVector3<T> x_ti;
-    uint32_t maxIterations = 100000 / 10;
-    T stepSizeAlpha = 0.0001 * 10;
+    uint32_t maxIterations = 100000 / 100;
+    T stepSizeAlpha = 0.0001 * 100;
+    T stepSizeAlphaOriginal = stepSizeAlpha;
     T eps = 1e-8;
     //x_ti = position;
     pos = projectToSDFSurfaceLocal(pos, SDFA);
@@ -1129,7 +1166,10 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         EigenVector4<T> gradientDir = (gB - (g_dot_n / norm_n2) * nA);
         EigenVector3<T> dx = EigenVector3<T>(gradientDir.x(), gradientDir.y(),
                                              gradientDir.z());
-        T dt = gradientDir.w();
+        T oldPointPenetration = valueAtProjectionForB(
+            xip1, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+        T dt = gradientDir.w() * oldPointPenetration;
         //Below can be either negative or positive, it actually doesnt matter much?
         xip1 = x_ti - stepSizeAlpha * dx;
         tip1 = std::clamp<T>(ti + stepSizeAlpha * dt, tstart, tend);
@@ -1138,11 +1178,24 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         T newPointPenetration = valueAtProjectionForB(
             xip1, *(SDFB.sdf), *(SDFB.A_centerTranslation),
             *(SDFB.A_centerRotation), poseB);
+
+        /*if (newPointPenetration <= -eps)
+        {
+            stepSizeAlpha *= 0.5;
+            tip1 = ti;
+        }
+
+        else */
         if (newPointPenetration <= eps)
         {
             penetration = true;
             break;
         }
+        /*else
+        {
+            //RESET
+            stepSizeAlpha = stepSizeAlphaOriginal;
+        }*/
 
         //Now traverse back to SDF start pose, such that xtip now lies in the
         // SDFs pose at t=0!

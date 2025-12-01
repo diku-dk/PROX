@@ -592,6 +592,7 @@ void investigateStartConfigsParallel(
         T localMaxDiff = std::numeric_limits<T>::min();
         T localMinDiffDist = std::numeric_limits<T>::max();
         T localMaxDiffDist = std::numeric_limits<T>::min();
+        T localTimeTaken = T(0);
         std::string stderrBuffer;
     };
 
@@ -690,9 +691,18 @@ void investigateStartConfigsParallel(
                     rInfoB.sdf = &SDFB;
 
                     std::vector<EigenVector3<T>> outContacts;
+                    auto gss_start = std::chrono::high_resolution_clock::now();
+
                     T toi = SDFSDFContact::getSDFSDFTOI(
                         finishedVoxelsA, finishedVoxelsB, rInfoA, rInfoB,
                         T(0.0), T(1.0), outContacts);
+                    auto gss_end = std::chrono::high_resolution_clock::now();
+                    auto gss_us
+                        = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                              gss_end - gss_start)
+                              .count();
+                    T totalAlgorithmTime = T(gss_us);
+
                     std::cerr << "outContacts: " << outContacts[0];
                     toi = std::min<T>(toi, maxDT);
                     EigenVector3<T> firstIntersectPoint;
@@ -790,6 +800,7 @@ void investigateStartConfigsParallel(
                         local.localMinDiffDist = diffDistance;
                     if (diffDistance > local.localMaxDiffDist)
                         local.localMaxDiffDist = diffDistance;
+                    local.localTimeTaken += totalAlgorithmTime;
 
                     // --- end per-config code ---
                 } // end for each i
@@ -803,6 +814,7 @@ void investigateStartConfigsParallel(
     for (auto& th : workers) th.join();
 
     // Merge per-thread results into globals
+    T allTime = 0.0;
     for (const auto& local : locals)
     {
         // append diffs
@@ -817,6 +829,7 @@ void investigateStartConfigsParallel(
             minDiffDist = local.localMinDiffDist;
         if (local.localMaxDiffDist > maxDiffDist)
             maxDiffDist = local.localMaxDiffDist;
+        allTime += local.localTimeTaken;
 
         // print buffered stderr in sequence to avoid interleaving
         if (!local.stderrBuffer.empty()) { std::cerr << local.stderrBuffer; }
@@ -834,6 +847,8 @@ void investigateStartConfigsParallel(
 
     // Print stats gathered by classifyResult
     stats.printStatistics();
+    std::cerr << "The gradient descent function took "
+              << allTime / T(startConfigs.size()) << " ns.\n";
 
     // Compute aggregated summary stats for allDifs (same as original)
     {
