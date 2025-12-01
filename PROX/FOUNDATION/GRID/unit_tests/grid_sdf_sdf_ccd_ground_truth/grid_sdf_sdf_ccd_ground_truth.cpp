@@ -617,7 +617,6 @@ void investigateStartConfigsParallel(
 
                 for (size_t i = begin; i < end; ++i)
                 {
-                    // --- begin: original per-config code, unchanged except pushing into local containers ---
                     EigenVector3<T> angularVelocity = EigenVector3<T>(0, 0, 0);
                     EigenVector3<T> linearVelocity
                         = startConfigs[i].linearVelocity;

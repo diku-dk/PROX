@@ -989,10 +989,184 @@ T SignedDistance(const currentSDFPose<T>& poseA_dead,
 }
 
 template <typename T>
+EigenVector3<T> compute_effective_point_velocity_for_A_at(
+    const EigenVector3<T>& world_x, const EigenVector3<T>& cA,
+    const EigenVector3<T>& v_cA, const EigenVector3<T>& omegaA)
+{
+    // cross = (x - cA) cross omega
+    EigenVector3<T> r = world_x - cA;
+    EigenVector3<T> cross = r.cross(omegaA);
+
+    // effective velocity for partial_t (x held fixed)
+    // note the minus on v_cA
+    EigenVector3<T> v_eff = cross - v_cA;
+    return v_eff;
+}
+
+template <typename T>
+EigenVector3<T> getVelocityAtPoint(const EigenVector3<T>& translationA,
+                                   const EigenVector3<T>& xt,
+                                   const EigenVector3<T>& omega,
+                                   const EigenVector3<T>& linearVelocity)
+{
+    //Get the center g of rotation at time t
+    /*    EigenVector3<T> currentCenter
+        = *(initialState.A_centerTranslation) + *(initialState.A_linearVel) * t;
+
+    //Paper's formula: v_t = v_g + ω_g × (x_t - g)
+    EigenVector3<T> radius = point - currentCenter;
+    EigenVector3<T> velocity = *(initialState.A_linearVel)
+                             + (*(initialState.A_angularVel)).cross(radius);
+
+    return velocity;*/
+    /*EigenVector3<T> currentCenter = *(initialState.A_centerTranslation);
+    //EigenVector3<T> currentCenter = (EigenVector3<T>(0, 0, 0)) + *(initialState.A_linearVel) * t;
+
+    //Paper's formula: v_t = v_g + ω_g × (x_t - g)
+    EigenVector3<T> radius = point - currentCenter;
+    EigenVector3<T> velocity = (*(initialState.A_linearVel))
+                             + ((*(initialState.A_angularVel))).cross(radius);
+    
+    
+
+    return velocity * t;*/
+
+    //v®𝑡 = v®𝑔 + 𝜔®𝑔 × (®x𝑡 − g®)
+    return linearVelocity + omega.cross(xt - translationA);
+
+    /*    EigenMatrix3<T> R;
+
+    if (true)
+    {
+        T const radian = omega_world.norm() * t;
+        Eigen::Matrix<T, 3, 1> axis = omega_world.normalized();
+        R = Eigen::AngleAxis<T>(radian, axis).toRotationMatrix();
+    }
+
+    EigenVector3<T> r0 = point - C0;
+
+    EigenVector3<T> tmp0 = (Cnew + R * r0);
+    return tmp0;*/
+    /*    EigenVector3<T> vti = (v_world + omega_world.cross(point - C0));
+    EigenVector3<T> vtiSDF = (vSDF + omegaSDF.cross(point - CSDF));*/
+
+    //return (v_world + omega_world.cross(point - C0));
+}
+
+template <typename T>
 T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
                              const SingleRigidBodyInfo<T>& SDFA,
                              const SingleRigidBodyInfo<T>& SDFB, T tstart,
                              T tend, EigenVector3<T>& outContactPoint)
+{
+    //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
+
+    //First our pos is in local coordinates in the sdf with absolutely no transformations
+    // not even those applied to the SDF. Thus we get the pos in world coordinates at time t=0:
+    EigenVector3<T> pos
+        = *(SDFA.A_centerRotation) * position + *(SDFA.A_centerTranslation);
+    T ti = tstart;
+    T tip1 = -1.0;
+    EigenVector3<T> xip1;
+    EigenVector3<T> x_ti;
+    uint32_t maxIterations = 10000;
+    T stepSizeAlpha = 0.0001;
+    T eps = 1e-8;
+    //x_ti = position;
+    pos = projectToSDFSurfaceLocal(pos, SDFA);
+    bool penetration = false;
+    for (uint32_t i = 0; i < maxIterations; ++i)
+    {
+        x_ti = getVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                 *(SDFA.A_linearVel), *(SDFA.A_angularVel), pos,
+                                 ti);
+        //Assume pos is in world coordinates but not transformed. So it is in world coordinates compared to
+        // SDF_A. So basically pos is always the point in world coordinates at time t=0.
+
+        //Let x always be in local coordiantes. Then we need no transformation for x
+        // in SDF A. x should only be transformed to B when we do gradient computation with B
+        EigenVector3<T> translationB;
+        EigenQuaternion<T> rotationB;
+        EigenVector3<T> translationA;
+        EigenQuaternion<T> rotationA;
+
+        //We do the same as before, but ONLY get the rotation and translation needed
+        // to transform SDF B into time ti, such that we can make accurate quries for
+        // x_ti.
+        getTransformForBody(*(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+                            *(SDFB.A_angularVel), ti, translationB, rotationB);
+        getTransformForBody(*(SDFA.A_centerTranslation), *(SDFA.A_linearVel),
+                            *(SDFA.A_angularVel), ti, translationA, rotationA);
+        currentSDFPose<T> poseB = {translationB, rotationB};
+        currentSDFPose<T> poseA = {translationA, rotationA};
+
+        EigenVector3<T> gradA = gradientAtProjectionForB(
+            x_ti, *(SDFA.sdf), *(SDFA.A_centerTranslation),
+            *(SDFA.A_centerRotation), poseA);
+        EigenVector3<T> normA = gradA.normalized();
+
+        EigenVector3<T> gradB = gradientAtProjectionForB(
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+
+        EigenVector3<T> vtiA
+            = getVelocityAtPoint(*(SDFA.A_centerTranslation), x_ti,
+                                 *(SDFA.A_angularVel), *(SDFA.A_linearVel));
+        EigenVector3<T> vtiB
+            = getVelocityAtPoint(*(SDFB.A_centerTranslation), x_ti,
+                                 *(SDFB.A_angularVel), *(SDFB.A_linearVel));
+        T At = gradA.dot(vtiA);
+        T Bt = gradB.dot(vtiB);
+        EigenVector4<T> gB
+            = EigenVector4<T>(gradB.x(), gradB.y(), gradB.z(), Bt);
+        EigenVector4<T> nA
+            = EigenVector4<T>(gradA.x(), gradA.y(), gradA.z(), At);
+
+        //EigenVector3<T> gradientDir = (gradB - (gradB.dot(normA)) * normA);
+        T g_dot_n = gB.dot(nA);
+        T norm_n2 = dot(nA, nA);
+        EigenVector4<T> gradientDir = (gB - (g_dot_n / norm_n2) * nA);
+        EigenVector3<T> dx = EigenVector3<T>(gradientDir.x(), gradientDir.y(),
+                                             gradientDir.z());
+        T dt = gradientDir.w();
+        xip1 = x_ti - stepSizeAlpha * dx;
+        tip1 = std::clamp<T>(ti + stepSizeAlpha * dt, tstart, tend);
+        //Check for convergence...
+        //Maybe check tip?
+        T newPointPenetration = valueAtProjectionForB(
+            xip1, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+        if (std::abs<T>(xip1.norm() - x_ti.norm()) < eps
+            && newPointPenetration <= eps)
+        {
+            penetration = true;
+            break;
+        }
+
+        //Now traverse back to SDF start pose, such that xtip now lies in the
+        // SDFs pose at t=0!
+        //Pretty sure we should use ti!
+        xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                     *(SDFA.A_linearVel), *(SDFA.A_angularVel),
+                                     xip1, ti);
+        //After transform, remember to project back to local coordinates!
+        xip1 = projectToSDFSurfaceLocal(xip1, SDFA);
+        //Now set our new search start point to pos!
+        pos = xip1;
+        ti = tip1;
+    }
+    // std::cerr << tip1 << "\n";
+    //If no penetration was ever found, we simply do not have a TOI.
+    if (!penetration) tip1 = tend;
+    outContactPoint = xip1;
+    return tip1;
+}
+
+template <typename T>
+T getSDFSDFTOISingleVoxelCCD_P(const EigenVector3<T>& position,
+                               const SingleRigidBodyInfo<T>& SDFA,
+                               const SingleRigidBodyInfo<T>& SDFB, T tstart,
+                               T tend, EigenVector3<T>& outContactPoint)
 {
     //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
 
@@ -1102,9 +1276,11 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
 
         //Now traverse back to SDF start pose, such that xtip now lies in the
         // SDFs pose at t=0!
+        //TODO: CHECK IF WE SHOULD SET ti = tip1 at the end to update time step properly!!!!!!
         xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
                                      *(SDFA.A_linearVel), *(SDFA.A_angularVel),
                                      xip1, ti);
+        ti = tip1;
         //After transform, remember to project back to local coordinates!
         xip1 = projectToSDFSurfaceLocal(xip1, SDFA);
         //Now set our new search start point to pos!
