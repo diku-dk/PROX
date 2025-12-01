@@ -1069,12 +1069,13 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
     T tip1 = -1.0;
     EigenVector3<T> xip1;
     EigenVector3<T> x_ti;
-    uint32_t maxIterations = 10000;
-    T stepSizeAlpha = 0.0001;
+    uint32_t maxIterations = 100000 / 10;
+    T stepSizeAlpha = 0.0001 * 10;
     T eps = 1e-8;
     //x_ti = position;
     pos = projectToSDFSurfaceLocal(pos, SDFA);
     bool penetration = false;
+    uint32_t its;
     for (uint32_t i = 0; i < maxIterations; ++i)
     {
         x_ti = getVertexPosAtMat(*(SDFA.A_centerTranslation),
@@ -1129,6 +1130,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         EigenVector3<T> dx = EigenVector3<T>(gradientDir.x(), gradientDir.y(),
                                              gradientDir.z());
         T dt = gradientDir.w();
+        //Below can be either negative or positive, it actually doesnt matter much?
         xip1 = x_ti - stepSizeAlpha * dx;
         tip1 = std::clamp<T>(ti + stepSizeAlpha * dt, tstart, tend);
         //Check for convergence...
@@ -1136,8 +1138,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         T newPointPenetration = valueAtProjectionForB(
             xip1, *(SDFB.sdf), *(SDFB.A_centerTranslation),
             *(SDFB.A_centerRotation), poseB);
-        if (std::abs<T>(xip1.norm() - x_ti.norm()) < eps
-            && newPointPenetration <= eps)
+        if (newPointPenetration <= eps)
         {
             penetration = true;
             break;
@@ -1154,7 +1155,9 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         //Now set our new search start point to pos!
         pos = xip1;
         ti = tip1;
+        its = i;
     }
+    std::cerr << "ITS: " << its << "\n";
     // std::cerr << tip1 << "\n";
     //If no penetration was ever found, we simply do not have a TOI.
     if (!penetration) tip1 = tend;
