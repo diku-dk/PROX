@@ -366,6 +366,29 @@ void selectFeaturePointsPerVoxelOld(std::vector<SDFVoxel<T>>& voxels,
     } // end loop voxels
 }
 
+template <typename T>
+std::vector<SelectedPoint<T>>
+filterClosePointsStable(const std::vector<SelectedPoint<T>>& pts, T minDist)
+{
+    std::vector<SelectedPoint<T>> kept;
+    T minDist2 = minDist * minDist;
+
+    for (const auto& p : pts)
+    {
+        bool tooClose = false;
+        for (const auto& k : kept)
+        {
+            if ((p.pos - k.pos).squaredNorm() < minDist2)
+            { // squaredNorm -> no sqrt
+                tooClose = true;
+                break;
+            }
+        }
+        if (!tooClose) kept.push_back(p);
+    }
+    return kept;
+}
+
 template <typename D, typename T>
 void selectFeaturePointsPerVoxel(std::vector<SDFVoxel<T>>& voxels,
                                  const EigenVector3<T>& global_mmin, T spacing,
@@ -818,6 +841,29 @@ void selectFeaturePointsPerVoxel(std::vector<SDFVoxel<T>>& voxels,
                           voxels[i].selected[j].pos, grid);
         }
     }
+
+    //Dedupe all points
+    std::cerr << "Deduping points...\n";
+    T totalPoints = 0;
+    for (size_t i = 0; i < voxels.size(); ++i)
+    {
+        T voxelSize = voxels[i].selected.size();
+        totalPoints += voxelSize;
+    }
+    std::cerr << "Total voxels before dedup: " << totalPoints << "\n";
+    for (size_t i = 0; i < voxels.size(); ++i)
+    {
+        std::vector<SelectedPoint<T>> val
+            = filterClosePointsStable<T>(voxels[i].selected, 0.1);
+        voxels[i].selected = val;
+    }
+    totalPoints = 0;
+    for (size_t i = 0; i < voxels.size(); ++i)
+    {
+        T voxelSize = voxels[i].selected.size();
+        totalPoints += voxelSize;
+    }
+    std::cerr << "Total voxels after dedup: " << totalPoints << "\n";
 }
 
 template <typename D, typename T>

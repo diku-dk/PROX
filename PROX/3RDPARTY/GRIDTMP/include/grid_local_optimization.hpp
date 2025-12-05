@@ -86,28 +86,28 @@ Eigen::Matrix<T, 3, 1> computeGradient_Working(const Eigen::Matrix<T, 3, 1>& p,
         diff.z() / (grid.m_nodes.z() - 1));
 
     // Use cell size for finite differences
-    T hx = cell_size.x() * 1.0;
-    T hy = cell_size.y() * 1.0;
-    T hz = cell_size.z() * 1.0;
+    T hx = cell_size.x() * 2.0;
+    T hy = cell_size.y() * 2.0;
+    T hz = cell_size.z() * 2.0;
 
     // Central difference for gradient approximation
     T dx = (grid::value_at_2(grid,
                              Eigen::Matrix<T, 3, 1>(p.x() + hx, p.y(), p.z()))
             - grid::value_at_2(
                 grid, Eigen::Matrix<T, 3, 1>(p.x() - hx, p.y(), p.z())))
-         / (2 * hx);
+         / (2.0 * hx);
 
     T dy = (grid::value_at_2(grid,
                              Eigen::Matrix<T, 3, 1>(p.x(), p.y() + hy, p.z()))
             - grid::value_at_2(
                 grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y() - hy, p.z())))
-         / (2 * hy);
+         / (2.0 * hy);
 
     T dz = (grid::value_at_2(grid,
                              Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() + hz))
             - grid::value_at_2(
                 grid, Eigen::Matrix<T, 3, 1>(p.x(), p.y(), p.z() - hz)))
-         / (2 * hz);
+         / (2.0 * hz);
 
     return Eigen::Matrix<T, 3, 1>(dx, dy, dz);
 }

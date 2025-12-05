@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(grid_test_sphere_correct_placement)
     sp.pos = EigenVector3<T>(0.0f, 1.0f, 0.0f);
     finishedVoxelsA[0].selected.push_back(sp);
 
-    std::vector<EigenVector3<T>> dummy;
+    EigenVector3<T> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0), dummy);
     std::cerr << "GOT TOI = " << toi << "\n";
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(grid_test_sphere_side_placement)
     sp.pos = EigenVector3<T>(0.0f, 1.0f, 0.0);
     finishedVoxelsA[0].selected.push_back(sp);
 
-    std::vector<EigenVector3<T>> dummy;
+    EigenVector3<T> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0), dummy);
     std::cerr << "GOT TOI = " << toi << "\n";
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(grid_test_box_top_placement)
     sp.pos = EigenVector3<T>(0.0f, 0.5f, 0.0);
     finishedVoxelsA[0].selected.push_back(sp);
 
-    std::vector<EigenVector3<T>> dummy;
+    EigenVector3<T> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0), dummy);
     BOOST_TEST(std::abs<T>(toi - 0.6) <= 0.01);
@@ -454,7 +454,7 @@ BOOST_AUTO_TEST_CASE(grid_test_box_corner_placement)
     sp.pos = EigenVector3<T>(0.5f, 0.5f, 0.5);
     finishedVoxelsA[0].selected.push_back(sp);
 
-    std::vector<EigenVector3<T>> dummy;
+    EigenVector3<T> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0), dummy);
     BOOST_TEST(std::abs<T>(toi - 0.181541) <= 0.01);
@@ -516,7 +516,7 @@ BOOST_AUTO_TEST_CASE(grid_test_box_non_corner_placement)
     SDFSDFContact::SelectedPoint<T> sp;
     sp.pos = EigenVector3<T>(0.0f, 0.5f, 0.0);
     finishedVoxelsA[0].selected.push_back(sp);
-    std::vector<EigenVector3<T>> dummy;
+    EigenVector3<T> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0), dummy);
     BOOST_TEST(std::abs<T>(toi - 0.181541) <= 0.01);
@@ -579,7 +579,7 @@ BOOST_AUTO_TEST_CASE(grid_test_star_star)
     sp.pos = EigenVector3<T>(0.001112, 0.797714, -0.57828);
     finishedVoxelsA[0].selected.push_back(sp);
 
-    std::vector<EigenVector3<T>> dummy;
+    EigenVector3<T> dummy;
     T toi = SDFSDFContact::getSDFSDFTOI(finishedVoxelsA, finishedVoxelsB,
                                         rInfoA, rInfoB, T(0.0), T(1.0), dummy);
     BOOST_TEST(std::abs<T>(toi - 0.289893) <= 0.01);

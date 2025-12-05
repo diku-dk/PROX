@@ -20,7 +20,7 @@ template <typename T> struct SelectedPoint
 
     EigenVector3<T> pos;
     T sdf;
-    // optional: store grid index if it originates from a grid sample
+    // store grid index if it originates from a grid sample
     int gx = -1, gy = -1, gz = -1;
 };
 
