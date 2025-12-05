@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
         namespace fs = std::filesystem;
         fs::path source_dir = fs::path(__FILE__).parent_path();
         fs::path bunnyRelative
-            = "../../../../../bin/resources/objs/blender_sphere.obj";
+            = "../../../../../bin/resources/objs/blender_star.obj";
         fs::path bunnyFull = source_dir / bunnyRelative;
         fs::path bunnyNormalized = bunnyFull.lexically_normal();
 
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
 
             uint32_t a, b, c;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxels
-                = SDFSDFContact::createVoxels(G.min(), G.max(), 4, cellSpacing,
+                = SDFSDFContact::createVoxels(G.min(), G.max(), 8, cellSpacing,
                                               a, b, c);
             //Filter voxels;
             std::vector<SDFSDFContact::SDFVoxel<T>> filteredVoxels

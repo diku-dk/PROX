@@ -212,28 +212,59 @@ BOOST_AUTO_TEST_CASE(grid_test_bunny_many_points_main)
 
 //Note for this function we assume one satatic SDF and one moving towards the static one.
 //As soon as it returns true we can stop
+/*template <typename T>
+struct SinglePoint
+{
+    name() {}
+};*/
+
 template <typename T>
 bool getContactInTimeInstance(
     const std::vector<EigenVector3<T>>& points,
     const grid::Grid<T, T>& staticSDF,
     const SDFSDFContact::SingleRigidBodyInfo<T>& movingSDF,
-    T currentTimeInstance, std::vector<EigenVector3<T>>& outContactPoints)
+    T currentTimeInstance, EigenVector3<T>& outContactPoints)
 {
+    outContactPoints = EigenVector3<T>(std::numeric_limits<T>::max(),
+                                       std::numeric_limits<T>::max(),
+                                       std::numeric_limits<T>::max());
+    bool contact = false;
     for (size_t i = 0; i < points.size(); ++i)
     {
+
+        /*EigenVector3<T> translationB;
+        EigenQuaternion<T> rotationB;
+        SDFSDFContact::getTransformForBody(
+            *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
+            *(movingSDF.A_angularVel), currentTimeInstance, translationB,
+            rotationB);
+        SDFSDFContact::currentSDFPose<T> poseB = {translationB, rotationB};
+        EigenVector3<T> xPos = SDFSDFContact::getVertexPosAtMat(
+            *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
+            *(movingSDF.A_angularVel), points[i], currentTimeInstance);*/
+
         EigenVector3<T> pointWorldSpace
             = *(movingSDF.A_centerRotation) * points[i]
             + *(movingSDF.A_centerTranslation);
         EigenVector3<T> pointAtNewTime = SDFSDFContact::getVertexPosAtMat(
             *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
             *(movingSDF.A_angularVel), pointWorldSpace, currentTimeInstance);
-        /*        T distToSolution = grid::valueAtProjection(
-            grid, pointAtNewTime, *(movingSDF.A_centerTranslation),
-            *(movingSDF.A_centerRotation));*/
+
         T distToSolution = grid::value_at_2(staticSDF, pointAtNewTime);
-        if (distToSolution <= 0) { outContactPoints.push_back(pointAtNewTime); }
+        /*T distToSolution = SDFSDFContact::valueAtProjectionForB(
+            xPos, *(movingSDF.sdf), *(movingSDF.A_centerTranslation),
+            *(movingSDF.A_centerRotation), poseB);*/
+        if (distToSolution <= 0)
+        {
+            contact = true;
+
+            if (pointAtNewTime.norm() < outContactPoints.norm())
+            {
+                outContactPoints = pointAtNewTime;
+            }
+        }
     }
-    return outContactPoints.size() > 0;
+    return contact;
 }
 
 template <typename T> struct StartConfigurations
@@ -637,7 +668,8 @@ void investigateStartConfigsParallel(
                     T maxDT = 1.0;
                     T smallStep = 1e-5;
                     T evenSmallerStep = 1e-8;
-                    std::vector<EigenVector3<T>> outContactPoints;
+                    T evenTinierStep = 1e-11;
+                    EigenVector3<T> outContactPoints;
                     while (dt <= maxDT)
                     {
                         bool hasPenetrated = getContactInTimeInstance<T>(
@@ -647,13 +679,26 @@ void investigateStartConfigsParallel(
                             T stepBackDT = dt - smallStep;
                             while (stepBackDT <= dt)
                             {
+                                //std::cerr << "stepback: " << stepBackDT << "\n";
                                 bool hasPenetrated2
                                     = getContactInTimeInstance<T>(
-                                        final_points, SDFB, bodyInfo, dt,
-                                        outContactPoints);
+                                        final_points, SDFB, bodyInfo,
+                                        stepBackDT, outContactPoints);
                                 if (hasPenetrated2)
                                 {
-                                    dt = stepBackDT;
+                                    /*T stepBackDTNew = dt - evenSmallerStep;
+                                    while (stepBackDTNew <= dt)
+                                    {
+                                        std::cerr << "stepbackTinier: "
+                                                  << stepBackDTNew << "\n";
+                                        bool hasPenetrated3
+                                            = getContactInTimeInstance<T>(
+                                                final_points, SDFB, bodyInfo,
+                                                dt, outContactPoints);
+                                        if (hasPenetrated3) {}
+                                        stepBackDTNew += evenTinierStep;
+                                    }
+                                    dt = stepBackDT;*/
                                     break;
                                 }
                                 stepBackDT += evenSmallerStep;
@@ -664,12 +709,10 @@ void investigateStartConfigsParallel(
 
                         dt += smallStep;
                     }
+                    //throw std::runtime_error("STOPHERE!");
                     dt = std::min<T>(maxDT, dt);
                     //For now select one point only.
-                    if (dt != maxDT && false)
-                    {
-                        lastContactPoint = outContactPoints[0];
-                    }
+                    if (dt != maxDT) { lastContactPoint = outContactPoints; }
                     else
                     {
                         lastContactPoint
@@ -715,6 +758,54 @@ void investigateStartConfigsParallel(
                         firstIntersectPoint
                             = EigenVector3<T>(-10000.0, -10000.0, -10000.0);
                     }
+
+                    std::cerr << "GOT DT VS TOI: " << dt << " vs " << toi
+                              << "\n";
+
+                    //For Print!!
+                    EigenVector3<T> translationB;
+                    EigenQuaternion<T> rotationB;
+                    SDFSDFContact::getTransformForBody(
+                        *(rInfoB.A_centerTranslation), *(rInfoB.A_linearVel),
+                        *(rInfoB.A_angularVel), dt, translationB, rotationB);
+                    SDFSDFContact::currentSDFPose<T> poseB
+                        = {translationB, rotationB};
+                    EigenVector3<T> translationA;
+                    EigenQuaternion<T> rotationA;
+                    SDFSDFContact::getTransformForBody(
+                        *(rInfoA.A_centerTranslation), *(rInfoA.A_linearVel),
+                        *(rInfoA.A_angularVel), dt, translationA, rotationA);
+                    SDFSDFContact::currentSDFPose<T> poseA
+                        = {translationA, rotationA};
+                    EigenVector3<T> gradientB
+                        = SDFSDFContact::gradientAtProjectionForB(
+                            lastContactPoint, *(rInfoB.sdf),
+                            *(rInfoB.A_centerTranslation),
+                            *(rInfoB.A_centerRotation), poseB);
+                    EigenVector3<T> gradientA
+                        = SDFSDFContact::gradientAtProjectionForB(
+                            lastContactPoint, *(rInfoA.sdf),
+                            *(rInfoA.A_centerTranslation),
+                            *(rInfoA.A_centerRotation), poseA);
+                    std::cerr << "DIST TO surface B: "
+                              << SDFSDFContact::valueAtProjectionForB(
+                                     lastContactPoint, *(rInfoB.sdf),
+                                     *(rInfoB.A_centerTranslation),
+                                     *(rInfoB.A_centerRotation), poseB)
+                              << " and dist to surface A: "
+                              << SDFSDFContact::valueAtProjectionForB(
+                                     lastContactPoint, *(rInfoA.sdf),
+                                     *(rInfoA.A_centerTranslation),
+                                     *(rInfoA.A_centerRotation), poseA)
+                              << ". Gradient of A and gradient B: (("
+                              << gradientA.x() << "," << gradientA.y() << ","
+                              << gradientA.z() << "),(" << gradientB.x() << ","
+                              << gradientB.y() << "," << gradientB.z()
+                              << ")) and finally xti=(" << lastContactPoint.x()
+                              << "," << lastContactPoint.y() << ","
+                              << lastContactPoint.z() << ")\n";
+                    std::cerr << "NOte gradientA times gradientB: "
+                              << gradientA.cross(gradientB) << "\n";
 
                     // Buffer some debug output — we'll flush it thread-safely later
                     erross << "GOT DT VS TOI: " << dt << " vs " << toi << "\n";
@@ -806,7 +897,7 @@ void investigateStartConfigsParallel(
                 } // end for each i
 
                 // store buffered stderr
-                local.stderrBuffer = erross.str();
+                local.stderrBuffer = "DONE"; //erross.str();
             });
     } // end launch threads
 
@@ -958,6 +1049,7 @@ void investigateStartConfigs(
                 T stepBackDT = dt - smallStep;
                 while (stepBackDT <= dt)
                 {
+
                     bool hasPenetrated2 = getContactInTimeInstance<T>(
                         final_points, SDFB, bodyInfo, dt, outContactPoints);
                     if (hasPenetrated2)
@@ -1166,19 +1258,19 @@ void investigateStartConfigs(
 BOOST_AUTO_TEST_CASE(grid_local_strategy)
 {
     {
-        using D = float;
-        using T = float;
+        using D = double;
+        using T = double;
         {
             grid::Grid<T, T> SDFA;
             std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
-            makeSDF(SDFA, "blender_star.obj", finishedVoxelsA, voxelsA, 64, 8);
+            makeSDF(SDFA, "torus.obj", finishedVoxelsA, voxelsA, 64, 8);
             std::cerr << "Finished filtering SDF 1/2!" << "\n";
             //This is static for tihs case!
             grid::Grid<T, T> SDFB;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
             std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
-            makeSDF(SDFB, "blender_star.obj", finishedVoxelsB, voxelsB, 64, 8);
+            makeSDF(SDFB, "torus.obj", finishedVoxelsB, voxelsB, 64, 8);
             std::cerr << "Finished filtering SDF 2/2!" << "\n";
             std::vector<Eigen::Matrix<T, 3, 1>>
                 final_points; // collects points to push
@@ -1270,10 +1362,20 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                                           final_points[i], SDFA);
             }
 
+            for (size_t i = 0; i < final_points.size(); ++i)
+            {
+                final_points[i]
+                    = final_points[i]
+                    - grid::value_at_2(SDFA, final_points[i])
+                          * grid::computeGradient_Working(final_points[i], SDFA)
+                                .normalized()
+                          * 2.0;
+            }
+
             std::cerr << "SIZE: " << final_points.size() << "\n";
 
             std::vector<StartConfigurations<T>> startConfigs
-                = generateStartConfigurations<T>(50, 1.0, 1.0, 6.0, 3.0, 15.0,
+                = generateStartConfigurations<T>(200, 1.0, 1.0, 6.0, 3.0, 15.0,
                                                  50);
             investigateStartConfigsParallel<T>(startConfigs, SDFA, SDFB,
                                                final_points, finishedVoxelsA,

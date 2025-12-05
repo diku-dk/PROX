@@ -927,7 +927,7 @@ void time_stepper_CCD(T dt, std::vector<RigidBody<T>>& bodies,
             //Else empty?
 
             //set_position_vector(bodies.begin(), bodies.end(), q);
-            //set_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
+            set_position_vector_eigen(bodies.begin(), bodies.end(), qNew);
             //set_velocity_vector(bodies.begin(), bodies.end(), u);
             set_velocity_vector_eigen(bodies.begin(), bodies.end(), uNew);
 

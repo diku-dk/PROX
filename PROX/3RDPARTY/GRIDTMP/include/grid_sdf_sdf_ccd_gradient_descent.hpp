@@ -923,7 +923,8 @@ EigenVector3<T> projectToSDFSurfaceLocal(EigenVector3<T> pos,
                                    *(sdfInfo.A_centerRotation))
                * grid::gradientAtProjection(pos, *(sdfInfo.sdf),
                                             *(sdfInfo.A_centerTranslation),
-                                            *(sdfInfo.A_centerRotation));
+                                            *(sdfInfo.A_centerRotation))
+                     .normalized();
 }
 
 //Apply the standard SDF transformation and then the time transformation
@@ -1053,31 +1054,42 @@ EigenVector3<T> getVelocityAtPoint(const EigenVector3<T>& translationA,
     //return (v_world + omega_world.cross(point - C0));
 }
 
-/*template <typename T>
-T backtracking_line_search(T tstart, T tend, T u, T v, T w, T t,
-                           EigenVector4<T> gradient, EigenVector4<T> direction,
-                           const RigidBodyInfo<T>& info, T alpha = 1.0,
+template <typename T>
+T backtracking_line_search(T tstart, T tend, T ti, const EigenVector3<T> xt,
+                           const EigenVector4<T>& gradient,
+                           const EigenVector4<T>& direction,
+                           const SingleRigidBodyInfo<T>& SDFA,
+                           const SingleRigidBodyInfo<T>& SDFB,
+                           const currentSDFPose<T>& poseB, T alpha = 1.0,
                            T rho = 0.5, T c = 1e-4)
 {
-    EigenVector3<T> xt = BarycentricInterpolate(u, v, w, t, info);
     T current_val
-        = valueAtProjection(*(info.B_sdf), xt, *(info.B_centerTranslation),
-                            *(info.B_centerRotation));
+        = valueAtProjectionForB(xt, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+                                *(SDFB.A_centerRotation), poseB);
     //Armijo condition: f(x + αd) ≤ f(x) + cα∇f·d
     T grad_dot_dir = (gradient.dot(direction));
-    
-    while (alpha > 1e-10)
+    currentSDFPose<T> pose = poseB;
+
+    while (alpha > 1e-7)
     {
+        T tnew = ti + alpha * direction.w();
+        //tnew = ti;
         //step
-        
+
         //Project to triangle
 
+        getTransformForBody(*(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+                            *(SDFB.A_angularVel), tnew, pose.translation,
+                            pose.rotation);
         EigenVector3<T> trialPos
-            = BarycentricInterpolate(u_new, v_new, w_new, t_new, info);
-        T step_val = valueAtProjection(*(info.B_sdf), trialPos,
-                                       *(info.B_centerTranslation),
-                                       *(info.B_centerRotation));
-        
+            = xt
+            - alpha
+                  * EigenVector3<T>(direction.x(), direction.y(),
+                                    direction.z());
+        T step_val = valueAtProjectionForB(trialPos, *(SDFB.sdf),
+                                           *(SDFB.A_centerTranslation),
+                                           *(SDFB.A_centerRotation), poseB);
+
         if (step_val <= current_val + c * alpha * grad_dot_dir)
         {
             return alpha;
@@ -1087,7 +1099,199 @@ T backtracking_line_search(T tstart, T tend, T u, T v, T w, T t,
     }
     //Return smallest step if no better found
     return alpha;
-}*/
+}
+
+template <typename T>
+T backtracking_line_search_time_only(
+    T tstart, T tend, T ti, const EigenVector3<T> xt,
+    const EigenVector4<T>& gradient, const EigenVector4<T>& direction,
+    const SingleRigidBodyInfo<T>& SDFA, const SingleRigidBodyInfo<T>& SDFB,
+    const currentSDFPose<T>& poseB, T alpha = 1.0, T rho = 0.5, T c = 1e-4)
+{
+    T current_val
+        = valueAtProjectionForB(xt, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+                                *(SDFB.A_centerRotation), poseB);
+    //Armijo condition: f(x + αd) ≤ f(x) + cα∇f·d
+    T grad_dot_dir = (gradient.dot(direction));
+    currentSDFPose<T> pose = poseB;
+
+    while (alpha > 1e-7)
+    {
+        T tnew = ti + alpha * direction.w();
+        //tnew = ti;
+        //step
+
+        //Project to triangle
+
+        getTransformForBody(*(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+                            *(SDFB.A_angularVel), tnew, pose.translation,
+                            pose.rotation);
+        EigenVector3<T> trialPos = xt;
+        T step_val = valueAtProjectionForB(trialPos, *(SDFB.sdf),
+                                           *(SDFB.A_centerTranslation),
+                                           *(SDFB.A_centerRotation), poseB);
+
+        if (step_val <= current_val + c * alpha * grad_dot_dir)
+        {
+            return alpha;
+        }
+
+        alpha *= rho;
+    }
+    //Return smallest step if no better found
+    return alpha;
+}
+
+template <typename T>
+T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
+                             const SingleRigidBodyInfo<T>& SDFA,
+                             const SingleRigidBodyInfo<T>& SDFB, T tstart,
+                             T tend, T bestDTFound,
+                             EigenVector3<T>& outContactPoint)
+{
+    //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
+    if ((*(SDFA.A_angularVel)).norm() <= 1e-12
+        && (*(SDFA.A_linearVel)).norm() <= 1e-12)
+    {
+        return tend;
+    }
+
+    //First our pos is in local coordinates in the sdf with absolutely no transformations
+    // not even those applied to the SDF. Thus we get the pos in world coordinates at time t=0:
+    EigenVector3<T> pos
+        = *(SDFA.A_centerRotation) * position + *(SDFA.A_centerTranslation);
+    T ti = tstart;
+    T tip1 = -1.0;
+    EigenVector3<T> xip1;
+    EigenVector3<T> x_ti;
+    T scale = 100.0;
+    uint32_t maxIterations = 100000 / uint32_t(scale);
+    T stepSizeAlpha = 0.0001 * scale;
+    T stepSizeAlphaOriginal = stepSizeAlpha;
+    T eps = 1e-8;
+    //x_ti = position;
+    pos = projectToSDFSurfaceLocal(pos, SDFA);
+    bool penetration = false;
+    uint32_t its;
+    for (uint32_t i = 0; i < maxIterations; ++i)
+    {
+        x_ti = getVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                 *(SDFA.A_linearVel), *(SDFA.A_angularVel), pos,
+                                 ti);
+        //Assume pos is in world coordinates but not transformed. So it is in world coordinates compared to
+        // SDF_A. So basically pos is always the point in world coordinates at time t=0.
+
+        //Let x always be in local coordiantes. Then we need no transformation for x
+        // in SDF A. x should only be transformed to B when we do gradient computation with B
+        EigenVector3<T> translationB;
+        EigenQuaternion<T> rotationB;
+        EigenVector3<T> translationA;
+        EigenQuaternion<T> rotationA;
+        //Early exit -- no need to search more if we have a significantly earlier candidate!
+        if (ti * 0.5 > bestDTFound || ti >= tend) { return ti; }
+
+        //We do the same as before, but ONLY get the rotation and translation needed
+        // to transform SDF B into time ti, such that we can make accurate quries for
+        // x_ti.
+        getTransformForBody(*(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+                            *(SDFB.A_angularVel), ti, translationB, rotationB);
+        getTransformForBody(*(SDFA.A_centerTranslation), *(SDFA.A_linearVel),
+                            *(SDFA.A_angularVel), ti, translationA, rotationA);
+        currentSDFPose<T> poseB = {translationB, rotationB};
+        currentSDFPose<T> poseA = {translationA, rotationA};
+
+        EigenVector3<T> gradA = gradientAtProjectionForB(
+            x_ti, *(SDFA.sdf), *(SDFA.A_centerTranslation),
+            *(SDFA.A_centerRotation), poseA);
+        EigenVector3<T> normA = gradA.normalized();
+
+        EigenVector3<T> gradB = gradientAtProjectionForB(
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+
+        EigenVector3<T> vtiA
+            = getVelocityAtPoint(*(SDFA.A_centerTranslation), x_ti,
+                                 *(SDFA.A_angularVel), *(SDFA.A_linearVel));
+        EigenVector3<T> vtiB
+            = getVelocityAtPoint(*(SDFB.A_centerTranslation), x_ti,
+                                 *(SDFB.A_angularVel), *(SDFB.A_linearVel));
+        T At = gradA.dot(vtiA);
+        T Bt = gradB.dot(vtiB);
+        EigenVector4<T> gB
+            = EigenVector4<T>(gradB.x(), gradB.y(), gradB.z(), Bt);
+        EigenVector4<T> nA
+            = EigenVector4<T>(gradA.x(), gradA.y(), gradA.z(), At);
+
+        //EigenVector3<T> gradientDir = (gradB - (gradB.dot(normA)) * normA);
+        T g_dot_n = gB.dot(nA);
+        T norm_n2 = dot(nA, nA);
+        EigenVector4<T> gradientDir = (gB - (g_dot_n / norm_n2) * nA);
+        /*        EigenVector4<T> gradientDirNew = (gB-nA);
+        gradientDir.x() = gradientDirNew.x();
+        gradientDir.y() = gradientDirNew.y();
+        gradientDir.z() = gradientDirNew.z();*/
+        //gradientDir.w() = -gradientDirNew.w();
+        //gradientDir = -gB;
+        EigenVector3<T> dx = EigenVector3<T>(gradientDir.x(), gradientDir.y(),
+                                             gradientDir.z());
+        T oldPointPenetration = valueAtProjectionForB(
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+        T dt = gradientDir.w() * (oldPointPenetration);
+        //Below can be either negative or positive, it actually doesnt matter much?
+        EigenVector4<T> p = -gradientDir;
+        //stepSizeAlpha = backtracking_line_search<T>(tstart, tend, ti, x_ti, p, gradientDir, SDFA, SDFB, poseB);
+        xip1 = x_ti - stepSizeAlpha * dx;
+
+        /*T alphaStepSizeT = backtracking_line_search_time_only(
+            tstart, tend, ti, x_ti, p, gradientDir, SDFA, SDFB, poseB);
+        tip1 = std::clamp<T>(ti + alphaStepSizeT * dt, tstart, tend);*/
+        tip1 = std::clamp<T>(ti + stepSizeAlpha * dt, tstart, tend);
+        //Check for convergence...
+        //Maybe check tip?
+        T newPointPenetration = valueAtProjectionForB(
+            xip1, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+
+        /*if (newPointPenetration <= -eps)
+        {
+            stepSizeAlpha *= 0.5;
+            tip1 = ti;
+        }
+
+        else */
+        if (newPointPenetration <= eps)
+        {
+            penetration = true;
+            break;
+        }
+        /*else
+        {
+            //RESET
+            stepSizeAlpha = stepSizeAlphaOriginal;
+        }*/
+
+        //Now traverse back to SDF start pose, such that xtip now lies in the
+        // SDFs pose at t=0!
+        //Pretty sure we should use ti!
+        xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                     *(SDFA.A_linearVel), *(SDFA.A_angularVel),
+                                     xip1, ti);
+        //After transform, remember to project back to local coordinates!
+        xip1 = projectToSDFSurfaceLocal(xip1, SDFA);
+        //Now set our new search start point to pos!
+        pos = xip1;
+        ti = tip1;
+        its = i;
+    }
+    //std::cerr << "ITS: " << its << "\n";
+    // std::cerr << tip1 << "\n";
+    //If no penetration was ever found, we simply do not have a TOI.
+    if (!penetration) tip1 = tend;
+    outContactPoint = xip1;
+
+    return tip1;
+}
 
 template <typename T>
 T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
@@ -1095,6 +1299,11 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
                              const SingleRigidBodyInfo<T>& SDFB, T tstart,
                              T tend, EigenVector3<T>& outContactPoint)
 {
+    if ((*(SDFA.A_angularVel)).norm() <= 1e-12
+        && (*(SDFA.A_linearVel)).norm() <= 1e-12)
+    {
+        return tend;
+    }
     //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
 
     //First our pos is in local coordinates in the sdf with absolutely no transformations
@@ -1105,8 +1314,9 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
     T tip1 = -1.0;
     EigenVector3<T> xip1;
     EigenVector3<T> x_ti;
-    uint32_t maxIterations = 100000 / 100;
-    T stepSizeAlpha = 0.0001 * 100;
+    T scale = 1000.0;
+    uint32_t maxIterations = 100000 / uint32_t(scale);
+    T stepSizeAlpha = 0.0001 * scale;
     T stepSizeAlphaOriginal = stepSizeAlpha;
     T eps = 1e-8;
     //x_ti = position;
@@ -1164,13 +1374,16 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         T g_dot_n = gB.dot(nA);
         T norm_n2 = dot(nA, nA);
         EigenVector4<T> gradientDir = (gB - (g_dot_n / norm_n2) * nA);
+
         EigenVector3<T> dx = EigenVector3<T>(gradientDir.x(), gradientDir.y(),
                                              gradientDir.z());
         T oldPointPenetration = valueAtProjectionForB(
-            xip1, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
             *(SDFB.A_centerRotation), poseB);
         T dt = gradientDir.w() * oldPointPenetration;
         //Below can be either negative or positive, it actually doesnt matter much?
+        EigenVector4<T> p = -gradientDir;
+        //stepSizeAlpha = backtracking_line_search<T>(tstart, tend, ti, x_ti, p, gradientDir, SDFA, SDFB, poseB);
         xip1 = x_ti - stepSizeAlpha * dx;
         tip1 = std::clamp<T>(ti + stepSizeAlpha * dt, tstart, tend);
         //Check for convergence...
@@ -1210,7 +1423,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         ti = tip1;
         its = i;
     }
-    std::cerr << "ITS: " << its << "\n";
+    //std::cerr << "ITS: " << its << "\n";
     // std::cerr << tip1 << "\n";
     //If no penetration was ever found, we simply do not have a TOI.
     if (!penetration) tip1 = tend;
@@ -1358,7 +1571,7 @@ T getSDFSDFTOISingleVoxel(const SDFVoxel<T>& SDFBVoxel,
         EigenVector3<T> selectedPoint = SDFBVoxel.selected[i].pos;
         EigenVector3<T> outContactPoint;
         T toi = getSDFSDFTOISingleVoxelCCD(selectedPoint, SDFA, SDFB, tstart,
-                                           tend, outContactPoint);
+                                           tend, minTOI, outContactPoint);
         if (std::abs<T>(toi - minTOI) <= 1e-9)
         {
             outContactPoints.push_back(outContactPoint);
