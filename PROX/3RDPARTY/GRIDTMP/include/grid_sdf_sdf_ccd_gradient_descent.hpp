@@ -1259,10 +1259,11 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         EigenVector3<T> cools = reverseVertexPosAtMat(
             *(SDFA.A_centerTranslation), *(SDFA.A_linearVel),
             *(SDFA.A_angularVel), xip1, ti);
-        cools = projectToSDFSurfaceLocal(cools, SDFA);
+        EigenVector3<T> atA = projectToSDFSurfaceLocal(cools, SDFA);
+
         cools = getVertexPosAtMat(*(SDFA.A_centerTranslation),
                                   *(SDFA.A_linearVel), *(SDFA.A_angularVel),
-                                  cools, tip1);
+                                  atA, tip1);
 
         T newPointPenetration = valueAtProjectionForB(
             cools, *(SDFB.sdf), *(SDFB.A_centerTranslation),
@@ -1275,6 +1276,11 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         }
 
         else */
+        if (std::abs<T>((x_ti - cools).norm()) <= eps
+            && std::abs<T>(ti - tip1) <= eps)
+        {
+            break;
+        }
         if (newPointPenetration <= eps)
         {
             T f0 = oldPointPenetration;
@@ -1319,11 +1325,12 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         //Now traverse back to SDF start pose, such that xtip now lies in the
         // SDFs pose at t=0!
         //Pretty sure we should use ti!
-        xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
+        /*xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
                                      *(SDFA.A_linearVel), *(SDFA.A_angularVel),
                                      xip1, ti);
         //After transform, remember to project back to local coordinates!
-        xip1 = projectToSDFSurfaceLocal(xip1, SDFA);
+        xip1 = projectToSDFSurfaceLocal(xip1, SDFA);*/
+        xip1 = atA;
         //Now set our new search start point to pos!
         pos = xip1;
         ti = tip1;
