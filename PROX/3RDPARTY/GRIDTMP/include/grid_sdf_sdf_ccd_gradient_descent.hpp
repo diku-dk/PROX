@@ -923,8 +923,7 @@ EigenVector3<T> projectToSDFSurfaceLocal(EigenVector3<T> pos,
                                    *(sdfInfo.A_centerRotation))
                * grid::gradientAtProjection(pos, *(sdfInfo.sdf),
                                             *(sdfInfo.A_centerTranslation),
-                                            *(sdfInfo.A_centerRotation))
-                     .normalized();
+                                            *(sdfInfo.A_centerRotation));
 }
 
 //Apply the standard SDF transformation and then the time transformation
@@ -1238,7 +1237,8 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         T oldPointPenetration = valueAtProjectionForB(
             x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
             *(SDFB.A_centerRotation), poseB);
-        T dt = gradientDir.w() * (oldPointPenetration);
+        T dt = gradientDir.w() * oldPointPenetration
+             * std::max<T>(oldPointPenetration, stepSizeAlphaT * 0.01);
         //T dt = gradientDir.w() * std::min<T>((oldPointPenetration), 0.1);
         //Below can be either negative or positive, it actually doesnt matter much?
         EigenVector4<T> p = -gradientDir;
@@ -1276,12 +1276,13 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         }
 
         else */
+        //If absolutely no movement, break!
         if (std::abs<T>((x_ti - cools).norm()) <= eps
             && std::abs<T>(ti - tip1) <= eps)
         {
             break;
         }
-        if (newPointPenetration <= eps)
+        if (newPointPenetration <= 1e-7)
         {
             T f0 = oldPointPenetration;
             T f1 = newPointPenetration;
@@ -1433,7 +1434,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         T oldPointPenetration = valueAtProjectionForB(
             x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
             *(SDFB.A_centerRotation), poseB);
-        T dt = gradientDir.w() * oldPointPenetration;
+        T dt = gradientDir.w() * oldPointPenetration * 2.0;
         //Below can be either negative or positive, it actually doesnt matter much?
         EigenVector4<T> p = -gradientDir;
         //stepSizeAlpha = backtracking_line_search<T>(tstart, tend, ti, x_ti, p, gradientDir, SDFA, SDFB, poseB);

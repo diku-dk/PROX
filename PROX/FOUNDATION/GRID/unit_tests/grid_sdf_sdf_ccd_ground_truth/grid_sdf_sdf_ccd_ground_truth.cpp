@@ -1645,8 +1645,8 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             std::cerr << "SIZE: " << final_points.size() << "\n";
 
             std::vector<StartConfigurations<T>> startConfigs
-                = generateStartConfigurations<T>(100, 1.0, 1.0, 6.0, 3.0, 15.0,
-                                                 50, 10.0, 0xdeadbeef);
+                = generateStartConfigurations<T>(1000, 1.0, 1.0, 6.0, 3.0, 15.0,
+                                                 50, 10.0, 0xdeadbef);
             investigateStartConfigsParallel<T>(startConfigs, SDFA, SDFB,
                                                final_points, finishedVoxelsA,
                                                finishedVoxelsB);
