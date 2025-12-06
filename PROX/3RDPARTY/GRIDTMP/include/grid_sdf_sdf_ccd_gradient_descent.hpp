@@ -1478,7 +1478,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
     //std::cerr << "ITS: " << its << "\n";
     // std::cerr << tip1 << "\n";
     //If no penetration was ever found, we simply do not have a TOI.
-    if (!penetration) tip1 = tend;
+    ///if (!penetration) tip1 = tend;
     outContactPoint = xip1;
     return tip1;
 }

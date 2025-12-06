@@ -221,7 +221,7 @@ struct SinglePoint
 template <typename T>
 std::vector<EigenVector3<T>>
 getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
-                         const grid::Grid<T, T>& staticSDF,
+                         const SDFSDFContact::SingleRigidBodyInfo<T>& SDFB,
                          const SDFSDFContact::SingleRigidBodyInfo<T>& movingSDF,
                          T currentTimeInstance,
                          EigenVector3<T>& outContactPoints)
@@ -252,7 +252,15 @@ getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
             *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
             *(movingSDF.A_angularVel), pointWorldSpace, currentTimeInstance);
 
-        T distToSolution = grid::value_at_2(staticSDF, pointAtNewTime);
+        EigenVector3<T> translationB;
+        EigenQuaternion<T> rotationB;
+        SDFSDFContact::getTransformForBody(
+            *(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+            *(SDFB.A_angularVel), currentTimeInstance, translationB, rotationB);
+        SDFSDFContact::currentSDFPose<T> poseB = {translationB, rotationB};
+        T distToSolution = SDFSDFContact::valueAtProjectionForB(
+            pointAtNewTime, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
         /*T distToSolution = SDFSDFContact::valueAtProjectionForB(
             xPos, *(movingSDF.sdf), *(movingSDF.A_centerTranslation),
             *(movingSDF.A_centerRotation), poseB);*/
@@ -270,8 +278,6 @@ getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
     return values;
 }
 
-namespace pscg // pair start-config-generator
-{
 template <typename T> struct StartConfigurations
 {
     EigenVector3<T> translationFromZeroBodyA;
@@ -308,7 +314,7 @@ template <typename T = double>
 std::vector<StartConfigurations<T>> generatePairStartConfigurations(
     size_t N, T radiusA, T radiusB, T max_center_distance = T(4.5),
     T min_center_distance = T(0.0), T min_speed = T(0.1), T max_speed = T(20.0),
-    T max_perturb_angle_deg = T(10.0), T midpoint_jitter = T(0.5),
+    T max_perturb_angle_deg = T(0.0), T midpoint_jitter = T(0.5),
     unsigned int rng_seed = 0u)
 {
     const T eps = std::numeric_limits<T>::epsilon();
@@ -494,187 +500,6 @@ std::vector<StartConfigurations<T>> generatePairStartConfigurations(
         sc.translationFromZeroBodyB = pB;
         sc.linearVelocitBodyB = vB;
         out.push_back(sc);
-    }
-
-    return out;
-}
-} // namespace pscg
-
-template <typename T> struct StartConfigurations
-{
-    EigenVector3<T> translationFromZero;
-    EigenVector3<T> linearVelocity;
-};
-
-template <typename T>
-EigenVector3<T> rotateAroundAxis(const EigenVector3<T>& v,
-                                 const EigenVector3<T>& axis, T angle)
-{
-    // axis assumed normalized
-    const T ca = std::cos(angle);
-    const T sa = std::sin(angle);
-    return v * ca + axis.cross(v) * sa + axis * (axis.dot(v)) * (T(1) - ca);
-}
-
-template <typename T = double>
-std::vector<StartConfigurations<T>> generateStartConfigurations(
-    size_t N, T static_radius, T moving_radius,
-    T max_start_distance = T(4.5), // default keep <5 so collisions possible
-    T min_start_distance
-    = T((T)0.0), // if 0, we'll bump it to safe minimum inside the function
-    T min_speed = T(0.1), T max_speed = T(50.0),
-    T max_perturb_angle_deg = T(10.0), unsigned int rng_seed = 0u)
-{
-    // Safety margin to avoid exact contact / penetration at start
-    const T start_margin = T(1e-3);
-
-    // If user didn't set min_start_distance, enforce non-penetration lower bound
-    T d_min_safe = static_radius + moving_radius + start_margin;
-    if (min_start_distance < d_min_safe) min_start_distance = d_min_safe;
-
-    const T hard_collision_limit = T(5.0);
-    if (max_start_distance > hard_collision_limit)
-        max_start_distance = hard_collision_limit;
-
-    // Also ensure that configurations are reachable within max_speed:
-    // required_distance_to_contact = d - (static_radius + moving_radius)
-    // we need required_distance_to_contact <= max_speed (since t in [0,1])
-    // => d <= max_speed + static_radius + moving_radius
-    T reachability_cap = max_speed + static_radius + moving_radius;
-    if (max_start_distance > reachability_cap)
-        max_start_distance = reachability_cap;
-
-    // If after constraints the interval is invalid, try to fix or fail gracefully:
-    if (max_start_distance <= min_start_distance)
-    {
-        // Expand max_start_distance slightly so the loop can produce something
-        max_start_distance = min_start_distance + T(1e-2);
-    }
-
-    // RNG setup
-    std::random_device rd;
-    std::mt19937_64 rng(rng_seed == 0u ? rd() : rng_seed);
-    std::uniform_real_distribution<T> uni01((T)0.0, (T)1.0);
-    std::uniform_real_distribution<T> dist_radius(min_start_distance,
-                                                  max_start_distance);
-    std::uniform_real_distribution<T> dist_azimuth((T)0.0, (T)2.0 * M_PI);
-    std::uniform_real_distribution<T> dist_cos_theta((T)-1.0, (T)1.0);
-    std::uniform_real_distribution<T> dist_angle(
-        (T)0.0, (T)(max_perturb_angle_deg * M_PI / 180.0));
-
-    std::vector<StartConfigurations<T>> out;
-    out.reserve(N);
-
-    for (size_t i = 0; i < N; ++i)
-    {
-        // sample a point uniformly on spherical shell [rmin, rmax]
-        T r = dist_radius(rng);
-        // uniform direction on sphere
-        T phi = dist_azimuth(rng);
-        T cos_theta = dist_cos_theta(rng);
-        T sin_theta
-            = std::sqrt(std::max((T)0.0, (T)1.0 - cos_theta * cos_theta));
-
-        EigenVector3<T> dir;
-        dir.x() = sin_theta * std::cos(phi);
-        dir.y() = sin_theta * std::sin(phi);
-        dir.z() = cos_theta;
-
-        EigenVector3<T> position = dir * r; // position measured from origin
-
-        // Compute required distance to contact along direct path toward origin:
-        // distance from moving center to static surface along line = r - (static_radius + moving_radius)
-        T required_distance_to_contact = r - (static_radius + moving_radius);
-        if (required_distance_to_contact < (T)0.0)
-        {
-            // defensive: if by floating rounding the sampled r was too small, push it out
-            required_distance_to_contact = (T)0.0;
-            r = static_radius + moving_radius + start_margin;
-            position = dir * r;
-        }
-
-        // Ensure speed is large enough to cover required_distance_to_contact within 1s.
-        // Choose speed = max(required_distance_to_contact + small_margin, min_speed), but <= max_speed
-        const T speed_safety_margin = (T)0.01;
-        T chosen_speed = required_distance_to_contact + speed_safety_margin;
-        if (chosen_speed < min_speed) chosen_speed = min_speed;
-        if (chosen_speed > max_speed)
-        {
-            // This should not happen because we clamped max_start_distance earlier,
-            // but be defensive: set chosen_speed to max_speed and optionally reduce r so it's reachable.
-            chosen_speed = max_speed;
-            // Optionally reduce r to be reachable within max_speed (keeps distribution reasonable)
-            T reachable_r = max_speed + static_radius + moving_radius;
-            if (r > reachable_r)
-            {
-                r = reachable_r;
-                position = dir * r;
-                required_distance_to_contact
-                    = r - (static_radius + moving_radius);
-            }
-        }
-
-        // Compute nominal direction toward the static body (origin)
-        // vector from moving center to origin is (-position)
-        EigenVector3<T> toward_origin = -position;
-        T toward_norm = toward_origin.norm();
-        if (toward_norm <= std::numeric_limits<T>::epsilon())
-        {
-            // extremely unlikely: sampled position exactly at origin; nudge slightly outward
-            toward_origin = EigenVector3<T>(T(1.0), T(0.0), T(0.0));
-            toward_norm = (T)1.0;
-            position = EigenVector3<T>(
-                (static_radius + moving_radius + start_margin), (T)0.0, (T)0.0);
-        }
-        toward_origin /= toward_norm; // unit
-
-        // apply angular perturbation up to max_perturb_angle_deg to avoid perfectly centered hits
-        T perturb_angle = dist_angle(rng);
-        EigenVector3<T> perturbed_direction = toward_origin;
-        if (perturb_angle > (T)1e-8)
-        {
-            // pick a random axis perpendicular to toward_origin: generate random unit vector and orthonormalize
-            EigenVector3<T> random_vec;
-            // sample random vector uniformly in cube, then orthonormalize
-            random_vec.x() = uni01(rng) * 2 - 1;
-            random_vec.y() = uni01(rng) * 2 - 1;
-            random_vec.z() = uni01(rng) * 2 - 1;
-            // make sure not colinear
-            if (random_vec.norm() < (T)1e-6)
-                random_vec = EigenVector3<T>((T)1.0, (T)0.0, (T)0.0);
-
-            // axis = normalized( random_vec - proj_random_on_toward )
-            EigenVector3<T> axis
-                = random_vec - toward_origin * (toward_origin.dot(random_vec));
-            T axis_norm = axis.norm();
-            if (axis_norm < (T)1e-6)
-            {
-                // fallback axis
-                axis = EigenVector3<T>(toward_origin.y(), -toward_origin.x(),
-                                       (T)0.0);
-                axis_norm = axis.norm();
-                if (axis_norm < (T)1e-6)
-                    axis = EigenVector3<T>((T)0.0, (T)1.0, (T)0.0),
-                    axis_norm = (T)1.0;
-            }
-            axis /= axis_norm;
-
-            // rotate toward_origin around axis by +perturb_angle (random sign)
-            std::uniform_int_distribution<int> sign01(0, 1);
-            T signed_angle = perturb_angle * (sign01(rng) ? (T)1.0 : (T)-1.0);
-            perturbed_direction
-                = rotateAroundAxis<T>(toward_origin, axis, signed_angle);
-            // normalize safe
-            perturbed_direction.normalize();
-        }
-
-        // final linear velocity is in direction 'perturbed_direction' scaled by chosen_speed
-        EigenVector3<T> linear_velocity = perturbed_direction * chosen_speed;
-
-        StartConfigurations<T> s;
-        s.translationFromZero = position;
-        s.linearVelocity = linear_velocity;
-        out.push_back(s);
     }
 
     return out;
@@ -882,12 +707,12 @@ void investigateStartConfigsParallel(
 
                 for (size_t i = begin; i < end; ++i)
                 {
-                    EigenVector3<T> angularVelocity
-                        = EigenVector3<T>(0, 1.5, 0);
+                    EigenVector3<T> angularVelocity = EigenVector3<T>(0, 0, 0);
+
                     EigenVector3<T> linearVelocity
-                        = startConfigs[i].linearVelocity;
+                        = startConfigs[i].linearVelocitBodyA;
                     EigenVector3<T> centerTranslation
-                        = startConfigs[i].translationFromZero;
+                        = startConfigs[i].translationFromZeroBodyA;
                     EigenQuaternion<T> rotA = EigenQuaternion<T>::Identity();
                     SDFSDFContact::SingleRigidBodyInfo<T> bodyInfo;
                     bodyInfo.A_angularVel = &angularVelocity;
@@ -895,6 +720,20 @@ void investigateStartConfigsParallel(
                     bodyInfo.A_centerTranslation = &centerTranslation;
                     bodyInfo.A_centerRotation = &rotA;
                     bodyInfo.sdf = &SDFA;
+
+                    EigenVector3<T> angularVelocityB = EigenVector3<T>(0, 0, 0);
+
+                    EigenVector3<T> linearVelocityB
+                        = startConfigs[i].linearVelocitBodyB;
+                    EigenVector3<T> centerTranslationB
+                        = startConfigs[i].translationFromZeroBodyB;
+                    EigenQuaternion<T> rotBS = EigenQuaternion<T>::Identity();
+                    SDFSDFContact::SingleRigidBodyInfo<T> bodyInfoB;
+                    bodyInfoB.A_angularVel = &angularVelocityB;
+                    bodyInfoB.A_linearVel = &linearVelocityB;
+                    bodyInfoB.A_centerTranslation = &centerTranslationB;
+                    bodyInfoB.A_centerRotation = &rotBS;
+                    bodyInfoB.sdf = &SDFB;
 
                     //NOW TODO, MAKE ACTUAL GROUND TRUTH!
                     EigenVector3<T> lastContactPoint;
@@ -908,7 +747,8 @@ void investigateStartConfigsParallel(
                     while (dt <= maxDT)
                     {
                         finalContactPoints = getContactInTimeInstance<T>(
-                            final_points, SDFB, bodyInfo, dt, outContactPoints);
+                            final_points, bodyInfoB, bodyInfo, dt,
+                            outContactPoints);
                         bool hasPenetrated = true;
                         if (finalContactPoints.size() == 0)
                         {
@@ -922,7 +762,7 @@ void investigateStartConfigsParallel(
                                 //std::cerr << "stepback: " << stepBackDT << "\n";
                                 finalContactPoints
                                     = getContactInTimeInstance<T>(
-                                        final_points, SDFB, bodyInfo, dt,
+                                        final_points, bodyInfoB, bodyInfo, dt,
                                         outContactPoints);
                                 bool hasPenetrated2 = true;
                                 if (finalContactPoints.size() == 0)
@@ -938,7 +778,7 @@ void investigateStartConfigsParallel(
                                                   << stepBackDTNew << "\n";
                                         bool hasPenetrated3
                                             = getContactInTimeInstance<T>(
-                                                final_points, SDFB, bodyInfo,
+                                                final_points, bodyInfoB, bodyInfo,
                                                 dt, outContactPoints);
                                         if (hasPenetrated3) {}
                                         stepBackDTNew += evenTinierStep;
@@ -974,12 +814,7 @@ void investigateStartConfigsParallel(
                     EigenVector3<T> linearB(0, 0, 0);
                     SDFSDFContact::SingleRigidBodyInfo<T> rInfoA = bodyInfo;
 
-                    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB;
-                    rInfoB.A_angularVel = &angularVelB;
-                    rInfoB.A_centerRotation = &rotB;
-                    rInfoB.A_centerTranslation = &transB;
-                    rInfoB.A_linearVel = &linearB;
-                    rInfoB.sdf = &SDFB;
+                    SDFSDFContact::SingleRigidBodyInfo<T> rInfoB = bodyInfoB;
 
                     EigenVector3<T> outContacts;
                     auto gss_start = std::chrono::high_resolution_clock::now();
@@ -1645,8 +1480,8 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             std::cerr << "SIZE: " << final_points.size() << "\n";
 
             std::vector<StartConfigurations<T>> startConfigs
-                = generateStartConfigurations<T>(100, 1.0, 1.0, 6.0, 3.0, 15.0,
-                                                 50, 10.0, 0xdeadbeef);
+                = generatePairStartConfigurations<T>(100, 1.0, 1.0, 6.0, 3.0,
+                                                     15.0, 50);
             investigateStartConfigsParallel<T>(startConfigs, SDFA, SDFB,
                                                final_points, finishedVoxelsA,
                                                finishedVoxelsB);
