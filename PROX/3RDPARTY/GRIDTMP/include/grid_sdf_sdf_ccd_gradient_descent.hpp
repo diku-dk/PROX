@@ -923,7 +923,8 @@ EigenVector3<T> projectToSDFSurfaceLocal(EigenVector3<T> pos,
                                    *(sdfInfo.A_centerRotation))
                * grid::gradientAtProjection(pos, *(sdfInfo.sdf),
                                             *(sdfInfo.A_centerTranslation),
-                                            *(sdfInfo.A_centerRotation));
+                                            *(sdfInfo.A_centerRotation))
+                     .normalized();
 }
 
 //Apply the standard SDF transformation and then the time transformation
@@ -1145,7 +1146,7 @@ template <typename T>
 T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
                              const SingleRigidBodyInfo<T>& SDFA,
                              const SingleRigidBodyInfo<T>& SDFB, T tstart,
-                             T tend, T bestDTFound,
+                             T tend, T bestDTFound, bool& contactFound,
                              EigenVector3<T>& outContactPoint)
 {
     //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
@@ -1237,8 +1238,9 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
         T oldPointPenetration = valueAtProjectionForB(
             x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
             *(SDFB.A_centerRotation), poseB);
-        T dt = gradientDir.w() * oldPointPenetration
-             * std::max<T>(oldPointPenetration, stepSizeAlphaT * 0.01);
+        T dt
+            = gradientDir.w()
+            * oldPointPenetration; //std::max<T>(oldPointPenetration, stepSizeAlphaT * 0.01);
         //T dt = gradientDir.w() * std::min<T>((oldPointPenetration), 0.1);
         //Below can be either negative or positive, it actually doesnt matter much?
         EigenVector4<T> p = -gradientDir;
@@ -1277,11 +1279,11 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
 
         else */
         //If absolutely no movement, break!
-        if (std::abs<T>((x_ti - cools).norm()) <= eps
+        /*if (std::abs<T>((x_ti - cools).norm()) <= eps
             && std::abs<T>(ti - tip1) <= eps)
         {
             break;
-        }
+        }*/
         if (newPointPenetration <= 1e-7)
         {
             T f0 = oldPointPenetration;
@@ -1341,6 +1343,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
     // std::cerr << tip1 << "\n";
     //If no penetration was ever found, we simply do not have a TOI.
     if (!penetration) tip1 = tend;
+    contactFound = penetration;
     outContactPoint = xip1;
 
     return tip1;
@@ -1486,7 +1489,7 @@ T getSDFSDFTOISingleVoxelCCD(const EigenVector3<T>& position,
     //std::cerr << "ITS: " << its << "\n";
     // std::cerr << tip1 << "\n";
     //If no penetration was ever found, we simply do not have a TOI.
-    ///if (!penetration) tip1 = tend;
+    //if (!penetration) tip1 = tend;
     outContactPoint = xip1;
     return tip1;
 }
@@ -1630,14 +1633,16 @@ T getSDFSDFTOISingleVoxel(const SDFVoxel<T>& SDFBVoxel,
     {
         EigenVector3<T> selectedPoint = SDFBVoxel.selected[i].pos;
         EigenVector3<T> outContactPoint;
+        bool contactFound = false;
         T toi = getSDFSDFTOISingleVoxelCCD(selectedPoint, SDFA, SDFB, tstart,
-                                           tend, minTOI, outContactPoint);
+                                           tend, minTOI, contactFound,
+                                           outContactPoint);
         /*if (std::abs<T>(toi - minTOI) <= 1e-9)
         {
             outContactPoints.push_back(outContactPoint);
         }
         else */
-        if (toi <= minTOI)
+        if (toi <= minTOI && contactFound)
         {
             /*outContactPoints.clear();
             outContactPoints.push_back(outContactPoint);*/
@@ -1685,8 +1690,308 @@ T getSDFSDFTOI(const std::vector<SDFVoxel<T>>& SDFAVoxel,
             outContactPoints = newOutContactPoints;
         }
     }
+    if (minTOI == std::numeric_limits<T>::max()) { return tend; }
     return minTOI;
 }
+
+template <typename T>
+T getSDFSDFTOISingleVoxelCCD_BENCHMARK(const EigenVector3<T>& position,
+                                       const SingleRigidBodyInfo<T>& SDFA,
+                                       const SingleRigidBodyInfo<T>& SDFB,
+                                       T tstart, T tend, T bestDTFound,
+                                       bool& contactFound,
+                                       size_t& iterationsUsed,
+                                       EigenVector3<T>& outContactPoint)
+{
+    //TODO: If velocity is zero for this SDF combination, we can return because nothing can move in time. Maybe return -1 for nothing? Otherwise return 1 for end
+    if ((*(SDFA.A_angularVel)).norm() <= 1e-12
+        && (*(SDFA.A_linearVel)).norm() <= 1e-12)
+    {
+        return tend;
+    }
+
+    //First our pos is in local coordinates in the sdf with absolutely no transformations
+    // not even those applied to the SDF. Thus we get the pos in world coordinates at time t=0:
+    EigenVector3<T> pos
+        = *(SDFA.A_centerRotation) * position + *(SDFA.A_centerTranslation);
+    T ti = tstart;
+    T tip1 = -1.0;
+    EigenVector3<T> xip1;
+    EigenVector3<T> x_ti;
+    T scale = 1000;
+    uint32_t maxIterations = 100000 / uint32_t(scale);
+    T stepSizeAlpha = 0.0001 * scale;
+    T stepSizeAlphaT = 0.0005 * scale;
+    T stepSizeAlphaOriginal = stepSizeAlpha;
+    T eps = 1e-8;
+    //x_ti = position;
+    pos = projectToSDFSurfaceLocal(pos, SDFA);
+    bool penetration = false;
+    iterationsUsed = 0;
+    for (uint32_t i = 0; i < maxIterations; ++i)
+    {
+        x_ti = getVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                 *(SDFA.A_linearVel), *(SDFA.A_angularVel), pos,
+                                 ti);
+        //Assume pos is in world coordinates but not transformed. So it is in world coordinates compared to
+        // SDF_A. So basically pos is always the point in world coordinates at time t=0.
+
+        //Let x always be in local coordiantes. Then we need no transformation for x
+        // in SDF A. x should only be transformed to B when we do gradient computation with B
+        EigenVector3<T> translationB;
+        EigenQuaternion<T> rotationB;
+        EigenVector3<T> translationA;
+        EigenQuaternion<T> rotationA;
+        //Early exit -- no need to search more if we have a significantly earlier candidate!
+        if (ti /* * 0.5*/ > bestDTFound || ti >= tend) { return ti; }
+
+        //We do the same as before, but ONLY get the rotation and translation needed
+        // to transform SDF B into time ti, such that we can make accurate quries for
+        // x_ti.
+        getTransformForBody(*(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+                            *(SDFB.A_angularVel), ti, translationB, rotationB);
+        getTransformForBody(*(SDFA.A_centerTranslation), *(SDFA.A_linearVel),
+                            *(SDFA.A_angularVel), ti, translationA, rotationA);
+        currentSDFPose<T> poseB = {translationB, rotationB};
+        currentSDFPose<T> poseA = {translationA, rotationA};
+
+        EigenVector3<T> gradA = gradientAtProjectionForB(
+            x_ti, *(SDFA.sdf), *(SDFA.A_centerTranslation),
+            *(SDFA.A_centerRotation), poseA);
+        EigenVector3<T> normA = gradA.normalized();
+
+        EigenVector3<T> gradB = gradientAtProjectionForB(
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+
+        EigenVector3<T> vtiA
+            = getVelocityAtPoint(*(SDFA.A_centerTranslation), x_ti,
+                                 *(SDFA.A_angularVel), *(SDFA.A_linearVel));
+        EigenVector3<T> vtiB
+            = getVelocityAtPoint(*(SDFB.A_centerTranslation), x_ti,
+                                 *(SDFB.A_angularVel), *(SDFB.A_linearVel));
+        T At = gradA.dot(vtiA);
+        T Bt = gradB.dot(vtiB);
+        EigenVector4<T> gB
+            = EigenVector4<T>(gradB.x(), gradB.y(), gradB.z(), Bt);
+        EigenVector4<T> nA
+            = EigenVector4<T>(gradA.x(), gradA.y(), gradA.z(), At);
+
+        //EigenVector3<T> gradientDir = (gradB - (gradB.dot(normA)) * normA);
+        T g_dot_n = gB.dot(nA);
+        T norm_n2 = dot(nA, nA);
+        EigenVector4<T> gradientDir = (gB - (g_dot_n / norm_n2) * nA);
+        /*        EigenVector4<T> gradientDirNew = (gB-nA);
+        gradientDir.x() = gradientDirNew.x();
+        gradientDir.y() = gradientDirNew.y();
+        gradientDir.z() = gradientDirNew.z();*/
+        //gradientDir.w() = -gradientDirNew.w();
+        //gradientDir = -gB;
+        EigenVector3<T> dx = EigenVector3<T>(gradientDir.x(), gradientDir.y(),
+                                             gradientDir.z());
+        T oldPointPenetration = valueAtProjectionForB(
+            x_ti, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+        T dt
+            = gradientDir.w()
+            * oldPointPenetration; //std::max<T>(oldPointPenetration, stepSizeAlphaT * 0.01);
+        //T dt = gradientDir.w() * std::min<T>((oldPointPenetration), 0.1);
+        //Below can be either negative or positive, it actually doesnt matter much?
+        EigenVector4<T> p = -gradientDir;
+        //stepSizeAlpha = backtracking_line_search<T>(tstart, tend, ti, x_ti, p, gradientDir, SDFA, SDFB, poseB);
+        xip1 = x_ti - stepSizeAlpha * dx;
+
+        /*T alphaStepSizeT = backtracking_line_search_time_only(
+            tstart, tend, ti, x_ti, p, gradientDir, SDFA, SDFB, poseB);
+        tip1 = std::clamp<T>(ti + alphaStepSizeT * dt, tstart, tend);*/
+        tip1 = std::clamp<T>(ti + stepSizeAlphaT * dt, tstart, tend);
+        //Check for convergence...
+        //Maybe check tip?
+        getTransformForBody(*(SDFB.A_centerTranslation), *(SDFB.A_linearVel),
+                            *(SDFB.A_angularVel), tip1, translationB,
+                            rotationB);
+        poseB = {translationB, rotationB};
+
+        EigenVector3<T> cools = reverseVertexPosAtMat(
+            *(SDFA.A_centerTranslation), *(SDFA.A_linearVel),
+            *(SDFA.A_angularVel), xip1, ti);
+        EigenVector3<T> atA = projectToSDFSurfaceLocal(cools, SDFA);
+
+        cools = getVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                  *(SDFA.A_linearVel), *(SDFA.A_angularVel),
+                                  atA, tip1);
+
+        T newPointPenetration = valueAtProjectionForB(
+            cools, *(SDFB.sdf), *(SDFB.A_centerTranslation),
+            *(SDFB.A_centerRotation), poseB);
+
+        /*if (newPointPenetration <= -eps)
+        {
+            stepSizeAlpha *= 0.5;
+            tip1 = ti;
+        }
+
+        else */
+        //If absolutely no movement, break!
+        /*if (std::abs<T>((x_ti - cools).norm()) <= eps
+            && std::abs<T>(ti - tip1) <= eps)
+        {
+            break;
+        }*/
+        if (newPointPenetration <= 1e-7)
+        {
+            T f0 = oldPointPenetration;
+            T f1 = newPointPenetration;
+            T t0 = ti;
+            T t1 = tip1;
+            EigenVector3<T> p0 = x_ti;
+            EigenVector3<T> p1 = cools;
+
+            T den = f1 - f0;
+            T res = std::numeric_limits<T>::max();
+            if (std::abs<T>(den) < 1e-12)
+            {
+                //DO nothing
+            }
+            else { res = ((eps - f0) / den); }
+
+            if (res != std::numeric_limits<T>::max() && T(0.0) <= res <= T(1.0))
+            {
+                EigenVector3<T> p_star = p0 + res * (p1 - p0);
+                T realTOI = t0 + res * (t1 - t0);
+                tip1 = realTOI;
+                xip1 = p_star;
+            }
+            else { xip1 = cools; }
+            /*xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                         *(SDFA.A_linearVel),
+                                         *(SDFA.A_angularVel), xip1, ti);
+            xip1 = projectToSDFSurfaceLocal(xip1, SDFA);
+            xip1 = getVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                     *(SDFA.A_linearVel), *(SDFA.A_angularVel),
+                                     xip1, tip1);*/
+            penetration = true;
+            iterationsUsed = (i + 1);
+            break;
+        }
+        /*else
+        {
+            //RESET
+            stepSizeAlpha = stepSizeAlphaOriginal;
+        }*/
+
+        //Now traverse back to SDF start pose, such that xtip now lies in the
+        // SDFs pose at t=0!
+        //Pretty sure we should use ti!
+        /*xip1 = reverseVertexPosAtMat(*(SDFA.A_centerTranslation),
+                                     *(SDFA.A_linearVel), *(SDFA.A_angularVel),
+                                     xip1, ti);
+        //After transform, remember to project back to local coordinates!
+        xip1 = projectToSDFSurfaceLocal(xip1, SDFA);*/
+        xip1 = atA;
+        //Now set our new search start point to pos!
+        pos = xip1;
+        ti = tip1;
+        iterationsUsed = (i + 1);
+    }
+    //std::cerr << "ITS: " << its << "\n";
+    // std::cerr << tip1 << "\n";
+    //If no penetration was ever found, we simply do not have a TOI.
+    if (!penetration) tip1 = tend;
+    contactFound = penetration;
+    outContactPoint = xip1;
+
+    return tip1;
+}
+
+template <typename T>
+T getSDFSDFTOISingleVoxel_BENCHMARK(const SDFVoxel<T>& SDFBVoxel,
+                                    const SingleRigidBodyInfo<T>& SDFA,
+                                    const SingleRigidBodyInfo<T>& SDFB,
+                                    T tstart, T tend, T& avgIterationsForVoxel,
+                                    EigenVector3<T>& outContactPoints)
+{
+    T minTOI = std::numeric_limits<T>::max();
+    size_t totalIterationsUsed = 0;
+    for (size_t i = 0; i < SDFBVoxel.selected.size(); ++i)
+    {
+        EigenVector3<T> selectedPoint = SDFBVoxel.selected[i].pos;
+        EigenVector3<T> outContactPoint;
+        bool contactFound = false;
+        size_t iterationsUsed;
+        T toi = getSDFSDFTOISingleVoxelCCD_BENCHMARK(
+            selectedPoint, SDFA, SDFB, tstart, tend, minTOI, contactFound,
+            iterationsUsed, outContactPoint);
+        totalIterationsUsed += iterationsUsed;
+        /*if (std::abs<T>(toi - minTOI) <= 1e-9)
+        {
+            outContactPoints.push_back(outContactPoint);
+        }
+        else */
+        if (toi <= minTOI && contactFound)
+        {
+            /*outContactPoints.clear();
+            outContactPoints.push_back(outContactPoint);*/
+            outContactPoints = outContactPoint;
+            minTOI = toi;
+        }
+    }
+    avgIterationsForVoxel
+        = T(totalIterationsUsed) / T(SDFBVoxel.selected.size());
+    return minTOI;
+}
+
+template <typename T>
+T getSDFSDFTOI_BENCHMARK(const std::vector<SDFVoxel<T>>& SDFAVoxel,
+                         const std::vector<SDFVoxel<T>>& SDFBVoxel,
+                         const SingleRigidBodyInfo<T>& SDFA,
+                         const SingleRigidBodyInfo<T>& SDFB, T tstart, T tend,
+                         T& avgIterationsForVoxelA, T& avgIterationsForVoxelB,
+                         EigenVector3<T>& outContactPoints)
+{
+    avgIterationsForVoxelA = 0;
+    T minTOI = std::numeric_limits<T>::max();
+    //Compute all voxels of SDF A
+    for (size_t i = 0; i < SDFAVoxel.size(); ++i)
+    {
+        EigenVector3<T> newOutContactPoints;
+        //Importantly to get correct projection first loop is SDFA, SDFB, second should swap!
+        T currAvgIterationsForVoxel = 0;
+        T toi = getSDFSDFTOISingleVoxel_BENCHMARK(
+            SDFAVoxel[i], SDFA, SDFB, tstart, tend, currAvgIterationsForVoxel,
+            newOutContactPoints);
+        avgIterationsForVoxelA += currAvgIterationsForVoxel;
+        if (minTOI >= toi)
+        {
+            minTOI = toi;
+            //outContactPoints = std::move(newOutContactPoints);
+            outContactPoints = newOutContactPoints;
+        };
+    }
+    avgIterationsForVoxelA = avgIterationsForVoxelA / T(SDFAVoxel.size());
+
+    avgIterationsForVoxelB = 0;
+    //Compute all voxels of SDF B
+    for (size_t i = 0; i < SDFBVoxel.size(); ++i)
+    {
+        EigenVector3<T> newOutContactPoints;
+        //Importantly to get correct projection first loop is SDFA, SDFB, second should swap!
+        T currAvgIterationsForVoxel = 0;
+        T toi = getSDFSDFTOISingleVoxel_BENCHMARK(
+            SDFBVoxel[i], SDFB, SDFA, tstart, tend, currAvgIterationsForVoxel,
+            newOutContactPoints);
+        avgIterationsForVoxelB += currAvgIterationsForVoxel;
+        if (minTOI >= toi)
+        {
+            minTOI = toi;
+            outContactPoints = newOutContactPoints;
+        }
+    }
+    avgIterationsForVoxelB = avgIterationsForVoxelB / T(SDFBVoxel.size());
+    if (minTOI == std::numeric_limits<T>::max()) { return tend; }
+    return minTOI;
+}
+
 } // namespace SDFSDFContact
 
 #endif // GRID_SDF_SDF_CCD_GRADIENT_DESCENT_HPP

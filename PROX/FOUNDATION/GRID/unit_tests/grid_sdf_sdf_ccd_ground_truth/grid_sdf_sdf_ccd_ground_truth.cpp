@@ -856,6 +856,8 @@ void investigateStartConfigsParallel(
         T localMaxDiff = std::numeric_limits<T>::min();
         T localMinDiffDist = std::numeric_limits<T>::max();
         T localMaxDiffDist = std::numeric_limits<T>::min();
+        T averageIterationsA = 0;
+        T averageIterationsB = 0;
         T localTimeTaken = T(0);
         std::string stderrBuffer;
     };
@@ -984,9 +986,12 @@ void investigateStartConfigsParallel(
                     EigenVector3<T> outContacts;
                     auto gss_start = std::chrono::high_resolution_clock::now();
 
-                    T toi = SDFSDFContact::getSDFSDFTOI(
+                    T averageIterationsA = 0;
+                    T averageIterationsB = 0;
+                    T toi = SDFSDFContact::getSDFSDFTOI_BENCHMARK(
                         finishedVoxelsA, finishedVoxelsB, rInfoA, rInfoB,
-                        T(0.0), T(1.0), outContacts);
+                        T(0.0), T(1.0), averageIterationsA, averageIterationsB,
+                        outContacts);
                     auto gss_end = std::chrono::high_resolution_clock::now();
                     auto gss_us
                         = std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -1049,15 +1054,29 @@ void investigateStartConfigsParallel(
                               << ")) and finally xti=(" << lastContactPoint.x()
                               << "," << lastContactPoint.y() << ","
                               << lastContactPoint.z() << ")\n";
-                    std::cerr << "NOte gradientA times gradientB: "
-                              << gradientA.cross(gradientB) << "\n";
+                    std::cerr << "NOte |gradientA times gradientB|: "
+                              << ((gradientA.normalized())
+                                      .cross((gradientB.normalized())))
+                                     .norm()
+                              << "\n";
                     std::cerr << "LinVel: (" << (*(rInfoA.A_linearVel)).x()
                               << "," << (*(rInfoA.A_linearVel)).y() << ","
                               << (*(rInfoA.A_linearVel)).z()
                               << ") and center translation: ("
                               << (*(rInfoA.A_centerTranslation)).x() << ","
                               << (*(rInfoA.A_centerTranslation)).y() << ","
-                              << (*(rInfoA.A_centerTranslation)).z() << ").\n";
+                              << (*(rInfoA.A_centerTranslation)).z() << ").";
+                    EigenVector3<T> velAtTimeA
+                        = SDFSDFContact::getVelocityAtPoint<T>(
+                            *(rInfoA.A_centerTranslation), lastContactPoint,
+                            *(rInfoA.A_angularVel), *(rInfoA.A_linearVel));
+                    EigenVector3<T> velAtTimeB
+                        = SDFSDFContact::getVelocityAtPoint<T>(
+                            *(rInfoB.A_centerTranslation), lastContactPoint,
+                            *(rInfoB.A_angularVel), *(rInfoB.A_linearVel));
+                    std::cerr << " (vtiAdotPhiA, vtiAdotPhiB) = "
+                              << gradientA.dot(velAtTimeA) << ","
+                              << gradientB.dot(velAtTimeB) << "\n";
 
                     // Buffer some debug output — we'll flush it thread-safely later
                     erross << "GOT DT VS TOI: " << dt << " vs " << toi << "\n";
@@ -1142,28 +1161,37 @@ void investigateStartConfigsParallel(
                                   "prec)\n";
                     }
 
-                    // Save results locally
-                    local.diffs.push_back(static_cast<long double>(diff));
-                    local.diffsDist.push_back(
-                        static_cast<long double>(diffDistance));
-                    local.classifications.push_back(
-                        ClassificationRecord{dist, toi, hasIntersection});
-
-                    // Update local mins/maxs
-                    if (diff < local.localMinDiff) local.localMinDiff = diff;
-                    if (diff > local.localMaxDiff) local.localMaxDiff = diff;
-                    if (!(std::abs<T>(firstIntersectPoint.norm()) >= T(999)
-                          || std::abs<T>(lastContactPoint.norm()) >= T(999)))
+                    //                    if (dt < T(0.99) && toi < T(0.99))
                     {
-                        if (diffDistance < local.localMinDiffDist)
-                            local.localMinDiffDist = diffDistance;
 
-                        if (diffDistance > local.localMaxDiffDist)
-                            local.localMaxDiffDist = diffDistance;
+                        // Save results locally
+                        local.diffs.push_back(static_cast<long double>(diff));
+                        local.diffsDist.push_back(
+                            static_cast<long double>(diffDistance));
+                        local.classifications.push_back(
+                            ClassificationRecord{dist, toi, hasIntersection});
+
+                        // Update local mins/maxs
+                        if (diff < local.localMinDiff)
+                            local.localMinDiff = diff;
+                        if (diff > local.localMaxDiff)
+                            local.localMaxDiff = diff;
+                        if (!(std::abs<T>(firstIntersectPoint.norm()) >= T(999)
+                              || std::abs<T>(lastContactPoint.norm())
+                                     >= T(999)))
+                        {
+                            if (diffDistance < local.localMinDiffDist)
+                                local.localMinDiffDist = diffDistance;
+
+                            if (diffDistance > local.localMaxDiffDist)
+                                local.localMaxDiffDist = diffDistance;
+                        }
+                        local.localTimeTaken += totalAlgorithmTime;
+                        local.averageIterationsA += averageIterationsA;
+                        local.averageIterationsB += averageIterationsB;
+
+                        // --- end per-config code ---
                     }
-                    local.localTimeTaken += totalAlgorithmTime;
-
-                    // --- end per-config code ---
                 } // end for each i
 
                 // store buffered stderr
@@ -1176,6 +1204,8 @@ void investigateStartConfigsParallel(
 
     // Merge per-thread results into globals
     T allTime = 0.0;
+    T allItsA = 0.0;
+    T allItsB = 0.0;
     for (const auto& local : locals)
     {
         // append diffs
@@ -1191,6 +1221,8 @@ void investigateStartConfigsParallel(
         if (local.localMaxDiffDist > maxDiffDist)
             maxDiffDist = local.localMaxDiffDist;
         allTime += local.localTimeTaken;
+        allItsA += local.averageIterationsA;
+        allItsB += local.averageIterationsB;
 
         // print buffered stderr in sequence to avoid interleaving
         if (!local.stderrBuffer.empty()) { std::cerr << local.stderrBuffer; }
@@ -1210,8 +1242,12 @@ void investigateStartConfigsParallel(
     stats.printStatistics();
     std::cerr << "The gradient descent function took "
               << allTime / T(startConfigs.size()) << " ns.\n";
+    std::cerr << "The gradient descent function used for SDF A "
+              << allItsA / T(startConfigs.size()) << " its.\n";
+    std::cerr << "The gradient descent function used for SDF B "
+              << allItsB / T(startConfigs.size()) << " its.\n";
 
-    // Compute aggregated summary stats for allDifs (same as original)
+    // Compute aggregated summary stats for allDifs
     {
         // --- Mean ---
         long double mean = std::accumulate(allDifs.begin(), allDifs.end(), 0.0L)
@@ -1646,7 +1682,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
 
             std::vector<StartConfigurations<T>> startConfigs
                 = generateStartConfigurations<T>(1000, 1.0, 1.0, 6.0, 3.0, 15.0,
-                                                 50, 10.0, 0xdeadbef);
+                                                 50, 10.0, 0xdeeabaef);
             investigateStartConfigsParallel<T>(startConfigs, SDFA, SDFB,
                                                final_points, finishedVoxelsA,
                                                finishedVoxelsB);
