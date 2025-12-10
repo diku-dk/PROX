@@ -854,7 +854,7 @@ void selectFeaturePointsPerVoxel(std::vector<SDFVoxel<T>>& voxels,
     for (size_t i = 0; i < voxels.size(); ++i)
     {
         std::vector<SelectedPoint<T>> val
-            = filterClosePointsStable<T>(voxels[i].selected, 0.1);
+            = filterClosePointsStable<T>(voxels[i].selected, 0.3);
         voxels[i].selected = val;
     }
     totalPoints = 0;
