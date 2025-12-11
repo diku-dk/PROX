@@ -5,6 +5,7 @@
 #include "grid_node_position.h"
 #include "grid_sdf_sdf_voxelize.hpp"
 #include "grid_sdf_sdf_ccd_gradient_descent.hpp"
+#include "grid_sdf_sdf_ccd_gradient_descent_analytical.hpp"
 #include "grid_value_at.h"
 
 #include <iostream>
@@ -248,11 +249,14 @@ getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
         EigenVector3<T> pointWorldSpace
             = *(movingSDF.A_centerRotation) * points[i]
             + *(movingSDF.A_centerTranslation);
-        EigenVector3<T> pointAtNewTime = SDFSDFContact::getVertexPosAtMat(
-            *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
-            *(movingSDF.A_angularVel), pointWorldSpace, currentTimeInstance);
+        EigenVector3<T> pointAtNewTime
+            = SDFSDFContactAnalytical::getVertexPosAtMat(
+                *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
+                *(movingSDF.A_angularVel), pointWorldSpace,
+                currentTimeInstance);
 
-        T distToSolution = grid::value_at_2(staticSDF, pointAtNewTime);
+        T distToSolution
+            = SDFSDFContactAnalytical::sphere_signed_distance(pointAtNewTime);
         /*T distToSolution = SDFSDFContact::valueAtProjectionForB(
             xPos, *(movingSDF.sdf), *(movingSDF.A_centerTranslation),
             *(movingSDF.A_centerRotation), poseB);*/
@@ -264,8 +268,12 @@ getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
             {
                 outContactPoints = pointAtNewTime;
             }*/
-
-            values.push_back(pointAtNewTime);
+            T valA = pointAtNewTime.x();
+            T valB = pointAtNewTime.y();
+            T valC = pointAtNewTime.z();
+            values.push_back(EigenVector3<T>(valA, valB, valC));
+            outContactPoints = EigenVector3<T>(valA, valB, valC);
+            //std::cerr << "HA " << pointAtNewTime << " HA\n";
         }
     }
     return values;
@@ -801,6 +809,29 @@ void classifyResult(CCDStatistics2<T>& stats, const T distance, T toi,
 }
 
 template <typename T>
+EigenVector3<T>
+gradientAtProjectionForBBT(const EigenVector3<T>& samplePoint,
+                           const grid::Grid<T, T>& sdf,
+                           const EigenVector3<T>& translationSDF,
+                           const EigenQuaternion<T>& rotationSDF,
+                           const SDFSDFContact::currentSDFPose<T> pose)
+{
+    EigenVector3<T> localSamplePoint
+        = pose.rotation.inverse()
+        * ((rotationSDF.inverse() * (samplePoint - translationSDF))
+           - pose.translation);
+    /*    contactPoint
+        = transformRotation * contactPoint + transformTranslation;*/
+    EigenVector3<T> a
+        = localSamplePoint
+        - SDFSDFContactAnalytical::sphere_sdf_gradient(localSamplePoint)
+              * SDFSDFContactAnalytical::sphere_signed_distance(
+                  localSamplePoint);
+    return (pose.rotation * rotationSDF)
+         * (SDFSDFContactAnalytical::sphere_sdf_gradient(localSamplePoint));
+}
+
+template <typename T>
 void investigateStartConfigsParallel(
     std::vector<StartConfigurations<T>>& startConfigs,
     const grid::Grid<T, T>& SDFA, const grid::Grid<T, T>& SDFB,
@@ -886,7 +917,7 @@ void investigateStartConfigsParallel(
                 for (size_t i = begin; i < end; ++i)
                 {
                     EigenVector3<T> angularVelocity
-                        = EigenVector3<T>(0, 1.5, 0);
+                        = EigenVector3<T>(0, 0.0, 0);
                     EigenVector3<T> linearVelocity
                         = startConfigs[i].linearVelocity;
                     EigenVector3<T> centerTranslation
@@ -906,6 +937,7 @@ void investigateStartConfigsParallel(
                     T smallStep = 1e-5;
                     T evenSmallerStep = 1e-8;
                     T evenTinierStep = 1e-11;
+                    T evenTinierTinierStep = 1e-14;
                     EigenVector3<T> outContactPoints;
                     std::vector<EigenVector3<T>> finalContactPoints;
                     while (dt <= maxDT)
@@ -925,8 +957,8 @@ void investigateStartConfigsParallel(
                                 //std::cerr << "stepback: " << stepBackDT << "\n";
                                 finalContactPoints
                                     = getContactInTimeInstance<T>(
-                                        final_points, SDFB, bodyInfo, dt,
-                                        outContactPoints);
+                                        final_points, SDFB, bodyInfo,
+                                        stepBackDT, outContactPoints);
                                 bool hasPenetrated2 = true;
                                 if (finalContactPoints.size() == 0)
                                 {
@@ -934,19 +966,28 @@ void investigateStartConfigsParallel(
                                 }
                                 if (hasPenetrated2)
                                 {
-                                    /*T stepBackDTNew = dt - evenSmallerStep;
-                                    while (stepBackDTNew <= dt)
+                                    T stepBackDT2
+                                        = stepBackDT - evenSmallerStep;
+                                    while (stepBackDT2 <= stepBackDT)
                                     {
-                                        std::cerr << "stepbackTinier: "
-                                                  << stepBackDTNew << "\n";
-                                        bool hasPenetrated3
+                                        //std::cerr << "stepback: " <<smallStep stepBackDT << "\n";
+                                        finalContactPoints
                                             = getContactInTimeInstance<T>(
                                                 final_points, SDFB, bodyInfo,
-                                                dt, outContactPoints);
-                                        if (hasPenetrated3) {}
-                                        stepBackDTNew += evenTinierStep;
+                                                stepBackDT2, outContactPoints);
+                                        bool hasPenetrated3 = true;
+                                        if (finalContactPoints.size() == 0)
+                                        {
+                                            hasPenetrated3 = false;
+                                        }
+                                        if (hasPenetrated3)
+                                        {
+                                            stepBackDT = stepBackDT2;
+                                            break;
+                                        }
+                                        stepBackDT2 += evenTinierStep;
                                     }
-                                    dt = stepBackDT;*/
+                                    dt = stepBackDT;
                                     break;
                                 }
                                 stepBackDT += evenSmallerStep;
@@ -962,7 +1003,10 @@ void investigateStartConfigsParallel(
                     //For now select one point only.
                     if (dt != maxDT)
                     {
-                        lastContactPoint = finalContactPoints[0];
+                        //std::cerr << final_points[0];
+                        //std::cerr << dt << "\n";
+
+                        lastContactPoint = outContactPoints;
                     }
                     else
                     {
@@ -984,12 +1028,38 @@ void investigateStartConfigsParallel(
                     rInfoB.A_linearVel = &linearB;
                     rInfoB.sdf = &SDFB;
 
+                    //Only fair to check all contact pointts....
+                    T bestCollinearty = std::numeric_limits<T>::max();
+                    for (size_t i = 0; i < final_points.size(); ++i)
+                    {
+                        EigenVector3<T> locallyA = final_points[i]
+                                                 - *(rInfoA.A_centerTranslation)
+                                                 - (*(rInfoA.A_linearVel) * dt);
+                        EigenVector3<T> locallyB = final_points[i]
+                                                 - *(rInfoB.A_centerTranslation)
+                                                 - (*(rInfoB.A_linearVel) * dt);
+                        EigenVector3<T> gradientB
+                            = SDFSDFContactAnalytical::sphere_sdf_gradient(
+                                locallyB);
+                        EigenVector3<T> gradientA
+                            = SDFSDFContactAnalytical::sphere_sdf_gradient(
+                                locallyA);
+                        T candidate = ((gradientA.normalized())
+                                           .cross((gradientB.normalized())))
+                                          .norm();
+                        if (candidate < bestCollinearty)
+                        {
+                            bestCollinearty = candidate;
+                            lastContactPoint = final_points[i];
+                        }
+                    }
+
                     EigenVector3<T> outContacts;
                     auto gss_start = std::chrono::high_resolution_clock::now();
 
                     T averageIterationsA = 0;
                     T averageIterationsB = 0;
-                    T toi = SDFSDFContact::getSDFSDFTOI_BENCHMARK(
+                    T toi = SDFSDFContactAnalytical::getSDFSDFTOI_BENCHMARK(
                         finishedVoxelsA, finishedVoxelsB, rInfoA, rInfoB,
                         T(0.0), T(1.0), averageIterationsA, averageIterationsB,
                         outContacts);
@@ -1016,45 +1086,55 @@ void investigateStartConfigsParallel(
                     //For Print!!
                     EigenVector3<T> translationB;
                     EigenQuaternion<T> rotationB;
-                    SDFSDFContact::getTransformForBody(
+                    SDFSDFContactAnalytical::getTransformForBody(
                         *(rInfoB.A_centerTranslation), *(rInfoB.A_linearVel),
                         *(rInfoB.A_angularVel), dt, translationB, rotationB);
                     SDFSDFContact::currentSDFPose<T> poseB
                         = {translationB, rotationB};
                     EigenVector3<T> translationA;
                     EigenQuaternion<T> rotationA;
-                    SDFSDFContact::getTransformForBody(
+                    SDFSDFContactAnalytical::getTransformForBody(
                         *(rInfoA.A_centerTranslation), *(rInfoA.A_linearVel),
                         *(rInfoA.A_angularVel), dt, translationA, rotationA);
                     SDFSDFContact::currentSDFPose<T> poseA
                         = {translationA, rotationA};
+                    /*                    EigenVector3<T> gradientB = gradientAtProjectionForBBT(
+                        lastContactPoint, *(rInfoB.sdf),
+                        *(rInfoB.A_centerTranslation),
+                        *(rInfoB.A_centerRotation), poseB);*/
+                    EigenVector3<T> locallyA = lastContactPoint
+                                             - *(rInfoA.A_centerTranslation)
+                                             - (*(rInfoA.A_linearVel) * dt);
+                    EigenVector3<T> locallyB = lastContactPoint
+                                             - *(rInfoB.A_centerTranslation)
+                                             - (*(rInfoB.A_linearVel) * dt);
                     EigenVector3<T> gradientB
-                        = SDFSDFContact::gradientAtProjectionForB(
-                            lastContactPoint, *(rInfoB.sdf),
-                            *(rInfoB.A_centerTranslation),
-                            *(rInfoB.A_centerRotation), poseB);
+                        = SDFSDFContactAnalytical::sphere_sdf_gradient(
+                            locallyB);
                     EigenVector3<T> gradientA
-                        = SDFSDFContact::gradientAtProjectionForB(
-                            lastContactPoint, *(rInfoA.sdf),
-                            *(rInfoA.A_centerTranslation),
-                            *(rInfoA.A_centerRotation), poseA);
-                    std::cerr << "DIST TO surface B: "
-                              << SDFSDFContact::valueAtProjectionForB(
-                                     lastContactPoint, *(rInfoB.sdf),
-                                     *(rInfoB.A_centerTranslation),
-                                     *(rInfoB.A_centerRotation), poseB)
-                              << " and dist to surface A: "
-                              << SDFSDFContact::valueAtProjectionForB(
-                                     lastContactPoint, *(rInfoA.sdf),
-                                     *(rInfoA.A_centerTranslation),
-                                     *(rInfoA.A_centerRotation), poseA)
-                              << ". Gradient of A and gradient B: (("
-                              << gradientA.x() << "," << gradientA.y() << ","
-                              << gradientA.z() << "),(" << gradientB.x() << ","
-                              << gradientB.y() << "," << gradientB.z()
-                              << ")) and finally xti=(" << lastContactPoint.x()
-                              << "," << lastContactPoint.y() << ","
-                              << lastContactPoint.z() << ")\n";
+                        = SDFSDFContactAnalytical::sphere_sdf_gradient(
+                            locallyA);
+
+                    std::cerr
+                        << "DIST TO surface B: "
+                        << SDFSDFContactAnalytical::valueAtProjectionForBB(
+                               lastContactPoint, *(rInfoB.sdf),
+                               *(rInfoB.A_centerTranslation),
+                               *(rInfoB.A_centerRotation), poseB)
+                        << " and dist to surface A: "
+                        << /*SDFSDFContactAnalytical::valueAtProjectionForBB(
+                               lastContactPoint, *(rInfoA.sdf),
+                               *(rInfoA.A_centerTranslation),
+                               *(rInfoA.A_centerRotation), poseA)*/
+                        SDFSDFContactAnalytical::sphere_signed_distance(
+                            locallyA)
+
+                        << ". Gradient of A and gradient B: ((" << gradientA.x()
+                        << "," << gradientA.y() << "," << gradientA.z() << "),("
+                        << gradientB.x() << "," << gradientB.y() << ","
+                        << gradientB.z() << ")) and finally xti=("
+                        << lastContactPoint.x() << "," << lastContactPoint.y()
+                        << "," << lastContactPoint.z() << ")\n";
                     std::cerr << "NOte |gradientA times gradientB|: "
                               << ((gradientA.normalized())
                                       .cross((gradientB.normalized())))
@@ -1068,16 +1148,22 @@ void investigateStartConfigsParallel(
                               << (*(rInfoA.A_centerTranslation)).y() << ","
                               << (*(rInfoA.A_centerTranslation)).z() << ").";
                     EigenVector3<T> velAtTimeA
-                        = SDFSDFContact::getVelocityAtPoint<T>(
+                        = SDFSDFContactAnalytical::getVelocityAtPoint<T>(
                             *(rInfoA.A_centerTranslation), lastContactPoint,
                             *(rInfoA.A_angularVel), *(rInfoA.A_linearVel));
                     EigenVector3<T> velAtTimeB
-                        = SDFSDFContact::getVelocityAtPoint<T>(
+                        = SDFSDFContactAnalytical::getVelocityAtPoint<T>(
                             *(rInfoB.A_centerTranslation), lastContactPoint,
                             *(rInfoB.A_angularVel), *(rInfoB.A_linearVel));
                     std::cerr << " (vtiAdotPhiA, vtiAdotPhiB) = "
                               << gradientA.dot(velAtTimeA) << ","
                               << gradientB.dot(velAtTimeB) << "\n";
+                    std::cerr
+                        << "More info last contact point: " << lastContactPoint
+                        << " and poseA: " << poseA.translation << " and poseB"
+                        << poseB.translation << " and translationA: "
+                        << *(rInfoA.A_centerTranslation) << " and translationB "
+                        << *(rInfoB.A_centerTranslation);
 
                     // Buffer some debug output — we'll flush it thread-safely later
                     erross << "GOT DT VS TOI: " << dt << " vs " << toi << "\n";
@@ -1094,17 +1180,17 @@ void investigateStartConfigsParallel(
                                + *(rInfoA.A_linearVel) * dt)
                            << "\n\n";
 
-                    T dist
-                        = grid::valueAtProjection(SDFB, firstIntersectPoint,
-                                                  *(rInfoB.A_centerTranslation),
-                                                  *(rInfoB.A_centerRotation));
-                    T distGT = grid::valueAtProjection(
+                    T dist = SDFSDFContactAnalytical::valueAtProjectionAna(
+                        SDFB, firstIntersectPoint,
+                        *(rInfoB.A_centerTranslation),
+                        *(rInfoB.A_centerRotation));
+                    T distGT = SDFSDFContactAnalytical::valueAtProjectionAna(
                         SDFB, lastContactPoint, *(rInfoB.A_centerTranslation),
                         *(rInfoB.A_centerRotation));
                     T bestDiffDistance = dist - distGT;
                     for (size_t i = 0; i < finalContactPoints.size(); ++i)
                     {
-                        distGT = grid::valueAtProjection(
+                        distGT = SDFSDFContactAnalytical::valueAtProjectionAna(
                             SDFB, lastContactPoint,
                             *(rInfoB.A_centerTranslation),
                             *(rInfoB.A_centerRotation));
@@ -1200,7 +1286,7 @@ void investigateStartConfigsParallel(
             });
     } // end launch threads
 
-    // join
+    // joinevenTinierStep
     for (auto& th : workers) th.join();
 
     // Merge per-thread results into globals
@@ -1426,12 +1512,12 @@ void investigateStartConfigs(
                   << "\n";
         std::cerr << "\n\n";
 
-        T dist = grid::valueAtProjection(SDFB, firstIntersectPoint,
-                                         *(rInfoB.A_centerTranslation),
-                                         *(rInfoB.A_centerRotation));
-        T distGT = grid::valueAtProjection(SDFB, lastContactPoint,
-                                           *(rInfoB.A_centerTranslation),
-                                           *(rInfoB.A_centerRotation));
+        T dist = SDFSDFContactAnalytical::valueAtProjectionAna(
+            SDFB, firstIntersectPoint, *(rInfoB.A_centerTranslation),
+            *(rInfoB.A_centerRotation));
+        T distGT = SDFSDFContactAnalytical::valueAtProjectionAna(
+            SDFB, lastContactPoint, *(rInfoB.A_centerTranslation),
+            *(rInfoB.A_centerRotation));
 
         T diffDistance = dist - distGT;
 
@@ -1562,22 +1648,226 @@ void investigateStartConfigs(
     }
 }
 
+template <typename T> using Vec3 = Eigen::Matrix<T, 3, 1>;
+template <typename T> using Mat3 = Eigen::Matrix<T, 3, 3>;
+template <typename T> using Aff3 = Eigen::Transform<T, 3, Eigen::Affine>;
+
+// analytic local gradient for sphere at origin r=0.5
+template <typename T> Vec3<T> sphere_local_gradient(const Vec3<T>& plocal)
+{
+    T len = plocal.norm();
+    const T eps = std::numeric_limits<T>::epsilon() * T(100);
+    if (len > eps) return plocal / len;
+    return Vec3<T>::UnitX(); // choose deterministic if at center
+}
+
+// transform gradient from local to world properly
+// linear = 3x3 linear part of worldFromLocal (rotation*scale),
+// gradient_world = normalize( (linear.inverse().transpose() * gradient_local) )
+template <typename T>
+Vec3<T> transform_gradient_to_world(const Mat3<T>& linear,
+                                    const Vec3<T>& g_local)
+{
+    Mat3<T> M = linear.inverse().transpose();
+    Vec3<T> g_ws = M * g_local;
+    return g_ws.normalized();
+}
+
+template <typename T>
+void debug_point(const Aff3<T>& worldFromLocalA, const Aff3<T>& worldFromLocalB,
+                 const Vec3<T>& p_world)
+{
+    // compute local points
+    Aff3<T> localFromWorldA = worldFromLocalA.inverse();
+    Aff3<T> localFromWorldB = worldFromLocalB.inverse();
+
+    Vec3<T> pA_local = localFromWorldA * p_world;
+    Vec3<T> pB_local = localFromWorldB * p_world;
+
+    // local gradients (analytic)
+    Vec3<T> gA_local = sphere_local_gradient<T>(pA_local);
+    Vec3<T> gB_local = sphere_local_gradient<T>(pB_local);
+
+    // transform gradients to world (take linear part)
+    Mat3<T> LA = worldFromLocalA.linear();
+    Mat3<T> LB = worldFromLocalB.linear();
+
+    Vec3<T> gA_world = transform_gradient_to_world<T>(LA, gA_local);
+    Vec3<T> gB_world = transform_gradient_to_world<T>(LB, gB_local);
+
+    // normalize (safety)
+    gA_world.normalize();
+    gB_world.normalize();
+
+    T dot = gA_world.dot(gB_world);
+    Vec3<T> cross = gA_world.cross(gB_world);
+    T cross_norm = cross.norm();
+    T angle_deg = std::asin(std::min<T>(std::max<T>(cross_norm, T(0)), T(1)))
+                * 180.0 / M_PI;
+
+    std::cout << std::fixed << std::setprecision(8);
+    std::cout << "p_world           = [" << p_world.transpose() << "]\n";
+    std::cout << "pA_local          = [" << pA_local.transpose()
+              << "], norm=" << pA_local.norm() << "\n";
+    std::cout << "pB_local          = [" << pB_local.transpose()
+              << "], norm=" << pB_local.norm() << "\n";
+    std::cout << "gA_local (unit)   = [" << gA_local.transpose() << "]\n";
+    std::cout << "gB_local (unit)   = [" << gB_local.transpose() << "]\n";
+    std::cout << "gA_world (unit)   = [" << gA_world.transpose() << "]\n";
+    std::cout << "gB_world (unit)   = [" << gB_world.transpose() << "]\n";
+    std::cout << "dot               = " << dot << "\n";
+    std::cout << "cross_norm         = " << cross_norm << "  (angle ≈ "
+              << angle_deg << " deg)\n";
+    std::cout << "-------------------------------------------\n";
+}
+
+// helper: remove near-duplicates from vector of points (keeps first)
+template <typename T>
+void unique_by_epsilon(std::vector<EigenVector3<T>>& pts,
+                       T eps = static_cast<T>(1e-8))
+{
+    const T eps2 = eps * eps;
+    std::vector<EigenVector3<T>> out;
+    out.reserve(pts.size());
+    for (auto& p : pts)
+    {
+        bool found = false;
+        for (auto& q : out)
+        {
+            if ((p - q).squaredNorm() <= eps2)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found) out.push_back(p);
+    }
+    pts.swap(out);
+}
+
+// 1) Parametric sampling of the sphere surface
+//    - every returned point has exactly norm == radius (mod numeric rounding).
+//    - includes 6 axis/canonical points so (0, 0.5, 0) is present.
+template <typename T = double>
+std::vector<EigenVector3<T>>
+sample_sphere_iso_parametric(int theta_steps = 64, // polar steps (0..pi)
+                             int phi_steps = 128, // azimuthal steps (0..2pi)
+                             bool include_cardinal_axis = true)
+{
+    std::vector<EigenVector3<T>> pts;
+    //pts.reserve(theta_steps * phi_steps + 6);
+
+    const T R = SDFSDFContactAnalytical::sphere_radius<T>();
+    const T PI = static_cast<T>(M_PI);
+
+    for (int i = 0; i < theta_steps; ++i)
+    {
+        // theta in [0, pi]
+        T theta
+            = (theta_steps == 1)
+                ? PI / 2
+                : (static_cast<T>(i) / static_cast<T>(theta_steps - 1)) * PI;
+        T st = std::sin(theta), ct = std::cos(theta);
+        for (int j = 0; j < phi_steps; ++j)
+        {
+            // phi in [0, 2pi)
+            T phi = (static_cast<T>(j) / static_cast<T>(phi_steps))
+                  * (static_cast<T>(2) * PI);
+            T sp = std::sin(phi), cp = std::cos(phi);
+            EigenVector3<T> dir;
+            // spherical -> Cartesian: (x,y,z) = (sinθ cosφ, cosθ, sinθ sinφ)
+            dir << st * cp, ct, st * sp;
+            EigenVector3<T> p = R * dir;
+            pts.push_back(p);
+        }
+    }
+
+    if (include_cardinal_axis)
+    {
+        pts.push_back(EigenVector3<T>(R, 0, 0));
+        pts.push_back(EigenVector3<T>(-R, 0, 0));
+        pts.push_back(EigenVector3<T>(0, R, 0)); // ensures (0, 0.5, 0)
+        pts.push_back(EigenVector3<T>(0, -R, 0));
+        pts.push_back(EigenVector3<T>(0, 0, R));
+        pts.push_back(EigenVector3<T>(0, 0, -R));
+    }
+
+    //unique_by_epsilon(pts, static_cast<T>(1e-12));
+    return pts;
+}
+
+// 2) Project grid candidates to the isosurface
+//    - iterate (x,y,z) in bounding box with step
+//    - consider only candidates within `band` of the isosurface
+//    - project each candidate onto the isosurface using p_proj = p - sdf(p)*grad(p)
+//    - deduplicate projected points
+template <typename T = double>
+std::vector<EigenVector3<T>> project_grid_points_to_surface(
+    EigenVector3<T> min_bound, EigenVector3<T> max_bound, T step,
+    T band = static_cast<T>(1e-2), T dedup_eps = static_cast<T>(1e-8))
+{
+    std::vector<EigenVector3<T>> out;
+    const T eps = std::numeric_limits<T>::epsilon() * static_cast<T>(10);
+
+    for (T x = min_bound.x(); x <= max_bound.x() + step / 2; x += step)
+    {
+        for (T y = min_bound.y(); y <= max_bound.y() + step / 2; y += step)
+        {
+            for (T z = min_bound.z(); z <= max_bound.z() + step / 2; z += step)
+            {
+                EigenVector3<T> p(x, y, z);
+                T sd = SDFSDFContactAnalytical::sphere_signed_distance<T>(p);
+                if (std::abs(sd) <= band)
+                {
+                    EigenVector3<T> g
+                        = SDFSDFContactAnalytical::sphere_sdf_gradient<T>(p);
+                    if (g.squaredNorm() <= eps)
+                        continue; // skip undefined gradient
+                    EigenVector3<T> p_proj = p - sd * g;
+                    // enforce exact magnitude = radius to avoid tiny drift:
+                    p_proj = (SDFSDFContactAnalytical::sphere_radius<T>()
+                              / p_proj.norm())
+                           * p_proj;
+                    out.push_back(p_proj);
+                }
+            }
+        }
+    }
+    unique_by_epsilon(out, dedup_eps);
+    return out;
+}
+
 BOOST_AUTO_TEST_CASE(grid_local_strategy)
 {
     {
-        using D = double;
         using T = double;
+
+        {
+            using V = Vec3<T>;
+            // Sphere centers and world transforms (here only translation)
+            Aff3<T> A = Aff3<T>::Identity();
+            A.translate(V(0, 0, 0));
+            Aff3<T> B = Aff3<T>::Identity();
+            B.translate(V(0, 1, 0));
+
+            // sample point: touching point (0,0.5,0)
+            V p_touch(-0.0117967, 0.499822, -0.00622184);
+
+            debug_point<T>(A, B, p_touch);
+        }
+
+        using D = double;
         {
             grid::Grid<T, T> SDFA;
             std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
             std::cerr << "Finished filtering SDF 1/2!" << "\n";
-            makeSDF(SDFA, "torus.obj", finishedVoxelsA, voxelsA, 64, 8);
+            makeSDF(SDFA, "sphere.obj", finishedVoxelsA, voxelsA, 64, 8);
             //This is static for tihs case!
             grid::Grid<T, T> SDFB;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
             std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
-            makeSDF(SDFB, "torus.obj", finishedVoxelsB, voxelsB, 64, 8);
+            makeSDF(SDFB, "sphere.obj", finishedVoxelsB, voxelsB, 64, 8);
             std::cerr << "Finished filtering SDF 2/2!" << "\n";
             std::vector<Eigen::Matrix<T, 3, 1>>
                 final_points; // collects points to push
@@ -1663,13 +1953,16 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             //Now project all points to isosurface such that we are sure they cover the isosurface
             for (size_t i = 0; i < final_points.size(); ++i)
             {
-                final_points[i] = final_points[i]
-                                - grid::value_at_2(SDFA, final_points[i])
-                                      * grid::computeGradient_Working(
-                                          final_points[i], SDFA);
+                final_points[i]
+                    = final_points[i]
+                    - SDFSDFContactAnalytical::sphere_signed_distance(
+                          final_points[i])
+                          * SDFSDFContactAnalytical::sphere_sdf_gradient(
+                              final_points[i]);
+                //std::cerr << final_points[i] << "\n";
             }
 
-            for (size_t i = 0; i < final_points.size(); ++i)
+            /*for (size_t i = 0; i < final_points.size(); ++i)
             {
                 final_points[i]
                     = final_points[i]
@@ -1677,15 +1970,73 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
                           * grid::computeGradient_Working(final_points[i], SDFA)
                                 .normalized()
                           * 2.0;
+            }*/
+
+            // Example A: parametric sampling (guaranteed to contain (0,0.5,0) because we add axis points)
+            std::vector<EigenVector3<T>> pts_param
+                = sample_sphere_iso_parametric<T>(2000, 2000, true);
+            std::cout << "Parametric sample count: " << pts_param.size()
+                      << "\n";
+
+            // check for (0, 0.5, 0)
+            EigenVector3<T> desired(
+                0, SDFSDFContactAnalytical::sphere_radius<T>(), 0);
+            bool found = false;
+            for (auto& p : pts_param)
+            {
+                if ((p - desired).norm() <= 1e-12)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            std::cout << "(0,0.5,0) in parametric? " << (found ? "yes" : "no")
+                      << "\n";
+
+            // Example B: project a small grid to surface; ensure the bounding box covers the sphere
+            EigenVector3<T> minb(-0.6, -0.6, -0.6), maxb(0.6, 0.6, 0.6);
+            T step = 0.25; // a grid step; smaller -> more surface points
+            auto pts_proj = project_grid_points_to_surface<T>(
+                minb, maxb, step, 0.5 * step, 1e-10);
+            std::cout << "Projected sample count: " << pts_proj.size() << "\n";
+
+            // check whether (0,0.5,0) was produced by projection:
+            bool found_proj = false;
+            for (auto& p : pts_proj)
+            {
+                if ((p - desired).norm() <= 1e-12)
+                {
+                    found_proj = true;
+                    break;
+                }
+            }
+            std::cout << "(0,0.5,0) in projected? "
+                      << (found_proj ? "yes" : "no") << "\n";
+            /*std::cerr << "SIZE: " << final_points.size() << "\n";
+            for (size_t i = 0; i < pts_param.size(); ++i)
+            {
+                T tmp = pts_param[i].z();
+                pts_param[i].z() = pts_param[i].y();
+                pts_param[i].y() = tmp;
+            }*/
+            for (size_t i = 0; i < pts_param.size(); ++i)
+            {
+                pts_param[i]
+                    = pts_param[i]
+                    - SDFSDFContactAnalytical::sphere_signed_distance(
+                          pts_param[i])
+                          * SDFSDFContactAnalytical::sphere_sdf_gradient(
+                              pts_param[i]);
             }
 
-            std::cerr << "SIZE: " << final_points.size() << "\n";
-
             std::vector<StartConfigurations<T>> startConfigs
-                = generateStartConfigurations<T>(500, 1.0, 1.0, 6.0, 3.0, 15.0,
-                                                 50, 0.0, 0xdabaef);
+                = generateStartConfigurations<T>(100, 1.0, 1.0, 6.0, 3.0, 15.0,
+                                                 50, 0.0, 0);
+            startConfigs[0].linearVelocity = EigenVector3<T>(0.0, -10.0, 0.0);
+            startConfigs[0].translationFromZero
+                = EigenVector3<T>(0.0, 3.0, 0.0);
             investigateStartConfigsParallel<T>(startConfigs, SDFA, SDFB,
-                                               final_points, finishedVoxelsA,
+                                               pts_param, finishedVoxelsA,
                                                finishedVoxelsB);
         }
     }
