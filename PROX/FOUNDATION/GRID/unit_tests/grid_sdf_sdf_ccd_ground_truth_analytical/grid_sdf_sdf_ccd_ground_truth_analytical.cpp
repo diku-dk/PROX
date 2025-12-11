@@ -327,7 +327,6 @@ std::vector<StartConfigurations<T>> generatePairStartConfigurations(
     T d_min_safe = radiusA + radiusB + start_margin;
     if (min_center_distance < d_min_safe) min_center_distance = d_min_safe;
 
-    // keep max_center_distance <= 5.0 by default to produce likely-colliding starts (per your rule)
     const T collision_distance_limit = T(5.0);
     if (max_center_distance > collision_distance_limit)
         max_center_distance = collision_distance_limit;
@@ -1165,7 +1164,6 @@ void investigateStartConfigsParallel(
                         << *(rInfoA.A_centerTranslation) << " and translationB "
                         << *(rInfoB.A_centerTranslation);
 
-                    // Buffer some debug output — we'll flush it thread-safely later
                     erross << "GOT DT VS TOI: " << dt << " vs " << toi << "\n";
                     erross << "Center translation for SDF A: "
                            << *(rInfoA.A_centerTranslation) << "\n";
