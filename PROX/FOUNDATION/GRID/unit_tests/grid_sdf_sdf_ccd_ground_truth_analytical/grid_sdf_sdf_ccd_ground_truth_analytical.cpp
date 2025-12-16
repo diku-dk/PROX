@@ -849,6 +849,9 @@ void investigateStartConfigsParallel(
     std::vector<long double> allDifsDist;
     allDifsDist.reserve(startConfigs.size());
 
+    std::vector<long double> allDifsMeters;
+    allDifsMeters.reserve(startConfigs.size());
+
     CCDStatistics2<T>
         stats; // will be filled by calling classifyResult serially after threads finish
 
@@ -882,11 +885,15 @@ void investigateStartConfigsParallel(
     {
         std::vector<long double> diffs;
         std::vector<long double> diffsDist;
+        std::vector<long double> diffsMeters;
         std::vector<ClassificationRecord> classifications;
         T localMinDiff = std::numeric_limits<T>::max();
         T localMaxDiff = std::numeric_limits<T>::min();
         T localMinDiffDist = std::numeric_limits<T>::max();
         T localMaxDiffDist = std::numeric_limits<T>::min();
+        T localMinMeters = std::numeric_limits<T>::max();
+        T localMaxMeters = std::numeric_limits<T>::min();
+
         T averageIterationsA = 0;
         T averageIterationsB = 0;
         T localTimeTaken = T(0);
@@ -908,6 +915,8 @@ void investigateStartConfigsParallel(
                 ThreadLocal& local = locals[t];
                 local.diffs.reserve((end > begin) ? (end - begin) : 0);
                 local.diffsDist.reserve((end > begin) ? (end - begin) : 0);
+                local.diffsMeters.reserve((end > begin) ? (end - begin) : 0);
+
                 local.classifications.reserve((end > begin) ? (end - begin)
                                                             : 0);
 
@@ -1029,12 +1038,12 @@ void investigateStartConfigsParallel(
 
                     //Only fair to check all contact pointts....
                     T bestCollinearty = std::numeric_limits<T>::max();
-                    for (size_t i = 0; i < final_points.size(); ++i)
+                    for (size_t i = 0; i < finalContactPoints.size(); ++i)
                     {
-                        EigenVector3<T> locallyA = final_points[i]
+                        EigenVector3<T> locallyA = finalContactPoints[i]
                                                  - *(rInfoA.A_centerTranslation)
                                                  - (*(rInfoA.A_linearVel) * dt);
-                        EigenVector3<T> locallyB = final_points[i]
+                        EigenVector3<T> locallyB = finalContactPoints[i]
                                                  - *(rInfoB.A_centerTranslation)
                                                  - (*(rInfoB.A_linearVel) * dt);
                         EigenVector3<T> gradientB
@@ -1049,7 +1058,7 @@ void investigateStartConfigsParallel(
                         if (candidate < bestCollinearty)
                         {
                             bestCollinearty = candidate;
-                            lastContactPoint = final_points[i];
+                            lastContactPoint = finalContactPoints[i];
                         }
                     }
 
@@ -1121,12 +1130,12 @@ void investigateStartConfigsParallel(
                                *(rInfoB.A_centerTranslation),
                                *(rInfoB.A_centerRotation), poseB)
                         << " and dist to surface A: "
-                        << /*SDFSDFContactAnalytical::valueAtProjectionForBB(
+                        << SDFSDFContactAnalytical::valueAtProjectionForBB(
                                lastContactPoint, *(rInfoA.sdf),
                                *(rInfoA.A_centerTranslation),
-                               *(rInfoA.A_centerRotation), poseA)*/
-                        SDFSDFContactAnalytical::sphere_signed_distance(
-                            locallyA)
+                               *(rInfoA.A_centerRotation), poseA)
+                        /*SDFSDFContactAnalytical::sphere_signed_distance(
+                            locallyA)*/
 
                         << ". Gradient of A and gradient B: ((" << gradientA.x()
                         << "," << gradientA.y() << "," << gradientA.z() << "),("
@@ -1211,6 +1220,12 @@ void investigateStartConfigsParallel(
                     bool hasIntersection = (toi >= 0.01);
                     T diff = toi - dt;
 
+                    T maxDim
+                        = std::max<T>((*(rInfoA.A_linearVel)).x(),
+                                      std::max<T>((*(rInfoA.A_linearVel)).y(),
+                                                  (*(rInfoA.A_linearVel)).x()));
+                    T diffsMetersVal = maxDim * diff;
+
                     if (diffDistance <= -1e-5)
                     {
                         erross << "=========================================\n";
@@ -1256,6 +1271,18 @@ void investigateStartConfigsParallel(
                         local.classifications.push_back(
                             ClassificationRecord{dist, toi, hasIntersection});
 
+                        local.diffsMeters.push_back(
+                            static_cast<long double>(diffsMetersVal));
+
+                        local.classifications.push_back(
+                            ClassificationRecord{dist, toi, hasIntersection});
+
+                        // Update local mins/maxs
+                        if (diffsMetersVal < local.localMinMeters)
+                            local.localMinMeters = diffsMetersVal;
+                        if (diffsMetersVal > local.localMaxMeters)
+                            local.localMaxMeters = diffsMetersVal;
+
                         // Update local mins/maxs
                         if (diff < local.localMinDiff)
                             local.localMinDiff = diff;
@@ -1291,16 +1318,25 @@ void investigateStartConfigsParallel(
     T allTime = 0.0;
     T allItsA = 0.0;
     T allItsB = 0.0;
+    T minDifsMeters = std::numeric_limits<T>::max();
+    T maxDifsMeters = std::numeric_limits<T>::min();
     for (const auto& local : locals)
     {
         // append diffs
         allDifs.insert(allDifs.end(), local.diffs.begin(), local.diffs.end());
         allDifsDist.insert(allDifsDist.end(), local.diffsDist.begin(),
                            local.diffsDist.end());
+        allDifsMeters.insert(allDifsMeters.end(), local.diffsMeters.begin(),
+                             local.diffsMeters.end());
 
         // combine min/max
         if (local.localMinDiff < minDiff) minDiff = local.localMinDiff;
         if (local.localMaxDiff > maxDiff) maxDiff = local.localMaxDiff;
+        if (local.localMinMeters < minDifsMeters)
+            minDifsMeters = local.localMinMeters;
+        if (local.localMaxMeters > maxDifsMeters)
+            maxDifsMeters = local.localMaxMeters;
+
         if (local.localMinDiffDist < minDiffDist)
             minDiffDist = local.localMinDiffDist;
         if (local.localMaxDiffDist > maxDiffDist)
@@ -1387,6 +1423,27 @@ void investigateStartConfigsParallel(
         std::cout << "StdDev diff (phi (x)) of toi: " << stddev << "\n";
         std::cout << "min diff (phi (x)) of toi: " << minDiffDist << "\n";
         std::cout << "max diff (phi (x)) of toi: " << maxDiffDist << "\n";
+    }
+
+    //Summary for meters
+    {
+        std::cerr << "Meters info:\n";
+        long double mean
+            = std::accumulate(allDifsMeters.begin(), allDifsMeters.end(), 0.0L)
+            / allDifsMeters.size();
+
+        long double sumSqDiff = 0.0L;
+        for (auto x : allDifsMeters) sumSqDiff += (x - mean) * (x - mean);
+        long double stddev = std::sqrtl(sumSqDiff / (allDifsMeters.size() - 1));
+
+        std::cout << "Mean diff (meters diff) of diff of toi:   " << mean
+                  << "\n";
+        std::cout << "StdDev diff (meters diff) of diff of toi: " << stddev
+                  << "\n";
+        std::cout << "min diff (meters diff) of diff of toi: " << minDifsMeters
+                  << "\n";
+        std::cout << "max diff (meters diff) of diff of toi: " << maxDifsMeters
+                  << "\n";
     }
 }
 
@@ -1746,6 +1803,39 @@ void unique_by_epsilon(std::vector<EigenVector3<T>>& pts,
 // 1) Parametric sampling of the sphere surface
 //    - every returned point has exactly norm == radius (mod numeric rounding).
 //    - includes 6 axis/canonical points so (0, 0.5, 0) is present.
+
+template <typename T>
+std::vector<EigenVector3<T>> sample_sphere_fibonacci(size_t N)
+{
+    std::vector<EigenVector3<T>> pts;
+    pts.reserve(N);
+    const T R = SDFSDFContactAnalytical::sphere_radius<T>();
+    const T ga = M_PI * (3.0 - std::sqrt(5.0)); // golden angle ~2.399963
+
+    for (size_t k = 0; k < N; ++k)
+    {
+        T z = static_cast<T>(1)
+            - (static_cast<T>(2) * (k + 0.5) / static_cast<T>(N));
+        T r = std::sqrt(std::max(T(0), static_cast<T>(1) - z * z));
+        T phi = ga * static_cast<T>(k);
+        T x = r * std::cos(phi);
+        T y = r * std::sin(phi);
+        pts.emplace_back(R * x, R * y, R * z);
+    }
+    bool include_cardinal_axis = true;
+    if (include_cardinal_axis)
+    {
+        pts.push_back(EigenVector3<T>(R, 0, 0));
+        pts.push_back(EigenVector3<T>(-R, 0, 0));
+        pts.push_back(EigenVector3<T>(0, R, 0)); // ensures (0, 0.5, 0)
+        pts.push_back(EigenVector3<T>(0, -R, 0));
+        pts.push_back(EigenVector3<T>(0, 0, R));
+        pts.push_back(EigenVector3<T>(0, 0, -R));
+    }
+
+    return pts;
+}
+
 template <typename T = double>
 std::vector<EigenVector3<T>>
 sample_sphere_iso_parametric(int theta_steps = 64, // polar steps (0..pi)
@@ -1823,9 +1913,9 @@ std::vector<EigenVector3<T>> project_grid_points_to_surface(
                         continue; // skip undefined gradient
                     EigenVector3<T> p_proj = p - sd * g;
                     // enforce exact magnitude = radius to avoid tiny drift:
-                    p_proj = (SDFSDFContactAnalytical::sphere_radius<T>()
+                    /*p_proj = (SDFSDFContactAnalytical::sphere_radius<T>()
                               / p_proj.norm())
-                           * p_proj;
+                           * p_proj;*/
                     out.push_back(p_proj);
                 }
             }
@@ -1971,8 +2061,9 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             }*/
 
             // Example A: parametric sampling (guaranteed to contain (0,0.5,0) because we add axis points)
+            //std::vector<EigenVector3<T>> pts_param = sample_sphere_iso_parametric<T>(1000, 1000, true);
             std::vector<EigenVector3<T>> pts_param
-                = sample_sphere_iso_parametric<T>(2000, 2000, true);
+                = sample_sphere_fibonacci<T>(1000000);
             std::cout << "Parametric sample count: " << pts_param.size()
                       << "\n";
 

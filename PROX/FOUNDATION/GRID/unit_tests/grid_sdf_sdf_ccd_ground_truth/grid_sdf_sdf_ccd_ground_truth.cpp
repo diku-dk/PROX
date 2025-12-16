@@ -818,6 +818,9 @@ void investigateStartConfigsParallel(
     std::vector<long double> allDifsDist;
     allDifsDist.reserve(startConfigs.size());
 
+    std::vector<long double> allDifsMeters;
+    allDifsMeters.reserve(startConfigs.size());
+
     CCDStatistics2<T>
         stats; // will be filled by calling classifyResult serially after threads finish
 
@@ -851,14 +854,19 @@ void investigateStartConfigsParallel(
     {
         std::vector<long double> diffs;
         std::vector<long double> diffsDist;
+        std::vector<long double> diffsMeters;
         std::vector<ClassificationRecord> classifications;
         T localMinDiff = std::numeric_limits<T>::max();
         T localMaxDiff = std::numeric_limits<T>::min();
         T localMinDiffDist = std::numeric_limits<T>::max();
         T localMaxDiffDist = std::numeric_limits<T>::min();
+        T localMinMeters = std::numeric_limits<T>::max();
+        T localMaxMeters = std::numeric_limits<T>::min();
+
         T averageIterationsA = 0;
         T averageIterationsB = 0;
         T localTimeTaken = T(0);
+
         std::string stderrBuffer;
     };
 
@@ -877,6 +885,7 @@ void investigateStartConfigsParallel(
                 ThreadLocal& local = locals[t];
                 local.diffs.reserve((end > begin) ? (end - begin) : 0);
                 local.diffsDist.reserve((end > begin) ? (end - begin) : 0);
+                local.diffsMeters.reserve((end > begin) ? (end - begin) : 0);
                 local.classifications.reserve((end > begin) ? (end - begin)
                                                             : 0);
 
@@ -924,8 +933,8 @@ void investigateStartConfigsParallel(
                                 //std::cerr << "stepback: " << stepBackDT << "\n";
                                 finalContactPoints
                                     = getContactInTimeInstance<T>(
-                                        final_points, SDFB, bodyInfo, dt,
-                                        outContactPoints);
+                                        final_points, SDFB, bodyInfo,
+                                        stepBackDT, outContactPoints);
                                 bool hasPenetrated2 = true;
                                 if (finalContactPoints.size() == 0)
                                 {
@@ -1126,6 +1135,12 @@ void investigateStartConfigsParallel(
                     bool hasIntersection = (toi >= 0.01);
                     T diff = toi - dt;
 
+                    T maxDim
+                        = std::max<T>((*(rInfoA.A_linearVel)).x(),
+                                      std::max<T>((*(rInfoA.A_linearVel)).y(),
+                                                  (*(rInfoA.A_linearVel)).x()));
+                    T diffsMetersVal = maxDim * diff;
+
                     if (diffDistance <= -1e-5)
                     {
                         erross << "=========================================\n";
@@ -1168,14 +1183,23 @@ void investigateStartConfigsParallel(
                         local.diffs.push_back(static_cast<long double>(diff));
                         local.diffsDist.push_back(
                             static_cast<long double>(diffDistance));
+                        local.diffsMeters.push_back(
+                            static_cast<long double>(diffsMetersVal));
+
                         local.classifications.push_back(
                             ClassificationRecord{dist, toi, hasIntersection});
 
                         // Update local mins/maxs
+                        if (diffsMetersVal < local.localMinMeters)
+                            local.localMinMeters = diffsMetersVal;
+                        if (diffsMetersVal > local.localMaxMeters)
+                            local.localMaxMeters = diffsMetersVal;
+
                         if (diff < local.localMinDiff)
                             local.localMinDiff = diff;
                         if (diff > local.localMaxDiff)
                             local.localMaxDiff = diff;
+
                         if (!(std::abs<T>(firstIntersectPoint.norm()) >= T(999)
                               || std::abs<T>(lastContactPoint.norm())
                                      >= T(999)))
@@ -1206,16 +1230,26 @@ void investigateStartConfigsParallel(
     T allTime = 0.0;
     T allItsA = 0.0;
     T allItsB = 0.0;
+
+    T minDifsMeters = std::numeric_limits<T>::max();
+    T maxDifsMeters = std::numeric_limits<T>::min();
     for (const auto& local : locals)
     {
         // append diffs
         allDifs.insert(allDifs.end(), local.diffs.begin(), local.diffs.end());
         allDifsDist.insert(allDifsDist.end(), local.diffsDist.begin(),
                            local.diffsDist.end());
+        allDifsMeters.insert(allDifsMeters.end(), local.diffsMeters.begin(),
+                             local.diffsMeters.end());
 
         // combine min/max
         if (local.localMinDiff < minDiff) minDiff = local.localMinDiff;
         if (local.localMaxDiff > maxDiff) maxDiff = local.localMaxDiff;
+        if (local.localMinMeters < minDifsMeters)
+            minDifsMeters = local.localMinMeters;
+        if (local.localMaxMeters > maxDifsMeters)
+            maxDifsMeters = local.localMaxMeters;
+
         if (local.localMinDiffDist < minDiffDist)
             minDiffDist = local.localMinDiffDist;
         if (local.localMaxDiffDist > maxDiffDist)
@@ -1302,6 +1336,27 @@ void investigateStartConfigsParallel(
         std::cout << "StdDev diff (phi (x)) of toi: " << stddev << "\n";
         std::cout << "min diff (phi (x)) of toi: " << minDiffDist << "\n";
         std::cout << "max diff (phi (x)) of toi: " << maxDiffDist << "\n";
+    }
+
+    //Summary for meters
+    {
+        std::cerr << "Meters info:\n";
+        long double mean
+            = std::accumulate(allDifsMeters.begin(), allDifsMeters.end(), 0.0L)
+            / allDifsMeters.size();
+
+        long double sumSqDiff = 0.0L;
+        for (auto x : allDifsMeters) sumSqDiff += (x - mean) * (x - mean);
+        long double stddev = std::sqrtl(sumSqDiff / (allDifsMeters.size() - 1));
+
+        std::cout << "Mean diff (meters diff) of diff of toi:   " << mean
+                  << "\n";
+        std::cout << "StdDev diff (meters diff) of diff of toi: " << stddev
+                  << "\n";
+        std::cout << "min diff (meters diff) of diff of toi: " << minDifsMeters
+                  << "\n";
+        std::cout << "max diff (meters diff) of diff of toi: " << maxDifsMeters
+                  << "\n";
     }
 }
 
@@ -1571,12 +1626,12 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsA;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxelsA;
             std::cerr << "Finished filtering SDF 1/2!" << "\n";
-            makeSDF(SDFA, "torus.obj", finishedVoxelsA, voxelsA, 64, 8);
+            makeSDF(SDFA, "blender_star.obj", finishedVoxelsA, voxelsA, 64, 8);
             //This is static for tihs case!
             grid::Grid<T, T> SDFB;
             std::vector<SDFSDFContact::SDFVoxel<T>> voxelsB;
             std::vector<SDFSDFContact::SDFVoxel<T>> finishedVoxelsB;
-            makeSDF(SDFB, "torus.obj", finishedVoxelsB, voxelsB, 64, 8);
+            makeSDF(SDFB, "blender_star.obj", finishedVoxelsB, voxelsB, 64, 8);
             std::cerr << "Finished filtering SDF 2/2!" << "\n";
             std::vector<Eigen::Matrix<T, 3, 1>>
                 final_points; // collects points to push
@@ -1681,8 +1736,8 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             std::cerr << "SIZE: " << final_points.size() << "\n";
 
             std::vector<StartConfigurations<T>> startConfigs
-                = generateStartConfigurations<T>(200, 1.0, 1.0, 6.0, 3.0, 15.0,
-                                                 50, 0.0, 0xdabaef);
+                = generateStartConfigurations<T>(100, 1.0, 1.0, 6.0, 3.0, 15.0,
+                                                 50, 0.0, 0xafbcde);
             investigateStartConfigsParallel<T>(startConfigs, SDFA, SDFB,
                                                final_points, finishedVoxelsA,
                                                finishedVoxelsB);

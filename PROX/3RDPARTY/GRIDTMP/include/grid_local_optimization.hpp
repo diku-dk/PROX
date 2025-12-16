@@ -479,9 +479,82 @@ computeGradient_TrilinearAnalytic(const Eigen::Matrix<T, 3, 1>& p,
 }
 
 template <typename D, typename T>
+Eigen::Matrix<T, 3, 1>
+computeGradient_TrilinearAnalytics(const Eigen::Matrix<T, 3, 1>& p,
+                                   const grid::Grid<D, T>& grid)
+{
+    // 1) Find enclosing cell (same logic as in value_at_2)
+    Eigen::Matrix<size_t, 3, 1> nodes0, nodes1;
+    enclosing_indices(grid, p, nodes0, nodes1);
+
+    // clamp indices to valid range (same as your code)
+    nodes0 = Eigen::Matrix<size_t, 3, 1>(
+        std::clamp<size_t>(nodes0.x(), 0, grid.I() - 1),
+        std::clamp<size_t>(nodes0.y(), 0, grid.J() - 1),
+        std::clamp<size_t>(nodes0.z(), 0, grid.K() - 1));
+    nodes1 = Eigen::Matrix<size_t, 3, 1>(
+        std::clamp<size_t>(nodes1.x(), 0, grid.I() - 1),
+        std::clamp<size_t>(nodes1.y(), 0, grid.J() - 1),
+        std::clamp<size_t>(nodes1.z(), 0, grid.K() - 1));
+
+    // fetch corner values (same naming/ordering as your value_at_2)
+    D d000 = grid(nodes0);
+    D d001
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes1.x(), nodes0.y(), nodes0.z()));
+    D d010
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes0.x(), nodes1.y(), nodes0.z()));
+    D d011
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes1.x(), nodes1.y(), nodes0.z()));
+    D d100
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes0.x(), nodes0.y(), nodes1.z()));
+    D d101
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes1.x(), nodes0.y(), nodes1.z()));
+    D d110
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes0.x(), nodes1.y(), nodes1.z()));
+    D d111
+        = grid(Eigen::Matrix<size_t, 3, 1>(nodes1.x(), nodes1.y(), nodes1.z()));
+
+    // compute local fractional coordinates s,t,u (same as your value_at_2)
+    const Eigen::Matrix<T, 3, 1> stu
+        = (p
+           - (nodes0.template cast<T>().cwiseProduct(grid.dir()) + grid.min()))
+              .cwiseQuotient(grid.dir());
+
+    T s = stu.x(), t = stu.y(), u = stu.z();
+
+    // compute cell spacings (h_x, h_y, h_z)
+    Eigen::Matrix<T, 3, 1> diff = (grid.m_max - grid.m_min);
+    Eigen::Matrix<T, 3, 1> cell_size = Eigen::Matrix<T, 3, 1>(
+        diff.x() / (grid.m_nodes.x() - 1), diff.y() / (grid.m_nodes.y() - 1),
+        diff.z() / (grid.m_nodes.z() - 1));
+    T hx = cell_size.x(), hy = cell_size.y(), hz = cell_size.z();
+
+    // analytic partials (see formulas above)
+    T dfdx_s = (1.0 - t) * (1.0 - u) * (d001 - d000)
+             + t * (1.0 - u) * (d011 - d010) + (1.0 - t) * u * (d101 - d100)
+             + t * u * (d111 - d110);
+
+    T dfdy_t = (1.0 - s) * (1.0 - u) * (d010 - d000)
+             + s * (1.0 - u) * (d011 - d001) + (1.0 - s) * u * (d110 - d100)
+             + s * u * (d111 - d101);
+
+    T dfdz_u = (1.0 - s) * (1.0 - t) * (d100 - d000)
+             + s * (1.0 - t) * (d101 - d001) + (1.0 - s) * t * (d110 - d010)
+             + s * t * (d111 - d011);
+
+    // convert from derivatives w.r.t. (s,t,u) to world coordinates
+    T dx = dfdx_s / hx;
+    T dy = dfdy_t / hy;
+    T dz = dfdz_u / hz;
+
+    return Eigen::Matrix<T, 3, 1>(dx, dy, dz);
+}
+
+template <typename D, typename T>
 Eigen::Matrix<T, 3, 1> computeGradient_Working(const Eigen::Matrix<T, 3, 1>& p,
                                                const grid::Grid<D, T>& grid)
 {
+    //return computeGradient_TrilinearAnalytics(p, grid);
     return computeGradient_TrilinearAnalytic(p, grid);
     //return tricubicCR_value_and_gradient(grid, p);
     // Calculate grid cell size based on resolution and bounds
@@ -491,7 +564,7 @@ Eigen::Matrix<T, 3, 1> computeGradient_Working(const Eigen::Matrix<T, 3, 1>& p,
         diff.z() / (grid.m_nodes.z() - 1));
 
     // Use cell size for finite differences
-    T hx = cell_size.x() * 1.0;
+    T hx = cell_size.x() * 2.0;
     T hy = cell_size.y() * 1.0;
     T hz = cell_size.z() * 1.0;
 
