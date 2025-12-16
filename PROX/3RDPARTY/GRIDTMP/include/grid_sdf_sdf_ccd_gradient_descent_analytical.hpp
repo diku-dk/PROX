@@ -92,6 +92,15 @@ void getTransformForBody(const EigenVector3<T>& centerTranslation,
 }
 
 template <typename T>
+EigenVector3<T> sphereSDFNormal(EigenVector3<T> x, EigenVector3<T> c)
+{
+    EigenVector3<T> v = x - c;
+    T n = v.norm();
+    if (n == 0.0) return EigenVector3<T>(1.0, 0.0, 0.0);
+    return v / n;
+}
+
+template <typename T>
 EigenVector3<T> getVertexPosAtMat(const EigenVector3<T>& centerTranslation,
                                   const EigenVector3<T>& linVel,
                                   const EigenVector3<T>& angVel,

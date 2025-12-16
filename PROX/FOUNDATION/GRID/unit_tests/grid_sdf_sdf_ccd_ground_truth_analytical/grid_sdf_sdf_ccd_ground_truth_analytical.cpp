@@ -220,6 +220,43 @@ struct SinglePoint
 };*/
 
 template <typename T>
+EigenVector3<T> sphere_contactt(EigenVector3<T> cA, EigenVector3<T> cB, T rA,
+                                T rB, T eps = 1e-18)
+{
+    EigenVector3<T> dvec = cB - cA;
+    T d = (dvec.norm());
+    if (d >= rA + rB)
+    {
+
+        return EigenVector3<T>(400000, 400000,
+                               400000); // no collision (or touching if ==)
+    }
+
+    EigenVector3<T> u;
+    if (d <= eps)
+    {
+        //degenerate: centers coincident
+        u = EigenVector3<T>(1.0, 0.0, 0.0);
+    }
+    else { u = dvec / d; }
+    EigenVector3<T> pA = cA + rA * u; //deepest point on A into B
+    EigenVector3<T> pB = cB - rB * u; //deepest point on B into A
+    EigenVector3<T> p_mid = 0.5 * (pA + pB);
+    T penetration = (rA + rB) - d;
+    EigenVector3<T> nA = (pA - cA) / rA; // == u(except degenerate)
+    EigenVector3<T> nB = (pB - cB) / rB; //# == -u
+    return pA;
+    /*{
+        'pA' : pA,
+               'pB' : pB,
+                      'p_mid' : p_mid,
+                                'penetration' : penetration,
+                                                'nA' : nA,
+                                                       'nB' : nB,
+                                                              'd' : d
+    }*/
+}
+template <typename T>
 std::vector<EigenVector3<T>>
 getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
                          const grid::Grid<T, T>& staticSDF,
@@ -232,6 +269,25 @@ getContactInTimeInstance(const std::vector<EigenVector3<T>>& points,
                                        std::numeric_limits<T>::max());
     std::vector<EigenVector3<T>> values;
     bool contact = false;
+
+    EigenVector3<T> SDFACenterLocationDT
+        = SDFSDFContactAnalytical::getVertexPosAtMat(
+            *(movingSDF.A_centerTranslation), *(movingSDF.A_linearVel),
+            *(movingSDF.A_angularVel), *(movingSDF.A_centerTranslation),
+            currentTimeInstance);
+
+    EigenVector3<T> point = sphere_contactt<T>(
+        SDFACenterLocationDT, EigenVector3<T>(0.0, 0.0, 0.0),
+        SDFSDFContactAnalytical::sphere_radius<T>(),
+        SDFSDFContactAnalytical::sphere_radius<T>());
+    if (point.x() >= 300000 && point.y() >= 300000 && point.z() >= 300000)
+    {
+        return values;
+    }
+    //Otherwise we have contact, single contact!
+    outContactPoints = point;
+    values.push_back(point);
+    return values;
     for (size_t i = 0; i < points.size(); ++i)
     {
 
@@ -865,7 +921,7 @@ void investigateStartConfigsParallel(
     // Decide number of threads
     unsigned int hw = std::thread::hardware_concurrency();
     //size_t num_threads = (hw == 0) ? 4u : std::min<unsigned int>(std::max<unsigned int>(1u, hw), static_cast<unsigned int>(n));
-    size_t num_threads = 14;
+    size_t num_threads = 1;
     // Partition
     size_t chunk = (n + num_threads - 1) / num_threads;
 
@@ -944,7 +1000,7 @@ void investigateStartConfigsParallel(
                     T maxDT = 1.0;
                     T smallStep = 1e-5;
                     T evenSmallerStep = 1e-8;
-                    T evenTinierStep = 1e-11;
+                    T evenTinierStep = 1e-16;
                     T evenTinierTinierStep = 1e-14;
                     EigenVector3<T> outContactPoints;
                     std::vector<EigenVector3<T>> finalContactPoints;
@@ -1036,6 +1092,11 @@ void investigateStartConfigsParallel(
                     rInfoB.A_linearVel = &linearB;
                     rInfoB.sdf = &SDFB;
 
+                    EigenVector3<T> SDFACenterLocationDT
+                        = SDFSDFContactAnalytical::getVertexPosAtMat(
+                            *(rInfoA.A_centerTranslation),
+                            *(rInfoA.A_linearVel), *(rInfoA.A_angularVel),
+                            *(rInfoA.A_centerTranslation), dt);
                     //Only fair to check all contact pointts....
                     T bestCollinearty = std::numeric_limits<T>::max();
                     for (size_t i = 0; i < finalContactPoints.size(); ++i)
@@ -1046,12 +1107,15 @@ void investigateStartConfigsParallel(
                         EigenVector3<T> locallyB = finalContactPoints[i]
                                                  - *(rInfoB.A_centerTranslation)
                                                  - (*(rInfoB.A_linearVel) * dt);
+                        //EigenVector3<T> gradientB = SDFSDFContactAnalytical::sphere_sdf_gradient(locallyB);
                         EigenVector3<T> gradientB
-                            = SDFSDFContactAnalytical::sphere_sdf_gradient(
-                                locallyB);
+                            = SDFSDFContactAnalytical::sphereSDFNormal(
+                                finalContactPoints[i],
+                                EigenVector3<T>(0, 0, 0));
+                        //EigenVector3<T> gradientA = SDFSDFContactAnalytical::sphere_sdf_gradient(locallyA);
                         EigenVector3<T> gradientA
-                            = SDFSDFContactAnalytical::sphere_sdf_gradient(
-                                locallyA);
+                            = SDFSDFContactAnalytical::sphereSDFNormal(
+                                finalContactPoints[i], SDFACenterLocationDT);
                         T candidate = ((gradientA.normalized())
                                            .cross((gradientB.normalized())))
                                           .norm();
@@ -1117,11 +1181,17 @@ void investigateStartConfigsParallel(
                                              - *(rInfoB.A_centerTranslation)
                                              - (*(rInfoB.A_linearVel) * dt);
                     EigenVector3<T> gradientB
+                        = SDFSDFContactAnalytical::sphereSDFNormal(
+                            lastContactPoint, EigenVector3<T>(0, 0, 0));
+                    /*EigenVector3<T> gradientB
                         = SDFSDFContactAnalytical::sphere_sdf_gradient(
-                            locallyB);
+                            locallyB);*/
+                    /*EigenVector3<T> gradientA
+                        = SDFSDFContactAnalytical::sphere_sdf_gradient(
+                            locallyA);*/
                     EigenVector3<T> gradientA
-                        = SDFSDFContactAnalytical::sphere_sdf_gradient(
-                            locallyA);
+                        = SDFSDFContactAnalytical::sphereSDFNormal(
+                            lastContactPoint, SDFACenterLocationDT);
 
                     std::cerr
                         << "DIST TO surface B: "
@@ -1219,6 +1289,7 @@ void investigateStartConfigsParallel(
 
                     bool hasIntersection = (toi >= 0.01);
                     T diff = toi - dt;
+                    std::cerr << "NOTE: DIFF: " << diff << "\n";
 
                     T maxDim
                         = std::max<T>((*(rInfoA.A_linearVel)).x(),
@@ -1288,6 +1359,10 @@ void investigateStartConfigsParallel(
                             local.localMinDiff = diff;
                         if (diff > local.localMaxDiff)
                             local.localMaxDiff = diff;
+                        if (local.localMaxDiff == std::numeric_limits<T>::min())
+                        {
+                            local.localMaxDiff = diff;
+                        }
                         if (!(std::abs<T>(firstIntersectPoint.norm()) >= T(999)
                               || std::abs<T>(lastContactPoint.norm())
                                      >= T(999)))
@@ -1332,6 +1407,10 @@ void investigateStartConfigsParallel(
         // combine min/max
         if (local.localMinDiff < minDiff) minDiff = local.localMinDiff;
         if (local.localMaxDiff > maxDiff) maxDiff = local.localMaxDiff;
+        if (maxDiff == std::numeric_limits<T>::min())
+        {
+            maxDiff = local.localMaxDiff;
+        }
         if (local.localMinMeters < minDifsMeters)
             minDifsMeters = local.localMinMeters;
         if (local.localMaxMeters > maxDifsMeters)
@@ -1390,12 +1469,12 @@ void investigateStartConfigsParallel(
         long double stddev = std::sqrtl(sumSqDiff / (allDifs.size() - 1));
 
         // --- Output ---
-        std::cout << "Mean diff of toi:   " << mean << "\n";
-        std::cout << "Median diff of toi: " << std::setprecision(20) << median
+        std::cerr << "Mean diff of toi:   " << mean << "\n";
+        std::cerr << "Median diff of toi: " << std::setprecision(20) << median
                   << "\n";
-        std::cout << "StdDev diff of toi: " << stddev << "\n";
-        std::cout << "min diff of toi: " << minDiff << "\n";
-        std::cout << "max diff of toi: " << maxDiff << "\n";
+        std::cerr << "StdDev diff of toi: " << stddev << "\n";
+        std::cerr << "min diff of toi: " << minDiff << "\n";
+        std::cerr << "max diff of toi: " << maxDiff << "\n";
     }
 
     // Compute aggregated summary stats for allDifsDist (same as original)
@@ -1417,12 +1496,12 @@ void investigateStartConfigsParallel(
         for (auto x : allDifsDist) sumSqDiff += (x - mean) * (x - mean);
         long double stddev = std::sqrtl(sumSqDiff / (allDifsDist.size() - 1));
 
-        std::cout << "Mean diff (phi (x)) of toi:   " << mean << "\n";
-        std::cout << "Median diff (phi (x)) of toi: " << std::setprecision(20)
+        std::cerr << "Mean diff (phi (x)) of toi:   " << mean << "\n";
+        std::cerr << "Median diff (phi (x)) of toi: " << std::setprecision(20)
                   << median << "\n";
-        std::cout << "StdDev diff (phi (x)) of toi: " << stddev << "\n";
-        std::cout << "min diff (phi (x)) of toi: " << minDiffDist << "\n";
-        std::cout << "max diff (phi (x)) of toi: " << maxDiffDist << "\n";
+        std::cerr << "StdDev diff (phi (x)) of toi: " << stddev << "\n";
+        std::cerr << "min diff (phi (x)) of toi: " << minDiffDist << "\n";
+        std::cerr << "max diff (phi (x)) of toi: " << maxDiffDist << "\n";
     }
 
     //Summary for meters
@@ -1436,13 +1515,13 @@ void investigateStartConfigsParallel(
         for (auto x : allDifsMeters) sumSqDiff += (x - mean) * (x - mean);
         long double stddev = std::sqrtl(sumSqDiff / (allDifsMeters.size() - 1));
 
-        std::cout << "Mean diff (meters diff) of diff of toi:   " << mean
+        std::cerr << "Mean diff (meters diff) of diff of toi:   " << mean
                   << "\n";
-        std::cout << "StdDev diff (meters diff) of diff of toi: " << stddev
+        std::cerr << "StdDev diff (meters diff) of diff of toi: " << stddev
                   << "\n";
-        std::cout << "min diff (meters diff) of diff of toi: " << minDifsMeters
+        std::cerr << "min diff (meters diff) of diff of toi: " << minDifsMeters
                   << "\n";
-        std::cout << "max diff (meters diff) of diff of toi: " << maxDifsMeters
+        std::cerr << "max diff (meters diff) of diff of toi: " << maxDifsMeters
                   << "\n";
     }
 }
@@ -2119,7 +2198,7 @@ BOOST_AUTO_TEST_CASE(grid_local_strategy)
             }
 
             std::vector<StartConfigurations<T>> startConfigs
-                = generateStartConfigurations<T>(100, 1.0, 1.0, 6.0, 3.0, 15.0,
+                = generateStartConfigurations<T>(20, 1.0, 1.0, 6.0, 3.0, 15.0,
                                                  50, 0.0, 0);
             startConfigs[0].linearVelocity = EigenVector3<T>(0.0, -10.0, 0.0);
             startConfigs[0].translationFromZero
